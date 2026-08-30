@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoLearn Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+</head>
+
+<style>
+
+    /* =========================================
+       ACTIVE SIDEBAR TAB
+    ========================================= */
+
+    nav .nav-link.Dashboard {
+
+        background-color: #40916C;
+
+        color: #ffffff !important;
+
+        font-weight: 600;
+
+    }
+
+</style>
+
+<body>
+    <!-- =========================================
+         SIDEBAR
+    ========================================= -->
+
+    <nav
+        class="d-flex flex-column align-items-center p-3 sidebar-bg"
+    >
+        
+        <img
+            src="imgs/Logo.jpg"
+            alt="Logo"
+            class="rounded-circle logo-img mb-2"
+        >
+
+
+        <h3 class="h5 brand-title mb-4">
+            EcoLearn
+        </h3>
+
+
+        <ul class="nav nav-pills flex-column w-100">
+
+
+            <!-- DASHBOARD -->
+
+            <li class="nav-item mb-1">
+
+                <a
+                    class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
+                    href="dashboard.html"
+                >
+
+                    <i class="bi bi-grid-1x2"></i>
+
+                    Dashboard
+
+                </a>
+
+            </li>
+
+
+            <!-- CELL MODELS -->
+
+            <li class="nav-item mb-1">
+
+                <a
+                    class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
+                    href="choose.html"
+                >
+
+                    <i class="bi bi-boxes"></i>
+
+                    Cell Models
+
+                </a>
+
+            </li>
+
+
+            <!-- Lesson -->
+
+            <li class="nav-item mb-1">
+
+                <a
+                    class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
+                    href="#"
+                >
+
+                    <i class="bi bi-book"></i>
+
+                    Lesson
+
+                </a>
+
+            </li>
+
+            <!-- QUIZ -->
+
+            <li class="nav-item mb-1">
+
+                <a
+                    class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
+                    href="#"
+                >
+
+                    <i class="bi bi-question-circle"></i>
+
+                    Quiz
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+    <main class="dashboard-content">
+        <div class="page-header">
+            <div>
+                <h1>Student Dashboard</h1>
+                <p>Welcome back! Continue your biology learning journey.</p>
+            </div>
+            <div class="header-badge">Week 6</div>
+        </div>
+
+        <section class="stats-grid">
+            <div class="stat-card folder-card" data-folder="lessons" data-title="Lessons" data-list="Module 1 • Cell Structure Basics|Module 2 • Cell Functions|Module 3 • Plant vs Animal Cells|Module 4 • DNA and Genetic Code|Module 5 • Cell Division|Module 6 • Cellular Energy|Module 7 • Transport Systems|Module 8 • Tissue Organization|Module 9 • Special Cells|Module 10 • Microscopy|Module 11 • Lab Review|Module 12 • Final Assessment">
+                <button class="stat-card-toggle" type="button" aria-expanded="false">
+                    <div class="label">
+                        <span>Lessons</span>
+                        <span class="icon"><i class="bi bi-book"></i></span>
+                    </div>
+                    <div class="value">12</div>
+                    <div class="meta">+3 from last week</div>
+                </button>
+            </div>
+
+            <div class="stat-card folder-card" data-folder="quizzes" data-title="Quizzes" data-list="Quiz 1 • Cell basics|Quiz 2 • Organelles|Quiz 3 • Membranes|Quiz 4 • Energy|Quiz 5 • Cell cycle|Quiz 6 • Genetics|Quiz 7 • Lab skills|Quiz 8 • Final review">
+                <button class="stat-card-toggle" type="button" aria-expanded="false">
+                    <div class="label">
+                        <span>Quizzes</span>
+                        <span class="icon"><i class="bi bi-patch-check"></i></span>
+                    </div>
+                    <div class="value">8</div>
+                    <div class="meta">Best score: 92%</div>
+                </button>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">
+                    <span>Progress</span>
+                    <span class="icon"><i class="bi bi-graph-up-arrow"></i></span>
+                </div>
+                <div class="value">72%</div>
+                <div class="meta">On target</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">
+                    <span>Streak</span>
+                    <span class="icon"><i class="bi bi-fire"></i></span>
+                </div>
+                <div class="value">5</div>
+                <div class="meta">Days in a row</div>
+            </div>
+        </section>
+
+        <section class="content-grid">
+            <div class="panel">
+                <div class="panel-title">
+                    <h2>Current learning path</h2>
+                    <a href="#">View all</a>
+                </div>
+
+                <div class="lesson-list">
+                    <button class="lesson-item" type="button" data-title="Cell Structure Basics" data-module="Module 1" data-time="25 min" data-summary="Explore how cells are organized into membranes, cytoplasm, organelles, and genetic material, and how each part supports life." data-objectives="Identify the main parts of a cell|Compare cell membrane and nucleus roles|Explain how organelles work together" data-model="AnimalCell.html">
+                        <div class="lesson-left">
+                            <div class="lesson-icon"><i class="bi bi-microscope"></i></div>
+                            <div>
+                                <div class="lesson-name">Cell Structure Basics</div>
+                                <div class="lesson-meta">Module 1 • 25 min</div>
+                            </div>
+                        </div>
+                        <span class="pill live">Live</span>
+                    </button>
+
+                    <button class="lesson-item" type="button" data-title="Cell Functions" data-module="Module 2" data-time="18 min" data-summary="Understand how cells move materials, convert energy, and maintain internal balance through specialized functions and organelles." data-objectives="Explain cellular respiration|Describe transport across membranes|Recognize how organelles support function" data-model="AnimalCell.html">
+                        <div class="lesson-left">
+                            <div class="lesson-icon"><i class="bi bi-activity"></i></div>
+                            <div>
+                                <div class="lesson-name">Cell Functions</div>
+                                <div class="lesson-meta">Module 2 • 18 min</div>
+                            </div>
+                        </div>
+                        <span class="pill todo">In progress</span>
+                    </button>
+
+                    <button class="lesson-item" type="button" data-title="Plant vs Animal Cells" data-module="Module 3" data-time="30 min" data-summary="Compare the similarities and differences between plant and animal cells and examine how structure reflects biological function." data-objectives="Identify cell wall and chloroplast roles|Compare lysosome and vacuole functions|Explain how cell shape supports purpose" data-model="AnimalCell.html">
+                        <div class="lesson-left">
+                            <div class="lesson-icon"><i class="bi bi-diagram-3"></i></div>
+                            <div>
+                                <div class="lesson-name">Plant vs Animal Cells</div>
+                                <div class="lesson-meta">Module 3 • 30 min</div>
+                            </div>
+                        </div>
+                        <span class="pill live">Next</span>
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <div class="panel">
+                    <div class="panel-title">
+                        <h2>Overall completion</h2>
+                    </div>
+
+                    <div class="mini-card">
+                        <h3>Course progress</h3>
+                        <div class="progress-ring"><span>72%</span></div>
+                    </div>
+
+                    <div class="goal-list">
+                        <div class="goal-item">
+                            <div class="label-row"><span class="dot"></span> Cell Theory</div>
+                            <span class="score">90%</span>
+                        </div>
+                        <div class="goal-item">
+                            <div class="label-row"><span class="dot"></span> Organelles</div>
+                            <span class="score">74%</span>
+                        </div>
+                        <div class="goal-item">
+                            <div class="label-row"><span class="dot"></span> Lab activities</div>
+                            <span class="score">68%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="lessonModal" class="lesson-modal" aria-hidden="true">
+        <div class="lesson-modal-backdrop" data-close="true"></div>
+        <div class="lesson-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle">
+            <div class="lesson-modal-header">
+                <div>
+                    <span class="lesson-modal-kicker" id="lessonModalModule">Module</span>
+                    <h3 id="lessonModalTitle">Lesson title</h3>
+                </div>
+                <button class="lesson-modal-close" type="button" aria-label="Close lesson">&times;</button>
+            </div>
+            <div class="lesson-modal-body">
+                <div class="lesson-modal-content">
+                    <div class="lesson-meta-row">
+                        <span id="lessonModalTime">25 min</span>
+                    </div>
+                    <p id="lessonModalSummary" class="lesson-summary"></p>
+
+                    <div class="lesson-section">
+                        <h4>Learning objectives</h4>
+                        <ul id="lessonObjectives"></ul>
+                    </div>
+
+                    <div class="lesson-section">
+                        <h4>Key idea</h4>
+                        <p>Cells are the basic units of life, and their internal structures are specialized to carry out essential processes for growth, energy, repair, and reproduction.</p>
+                    </div>
+                </div>
+
+                <div class="lesson-model-panel">
+                    <div class="lesson-model-header">Preview</div>
+                    <div class="lesson-model-placeholder">
+                        <i class="bi bi-diagram-3"></i>
+                        <span>3D model preview coming soon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="folderPopup" class="folder-popup" aria-hidden="true">
+        <div class="folder-popup-backdrop" data-close="true"></div>
+        <div class="folder-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="folderPopupTitle">
+            <div class="folder-popup-header">
+                <h3 id="folderPopupTitle">Folder</h3>
+                <button class="folder-popup-close" type="button" aria-label="Close folder">&times;</button>
+            </div>
+            <div class="folder-popup-body">
+                <ul id="folderPopupList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        ecoAuth.requireStudent();
+
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                ecoAuth.signOut();
+            });
+        }
+
+        const lessonModal = document.getElementById('lessonModal');
+        const lessonModalTitle = document.getElementById('lessonModalTitle');
+        const lessonModalModule = document.getElementById('lessonModalModule');
+        const lessonModalTime = document.getElementById('lessonModalTime');
+        const lessonModalSummary = document.getElementById('lessonModalSummary');
+        const lessonObjectives = document.getElementById('lessonObjectives');
+        const lessonModalClose = document.querySelector('.lesson-modal-close');
+        const folderPopup = document.getElementById('folderPopup');
+        const folderPopupTitle = document.getElementById('folderPopupTitle');
+        const folderPopupList = document.getElementById('folderPopupList');
+        const folderPopupClose = document.querySelector('.folder-popup-close');
+
+        function openLessonModal(button) {
+            const title = button.dataset.title || 'Lesson';
+            const module = button.dataset.module || 'Module';
+            const time = button.dataset.time || '10 min';
+            const summary = button.dataset.summary || 'Lesson details will appear here.';
+            const objectives = (button.dataset.objectives || '').split('|').filter(Boolean);
+
+            lessonModalTitle.textContent = title;
+            lessonModalModule.textContent = module;
+            lessonModalTime.textContent = time;
+            lessonModalSummary.textContent = summary;
+            lessonObjectives.innerHTML = '';
+            objectives.forEach((objective) => {
+                const item = document.createElement('li');
+                item.textContent = objective;
+                lessonObjectives.appendChild(item);
+            });
+            lessonModal.classList.add('is-open');
+            lessonModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeLessonModal() {
+            lessonModal.classList.remove('is-open');
+            lessonModal.setAttribute('aria-hidden', 'true');
+        }
+
+        function openFolderPopup(card) {
+            const title = card.dataset.title || 'Folder';
+            const list = (card.dataset.list || '').split('|').filter(Boolean);
+            folderPopupTitle.textContent = title;
+            folderPopupList.innerHTML = '';
+            list.forEach((item) => {
+                const li = document.createElement('li');
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'folder-item';
+                button.textContent = item;
+                button.dataset.title = item;
+                button.dataset.module = title;
+                button.dataset.time = '10 min';
+                button.dataset.summary = 'This item is part of your current ' + title.toLowerCase() + ' collection.';
+                button.dataset.objectives = 'Review the main concept|Understand the key idea|Complete the task';
+                button.addEventListener('click', () => {
+                    closeFolderPopup();
+                    openLessonModal(button);
+                });
+                li.appendChild(button);
+                folderPopupList.appendChild(li);
+            });
+            folderPopup.classList.add('is-open');
+            folderPopup.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeFolderPopup() {
+            folderPopup.classList.remove('is-open');
+            folderPopup.setAttribute('aria-hidden', 'true');
+        }
+
+        document.querySelectorAll('.lesson-item, .folder-item').forEach((item) => {
+            item.addEventListener('click', () => openLessonModal(item));
+        });
+
+        document.querySelectorAll('.folder-card .stat-card-toggle').forEach((toggle) => {
+            toggle.addEventListener('click', () => {
+                const card = toggle.closest('.folder-card');
+                openFolderPopup(card);
+            });
+        });
+
+        lessonModalClose.addEventListener('click', closeLessonModal);
+        folderPopupClose.addEventListener('click', closeFolderPopup);
+        lessonModal.addEventListener('click', (event) => {
+            if (event.target.matches('[data-close="true"]')) {
+                closeLessonModal();
+            }
+        });
+        folderPopup.addEventListener('click', (event) => {
+            if (event.target.matches('[data-close="true"]')) {
+                closeFolderPopup();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeLessonModal();
+                closeFolderPopup();
+            }
+        });
+
+        function addPublishedContent() {
+            let uploads = [];
+            try { uploads = JSON.parse(localStorage.getItem('ecolearn-published-content') || '[]'); } catch (error) { return; }
+            const cards = {
+                lesson: document.querySelector('[data-folder="lessons"]'),
+                quizizz: document.querySelector('[data-folder="quizzes"]')
+            };
+            const counts = { lesson: 12, quizizz: 8 };
+            uploads.forEach((upload) => {
+                const card = cards[upload.type];
+                if (!card) return;
+                counts[upload.type] += 1;
+                card.dataset.list = `${card.dataset.list}|${upload.module} - ${upload.title}`;
+            });
+            Object.entries(cards).forEach(([type, card]) => {
+                const value = card.querySelector('.value');
+                if (value) value.textContent = counts[type];
+            });
+        }
+
+        addPublishedContent();
+    </script>
+</body>
+</html>

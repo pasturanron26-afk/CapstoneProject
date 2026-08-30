@@ -1,0 +1,44 @@
+/* Fixed Sidebar Container */
+.sidebar-bg {
+  width: 250px;
+  height: 100vh;
+  background-color: #1B4332;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+}
+
+/* Logo Sizing */
+.logo-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+/* Brand Header */
+.brand-title {
+  color: #D8F3DC;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Base Link Styles */
+nav .nav-link {
+  color: #E8F5E9;
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Icon Sizing */
+nav .nav-link i {
+  font-size: 1.1rem;
+}
+
+/* Hover Effect */
+nav .nav-link:hover {
+  background-color: #2D6A4F;
+  color: #ffffff !important;
+}

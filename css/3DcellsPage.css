@@ -1,0 +1,1190 @@
+/* =========================================
+   MAIN GRID
+========================================= */
+
+.parent {
+    width: 100%;
+    height: 100vh;
+
+    display: grid;
+
+    grid-template-columns: 200px 1fr 1fr 1fr;
+    grid-template-rows: repeat(5, 1fr);
+
+    transition: grid-template-columns 0.3s ease-in-out;
+}
+
+.parent.sidebar-collapsed {
+    grid-template-columns: 50px 1fr 1fr 1fr;
+}
+
+
+/* =========================================
+   3D MODEL AREA
+========================================= */
+
+.div1 {
+    grid-column: span 2 / span 2;
+    grid-row: span 5 / span 5;
+
+    grid-column-start: 2;
+    grid-row-start: 1;
+
+    position: relative;
+    overflow: hidden;
+
+    background: #F3F8F5;
+}
+
+
+/* =========================================
+   RIGHT PANEL
+========================================= */
+
+.div2 {
+    grid-column: span 2 / span 2;
+    grid-row: span 5 / span 5;
+
+    grid-column-start: 4;
+    grid-row-start: 1;
+
+    background: #ffffff;
+
+    padding: 40px;
+
+    overflow-y: auto;
+
+}
+
+
+/* =========================================
+   ORGANELLE INFORMATION
+========================================= */
+
+.organelleInfo {
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    
+}
+
+
+/* =========================================
+   INFORMATION TITLE
+========================================= */
+
+.infoTitleRow {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 0;
+    margin-bottom: 25px;
+}
+
+
+.infoTitleRow h1,
+#infoTitle {
+    margin: 0;
+
+    color: #1B4332;
+
+    font-size: 30px;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   PRONUNCIATION
+========================================= */
+
+#infoPronunciation,
+.pronunciation {
+    display: none;
+
+    margin-top: 5px;
+
+    color: #777;
+
+    font-size: 16px;
+    font-style: italic;
+}
+
+
+/* =========================================
+   SPEAKER BUTTON
+========================================= */
+
+.speakButton {
+    display: none;
+
+    width: 42px;
+    height: 42px;
+
+    margin-top: 12px;
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #40916C;
+    color: white;
+
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+
+    font-size: 19px;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.speakButton i {
+    font-size: 20px;
+}
+
+
+.speakButton:hover {
+    background: #2D6A4F;
+
+    transform: scale(1.05);
+}
+
+
+.speakButton:active {
+    transform: scale(0.95);
+}
+
+
+/* =========================================
+   DEFINITION / CONTENT AREA
+========================================= */
+
+.infoContent {
+    margin-top: 10px;
+
+    font-size: 16px;
+    line-height: 1.8;
+
+    color: #444;
+}
+
+
+#infoDefinition {
+    margin: 0;
+    margin-bottom: 30px;
+}
+
+
+/* =========================================
+   INFO SECTIONS
+========================================= */
+
+.infoSection {
+    margin-bottom: 22px;
+}
+
+
+.infoSection:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================
+   SECTION HEADING
+========================================= */
+
+.infoSectionHeading {
+    margin: 0 0 6px 0;
+
+    color: #2D6A4F;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.75px;
+}
+
+
+/* =========================================
+   SECTION BODY
+========================================= */
+
+.infoSectionBody {
+    margin: 0;
+
+    color: #333;
+
+    font-size: 15px;
+
+    line-height: 1.75;
+}
+
+
+
+/* =========================================
+   ORGANELLE NAVIGATION AREA
+========================================= */
+.div5 {
+    grid-row: span 5 / span 5;
+    grid-column-start: 1;
+    grid-row-start: 1;
+
+    background: #1B4332;
+    padding: 25px 10px;
+    overflow: hidden;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    transition:
+        padding 0.3s ease-in-out;
+}
+
+/* Toggle Button Styles */
+.sidebar-toggle-btn {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.parent.sidebar-collapsed .sidebar-toggle-btn {
+    right: 9px; /* Centers the button in the 50px column */
+}
+
+.organelleNav {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    opacity: 1;
+
+    transition:
+        opacity 0.2s ease-in-out;
+}
+
+.parent.sidebar-collapsed .organelleNav {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.organelleNav h3 {
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 20px 5px;
+    white-space: nowrap; /* Prevents text wrapping during animation */
+}
+
+
+/* =========================================
+   ORGANELLE LIST
+========================================= */
+
+.organelleList {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    overflow-y: auto;
+
+    padding-right: 5px;
+}
+
+
+/* =========================================
+   ORGANELLE BUTTON
+========================================= */
+
+.organelleButton {
+    width: 100%;
+    padding: 11px 12px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        padding 0.3s ease-in-out,
+        opacity 0.2s ease;
+}
+
+.parent.sidebar-collapsed .organelleButton {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.organelleButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+
+    color: white;
+}
+
+
+.organelleButton.active {
+    background: #40916C;
+
+    color: white;
+
+    font-weight: 600;
+}
+
+
+/* =========================================
+   ORGANELLE SCROLLBAR
+========================================= */
+
+.organelleList::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.organelleList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+
+    border-radius: 10px;
+}
+
+
+.organelleList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* =========================================
+   THREE.JS ANIMAL CELL VIEWER
+========================================= */
+
+#animalViewer {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+
+#animalViewer canvas {
+    display: block;
+
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+#animalViewer.loading canvas {
+    visibility: hidden;
+}
+
+
+/* =========================================
+   ZOOM CONTROLS
+========================================= */
+
+.zoomControls {
+    position: absolute;
+
+    bottom: 20px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    gap: 10px;
+
+    z-index: 10;
+}
+
+
+.zoomControls button {
+    width: 45px;
+    height: 45px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.9);
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    box-shadow:
+        0 3px 10px
+        rgba(0, 0, 0, 0.15);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.zoomControls button:hover {
+    background: white;
+
+    transform: scale(1.05);
+}
+
+
+.zoomControls button:active {
+    transform: scale(0.95);
+}
+
+
+/* =====================================================
+   3D MODEL LOADING SCREEN
+===================================================== */
+
+#modelLoading {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 50;
+
+    background: #F3F8F5;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        opacity 0.4s ease,
+        visibility 0.4s ease;
+}
+
+
+#modelLoading.hidden {
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   ROTATING 3D BOX
+===================================================== */
+
+.loadingBox {
+    position: relative;
+
+    width: 58px;
+    height: 58px;
+
+    margin-bottom: 32px;
+
+    transform-style: preserve-3d;
+
+    animation:
+        loadingBoxRotate 5s linear infinite;
+}
+
+
+/* =====================================================
+   BOX FACES
+===================================================== */
+
+.boxFace {
+    position: absolute;
+
+    width: 58px;
+    height: 58px;
+
+    border: 2px solid rgba(64, 145, 108, 0.65);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(64, 145, 108, 0.10),
+            rgba(27, 67, 50, 0.04)
+        );
+
+    box-shadow:
+        inset 0 0 15px
+        rgba(64, 145, 108, 0.08);
+}
+
+
+.boxFront {
+    transform:
+        translateZ(29px);
+}
+
+
+.boxBack {
+    transform:
+        rotateY(180deg)
+        translateZ(29px);
+}
+
+
+.boxRight {
+    transform:
+        rotateY(90deg)
+        translateZ(29px);
+}
+
+
+.boxLeft {
+    transform:
+        rotateY(-90deg)
+        translateZ(29px);
+}
+
+
+.boxTop {
+    transform:
+        rotateX(90deg)
+        translateZ(29px);
+}
+
+
+.boxBottom {
+    transform:
+        rotateX(-90deg)
+        translateZ(29px);
+}
+
+
+/* =====================================================
+   BOX ROTATION
+===================================================== */
+
+@keyframes loadingBoxRotate {
+
+    0% {
+        transform:
+            rotateX(-20deg)
+            rotateY(0deg)
+            rotateZ(0deg);
+    }
+
+    100% {
+        transform:
+            rotateX(-20deg)
+            rotateY(360deg)
+            rotateZ(0deg);
+    }
+
+}
+
+
+/* =====================================================
+   LOADING BAR CONTAINER
+===================================================== */
+
+.loadingBarContainer {
+    width: 320px;
+
+    max-width: 70%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+/* =====================================================
+   LOADING BAR
+===================================================== */
+
+.loadingBar {
+    position: relative;
+
+    width: 100%;
+    height: 9px;
+
+    background: #D8E8DF;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    flex: 1;
+
+    box-shadow:
+        inset 0 1px 2px
+        rgba(27, 67, 50, 0.08);
+}
+
+
+/* =====================================================
+   LOADING PROGRESS
+===================================================== */
+
+.loadingProgress {
+    display: block;
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    height: 100%;
+
+    width: 0%;
+
+    min-width: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2D6A4F,
+            #40916C,
+            #52B788
+        );
+
+    border-radius: 20px;
+
+    transition:
+        width 0.15s ease;
+
+    box-shadow:
+        0 0 8px
+        rgba(64, 145, 108, 0.35);
+
+    z-index: 2;
+}
+
+
+/* =====================================================
+   LOADING PERCENTAGE
+===================================================== */
+
+.loadingPercentage {
+    min-width: 42px;
+
+    color: #1B4332;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-align: right;
+}
+
+
+/* =====================================================
+   LOADING TEXT
+===================================================== */
+
+#modelLoading p {
+    margin: 14px 0 0 0;
+
+    color: #1B4332;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.2px;
+}
+
+
+/* =====================================================
+   INFORMATION LOADING SKELETON
+===================================================== */
+
+.infoLoadingSkeleton {
+    width: 100%;
+
+    padding: 40px;
+}
+
+
+/* =====================================================
+   SKELETON BASE
+===================================================== */
+
+.skeleton {
+    background:
+        linear-gradient(
+            90deg,
+            #DCEBE3 0%,
+            #EEF7F2 45%,
+            #DCEBE3 80%
+        );
+
+    background-size: 200% 100%;
+
+    animation:
+        skeletonLoading 1.6s ease-in-out infinite;
+
+    border-radius: 8px;
+}
+
+
+/* =====================================================
+   SKELETON TITLE
+===================================================== */
+
+.skeletonTitle {
+    width: 55%;
+
+    height: 35px;
+
+    margin-bottom: 35px;
+
+    border-radius: 9px;
+}
+
+
+/* =====================================================
+   SKELETON TEXT
+===================================================== */
+
+.skeletonText {
+    width: 100%;
+
+    height: 15px;
+
+    margin-bottom: 12px;
+
+    border-radius: 6px;
+}
+
+
+.skeletonText.short {
+    width: 65%;
+}
+
+
+/* =====================================================
+   SKELETON SHIMMER
+===================================================== */
+
+@keyframes skeletonLoading {
+
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+
+}
+
+
+/* =====================================================
+   NAVIGATION LOADING SKELETON
+===================================================== */
+
+.navLoadingSkeleton {
+    width: 100%;
+
+    padding: 25px 15px;
+}
+
+
+/* =====================================================
+   NAVIGATION TITLE
+===================================================== */
+
+.skeletonNavTitle {
+    width: 80px;
+
+    height: 22px;
+
+    margin-bottom: 25px;
+
+    border-radius: 7px;
+}
+
+
+/* =====================================================
+   NAVIGATION BUTTONS
+===================================================== */
+
+.skeletonNavButton {
+    width: 100%;
+
+    height: 40px;
+
+    margin-bottom: 8px;
+
+    border-radius: 7px;
+}
+
+
+/* =====================================================
+   HIDE REAL CONTENT WHILE LOADING
+===================================================== */
+
+.organelleInfo {
+    display: none;
+}
+
+
+.organelleNav {
+    display: none;
+}
+
+
+/* =====================================================
+   LOADING COMPLETE
+===================================================== */
+
+.loaded .loadingOverlay {
+    display: none;
+}
+
+
+.loaded .infoLoadingSkeleton {
+    display: none;
+}
+
+
+.loaded .navLoadingSkeleton {
+    display: none;
+}
+
+
+.loaded .organelleInfo {
+    display: flex;
+}
+
+
+.loaded .organelleNav {
+    display: flex;
+}
+
+
+/* =====================================================
+   REFERENCES / SOURCES SECTION
+===================================================== */
+
+.infoSources {
+    margin-top: 32px;
+
+    padding-top: 22px;
+
+    border-top: 1px solid #E0EDE6;
+}
+
+
+/* =====================================================
+   SOURCES HEADER
+===================================================== */
+
+.sourcesHeader {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-bottom: 12px;
+
+    color: #2D6A4F;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.8px;
+}
+
+
+.sourcesHeader i {
+    font-size: 13px;
+
+    opacity: 0.85;
+}
+
+
+/* =====================================================
+   SOURCES LIST
+===================================================== */
+
+.sourcesList {
+    list-style: none;
+
+    margin: 0;
+
+    padding: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+/* =====================================================
+   SOURCE ITEM
+===================================================== */
+
+.sourceItem {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 6px;
+}
+
+
+/* =====================================================
+   SOURCE NUMBER
+===================================================== */
+
+.sourceNumber {
+    flex-shrink: 0;
+
+    color: #888;
+
+    font-size: 11.5px;
+
+    line-height: 1.6;
+
+    min-width: 16px;
+}
+
+
+/* =====================================================
+   SOURCE TEXT
+===================================================== */
+
+.sourceText {
+    color: #666;
+
+    font-size: 11.5px;
+
+    line-height: 1.6;
+}
+
+
+.sourceText em {
+    font-style: italic;
+
+    color: #555;
+}
+
+
+/* =====================================================
+   SOURCE LINK
+===================================================== */
+
+.sourceLink {
+    display: inline-flex;
+
+    align-items: center;
+
+    margin-left: 4px;
+
+    color: #40916C;
+
+    font-size: 10px;
+
+    text-decoration: none;
+
+    vertical-align: middle;
+
+    opacity: 0.75;
+
+    transition:
+        opacity 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.sourceLink:hover {
+    opacity: 1;
+
+    color: #1B4332;
+}
+
+/* =========================================
+   MODE CONTROLS
+========================================= */
+.modeControls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 20;
+}
+
+.modeButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1B4332;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.modeButton:hover {
+    background: #ffffff;
+    transform: scale(1.02);
+}
+
+.modeButton:active {
+    transform: scale(0.98);
+}
+
+.modeButton i {
+    font-size: 16px;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 4px;
+    min-width: 140px;
+}
+
+.dropdown-item {
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #333;
+    transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: #F3F8F5;
+    color: #1B4332;
+}
+
+.dropdown-item.active {
+    background: #40916C;
+    color: white;
+}
+
+/* =========================================
+   DIV5 SIDEBAR
+========================================= */
+
+.div5 {
+    width: 200px;
+    overflow: hidden;
+
+    transition:
+        width 0.3s ease-in-out,
+        padding 0.3s ease-in-out;
+}
+
+/* Minimized */
+.parent.sidebar-collapsed .div5 {
+    width: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* =========================================
+   MERGED MAIN NAV IN DIV5
+========================================= */
+.main-nav-section {
+    padding: 0 10px 20px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+.main-nav-section .nav-link {
+    color: rgba(255, 255, 255, 0.75) !important;
+    transition: all 0.2s ease;
+}
+
+.main-nav-section .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+}
+
+.main-nav-section .nav-link.CellModel {
+    background-color: #40916C !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Hide text smoothly when sidebar is collapsed */
+.parent.sidebar-collapsed .main-nav-section h3,
+.parent.sidebar-collapsed .main-nav-section .nav-link span {
+    display: none;
+}
+
+.parent.sidebar-collapsed .main-nav-section {
+    padding: 0 5px 20px 5px;
+    align-items: center;
+}
+
+.parent.sidebar-collapsed .main-nav-section > div {
+    justify-content: center !important;
+}
+
+.parent.sidebar-collapsed .main-nav-section .nav-link {
+    justify-content: center;
+    padding: 10px 0;
+}
