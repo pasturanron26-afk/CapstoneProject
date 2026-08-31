@@ -1,0 +1,407 @@
+/* =========================================
+   LESSON PAGE STYLES
+========================================= */
+
+.lesson-page {
+    margin-left: 250px; /* Matches the fixed 250px sidebar width */
+    padding: 40px;
+    max-width: 1200px;
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+/* =========================================
+   HERO SECTION
+========================================= */
+
+.lesson-hero {
+    background: linear-gradient(135deg, #1B4332 0%, #40916C 100%);
+    color: white;
+    padding: 60px 40px;
+    border-radius: 16px;
+    margin-bottom: 50px;
+    box-shadow: 0 10px 30px rgba(27, 67, 50, 0.2);
+}
+
+.hero-content {
+    max-width: 900px;
+}
+
+.hero-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+}
+
+.hero-intro {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    opacity: 0.95;
+    max-width: 800px;
+}
+
+.hero-badges {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.badge i {
+    font-size: 1rem;
+}
+
+/* =========================================
+   SECTION TITLES & DIVIDERS
+========================================= */
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1B4332;
+    margin: 0 0 30px 0;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #40916C;
+}
+
+.section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 60px 0 50px 0;
+    position: relative;
+}
+
+.section-divider::before,
+.section-divider::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #40916C, transparent);
+}
+
+.section-divider span {
+    padding: 0 25px;
+    background: #f8f9fa;
+    color: #40916C;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* =========================================
+   COMPARISON TABLE
+========================================= */
+
+.comparison-section {
+    margin-bottom: 50px;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.comparison-table thead {
+    background: linear-gradient(135deg, #1B4332 0%, #40916C 100%);
+    color: white;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.comparison-table th {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.comparison-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.comparison-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.present {
+    color: #1B4332;
+    font-weight: 600;
+}
+
+.absent {
+    color: #999;
+    font-style: italic;
+}
+
+/* =========================================
+   ORGANELLE SECTIONS
+========================================= */
+
+.organelle-section {
+    background: white;
+    border-radius: 16px;
+    padding: 35px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.organelle-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Organelle Header */
+.organelle-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.organelle-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1B4332;
+    margin: 0;
+}
+
+/* Cell Tags */
+.cell-tag {
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tag-both {
+    background: #d4edda;
+    color: #155724;
+}
+
+.tag-animal {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.tag-plant {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Organelle Content */
+.organelle-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+}
+
+.organelle-text p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+/* Function Box */
+.function-box {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-left: 4px solid #40916C;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.function-box h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 12px 0;
+    color: #1B4332;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.function-box h4 i {
+    color: #40916C;
+}
+
+.function-box p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #555;
+}
+
+/* Organelle Embed (Sketchfab) */
+.organelle-embed {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.organelle-embed iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+    display: block;
+}
+
+.credit-line {
+    padding: 12px 15px;
+    background: #f8f9fa;
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* =========================================
+   REFERENCES SECTION
+========================================= */
+
+.references-section {
+    margin-top: 70px;
+    padding-top: 50px;
+    border-top: 3px solid #e0e0e0;
+}
+
+.references-group {
+    margin-bottom: 40px;
+}
+
+.references-group h3 {
+    font-size: 1.4rem;
+    color: #1B4332;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #40916C;
+}
+
+.references-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.references-list li {
+    padding: 12px 0;
+    padding-left: 25px;
+    position: relative;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #555;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.references-list li::before {
+    content: '•';
+    position: absolute;
+    left: 10px;
+    color: #40916C;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.references-list li:last-child {
+    border-bottom: none;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 1024px) {
+    .organelle-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .organelle-embed {
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .lesson-page {
+        margin-left: 0 !important;
+        padding: 20px;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-intro {
+        font-size: 1rem;
+    }
+    
+    .organelle-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .comparison-table {
+        font-size: 0.9rem;
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+        padding: 12px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lesson-hero {
+        padding: 40px 25px;
+    }
+    
+    .hero-title {
+        font-size: 1.6rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .organelle-section {
+        padding: 25px;
+    }
+    
+    .organelle-name {
+        font-size: 1.4rem;
+    }
+    
+    .organelle-embed iframe {
+        height: 300px;
+    }
+}

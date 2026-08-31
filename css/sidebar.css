@@ -6,7 +6,7 @@
   position: fixed;
   top: 0;
   left: 0;
-
+  z-index: 1000;
 }
 
 /* Logo Sizing */
@@ -16,16 +16,16 @@
   object-fit: cover;
 }
 
-/* Brand Header */
+/* Brand Header - !important prevents Bootstrap from overriding it to black */
 .brand-title {
-  color: #D8F3DC;
+  color: #D8F3DC !important;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
 
-/* Base Link Styles */
+/* Base Link Styles - !important prevents Bootstrap overrides */
 nav .nav-link {
-  color: #E8F5E9;
+  color: #E8F5E9 !important;
   font-size: 0.95rem;
   padding: 10px 16px;
   border-radius: 8px;
