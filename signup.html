@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Specimen Lab — Create Account · Partido State University</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/auth.js"></script>
+<style>
+  :root{
+    --paper: #ece3cd;
+    --paper-deep: #e0d4b4;
+    --paper-shadow: #cdbe94;
+    --ink: #2a2015;
+    --ink-soft: #5c5240;
+    --cyanotype: #1d3557;
+    --cyanotype-mid: #34567e;
+    --cyanotype-pale: #ccdae8;
+    --brass: #a9803f;
+    --brass-light: #d3ae6d;
+    --brass-dark: #7d5c28;
+    --moss: #52633b;
+    --rule-red: #9c3b2e;
+    --card-bg: #f6f0e0;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100vh;
+    background:
+      repeating-linear-gradient(0deg, rgba(93,79,45,0.05) 0px, rgba(93,79,45,0.05) 1px, transparent 1px, transparent 28px),
+      repeating-linear-gradient(90deg, rgba(93,79,45,0.035) 0px, rgba(93,79,45,0.035) 1px, transparent 1px, transparent 28px),
+      radial-gradient(ellipse at 20% 10%, #f2e9d2 0%, var(--paper) 55%, var(--paper-deep) 100%);
+    font-family: 'Poppins', sans-serif;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 40px 16px;
+  }
+
+  .backdrop-motif{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:0.10;
+    z-index:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .stage{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:420px;
+  }
+
+  .card{
+    position:relative;
+    background: var(--card-bg);
+    border-radius: 4px;
+    padding: 40px 32px 30px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.6) inset,
+      0 30px 60px -20px rgba(42,32,21,0.35),
+      0 4px 14px rgba(42,32,21,0.12);
+    border: 1px solid rgba(122,101,57,0.35);
+  }
+
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:9px;
+    border: 1px dashed rgba(122,101,57,0.45);
+    border-radius:2px;
+    pointer-events:none;
+  }
+
+  .rivet{
+    position:absolute;
+    width:9px; height:9px;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, var(--brass-light), var(--brass) 55%, var(--brass-dark) 100%);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .rivet.tl{ top:14px; left:14px; }
+  .rivet.tr{ top:14px; right:14px; }
+  .rivet.bl{ bottom:14px; left:14px; }
+  .rivet.br{ bottom:14px; right:14px; }
+
+  .seal-wrap{
+    display:flex;
+    justify-content:center;
+    margin-bottom: 14px;
+  }
+
+  .seal-wrap img{ width:84px; height:84px; object-fit:contain; border-radius:50px; }
+
+  .masthead{
+    text-align:center;
+    margin-bottom: 4px;
+  }
+
+  .uni-name{
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    font-weight:600;
+    color: var(--cyanotype);
+    text-transform: uppercase;
+  }
+
+  .uni-sub{
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--brass-dark);
+    text-transform: uppercase;
+    margin-top:2px;
+  }
+
+  .divider{
+    width:60px;
+    height:1px;
+    background: var(--brass);
+    margin: 14px auto;
+    position:relative;
+  }
+  .divider::before{
+    content:"⁕";
+    position:absolute;
+    top:50%; left:50%;
+    transform: translate(-50%,-50%);
+    background: var(--card-bg);
+    padding: 0 6px;
+    color: var(--brass-dark);
+    font-size:12px;
+  }
+
+  .title{
+    font-weight: 600;
+    font-size: 30px;
+    text-align:center;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle{
+    text-align:center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 6px 0 2px;
+    font-weight:500;
+  }
+
+  .tagline{
+    text-align:center;
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--cyanotype-mid);
+    line-height:1.5;
+    margin: 10px auto 24px;
+    max-width: 300px;
+  }
+
+  form{ display:flex; flex-direction:column; gap:18px; }
+
+  .field label{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color: var(--brass-dark);
+    margin-bottom:8px;
+  }
+
+  .field label::after{
+    content:"";
+    flex:1;
+    border-bottom:1px dotted rgba(122,101,57,0.55);
+    transform: translateY(-2px);
+  }
+
+  .input-shell{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+
+  .input-shell input{
+    width:100%;
+    border:none;
+    border-bottom:1.5px solid var(--brass);
+    background:transparent;
+    padding: 6px 30px 9px 2px;
+    font-size:14.5px;
+    color: var(--ink);
+    outline:none;
+    transition: border-color 0.2s ease;
+  }
+
+  .input-shell input::placeholder{ color: rgba(42,32,21,0.32); font-size:13px; }
+  .input-shell input:focus{ border-color: var(--cyanotype); }
+
+  .toggle-pass{
+    position:absolute;
+    right:0;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:4px;
+    color: var(--ink-soft);
+    display:flex;
+  }
+  .toggle-pass svg{ width:16px; height:16px; }
+
+  .row-meta{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:-6px;
+  }
+
+  .row-meta a{
+    font-size: 11.5px;
+    color: var(--cyanotype-mid);
+    text-decoration:none;
+    border-bottom:1px dotted var(--cyanotype-mid);
+  }
+  .row-meta a:hover{ color: var(--cyanotype); }
+
+  .signup-btn{
+    margin-top: 4px;
+    width:100%;
+    padding: 13px;
+    border:none;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #40916C 0%, #1B4332 65%);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight:600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    cursor:pointer;
+    box-shadow: 0 6px 16px -6px rgba(27,67,50,0.55);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .signup-btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 20px -8px rgba(27,67,50,0.6); }
+  .signup-btn:active{ transform: translateY(0); }
+
+  .footer{
+    text-align:center;
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(122,101,57,0.3);
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+  .footer a{
+    color: var(--cyanotype-mid);
+    text-decoration:none;
+    font-weight:600;
+  }
+
+  @media (max-width: 380px){
+    .card{ padding: 32px 22px 24px; }
+    .title{ font-size:26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop-motif" aria-hidden="true">
+  <svg width="520" height="520" viewBox="0 0 520 520" fill="none">
+    <ellipse cx="260" cy="260" rx="230" ry="150" stroke="#1d3557" stroke-width="1.5"/>
+    <ellipse cx="260" cy="260" rx="230" ry="150" stroke="#1d3557" stroke-width="1" transform="rotate(60 260 260)"/>
+    <ellipse cx="260" cy="260" rx="230" ry="150" stroke="#1d3557" stroke-width="1" transform="rotate(120 260 260)"/>
+    <circle cx="260" cy="260" r="46" stroke="#52633b" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<div class="stage">
+  <div class="card">
+    <span class="rivet tl"></span>
+    <span class="rivet tr"></span>
+    <span class="rivet bl"></span>
+    <span class="rivet br"></span>
+
+    <div class="seal-wrap">
+      <img src="imgs/Logo.jpg" alt="EcoLearn Logo">
+    </div>
+
+    <div class="masthead">
+      <div class="uni-name">Partido State University</div>
+      <div class="uni-sub">College of Science · Camarines Sur</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h1 class="title">EcoLearn</h1>
+    <p class="subtitle">Create your student account</p>
+    <p class="tagline">Register as a new Biology student and start accessing your learning resources.</p>
+
+    <form id="signupForm" novalidate>
+      <div class="field">
+        <label for="fullName">Full Name</label>
+        <div class="input-shell">
+          <input type="text" id="fullName" placeholder="Juan Dela Cruz" autocomplete="name" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="emailField">Student Email</label>
+        <div class="input-shell">
+          <input type="email" id="emailField" placeholder="you@partido.edu.ph" autocomplete="email" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="passField">Password</label>
+        <div class="input-shell">
+          <input type="password" id="passField" placeholder="Create a password" autocomplete="new-password" required>
+          <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password">
+            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="confirmPassField">Confirm Password</label>
+        <div class="input-shell">
+          <input type="password" id="confirmPassField" placeholder="Re-enter your password" autocomplete="new-password" required>
+        </div>
+      </div>
+
+      <div class="row-meta">
+        <a href="login.html">Already have an account?</a>
+      </div>
+
+      <button type="submit" class="signup-btn" id="submitBtn">
+        Create account
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </button>
+    </form>
+
+    <div class="footer">Already registered? <a href="login.html">Sign in here</a></div>
+  </div>
+</div>
+
+<script>
+  const togglePass = document.getElementById('togglePass');
+  const passField = document.getElementById('passField');
+  const eyeIcon = document.getElementById('eyeIcon');
+
+  togglePass.addEventListener('click', () => {
+    const show = passField.type === 'password';
+    passField.type = show ? 'text' : 'password';
+    togglePass.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    eyeIcon.innerHTML = show
+      ? '<path d="M2 12s4-7 11-7c2 0 3.7.5 5.1 1.3M22 12s-1.6 3-4.4 5M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="m3 3 18 18"/>'
+      : '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>';
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('emailField').value.trim();
+    const password = passField.value;
+    const confirmPassword = document.getElementById('confirmPassField').value;
+
+    if (!fullName || !email || !password || !confirmPassword) {
+      alert('Please complete all fields.');
+      return;
+    }
+
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Creating account...';
+
+    try {
+      const { data, error } = await ecoAuth.client.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            role: 'student'
+          }
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const userId = data?.user?.id;
+
+      if (userId) {
+        const { error: profileError } = await ecoAuth.client.from('profiles').upsert({
+          id: userId,
+          email,
+          full_name: fullName,
+          role: 'student',
+          created_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+
+        if (profileError) {
+          console.warn('Profile insert failed:', profileError);
+        }
+      }
+
+      alert('Account created successfully! You can now sign in.');
+      window.location.href = 'login.html';
+    } catch (error) {
+      alert(error.message || 'Unable to create account. Please try again.');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Create account <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+    }
+  });
+</script>
+
+</body>
+</html>
