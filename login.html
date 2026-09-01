@@ -1,581 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Specimen Lab — Sign In · Partido State University</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/auth.js"></script>
-<style>
-  :root{
-    --paper: #ece3cd;
-    --paper-deep: #e0d4b4;
-    --paper-shadow: #cdbe94;
-    --ink: #2a2015;
-    --ink-soft: #5c5240;
-    --cyanotype: #1d3557;
-    --cyanotype-mid: #34567e;
-    --cyanotype-pale: #ccdae8;
-    --brass: #a9803f;
-    --brass-light: #d3ae6d;
-    --brass-dark: #7d5c28;
-    --moss: #52633b;
-    --rule-red: #9c3b2e;
-    --card-bg: #f6f0e0;
-  }
-
-  *{ box-sizing: border-box; }
-
-  html,body{
-    margin:0;
-    padding:0;
-    min-height:100vh;
-    background:
-      repeating-linear-gradient(0deg, rgba(93,79,45,0.05) 0px, rgba(93,79,45,0.05) 1px, transparent 1px, transparent 28px),
-      repeating-linear-gradient(90deg, rgba(93,79,45,0.035) 0px, rgba(93,79,45,0.035) 1px, transparent 1px, transparent 28px),
-      radial-gradient(ellipse at 20% 10%, #f2e9d2 0%, var(--paper) 55%, var(--paper-deep) 100%);
-    font-family: 'Poppins', sans-serif;
-    color: var(--ink);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding: 40px 16px;
-  }
-
-  .backdrop-motif{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    opacity:0.10;
-    z-index:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-
-  .stage{
-    position:relative;
-    z-index:1;
-    width:100%;
-    max-width:392px;
-  }
-
-  .card{
-    position:relative;
-    background: var(--card-bg);
-    border-radius: 4px;
-    padding: 40px 32px 30px;
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.6) inset,
-      0 30px 60px -20px rgba(42,32,21,0.35),
-      0 4px 14px rgba(42,32,21,0.12);
-    border: 1px solid rgba(122,101,57,0.35);
-  }
-
-  .card::before{
-    content:"";
-    position:absolute;
-    inset:9px;
-    border: 1px dashed rgba(122,101,57,0.45);
-    border-radius:2px;
-    pointer-events:none;
-  }
-
-  .rivet{
-    position:absolute;
-    width:9px; height:9px;
-    border-radius:50%;
-    background: radial-gradient(circle at 35% 30%, var(--brass-light), var(--brass) 55%, var(--brass-dark) 100%);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
-  }
-  .rivet.tl{ top:14px; left:14px; }
-  .rivet.tr{ top:14px; right:14px; }
-  .rivet.bl{ bottom:14px; left:14px; }
-  .rivet.br{ bottom:14px; right:14px; }
-
-  .seal-wrap{
-    display:flex;
-    justify-content:center;
-    margin-bottom: 14px;
-  }
-
-  .seal-wrap svg{ width:84px; height:84px; }
-
-  .masthead{
-    text-align:center;
-    margin-bottom: 4px;
-  }
-
-  .uni-name{
-    font-family: 'Poppins', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    font-weight:600;
-    color: var(--cyanotype);
-    text-transform: uppercase;
-  }
-
-  .uni-sub{
-    font-family: 'Poppins', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--brass-dark);
-    text-transform: uppercase;
-    margin-top:2px;
-  }
-
-  .divider{
-    width:60px;
-    height:1px;
-    background: var(--brass);
-    margin: 14px auto;
-    position:relative;
-  }
-  .divider::before{
-    content:"⁕";
-    position:absolute;
-    top:50%; left:50%;
-    transform: translate(-50%,-50%);
-    background: var(--card-bg);
-    padding: 0 6px;
-    color: var(--brass-dark);
-    font-size:12px;
-  }
-
-  .title{
-    font-family: 'Poppins', sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    font-size: 30px;
-    text-align:center;
-    color: var(--ink);
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-
-  .subtitle{
-    text-align:center;
-    font-size: 13px;
-    color: var(--ink-soft);
-    margin: 6px 0 2px;
-    font-weight:500;
-  }
-
-  .tagline{
-    text-align:center;
-    font-family: 'Poppins', sans-serif;
-    font-style: italic;
-    font-size: 12.5px;
-    color: var(--cyanotype-mid);
-    line-height:1.5;
-    margin: 10px auto 24px;
-    max-width: 300px;
-  }
-
-  .field-note{
-    text-align:center;
-    font-family: 'Poppins', sans-serif;
-    font-size: 9.5px;
-    letter-spacing: 0.06em;
-    color: var(--ink-soft);
-    text-transform: uppercase;
-    margin: -14px 0 22px;
-  }
-
-  .tabs{
-    position:relative;
-    display:flex;
-    background: var(--paper-deep);
-    border: 1px solid rgba(122,101,57,0.4);
-    border-radius: 3px;
-    padding: 3px;
-    margin-bottom: 26px;
-  }
-
-  .tab-slider{
-    position:absolute;
-    top:3px; left:3px;
-    width: calc(50% - 3px);
-    height: calc(100% - 6px);
-    background: linear-gradient(180deg, #40916C 0%, #1B4332 70%);
-    border-radius: 2px;
-    transition: transform 0.28s cubic-bezier(.65,0,.35,1);
-    box-shadow: 0 2px 6px rgba(27,67,50,0.4);
-  }
-  .tabs.admin .tab-slider{ transform: translateX(100%); }
-
-  .tab-btn{
-    position:relative;
-    z-index:1;
-    flex:1;
-    border:none;
-    background:transparent;
-    padding: 9px 6px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 11.5px;
-    font-weight:600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    cursor:pointer;
-    transition: color 0.28s ease;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-  }
-  .tab-btn.active{ color: #ffffff; }
-  .tab-btn svg{ width:13px; height:13px; opacity:0.9; }
-
-  form{ display:flex; flex-direction:column; gap:18px; }
-
-  .field label{
-    display:flex;
-    align-items:baseline;
-    gap: 6px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 10.5px;
-    font-weight:600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--brass-dark);
-    margin-bottom: 8px;
-  }
-
-  .field label::after{
-    content:"";
-    flex:1;
-    border-bottom: 1px dotted rgba(122,101,57,0.55);
-    transform: translateY(-2px);
-  }
-
-  .input-shell{
-    position:relative;
-    display:flex;
-    align-items:center;
-  }
-
-  .input-shell input{
-    width:100%;
-    border:none;
-    border-bottom: 1.5px solid var(--brass);
-    background: transparent;
-    padding: 6px 30px 9px 2px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14.5px;
-    color: var(--ink);
-    outline:none;
-    transition: border-color 0.2s ease;
-  }
-
-  .input-shell input::placeholder{
-    color: rgba(42,32,21,0.32);
-    font-family: 'Poppins', sans-serif;
-    font-size: 13px;
-  }
-
-  .input-shell input:focus{ border-color: var(--cyanotype); }
-
-  .input-shell .icon{
-    position:absolute;
-    right:2px;
-    width:16px; height:16px;
-    color: var(--ink-soft);
-  }
-
-  .toggle-pass{
-    position:absolute;
-    right:0;
-    background:none;
-    border:none;
-    cursor:pointer;
-    padding:4px;
-    color: var(--ink-soft);
-    display:flex;
-  }
-  .toggle-pass svg{ width:16px; height:16px; }
-
-  .row-meta{
-    display:flex;
-    justify-content:flex-end;
-    margin-top:-6px;
-  }
-
-  .row-meta a{
-    font-size: 11.5px;
-    color: var(--cyanotype-mid);
-    text-decoration:none;
-    border-bottom: 1px dotted var(--cyanotype-mid);
-  }
-  .row-meta a:hover{ color: var(--cyanotype); }
-
-  .signin-btn{
-    margin-top: 4px;
-    width:100%;
-    padding: 13px;
-    border:none;
-    border-radius: 3px;
-    background: linear-gradient(180deg, #40916C 0%, #1B4332 65%);
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-    font-size: 12.5px;
-    font-weight:600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:9px;
-    cursor:pointer;
-    box-shadow: 0 6px 16px -6px rgba(27,67,50,0.55);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .signin-btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 20px -8px rgba(27,67,50,0.6); }
-  .signin-btn:active{ transform: translateY(0); }
-  .signin-btn svg{ width:14px; height:14px; }
-
-  .divider-or{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin: 18px 0 10px;
-    color: var(--ink-soft);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-  .divider-or::before,
-  .divider-or::after{
-    content:"";
-    flex:1;
-    height:1px;
-    background: rgba(122,101,57,0.35);
-  }
-
-  .stamp-note{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:7px;
-    margin-top:20px;
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color: var(--moss);
-  }
-  .stamp-note svg{ width:12px; height:12px; }
-
-  .footer{
-    text-align:center;
-    margin-top: 22px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(122,101,57,0.3);
-    font-size: 10.5px;
-    color: var(--ink-soft);
-    letter-spacing: 0.02em;
-  }
-
-  @media (max-width: 380px){
-    .card{ padding: 32px 22px 24px; }
-    .title{ font-size:26px; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In · EcoLearn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/auth.js"></script>
 </head>
 <body>
-
-<div class="backdrop-motif" aria-hidden="true">
-  <svg width="520" height="520" viewBox="0 0 520 520" fill="none">
-    <ellipse cx="260" cy="260" rx="230" ry="150" stroke="#1d3557" stroke-width="1.5"/>
-    <ellipse cx="260" cy="260" rx="230" ry="150" stroke="#1d3557" stroke-width="1" transform="rotate(60 260 260)"/>
-    <ellipse cx="260" cy="260" rx="230" ry="150" stroke="#1d3557" stroke-width="1" transform="rotate(120 260 260)"/>
-    <circle cx="260" cy="260" r="46" stroke="#52633b" stroke-width="1.5"/>
-  </svg>
-</div>
-
-<div class="stage">
-  <div class="card">
-    <span class="rivet tl"></span>
-    <span class="rivet tr"></span>
-    <span class="rivet bl"></span>
-    <span class="rivet br"></span>
-
-    <div class="seal-wrap">
-      <img src="imgs/Logo.jpg" alt="EcoLearn Logo" style="width:84px;height:84px;object-fit:contain;border-radius:50px;">
-    </div>
-
-    <div class="masthead">
-      <div class="uni-name">Partido State University</div>
-      <div class="uni-sub">College of Science · Camarines Sur</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <h1 class="title">EcoLearn</h1>
-    <p class="subtitle">Field Biology E-Learning Platform</p>
-    <p class="tagline">Cell models, specimen records, and coursework — accessioned and issued to enrolled Biology students.</p>
-
-    <div class="tabs" id="tabs">
-      <div class="tab-slider"></div>
-      <button type="button" class="tab-btn active" data-role="student" id="tabStudent">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>
-        Student
-      </button>
-      <button type="button" class="tab-btn" data-role="admin" id="tabAdmin">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/><path d="m16 4 1 1.5L19 4"/></svg>
-        Admin
-      </button>
-    </div>
-
-    <form id="loginForm" novalidate>
-      <div class="field">
-        <label for="idField" id="idLabel">Student Email</label>
-        <div class="input-shell">
-          <input type="email" id="idField" placeholder="you@partido.edu.ph" autocomplete="email" required>
+    <div class="auth-container">
+        <div class="auth-header">
+            <img src="imgs/Logo.jpg" alt="EcoLearn Logo" class="auth-logo">
+            <h1 class="auth-title">Welcome Back</h1>
+            <p class="auth-subtitle">Sign in to access your cell models, specimen records, and coursework.</p>
         </div>
-      </div>
 
-      <div class="field">
-        <label for="passField">Password</label>
-        <div class="input-shell">
-          <input type="password" id="passField" placeholder="Enter your password" autocomplete="current-password" required>
-          <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password">
-            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
+        <div class="auth-tabs" id="tabs">
+            <div class="tab-slider"></div>
+            <button type="button" class="tab-btn active" data-role="student" id="tabStudent">
+                <i class="bi bi-mortarboard"></i> Student
+            </button>
+            <button type="button" class="tab-btn" data-role="admin" id="tabAdmin">
+                <i class="bi bi-shield-lock"></i> Admin
+            </button>
         </div>
-      </div>
 
-      <div class="row-meta" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-        <a href="signup.html">Create account</a>
-        <a href="#">Forgot password?</a>
-      </div>
+        <form id="loginForm" class="auth-form" novalidate>
+            <div class="form-group">
+                <label for="idField" id="idLabel">Student Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="idField" placeholder="you@partido.edu.ph" autocomplete="email" required>
+                </div>
+            </div>
 
-      <button type="submit" class="signin-btn" id="submitBtn">
-        Sign in
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-      </button>
+            <div class="form-group">
+                <label for="passField">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="passField" placeholder="Enter your password" autocomplete="current-password" required>
+                    <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password">
+                        <i class="bi bi-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+            </div>
 
-      <div class="divider-or">or</div>
+            <div class="auth-links">
+                <a href="signup.html">Create account</a>
+                <a href="#">Forgot password?</a>
+            </div>
 
-      <div id="googleSignIn" style="margin-top:0;"></div>
-    </form>
+            <button type="submit" class="btn-primary" id="submitBtn">
+                Sign In <i class="bi bi-arrow-right"></i>
+            </button>
 
-    <div class="stamp-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="1"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Access restricted to students and administrators
+            <div class="divider">or</div>
+
+            <button type="button" class="btn-google" id="googleBtn">
+                <i class="bi bi-google"></i> Continue with Google
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            © 2026 EcoLearn. All rights reserved.
+        </div>
     </div>
 
-    <div class="footer">© 2026 Partido State University. All records digitally catalogued.</div>
-  </div>
-</div>
+    <script>
+        const tabs = document.getElementById('tabs');
+        const tabStudent = document.getElementById('tabStudent');
+        const tabAdmin = document.getElementById('tabAdmin');
+        const idLabel = document.getElementById('idLabel');
+        const idField = document.getElementById('idField');
+        let selectedRole = 'student';
 
-<script>
-  const tabs = document.getElementById('tabs');
-  const tabStudent = document.getElementById('tabStudent');
-  const tabAdmin = document.getElementById('tabAdmin');
-  const idLabel = document.getElementById('idLabel');
-  const idField = document.getElementById('idField');
-  let selectedRole = 'student';
+        function setRole(role) {
+            selectedRole = role;
+            if (role === 'admin') {
+                tabs.classList.add('admin');
+                tabAdmin.classList.add('active');
+                tabStudent.classList.remove('active');
+                idLabel.textContent = 'Admin Email';
+                idField.placeholder = 'admin@partido.edu.ph';
+            } else {
+                tabs.classList.remove('admin');
+                tabStudent.classList.add('active');
+                tabAdmin.classList.remove('active');
+                idLabel.textContent = 'Student Email';
+                idField.placeholder = 'you@partido.edu.ph';
+            }
+        }
 
-  function setRole(role){
-    selectedRole = role;
-    if(role === 'admin'){
-      tabs.classList.add('admin');
-      tabAdmin.classList.add('active');
-      tabStudent.classList.remove('active');
-      idLabel.textContent = 'Admin Email';
-      idField.placeholder = 'admin@partido.edu.ph';
-    } else {
-      tabs.classList.remove('admin');
-      tabStudent.classList.add('active');
-      tabAdmin.classList.remove('active');
-      idLabel.textContent = 'Student Email';
-      idField.placeholder = 'you@partido.edu.ph';
-    }
-  }
+        tabStudent.addEventListener('click', () => setRole('student'));
+        tabAdmin.addEventListener('click', () => setRole('admin'));
 
-  tabStudent.addEventListener('click', () => setRole('student'));
-  tabAdmin.addEventListener('click', () => setRole('admin'));
+        const togglePass = document.getElementById('togglePass');
+        const passField = document.getElementById('passField');
+        const eyeIcon = document.getElementById('eyeIcon');
 
-  const togglePass = document.getElementById('togglePass');
-  const passField = document.getElementById('passField');
-  const eyeIcon = document.getElementById('eyeIcon');
+        togglePass.addEventListener('click', () => {
+            const show = passField.type === 'password';
+            passField.type = show ? 'text' : 'password';
+            togglePass.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            eyeIcon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
+        });
 
-  togglePass.addEventListener('click', () => {
-    const show = passField.type === 'password';
-    passField.type = show ? 'text' : 'password';
-    togglePass.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
-    eyeIcon.innerHTML = show
-      ? '<path d="M2 12s4-7 11-7c2 0 3.7.5 5.1 1.3M22 12s-1.6 3-4.4 5M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="m3 3 18 18"/>'
-      : '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>';
-  });
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const idVal = idField.value.trim();
+            const passVal = passField.value;
+            
+            if (!idVal || !passVal) {
+                idField.style.borderColor = !idVal ? '#EF4444' : '';
+                passField.style.borderColor = !passVal ? '#EF4444' : '';
+                return;
+            }
 
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const idVal = idField.value.trim();
-    const passVal = passField.value;
-    if(!idVal || !passVal){
-      idField.style.borderColor = !idVal ? '#9c3b2e' : '';
-      passField.style.borderColor = !passVal ? '#9c3b2e' : '';
-      return;
-    }
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.firstChild.textContent = 'Signing in...';
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Signing in... <i class="bi bi-hourglass-split"></i>';
 
-    const { data, error } = await ecoAuth.client.auth.signInWithPassword({
-      email: idVal,
-      password: passVal
-    });
+            const { data, error } = await ecoAuth.client.auth.signInWithPassword({
+                email: idVal,
+                password: passVal
+            });
 
-    if(error){
-      alert(error.message);
-      submitBtn.disabled = false;
-      submitBtn.firstChild.textContent = 'Sign in';
-      return;
-    }
+            if (error) {
+                alert(error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Sign In <i class="bi bi-arrow-right"></i>';
+                return;
+            }
 
-    let accountRole;
-    try {
-      accountRole = await ecoAuth.getRole(data.session);
-    } catch (roleError) {
-      await ecoAuth.client.auth.signOut();
-      alert(roleError.message);
-      submitBtn.disabled = false;
-      submitBtn.firstChild.textContent = 'Sign in';
-      return;
-    }
+            let accountRole;
+            try {
+                accountRole = await ecoAuth.getRole(data.session);
+            } catch (roleError) {
+                await ecoAuth.client.auth.signOut();
+                alert(roleError.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Sign In <i class="bi bi-arrow-right"></i>';
+                return;
+            }
 
-    if (accountRole !== selectedRole) {
-      await ecoAuth.client.auth.signOut();
-      alert(`This account is registered as ${accountRole}. Select the ${accountRole} login to continue.`);
-      submitBtn.disabled = false;
-      submitBtn.firstChild.textContent = 'Sign in';
-      return;
-    }
+            if (accountRole !== selectedRole) {
+                await ecoAuth.client.auth.signOut();
+                alert(`This account is registered as ${accountRole}. Select the ${accountRole} login to continue.`);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Sign In <i class="bi bi-arrow-right"></i>';
+                return;
+            }
 
-    window.location.replace(accountRole === 'admin' ? 'admin.html' : 'choose.html');
-  });
+            // REDIRECTS TO DASHBOARD FOR STUDENTS, ADMIN.HTML FOR ADMINS
+            window.location.replace(accountRole === 'admin' ? 'admin.html' : 'dashboard.html');
+        });
 
-  const googleSignIn = document.getElementById('googleSignIn');
-  googleSignIn.innerHTML = '<button type="button" class="signin-btn" id="googleBtn">Continue with Google</button>';
-  document.getElementById('googleBtn').addEventListener('click', async () => {
-    const { error } = await ecoAuth.client.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin + window.location.pathname.replace('login.html', 'choose.html') }
-    });
-    if(error){
-      const message = error.message.includes('provider is not enabled')
-        ? 'Google sign-in is not enabled yet. Enable Google under Supabase Authentication > Providers, then try again.'
-        : error.message;
-      alert(message);
-    }
-  });
-</script>
-
+        document.getElementById('googleBtn').addEventListener('click', async () => {
+            const { error } = await ecoAuth.client.auth.signInWithOAuth({
+                provider: 'google',
+                options: { 
+                    // REDIRECTS TO DASHBOARD AFTER GOOGLE SIGN-IN
+                    redirectTo: window.location.origin + window.location.pathname.replace('login.html', 'dashboard.html') 
+                }
+            });
+            if (error) {
+                const message = error.message.includes('provider is not enabled')
+                    ? 'Google sign-in is not enabled yet. Enable Google under Supabase Authentication > Providers, then try again.'
+                    : error.message;
+                alert(message);
+            }
+        });
+    </script>
 </body>
 </html>
