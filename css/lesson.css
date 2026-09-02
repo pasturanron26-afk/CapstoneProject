@@ -1,407 +1,436 @@
 /* =========================================
-   LESSON PAGE STYLES
+   EcoLearn Theme Tokens (Consistency Layer)
 ========================================= */
+:root{
+  --eco-bg: #F3FAF6;
+  --eco-surface: #FFFFFF;
 
+  --eco-900: #081C15;
+  --eco-800: #1B4332;
+  --eco-700: #2D6A4F;
+  --eco-600: #40916C;
+  --eco-500: #52B788;
+
+  --eco-text: #102A22;
+  --eco-muted: #6B7280;
+  --eco-border: #E3EFE8;
+
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 4px 14px rgba(8, 28, 21, 0.08);
+  --shadow-md: 0 10px 28px rgba(8, 28, 21, 0.14);
+
+  --focus: 0 0 0 4px rgba(64, 145, 108, 0.18);
+}
+
+/* Page background + typography */
+body{
+  background: var(--eco-bg);
+  color: var(--eco-text);
+}
+
+.bi{
+  line-height: 1;
+  vertical-align: -0.12em;
+}
+
+/* =========================================
+   LESSON PAGE WRAPPER
+========================================= */
 .lesson-page {
-    margin-left: 250px; /* Matches the fixed 250px sidebar width */
-    padding: 40px;
-    max-width: 1200px;
-    background-color: #ffffff;
-    min-height: 100vh;
+  margin-left: 250px; /* matches sidebar */
+  padding: 40px 32px;
+  max-width: 1200px;
+  margin-right: auto;
+  min-height: 100vh;
+  background: transparent;
 }
 
 /* =========================================
    HERO SECTION
 ========================================= */
-
 .lesson-hero {
-    background: linear-gradient(135deg, #1B4332 0%, #40916C 100%);
-    color: white;
-    padding: 60px 40px;
-    border-radius: 16px;
-    margin-bottom: 50px;
-    box-shadow: 0 10px 30px rgba(27, 67, 50, 0.2);
+  background: linear-gradient(135deg, var(--eco-800) 0%, var(--eco-600) 100%);
+  color: #fff;
+  padding: 60px 44px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 50px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255,255,255,0.10);
 }
 
-.hero-content {
-    max-width: 900px;
-}
+.hero-content { max-width: 920px; }
 
 .hero-title {
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin: 0 0 20px 0;
-    line-height: 1.2;
+  font-size: 2.6rem;
+  font-weight: 800;
+  margin: 0 0 16px 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 .hero-intro {
-    font-size: 1.15rem;
-    line-height: 1.7;
-    margin-bottom: 30px;
-    opacity: 0.95;
-    max-width: 800px;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  margin-bottom: 26px;
+  opacity: 0.95;
+  max-width: 820px;
 }
 
+/* IMPORTANT: avoid Bootstrap badge collision by using hero-badge */
 .hero-badges {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    backdrop-filter: blur(10px);
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  backdrop-filter: blur(10px);
 }
 
-.badge i {
-    font-size: 1rem;
-}
+.hero-badge i { font-size: 1rem; opacity: 0.95; }
 
 /* =========================================
-   SECTION TITLES & DIVIDERS
+   SECTION TITLES & DIVIDERS (line only, no bg box)
 ========================================= */
 
-.section-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1B4332;
-    margin: 0 0 30px 0;
-    padding-bottom: 15px;
-    border-bottom: 3px solid #40916C;
+/* Title with a clean line (NOT border-bottom) */
+.section-title{
+  position: relative;
+  font-size: 2.1rem;
+  font-weight: 900;
+  color: var(--eco-800);
+  margin: 0 0 26px 0;
+  padding-bottom: 16px;
+  border: none;                 /* remove border underline */
 }
 
-.section-divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 60px 0 50px 0;
-    position: relative;
+.section-title::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;                  /* line thickness */
+  background: var(--eco-600);   /* line color */
+  opacity: 0.75;
+}
+
+/* Divider with lines and plain text (no background, no border) */
+.section-divider{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 60px 0 46px 0;
 }
 
 .section-divider::before,
-.section-divider::after {
-    content: '';
-    flex: 1;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #40916C, transparent);
+.section-divider::after{
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: var(--eco-600);
+  opacity: 0.55;
 }
 
-.section-divider span {
-    padding: 0 25px;
-    background: #f8f9fa;
-    color: #40916C;
-    font-weight: 700;
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.section-divider span{
+  padding: 0 6px;              /* small spacing, no box */
+  background: transparent;     /* remove background color */
+  border: none;                /* remove border */
+  color: var(--eco-700);
+  font-weight: 900;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
 }
 
 /* =========================================
    COMPARISON TABLE
 ========================================= */
-
-.comparison-section {
-    margin-bottom: 50px;
-}
+.comparison-section { margin-bottom: 50px; }
 
 .comparison-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--eco-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--eco-border);
 }
 
 .comparison-table thead {
-    background: linear-gradient(135deg, #1B4332 0%, #40916C 100%);
-    color: white;
+  background: linear-gradient(135deg, var(--eco-800) 0%, var(--eco-600) 100%);
+  color: #fff;
 }
 
 .comparison-table th,
 .comparison-table td {
-    padding: 16px 20px;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+  padding: 16px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--eco-border);
 }
 
 .comparison-table th {
-    font-weight: 700;
-    font-size: 1.05rem;
+  font-weight: 800;
+  font-size: 1.02rem;
 }
 
-.comparison-table tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.comparison-table tbody tr:last-child td {
-    border-bottom: none;
+.comparison-table tbody tr:nth-child(even){
+  background: rgba(82, 183, 136, 0.06);
 }
 
 .present {
-    color: #1B4332;
-    font-weight: 600;
+  color: var(--eco-800);
+  font-weight: 700;
 }
 
 .absent {
-    color: #999;
-    font-style: italic;
+  color: var(--eco-muted);
+  font-style: italic;
 }
 
 /* =========================================
-   ORGANELLE SECTIONS
+   ORGANELLE SECTIONS (Cards)
 ========================================= */
-
 .organelle-section {
-    background: white;
-    border-radius: 16px;
-    padding: 35px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f0f0f0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--eco-surface);
+  border-radius: var(--radius-lg);
+  padding: 34px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--eco-border);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.organelle-section:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+@media (prefers-reduced-motion: reduce){
+  .organelle-section{ transition: none; }
+  .organelle-section:hover{ transform:none; }
 }
 
-/* Organelle Header */
+/* Header */
 .organelle-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--eco-border);
 }
 
 .organelle-name {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1B4332;
-    margin: 0;
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: var(--eco-800);
+  margin: 0;
+  letter-spacing: -0.01em;
 }
 
-/* Cell Tags */
+/* Tags (make them feel part of the same theme) */
 .cell-tag {
-    padding: 8px 18px;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  white-space: nowrap;
 }
 
 .tag-both {
-    background: #d4edda;
-    color: #155724;
+  background: rgba(64, 145, 108, 0.12);
+  border-color: rgba(64, 145, 108, 0.26);
+  color: var(--eco-800);
 }
 
 .tag-animal {
-    background: #cce5ff;
-    color: #004085;
+  background: rgba(27, 67, 50, 0.10);
+  border-color: rgba(27, 67, 50, 0.20);
+  color: var(--eco-800);
 }
 
 .tag-plant {
-    background: #d1ecf1;
-    color: #0c5460;
+  background: rgba(82, 183, 136, 0.14);
+  border-color: rgba(82, 183, 136, 0.28);
+  color: var(--eco-800);
 }
 
-/* Organelle Content */
-.organelle-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 35px;
+/* Content grid */
+.organelle-content{
+  display: grid;
+  grid-template-columns: 1fr;  /* one column = embed goes below text */
+  gap: 22px;
+  align-items: start;
 }
 
-.organelle-text p {
-    font-size: 1rem;
-    line-height: 1.8;
-    color: #444;
-    margin-bottom: 20px;
+.organelle-text { min-width: 0; }
+
+/* Function box (you used it in HTML but didn’t style it here) */
+.function-box{
+  margin-top: 18px;
+  padding: 16px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(64,145,108,0.25);
+  background: linear-gradient(180deg, rgba(82,183,136,0.12), rgba(82,183,136,0.05));
 }
 
-/* Function Box */
-.function-box {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-left: 4px solid #40916C;
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
+.function-box h4{
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--eco-800);
 }
 
-.function-box h4 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 0 12px 0;
-    color: #1B4332;
-    font-size: 1.05rem;
-    font-weight: 700;
+.function-box i{
+  color: var(--eco-600);
+  font-size: 1.05rem;
 }
 
-.function-box h4 i {
-    color: #40916C;
-}
-
-.function-box p {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: #555;
-}
-
-/* Organelle Embed (Sketchfab) */
+/* Model embed */
 .organelle-embed {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--eco-border);
+  background-color: var(--eco-surface);
 }
 
 .organelle-embed iframe {
-    width: 100%;
-    height: 400px;
-    border: none;
-    display: block;
+  display: block;
+  width: 100%;
+  height: 360px;
+  min-height: 360px;
+  border: none;
 }
 
-.credit-line {
-    padding: 12px 15px;
-    background: #f8f9fa;
-    font-size: 0.8rem;
-    color: #666;
-    margin: 0;
-    text-align: center;
-    border-top: 1px solid #e0e0e0;
+/* Sketchfab attribution (override inline styles consistently) */
+.sketchfab-embed-wrapper{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.sketchfab-embed-wrapper p{
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--eco-muted);
+  text-align: center;
+  background: rgba(243, 250, 246, 0.6);
+  border-top: 1px solid var(--eco-border);
+}
+
+.sketchfab-embed-wrapper p a{
+  color: var(--eco-600) !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+}
+
+.sketchfab-embed-wrapper p a:hover{
+  color: var(--eco-800) !important;
+  text-decoration: underline !important;
 }
 
 /* =========================================
-   REFERENCES SECTION
+   REFERENCES
 ========================================= */
-
 .references-section {
-    margin-top: 70px;
-    padding-top: 50px;
-    border-top: 3px solid #e0e0e0;
+  margin-top: 70px;
+  padding-top: 50px;
+  border-top: 3px solid var(--eco-border);
 }
 
-.references-group {
-    margin-bottom: 40px;
-}
+.references-group { margin-bottom: 40px; }
 
 .references-group h3 {
-    font-size: 1.4rem;
-    color: #1B4332;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #40916C;
+  font-size: 1.35rem;
+  color: var(--eco-800);
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--eco-600);
 }
 
 .references-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .references-list li {
-    padding: 12px 0;
-    padding-left: 25px;
-    position: relative;
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: #555;
-    border-bottom: 1px solid #f0f0f0;
+  padding: 12px 0 12px 26px;
+  position: relative;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: #4B5563;
+  border-bottom: 1px solid rgba(227,239,232,0.9);
 }
 
 .references-list li::before {
-    content: '•';
-    position: absolute;
-    left: 10px;
-    color: #40916C;
-    font-weight: bold;
-    font-size: 1.2rem;
+  content: '•';
+  position: absolute;
+  left: 10px;
+  color: var(--eco-600);
+  font-weight: 900;
+  font-size: 1.2rem;
 }
 
-.references-list li:last-child {
-    border-bottom: none;
-}
+.references-list li:last-child { border-bottom: none; }
 
 /* =========================================
-   RESPONSIVE DESIGN
+   RESPONSIVE
 ========================================= */
-
 @media (max-width: 1024px) {
-    .organelle-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .organelle-embed {
-        order: -1;
-    }
+  .organelle-content { grid-template-columns: 1fr; }
+  /* remove the order:-1 rule so embed stays below text */
 }
 
 @media (max-width: 768px) {
-    .lesson-page {
-        margin-left: 0 !important;
-        padding: 20px;
-    }
-    
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .hero-intro {
-        font-size: 1rem;
-    }
-    
-    .organelle-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    
-    .comparison-table {
-        font-size: 0.9rem;
-    }
-    
-    .comparison-table th,
-    .comparison-table td {
-        padding: 12px 15px;
-    }
+  .lesson-page {
+    margin-left: 0 !important;
+    padding: 20px;
+  }
+
+  .lesson-hero { padding: 44px 22px; }
+
+  .hero-title { font-size: 2rem; }
+
+  .organelle-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .comparison-table { font-size: 0.92rem; }
+  .comparison-table th, .comparison-table td { padding: 12px 14px; }
 }
 
 @media (max-width: 480px) {
-    .lesson-hero {
-        padding: 40px 25px;
-    }
-    
-    .hero-title {
-        font-size: 1.6rem;
-    }
-    
-    .section-title {
-        font-size: 1.5rem;
-    }
-    
-    .organelle-section {
-        padding: 25px;
-    }
-    
-    .organelle-name {
-        font-size: 1.4rem;
-    }
-    
-    .organelle-embed iframe {
-        height: 300px;
-    }
+  .hero-title { font-size: 1.6rem; }
+  .section-title { font-size: 1.45rem; }
+  .organelle-section { padding: 24px; }
+  .organelle-name { font-size: 1.35rem; }
+  .organelle-embed iframe { height: 300px; min-height: 300px; }
 }
