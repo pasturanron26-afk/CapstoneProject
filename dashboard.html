@@ -127,6 +127,24 @@
 
             </li>
 
+            <!-- LOGOUT -->
+
+            <li class="nav-item mt-auto">
+
+                <button
+                    id="logoutButton"
+                    class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
+                    style="background: none; cursor: pointer;"
+                >
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                    Logout
+
+                </button>
+
+            </li>
+
         </ul>
 
     </nav>
@@ -309,6 +327,16 @@
 
     <script>
         ecoAuth.requireStudent();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    await window.ecoAuth.signOut();
+                });
+            }
+        });
 
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {

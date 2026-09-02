@@ -170,6 +170,24 @@
 
             </li>
 
+            <!-- LOGOUT -->
+
+            <li class="nav-item mt-auto">
+
+                <button
+                    id="logoutButton"
+                    class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
+                    style="background: none; cursor: pointer;"
+                >
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                    Logout
+
+                </button>
+
+            </li>
+
         </ul>
 
     </nav>
@@ -555,6 +573,14 @@
 
 
     <!-- =========================================
+         SUPABASE
+    ========================================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/+esm"></script>
+
+    <script src="js/auth.js"></script>
+
+    <!-- =========================================
          THREE.JS IMPORT MAP
     ========================================= -->
 
@@ -628,6 +654,21 @@
                         toggleIcon.classList.remove('bi-chevron-right');
                         toggleIcon.classList.add('bi-chevron-left');
                     }
+                });
+            }
+        });
+    </script>
+
+    <!-- =========================================
+        LOGOUT BUTTON SCRIPT
+    ========================================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    await window.ecoAuth.signOut();
                 });
             }
         });
