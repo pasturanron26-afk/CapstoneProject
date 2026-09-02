@@ -292,6 +292,13 @@
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
 
+                <button
+                    id="rotateModel"
+                    aria-label="Rotate 3D model"
+                    title="Rotate"
+                >
+                    <i class="bi bi-arrow-repeat"></i>
+                </button>
 
                 <button
                     id="zoomIn"
@@ -694,6 +701,37 @@
                 });
             }
         });
+    </script>
+
+    <!-- =========================================
+        ROTATE BUTTON SCRIPT
+    ========================================= -->
+    <script>
+        let isAutoRotating = false;
+        let autoRotationSpeed = 0.01;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const rotateButton = document.getElementById('rotateModel');
+            
+            if (rotateButton) {
+                rotateButton.addEventListener('click', () => {
+                    isAutoRotating = !isAutoRotating;
+                    rotateButton.classList.toggle('active', isAutoRotating);
+                    
+                    if (isAutoRotating) {
+                        rotateButton.style.opacity = '1';
+                    } else {
+                        rotateButton.style.opacity = '0.6';
+                    }
+                });
+            }
+        });
+
+        // Export auto-rotation state for use in plantTredii.js
+        window.modelRotationState = {
+            isAutoRotating: () => isAutoRotating,
+            getSpeed: () => autoRotationSpeed
+        };
     </script>
 </body>
 </html>

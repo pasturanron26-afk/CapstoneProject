@@ -492,6 +492,14 @@ organelleButtons.forEach(button => {
 // ======================================================
 function animate() {
     requestAnimationFrame(animate);
+    
+    // Auto-rotate if rotation is enabled
+    if (window.modelRotationState && window.modelRotationState.isAutoRotating()) {
+        if (plantCell) {
+            plantCell.rotation.y += window.modelRotationState.getSpeed();
+        }
+    }
+    
     controls.update();
     renderer.render(scene, camera);
 }
