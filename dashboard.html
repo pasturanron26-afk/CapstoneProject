@@ -152,8 +152,8 @@
     <main class="dashboard-content">
         <div class="page-header">
             <div>
-                <h1>Student Dashboard</h1>
-                <p>Welcome back! Continue your biology learning journey.</p>
+                <h1 id="studentName">Student Name</h1>
+                <p id="studentEmail">student@email.com</p>
             </div>
             <div class="header-badge">Week 6</div>
         </div>
@@ -328,7 +328,20 @@
     <script>
         ecoAuth.requireStudent();
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Get current user session
+            const { data, error } = await ecoAuth.client.auth.getSession();
+            
+            if (data?.session?.user) {
+                const user = data.session.user;
+                const fullName = user.user_metadata?.full_name || 'Student';
+                const email = user.email || 'student@email.com';
+                
+                // Update page header with student info
+                document.getElementById('studentName').textContent = fullName;
+                document.getElementById('studentEmail').textContent = email;
+            }
+
             const logoutButton = document.getElementById('logoutButton');
             
             if (logoutButton) {
