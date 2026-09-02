@@ -170,6 +170,24 @@
 
             </li>
 
+            <!-- LOGOUT -->
+
+            <li class="nav-item mt-auto">
+
+                <button
+                    id="logoutButton"
+                    class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
+                    style="background: none; cursor: pointer;"
+                >
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                    Logout
+
+                </button>
+
+            </li>
+
         </ul>
 
     </nav>
@@ -292,6 +310,13 @@
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
 
+                <button
+                    id="rotateModel"
+                    aria-label="Rotate 3D model"
+                    title="Rotate"
+                >
+                    <i class="bi bi-arrow-repeat"></i>
+                </button>
 
                 <button
                     id="zoomIn"
@@ -612,6 +637,14 @@
 
 
     <!-- =========================================
+         SUPABASE
+    ========================================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/+esm"></script>
+
+    <script src="js/auth.js"></script>
+
+    <!-- =========================================
          THREE.JS IMPORT MAP
     ========================================= -->
 
@@ -694,6 +727,52 @@
                 });
             }
         });
+    </script>
+
+    <!-- =========================================
+        LOGOUT BUTTON SCRIPT
+    ========================================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    await window.ecoAuth.signOut();
+                });
+            }
+        });
+    </script>
+
+    <!-- =========================================
+        ROTATE BUTTON SCRIPT
+    ========================================= -->
+    <script>
+        let isAutoRotating = false;
+        let autoRotationSpeed = 0.01;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const rotateButton = document.getElementById('rotateModel');
+            
+            if (rotateButton) {
+                rotateButton.addEventListener('click', () => {
+                    isAutoRotating = !isAutoRotating;
+                    rotateButton.classList.toggle('active', isAutoRotating);
+                    
+                    if (isAutoRotating) {
+                        rotateButton.style.opacity = '1';
+                    } else {
+                        rotateButton.style.opacity = '0.6';
+                    }
+                });
+            }
+        });
+
+        // Export auto-rotation state for use in plantTredii.js
+        window.modelRotationState = {
+            isAutoRotating: () => isAutoRotating,
+            getSpeed: () => autoRotationSpeed
+        };
     </script>
 </body>
 </html>

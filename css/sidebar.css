@@ -42,3 +42,33 @@ nav .nav-link:hover {
   background-color: #2D6A4F;
   color: #ffffff !important;
 }
+
+/* Navigation Pills Container */
+.sidebar-bg .nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Logout Button - Push to Bottom */
+.sidebar-bg .nav .nav-item.mt-auto {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Logout Button Styling */
+.sidebar-bg #logoutButton {
+  color: #E8F5E9 !important;
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  text-align: left;
+}
+
+.sidebar-bg #logoutButton:hover {
+  background-color: #D32F2F;
+  color: #ffffff !important;
+}

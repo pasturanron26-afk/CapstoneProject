@@ -19,7 +19,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Your proper font */
+    font-family: 'Poppins', sans-serif;
     background-color: var(--eco-bg);
     color: var(--eco-text);
     min-height: 100vh;
@@ -98,7 +98,7 @@ body {
     border: 1.5px solid #E0E0E0;
     border-radius: 8px;
     font-size: 14px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Your proper font */
+    font-family: 'Poppins', sans-serif;
     color: var(--eco-text);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     background-color: #FAFAFA;
@@ -166,7 +166,7 @@ body {
     color: var(--eco-white);
     font-size: 15px;
     font-weight: 600;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Your proper font */
+    font-family: 'Poppins', sans-serif;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -218,7 +218,7 @@ body {
     color: var(--eco-text);
     font-size: 14px;
     font-weight: 600;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Your proper font */
+    font-family: 'Poppins', sans-serif;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -257,7 +257,7 @@ body {
     border: none;
     background: transparent;
     color: var(--eco-text-soft);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Your proper font */
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -290,6 +290,7 @@ body {
 
 .auth-tabs.admin .tab-slider {
     transform: translateX(100%);
+}
 }
 
 @media (max-width: 480px) {
