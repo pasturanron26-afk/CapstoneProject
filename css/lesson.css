@@ -30,7 +30,8 @@ body{
   color: var(--eco-text);
 }
 
-.bi{
+/* Only affect icons inside the lesson page content (NOT the sidebar) */
+.lesson-page .bi{
   line-height: 1;
   vertical-align: -0.12em;
 }
@@ -39,7 +40,6 @@ body{
    LESSON PAGE WRAPPER
 ========================================= */
 .lesson-page {
-  margin-left: 250px; /* matches sidebar */
   padding: 40px 32px;
   max-width: 1200px;
   margin-right: auto;

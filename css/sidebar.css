@@ -24,23 +24,29 @@
 }
 
 /* Base Link Styles - !important prevents Bootstrap overrides */
-nav .nav-link {
+/* Base Link Styles (scoped to sidebar only) */
+.sidebar-bg .nav-link {
   color: #E8F5E9 !important;
-  font-size: 0.95rem;
+  font-size: 0.95rem !important;   /* prevent Bootstrap override */
   padding: 10px 16px;
   border-radius: 8px;
   transition: all 0.2s ease-in-out;
 }
 
-/* Icon Sizing */
-nav .nav-link i {
+/* Icon sizing (scoped) */
+.sidebar-bg .nav-link i {
   font-size: 1.1rem;
 }
 
-/* Hover Effect */
-nav .nav-link:hover {
+/* Hover (scoped) */
+.sidebar-bg .nav-link:hover {
   background-color: #2D6A4F;
   color: #ffffff !important;
+}
+
+/* Logout keeps same sizing */
+.sidebar-bg #logoutButton{
+  font-size: 0.95rem !important;
 }
 
 /* Navigation Pills Container */
