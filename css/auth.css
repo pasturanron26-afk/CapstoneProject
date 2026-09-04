@@ -291,7 +291,7 @@ body {
 .auth-tabs.admin .tab-slider {
     transform: translateX(100%);
 }
-}
+
 
 @media (max-width: 480px) {
     .auth-container {
