@@ -33,7 +33,7 @@
     position: relative;
     overflow: hidden;
 
-    background: #F3F8F5;
+    background: linear-gradient(135deg, #edf8f1 0%, #dff0e5 100%);
 }
 
 
@@ -48,9 +48,10 @@
     grid-column-start: 4;
     grid-row-start: 1;
 
-    background: #ffffff;
+    background: #f8fbf9;
 
     padding: 40px;
+    border-left: 1px solid #d8ebe0;
 
     overflow-y: auto;
 

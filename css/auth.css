@@ -2,12 +2,12 @@
    AUTH PAGES (Login & Signup)
 ========================================= */
 :root {
-    --eco-primary: #1B4332;
-    --eco-secondary: #40916C;
-    --eco-light: #D8F3DC;
-    --eco-bg: #F3F8F5;
-    --eco-text: #1B4332;
-    --eco-text-soft: #555;
+    --eco-primary: #1b4332;
+    --eco-secondary: #2d8a5b;
+    --eco-light: #e8f3ec;
+    --eco-bg: #1d5b3c;
+    --eco-text: #20352a;
+    --eco-text-soft: #64756b;
     --eco-white: #ffffff;
     --eco-error: #EF4444;
 }
@@ -20,70 +20,85 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: var(--eco-bg);
+    background: linear-gradient(135deg, #143f2b 0%, #2f8157 52%, #123b27 100%);
     color: var(--eco-text);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 0;
+    zoom: 1;
 }
 
 .auth-container {
     width: 100%;
-    max-width: 420px;
+    max-width: 336px;
+    min-height: 100vh;
     background: var(--eco-white);
-    border-radius: 16px;
-    padding: 40px 32px;
-    box-shadow: 0 10px 30px rgba(27, 67, 50, 0.1);
-    border: 1px solid rgba(64, 145, 108, 0.1);
+    border-radius: 15px;
+    padding: 24px 25px 25px;
+    box-shadow: 0 12px 28px rgba(4, 20, 52, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    overflow: hidden;
 }
 
 .auth-header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
 }
 
 .auth-logo {
-    width: 80px;
-    height: 80px;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     border-radius: 50%;
-    margin-bottom: 16px;
+    border: 0;
+    padding: 0;
+}
+
+.auth-logo-wrap {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 7px;
+    overflow: hidden;
+    border-radius: 50%;
     border: 2px solid var(--eco-light);
-    padding: 4px;
+    background: var(--eco-white);
 }
 
 .auth-title {
-    font-size: 28px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--eco-primary);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .auth-subtitle {
-    font-size: 14px;
+    font-size: 11px;
     color: var(--eco-text-soft);
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 14px;
+    background: #f4f6fa;
+    margin: 0 -25px -25px;
+    padding: 24px 25px 25px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
 }
 
 .form-group label {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--eco-primary);
-    letter-spacing: 0.5px;
+    letter-spacing: 0;
 }
 
 .input-wrapper {
@@ -94,20 +109,20 @@ body {
 
 .input-wrapper input {
     width: 100%;
-    padding: 12px 40px 12px 16px;
-    border: 1.5px solid #E0E0E0;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 11px 38px 11px 12px;
+    border: 1px solid #cbd2de;
+    border-radius: 9px;
+    font-size: 12px;
     font-family: 'Poppins', sans-serif;
     color: var(--eco-text);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    background-color: #FAFAFA;
+    background-color: var(--eco-white);
 }
 
 .input-wrapper input:focus {
     outline: none;
     border-color: var(--eco-secondary);
-    box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.15);
+    box-shadow: 0 0 0 3px rgba(45, 138, 91, 0.14);
     background-color: var(--eco-white);
 }
 
@@ -134,37 +149,37 @@ body {
 }
 
 .input-wrapper .toggle-pass i {
-    font-size: 18px;
+    font-size: 15px;
 }
 
 .auth-links {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 13px;
-    margin-top: -8px;
+    font-size: 10px;
+    margin-top: -2px;
 }
 
 .auth-links a {
-    color: var(--eco-secondary);
+    color: #53627b;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease;
 }
 
 .auth-links a:hover {
-    color: var(--eco-primary);
+    color: var(--eco-secondary);
     text-decoration: underline;
 }
 
 .btn-primary {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     border: none;
     border-radius: 8px;
-    background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-primary) 100%);
+    background: linear-gradient(100deg, #1b4332 0%, #2d8a5b 100%);
     color: var(--eco-white);
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
     cursor: pointer;
@@ -173,7 +188,7 @@ body {
     justify-content: center;
     gap: 8px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 12px rgba(27, 67, 50, 0.25);
+    box-shadow: 0 4px 10px rgba(27, 67, 50, 0.24);
 }
 
 .btn-primary:hover {
@@ -197,7 +212,7 @@ body {
     gap: 12px;
     margin: 8px 0;
     color: var(--eco-text-soft);
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 500;
 }
 
@@ -216,7 +231,7 @@ body {
     border-radius: 8px;
     background: var(--eco-white);
     color: var(--eco-text);
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
     cursor: pointer;
@@ -234,34 +249,34 @@ body {
 
 .auth-footer {
     text-align: center;
-    margin-top: 24px;
-    padding-top: 24px;
+    margin-top: 19px;
+    padding-top: 13px;
     border-top: 1px solid #E0E0E0;
-    font-size: 13px;
+    font-size: 9px;
     color: var(--eco-text-soft);
 }
 
 /* Tabs for Login */
 .auth-tabs {
     display: flex;
-    background-color: var(--eco-light);
-    border-radius: 8px;
-    padding: 4px;
-    margin-bottom: 24px;
+    background-color: #f4f5f8;
+    border-radius: 9px;
+    padding: 3px;
+    margin-bottom: 22px;
     position: relative;
 }
 
 .tab-btn {
     flex: 1;
-    padding: 10px;
+    padding: 9px 5px;
     border: none;
     background: transparent;
     color: var(--eco-text-soft);
     font-family: 'Poppins', sans-serif;
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -277,14 +292,14 @@ body {
 
 .tab-slider {
     position: absolute;
-    top: 4px;
-    left: 4px;
-    width: calc(50% - 4px);
-    height: calc(100% - 8px);
-    background: linear-gradient(135deg, var(--eco-secondary) 0%, var(--eco-primary) 100%);
-    border-radius: 6px;
+    top: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    height: calc(100% - 6px);
+    background: linear-gradient(100deg, #1b4332 0%, #2d8a5b 100%);
+    border-radius: 8px;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(27, 67, 50, 0.2);
+    box-shadow: 0 3px 8px rgba(27, 67, 50, 0.2);
     z-index: 0;
 }
 
@@ -292,10 +307,20 @@ body {
     transform: translateX(100%);
 }
 
+.auth-form.role-switching {
+    animation: roleSwitch 260ms ease both;
+}
+
+@keyframes roleSwitch {
+    0% { opacity: 0.45; transform: translateY(5px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
 
 @media (max-width: 480px) {
     .auth-container {
-        padding: 32px 24px;
+        max-width: 336px;
+        border-radius: 0;
     }
     .auth-title {
         font-size: 24px;

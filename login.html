@@ -13,7 +13,9 @@
 <body>
     <div class="auth-container">
         <div class="auth-header">
-            <img src="imgs/Logo.jpg" alt="EcoLearn Logo" class="auth-logo">
+            <div class="auth-logo-wrap">
+                <img src="imgs/Logo.jpg" alt="EcoLearn Logo" class="auth-logo">
+            </div>
             <h1 class="auth-title">Welcome Back</h1>
             <p class="auth-subtitle">Sign in to access your cell models, specimen records, and coursework.</p>
         </div>
@@ -77,6 +79,8 @@
 
         function setRole(role) {
             selectedRole = role;
+            document.getElementById('loginForm').classList.remove('role-switching');
+            requestAnimationFrame(() => document.getElementById('loginForm').classList.add('role-switching'));
             if (role === 'admin') {
                 tabs.classList.add('admin');
                 tabAdmin.classList.add('active');

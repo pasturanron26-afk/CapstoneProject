@@ -2,7 +2,8 @@
 .sidebar-bg {
   width: 250px;
   height: 100vh;
-  background-color: #1B4332;
+  background: linear-gradient(180deg, #1b4332 0%, #245f43 100%);
+  box-shadow: 4px 0 18px rgba(27, 67, 50, 0.14);
   position: fixed;
   top: 0;
   left: 0;
@@ -40,8 +41,16 @@
 
 /* Hover (scoped) */
 .sidebar-bg .nav-link:hover {
-  background-color: #2D6A4F;
+  background-color: rgba(82, 183, 136, 0.28);
   color: #ffffff !important;
+}
+
+.sidebar-bg .nav-link.active,
+.sidebar-bg .nav-link[aria-current="page"] {
+  background: linear-gradient(100deg, #2d8a5b 0%, #52b788 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(8, 28, 21, 0.18);
 }
 
 /* Logout keeps same sizing */

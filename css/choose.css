@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     padding: 30px;
+    min-height: 100vh;
     /* Width is controlled by sidebar.css */
 }
 
@@ -57,9 +58,17 @@
     width: 100%;
     max-width: 430px;
     overflow: hidden;
-    border-radius: 10px;
+    border: 1px solid #d8ebe0;
+    border-radius: 14px;
     background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 22px rgba(27, 67, 50, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.AnimalCellBox:hover,
+.PlantCellBox:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px rgba(27, 67, 50, 0.16);
 }
 
 /* =========================================
@@ -83,8 +92,8 @@
     display: flex;
     flex-direction: column;
     padding: 20px 25px;
-    background-color: rgb(179, 208, 228);
-    border-radius: 0 0 10px 10px;
+    background: linear-gradient(180deg, #f1f8f3 0%, #e2f1e8 100%);
+    border-radius: 0 0 14px 14px;
 }
 
 /* =========================================
@@ -133,7 +142,7 @@
     padding: 10px 15px;
     border: none;
     border-radius: 7px;
-    background-color: #1B4332;
+    background: linear-gradient(100deg, #1b4332 0%, #2d8a5b 100%);
     color: white;
     font-size: 15px;
     font-weight: 600;
@@ -146,7 +155,7 @@
 ========================================= */
 
 .exploreButton button:hover {
-    background-color: #2D6A4F;
+    background: linear-gradient(100deg, #245f43 0%, #40916c 100%);
     transform: translateY(-1px);
 }
 
