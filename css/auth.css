@@ -247,6 +247,12 @@ body {
     border-color: #CCC;
 }
 
+.btn-google img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
 .auth-footer {
     text-align: center;
     margin-top: 19px;
