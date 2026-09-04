@@ -7,6 +7,7 @@
     flex-direction: column;
     padding: 30px;
     min-height: 100vh;
+    background: linear-gradient(135deg, #08251d 0%, #0d382b 58%, #061c17 100%);
     /* Width is controlled by sidebar.css */
 }
 
@@ -21,7 +22,7 @@
 
 .HeaderAndSubTDiv h1 {
     margin: 0;
-    color: #1B4332;
+    color: #f4fff7;
     font-weight: bold;
     font-size: 32px;
 }
@@ -29,7 +30,7 @@
 .HeaderAndSubTDiv p {
     margin: 5px 0 0 0;
     font-style: italic;
-    color: #555;
+    color: #b8d6c3;
     font-size: 16px;
 }
 
@@ -58,10 +59,10 @@
     width: 100%;
     max-width: 430px;
     overflow: hidden;
-    border: 1px solid #d8ebe0;
+    border: 1px solid rgba(183, 228, 199, 0.18);
     border-radius: 14px;
-    background-color: #ffffff;
-    box-shadow: 0 8px 22px rgba(27, 67, 50, 0.12);
+    background: #102f29;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -81,7 +82,7 @@
     width: 100%;
     height: 300px;
     object-fit: contain;
-    background-color: #ffffff;
+    background-color: #123b31;
 }
 
 /* =========================================
@@ -92,7 +93,7 @@
     display: flex;
     flex-direction: column;
     padding: 20px 25px;
-    background: linear-gradient(180deg, #f1f8f3 0%, #e2f1e8 100%);
+    background: linear-gradient(180deg, #12392f 0%, #0c2c24 100%);
     border-radius: 0 0 14px 14px;
 }
 
@@ -102,7 +103,7 @@
 
 .cellBottomBox h3 {
     margin: 0;
-    color: #1B4332;
+    color: #f4fff7;
     font-size: 20px;
     font-weight: 700;
 }
@@ -113,7 +114,7 @@
 
 .cellBottomBox p {
     margin: 4px 0 0 0;
-    color: #444;
+    color: #b8d6c3;
     font-size: 14px;
     font-style: italic;
 }
@@ -172,6 +173,114 @@
     transform: translateX(4px);
 }
 
+.model-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: min(340px, 100%);
+    margin-top: 20px;
+    padding: 11px 13px;
+    color: #b8d6c3;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(183, 228, 199, 0.22);
+    border-radius: 9px;
+}
+
+.model-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    color: #f4fff7;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+}
+
+.AnimalCellBox,
+.PlantCellBox {
+    position: relative;
+}
+
+.model-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 7px 10px;
+    color: #b7e4c7;
+    background: rgba(7, 40, 30, 0.82);
+    border: 1px solid rgba(82, 183, 136, 0.45);
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.model-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.model-tags span {
+    padding: 5px 8px;
+    color: #b7e4c7;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(183, 228, 199, 0.18);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.explorer-support {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin: 28px auto 0;
+    padding: 24px 28px;
+    width: min(885px, 100%);
+    background: rgba(16, 47, 41, 0.88);
+    border: 1px solid rgba(183, 228, 199, 0.18);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(27, 67, 50, 0.08);
+}
+
+.support-kicker {
+    color: #40916c;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.explorer-support h2 {
+    margin: 5px 0 14px;
+    color: #f4fff7;
+    font-size: 20px;
+}
+
+.support-points {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px 24px;
+    color: #b8d6c3;
+    font-size: 12px;
+}
+
+.support-points i {
+    margin-right: 5px;
+    color: #2d8a5b;
+    font-weight: 800;
+}
+
+.explorer-support blockquote {
+    max-width: 220px;
+    margin: 0;
+    color: #b7e4c7;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.5;
+}
+
 /* =========================================
    RESPONSIVE
 ========================================= */
@@ -204,5 +313,14 @@
     .PlantCellBox img,
     .AnimalCellBox img {
         height: 250px;
+    }
+
+    .explorer-support {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .support-points {
+        grid-template-columns: 1fr;
     }
 }

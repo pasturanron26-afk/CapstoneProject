@@ -104,7 +104,7 @@
 
                     <i class="bi bi-book"></i>
 
-                    Lesson
+                    Lessons
 
                 </a>
 
@@ -121,10 +121,17 @@
 
                     <i class="bi bi-question-circle"></i>
 
-                    Quiz
+                    Quizzes
 
                 </a>
 
+            </li>
+
+            <li class="nav-item mb-1">
+                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="#">
+                    <i class="bi bi-person"></i>
+                    Profile
+                </a>
             </li>
 
             <!-- LOGOUT -->
@@ -152,10 +159,16 @@
     <main class="dashboard-content">
         <div class="page-header">
             <div>
-                <h1 id="studentName">Student Name</h1>
-                <p id="studentEmail">student@email.com</p>
+                <span class="eyebrow">STUDENT DASHBOARD</span>
+                <h1>Good evening, <span id="studentName">Dexter Peñero Ricarte</span></h1>
+                <p id="studentSubtitle">Keep exploring the amazing world of cells!</p>
             </div>
-            <div class="header-badge">Week 6</div>
+            <div class="header-tools">
+                <label class="dashboard-search">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input id="dashboardSearch" type="search" placeholder="Search lessons, topics..." aria-label="Search lessons and topics">
+                </label>
+            </div>
         </div>
 
         <section class="stats-grid">
@@ -203,17 +216,20 @@
         <section class="content-grid">
             <div class="panel">
                 <div class="panel-title">
-                    <h2>Current learning path</h2>
+                        <h2>Current Learning Path</h2>
                     <a href="#">View all</a>
                 </div>
 
                 <div class="lesson-list">
                     <button class="lesson-item" type="button" data-title="Cell Structure Basics" data-module="Module 1" data-time="25 min" data-summary="Explore how cells are organized into membranes, cytoplasm, organelles, and genetic material, and how each part supports life." data-objectives="Identify the main parts of a cell|Compare cell membrane and nucleus roles|Explain how organelles work together" data-model="AnimalCell.html">
                         <div class="lesson-left">
+                            <img class="lesson-thumb" src="imgs/animal-cell.png" alt="">
                             <div class="lesson-icon"><i class="bi bi-microscope"></i></div>
                             <div>
                                 <div class="lesson-name">Cell Structure Basics</div>
                                 <div class="lesson-meta">Module 1 • 25 min</div>
+                                <div class="lesson-progress"><span style="width: 100%"></span></div>
+                                <div class="lesson-status">100% <strong>Completed</strong></div>
                             </div>
                         </div>
                         <span class="pill live">Live</span>
@@ -221,10 +237,13 @@
 
                     <button class="lesson-item" type="button" data-title="Cell Functions" data-module="Module 2" data-time="18 min" data-summary="Understand how cells move materials, convert energy, and maintain internal balance through specialized functions and organelles." data-objectives="Explain cellular respiration|Describe transport across membranes|Recognize how organelles support function" data-model="AnimalCell.html">
                         <div class="lesson-left">
+                            <img class="lesson-thumb" src="imgs/animal-cell.png" alt="">
                             <div class="lesson-icon"><i class="bi bi-activity"></i></div>
                             <div>
                                 <div class="lesson-name">Cell Functions</div>
-                                <div class="lesson-meta">Module 2 • 18 min</div>
+                                <div class="lesson-meta">Module 2 • 15 min</div>
+                                <div class="lesson-progress"><span style="width: 60%"></span></div>
+                                <div class="lesson-status">60% <strong>In Progress</strong></div>
                             </div>
                         </div>
                         <span class="pill todo">In progress</span>
@@ -232,10 +251,13 @@
 
                     <button class="lesson-item" type="button" data-title="Plant vs Animal Cells" data-module="Module 3" data-time="30 min" data-summary="Compare the similarities and differences between plant and animal cells and examine how structure reflects biological function." data-objectives="Identify cell wall and chloroplast roles|Compare lysosome and vacuole functions|Explain how cell shape supports purpose" data-model="AnimalCell.html">
                         <div class="lesson-left">
+                            <img class="lesson-thumb" src="imgs/plant-cell.png" alt="">
                             <div class="lesson-icon"><i class="bi bi-diagram-3"></i></div>
                             <div>
                                 <div class="lesson-name">Plant vs Animal Cells</div>
-                                <div class="lesson-meta">Module 3 • 30 min</div>
+                                <div class="lesson-meta">Module 3 • 20 min</div>
+                                <div class="lesson-progress"><span style="width: 0%"></span></div>
+                                <div class="lesson-status">0% <strong>Up Next</strong></div>
                             </div>
                         </div>
                         <span class="pill live">Next</span>
@@ -260,16 +282,41 @@
                             <span class="score">90%</span>
                         </div>
                         <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Organelles</div>
-                            <span class="score">74%</span>
+                            <div class="label-row"><span class="dot"></span> Cell Organelles</div>
+                            <span class="score">70%</span>
                         </div>
                         <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Lab activities</div>
-                            <span class="score">68%</span>
+                            <div class="label-row"><span class="dot"></span> Cell Division</div>
+                            <span class="score">50%</span>
+                        </div>
+                        <div class="goal-item">
+                            <div class="label-row"><span class="dot"></span> Cell Transport</div>
+                            <span class="score">65%</span>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
+
+        <section class="dashboard-lower-grid">
+            <div class="panel quick-access-panel">
+                <div class="panel-title"><h2>Quick Access</h2></div>
+                <div class="quick-access-grid">
+                    <a href="choose.html" class="quick-access-item"><i class="bi bi-boxes"></i><span>3D Explorer</span></a>
+                    <a href="quiz.html" class="quick-access-item"><i class="bi bi-patch-check"></i><span>Take a Quiz</span></a>
+                    <a href="#" class="quick-access-item"><i class="bi bi-journal-text"></i><span>Study Notes</span></a>
+                    <a href="#" class="quick-access-item"><i class="bi bi-trophy"></i><span>My Achievements</span></a>
+                </div>
+            </div>
+            <article class="featured-learning">
+                <div class="featured-copy">
+                    <span class="eyebrow">FEATURED LEARNING</span>
+                    <h2>Discover the Microscopic World</h2>
+                    <p>Explore interactive 3D models and make science come alive!</p>
+                    <a class="featured-button" href="choose.html">Continue Learning <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <img src="imgs/animal-cell.png" alt="Colorful animal cell model">
+            </article>
         </section>
     </main>
 
@@ -335,11 +382,8 @@
             if (data?.session?.user) {
                 const user = data.session.user;
                 const fullName = user.user_metadata?.full_name || 'Student';
-                const email = user.email || 'student@email.com';
-                
                 // Update page header with student info
                 document.getElementById('studentName').textContent = fullName;
-                document.getElementById('studentEmail').textContent = email;
             }
 
             const logoutButton = document.getElementById('logoutButton');
@@ -437,6 +481,13 @@
             toggle.addEventListener('click', () => {
                 const card = toggle.closest('.folder-card');
                 openFolderPopup(card);
+            });
+        });
+
+        document.getElementById('dashboardSearch').addEventListener('input', (event) => {
+            const query = event.target.value.trim().toLowerCase();
+            document.querySelectorAll('.lesson-item').forEach((item) => {
+                item.hidden = query && !item.textContent.toLowerCase().includes(query);
             });
         });
 

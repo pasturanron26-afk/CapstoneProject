@@ -104,6 +104,48 @@ body {
     font-size: 0.95rem;
 }
 
+.eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--green-light);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.header-tools {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dashboard-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 225px;
+    padding: 10px 13px;
+    color: var(--text-muted);
+    background: #f7faf8;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.dashboard-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    color: var(--text-dark);
+    background: transparent;
+    font: inherit;
+    font-size: 0.78rem;
+}
+
+.dashboard-search:focus-within {
+    border-color: var(--green-light);
+    box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.12);
+}
+
 
 /* =====================================================
    HEADER BADGE
@@ -541,6 +583,47 @@ body {
         box-shadow 0.2s ease;
 }
 
+.lesson-item {
+    position: relative;
+}
+
+.lesson-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 34px;
+    top: 56px;
+    bottom: -13px;
+    width: 1px;
+    background: #b7d9c3;
+}
+
+.lesson-progress {
+    width: min(260px, 100%);
+    height: 5px;
+    margin-top: 8px;
+    overflow: hidden;
+    background: #dcebe1;
+    border-radius: 4px;
+}
+
+.lesson-progress span {
+    display: block;
+    height: 100%;
+    background: var(--green-light);
+    border-radius: inherit;
+}
+
+.lesson-status {
+    margin-top: 5px;
+    color: var(--green-light);
+    font-size: 0.7rem;
+}
+
+.lesson-status strong {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
 
 .lesson-item:hover,
 .lesson-item:focus-visible {
@@ -569,6 +652,16 @@ body {
     gap: 12px;
 
     min-width: 0;
+}
+
+.lesson-thumb {
+    width: 72px;
+    height: 48px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: #eaf5ee;
 }
 
 
@@ -1479,4 +1572,130 @@ body {
         padding: 16px;
     }
 
+}
+
+.dashboard-lower-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 22px;
+    margin-top: 22px;
+}
+
+.quick-access-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.quick-access-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 12px;
+    color: var(--green-dark);
+    background: #f7faf8;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.quick-access-item i {
+    color: var(--green-light);
+    font-size: 1rem;
+}
+
+.quick-access-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--green-light);
+}
+
+.featured-learning {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 220px;
+    overflow: hidden;
+    padding: 28px;
+    color: white;
+    background: linear-gradient(105deg, #1b4332 0%, #2d6a4f 65%, #40916c 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(27, 67, 50, 0.14);
+}
+
+.featured-copy {
+    position: relative;
+    z-index: 1;
+    max-width: 60%;
+}
+
+.featured-learning .eyebrow { color: #b7e4c7; }
+
+.featured-learning h2 {
+    margin: 0 0 8px;
+    font-size: 1.45rem;
+    line-height: 1.2;
+}
+
+.featured-learning p {
+    margin: 0 0 18px;
+    color: #e1f2e7;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.featured-learning img {
+    position: absolute;
+    right: -25px;
+    width: 48%;
+    max-width: 260px;
+    opacity: 0.92;
+    mix-blend-mode: screen;
+}
+
+.featured-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    color: var(--green-dark);
+    background: white;
+    border-radius: 7px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+@media (max-width: 820px) {
+    .header-tools,
+    .dashboard-lower-grid {
+        width: 100%;
+    }
+
+    .dashboard-lower-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .header-tools {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .dashboard-search {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .featured-copy {
+        max-width: 72%;
+    }
+
+    .featured-learning img {
+        right: -48px;
+        width: 62%;
+    }
 }

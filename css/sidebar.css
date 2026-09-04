@@ -15,6 +15,8 @@
   width: 60px;
   height: 60px;
   object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.88);
+  background: #ffffff;
 }
 
 /* Brand Header - !important prevents Bootstrap from overriding it to black */
@@ -86,4 +88,10 @@
 .sidebar-bg #logoutButton:hover {
   background-color: #D32F2F;
   color: #ffffff !important;
+}
+
+.sidebar-bg .nav-link:focus-visible,
+.sidebar-bg #logoutButton:focus-visible {
+  outline: 2px solid #b7e4c7;
+  outline-offset: 2px;
 }

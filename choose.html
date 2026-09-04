@@ -155,7 +155,7 @@
 
                     <i class="bi bi-book"></i>
 
-                    Lesson
+                    Lessons
 
                 </a>
 
@@ -172,10 +172,17 @@
 
                     <i class="bi bi-question-circle"></i>
 
-                    Quiz
+                    Quizzes
 
                 </a>
 
+            </li>
+
+            <li class="nav-item mb-1">
+                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="#">
+                    <i class="bi bi-person"></i>
+                    Profile
+                </a>
             </li>
 
             <!-- LOGOUT -->
@@ -223,6 +230,11 @@
                 Select a cell type to begin your interactive exploration
             </p>
 
+            <label class="model-search">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input id="modelSearch" type="search" placeholder="Search cell models..." aria-label="Search cell models">
+            </label>
+
         </div>
 
 
@@ -245,6 +257,8 @@
                     alt="Animal Cell"
                 >
 
+                <span class="model-badge"><i class="bi bi-boxes"></i> Interactive 3D</span>
+
 
                 <div class="cellBottomBox">
 
@@ -253,8 +267,10 @@
                     </h3>
 
                     <p>
-                        Animal cell structure
+                        Explore the structure and functions of an animal cell.
                     </p>
+
+                    <div class="model-tags"><span>Nucleus</span><span>Mitochondria</span><span>Ribosome</span><span>+8 more</span></div>
 
 
                     <a
@@ -295,6 +311,8 @@
                     alt="Plant Cell"
                 >
 
+                <span class="model-badge"><i class="bi bi-boxes"></i> Interactive 3D</span>
+
 
                 <div class="cellBottomBox">
 
@@ -303,8 +321,10 @@
                     </h3>
 
                     <p>
-                        Plant cell structure
+                        Explore the structure and functions of a plant cell.
                     </p>
+
+                    <div class="model-tags"><span>Cell Wall</span><span>Chloroplast</span><span>Vacuole</span><span>+8 more</span></div>
 
 
                     <a
@@ -335,6 +355,20 @@
 
         </div>
 
+        <section class="explorer-support">
+            <div>
+                <span class="support-kicker">LEARN BY EXPLORING</span>
+                <h2>Why 3D Exploration?</h2>
+                <div class="support-points">
+                    <span><i class="bi bi-check2"></i> Interactive learning experience</span>
+                    <span><i class="bi bi-check2"></i> Visualize complex structures</span>
+                    <span><i class="bi bi-check2"></i> Rotate and zoom freely</span>
+                    <span><i class="bi bi-check2"></i> Learn at your own pace</span>
+                </div>
+            </div>
+            <blockquote>"The cell is the basic unit of life."</blockquote>
+        </section>
+
     </div>
 
 
@@ -343,6 +377,13 @@
     ========================================= -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('modelSearch').addEventListener('input', (event) => {
+                const query = event.target.value.trim().toLowerCase();
+                document.querySelectorAll('.AnimalCellBox, .PlantCellBox').forEach((card) => {
+                    card.hidden = query && !card.textContent.toLowerCase().includes(query);
+                });
+            });
+
             const logoutButton = document.getElementById('logoutButton');
             
             if (logoutButton) {
