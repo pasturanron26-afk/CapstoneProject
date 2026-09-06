@@ -1,0 +1,396 @@
+/* =====================================================
+   ECOLEARN — ADMIN DASHBOARD
+   Extends dashboard.css. Reuses the same --green-* tokens
+   so the admin views match the student dashboard visually.
+===================================================== */
+
+/* ===================== VIEW SWITCHING ===================== */
+
+.admin-view {
+    display: none;
+}
+
+.admin-view.is-active {
+    display: block;
+}
+
+/* ===================== ROLE BADGE ===================== */
+
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: var(--green-dark);
+    color: var(--white);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ===================== SECTION HEADER ===================== */
+
+.admin-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.admin-section-header h2 {
+    margin: 0 0 4px;
+    color: var(--green-dark);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.admin-section-header p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.admin-count-badge {
+    padding: 6px 12px;
+    background-color: var(--green-pale);
+    color: var(--green-dark);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ===================== TOOLBAR ===================== */
+
+.admin-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.admin-toolbar .dashboard-search {
+    flex: 1;
+    min-width: 220px;
+}
+
+.admin-select {
+    padding: 10px 13px;
+    color: var(--text-dark);
+    background: #f7faf8;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 0.82rem;
+}
+
+.admin-select:focus {
+    outline: none;
+    border-color: var(--green-light);
+    box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.12);
+}
+
+/* ===================== TABLE ===================== */
+
+.admin-table-wrap {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.admin-table thead th {
+    padding: 10px 14px;
+    color: var(--green-dark);
+    background-color: var(--green-soft);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.admin-table tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dark);
+    vertical-align: middle;
+}
+
+.admin-table tbody tr:hover {
+    background-color: var(--green-soft);
+}
+
+.admin-empty-row {
+    padding: 24px !important;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* ===================== STUDENT CELL ===================== */
+
+.student-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-avatar {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-light), var(--green));
+    color: var(--white);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.student-avatar.muted {
+    background: #c8d6cd;
+    color: #4b5c52;
+}
+
+.student-name {
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.student-email {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+/* ===================== STATUS BADGE ===================== */
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.status-badge.active {
+    background-color: var(--green-pale);
+    color: var(--green-dark);
+}
+
+.status-badge.inactive {
+    background-color: #FCEBEA;
+    color: #B3261E;
+}
+
+/* ===================== ACTIONS ===================== */
+
+.admin-actions-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.admin-icon-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FAFCFB;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--green-dark);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-icon-btn:hover {
+    background-color: var(--green-pale);
+    border-color: var(--green-light);
+}
+
+.admin-icon-btn.danger:hover {
+    background-color: #FCEBEA;
+    border-color: #E5A6A0;
+    color: #B3261E;
+}
+
+.admin-text-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background-color: var(--green-pale);
+    border: none;
+    border-radius: 8px;
+    color: var(--green-dark);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.admin-text-btn:hover {
+    background-color: #b7e4c7;
+}
+
+/* ===================== PROGRESS ROW (in modal) ===================== */
+
+.progress-row {
+    margin-bottom: 14px;
+}
+
+.progress-row:last-child {
+    margin-bottom: 0;
+}
+
+.progress-row-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    color: var(--text-dark);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.progress-row-label span:last-child {
+    color: var(--green-dark);
+    font-weight: 700;
+}
+
+/* ===================== SCORE PILL (quiz modal) ===================== */
+
+.score-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.score-pill.good { background-color: var(--green-pale); color: var(--green-dark); }
+.score-pill.ok { background-color: #FFF4D6; color: #8A6100; }
+.score-pill.low { background-color: #FCEBEA; color: #B3261E; }
+
+/* ===================== FORM (manage account modal) ===================== */
+
+.admin-form-group {
+    margin-bottom: 16px;
+}
+
+.admin-form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--green-dark);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.admin-form-group input,
+.admin-form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: var(--text-dark);
+    background-color: #FAFCFB;
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus {
+    outline: none;
+    border-color: var(--green-light);
+    box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.12);
+}
+
+.admin-form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.admin-btn-primary {
+    padding: 10px 18px;
+    background-color: var(--green-dark);
+    border: none;
+    border-radius: 8px;
+    color: var(--white);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.admin-btn-primary:hover {
+    background-color: var(--green);
+}
+
+.admin-btn-danger-ghost {
+    padding: 10px 16px;
+    background-color: transparent;
+    border: 1px solid #E5A6A0;
+    border-radius: 8px;
+    color: #B3261E;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.admin-btn-danger-ghost:hover {
+    background-color: #FCEBEA;
+}
+
+/* ===================== SMALL MODAL SIZE VARIANT ===================== */
+
+.admin-modal-dialog.is-small {
+    width: min(460px, calc(100vw - 32px));
+    max-height: none;
+}
+
+.admin-modal-dialog.is-medium {
+    width: min(640px, calc(100vw - 32px));
+}
+
+/* Admin modals reuse .lesson-modal but need a single-column body
+   (the lesson modal's default is a two-column layout with a
+   model preview panel, which these modals don't have). */
+.admin-modal .lesson-modal-body {
+    display: block;
+    max-height: calc(86vh - 120px);
+    overflow-y: auto;
+}
+
+.admin-modal .lesson-modal-content {
+    border-right: none;
+    overflow-y: visible;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 768px) {
+    .admin-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
