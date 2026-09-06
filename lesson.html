@@ -29,6 +29,10 @@
   <link rel="stylesheet" href="css/global.css" />
   <!-- Page-specific styles -->
   <link rel="stylesheet" href="css/lessons.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/auth.js"></script>
+
 </head>
         <style>
         /* =========================================
@@ -210,6 +214,19 @@
 
     </div>
   </main>
-
+    <!-- =========================================
+        LOGOUT BUTTON SCRIPT
+    ========================================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    await window.ecoAuth.signOut();
+                });
+            }
+        });
+    </script>
 </body>
 </html>
