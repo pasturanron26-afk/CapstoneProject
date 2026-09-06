@@ -1,367 +1,700 @@
 /* =====================================================
-   ECOLEARN — ADMIN DASHBOARD
-   Extends dashboard.css. Reuses the same --green-* tokens
-   so the admin views match the student dashboard visually.
+   ECOLEARN — ADMIN LEDGER
+   Design concept: a field biologist's specimen ledger.
+   Forest-green ink on aged paper, serif for identity,
+   monospace for recorded data — instead of a generic
+   SaaS card kit. Overrides shared sidebar/dashboard
+   styles; only admin.html loads this file, so nothing
+   here reaches the student dashboard.
 ===================================================== */
 
-/* ===================== VIEW SWITCHING ===================== */
+:root {
+    --ink: #1C2E22;
+    --pine: #2F4C39;
+    --moss: #4F7A5B;
+    --lichen: #8FAE84;
+    --paper: #F4F1E6;
+    --paper-line: #DED6C0;
+    --stamp: #8B3A2F;
+    --stamp-gold: #93701F;
 
-.admin-view {
-    display: none;
+    --font-serif: 'Newsreader', Georgia, serif;
+    --font-mono: 'Space Mono', 'Courier New', monospace;
+    --font-sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
 }
 
-.admin-view.is-active {
-    display: block;
+/* ===================== BASE ===================== */
+
+body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
 }
 
-/* ===================== ROLE BADGE ===================== */
-
-.role-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background-color: var(--green-dark);
-    color: var(--white);
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+.dashboard-content {
+    max-width: 1180px;
 }
 
-/* ===================== SECTION HEADER ===================== */
+/* ===================== TOPBAR ===================== */
 
-.admin-section-header {
+.topbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 16px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
+    margin-bottom: 22px;
 }
 
-.admin-section-header h2 {
-    margin: 0 0 4px;
-    color: var(--green-dark);
-    font-size: 1.3rem;
-    font-weight: 700;
+.topbar-search {
+    flex: 1;
+    max-width: 360px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background-color: #FBF9F2;
+    border: 1px solid var(--paper-line);
+    border-radius: 999px;
 }
 
-.admin-section-header p {
-    margin: 0;
-    color: var(--text-muted);
+.topbar-search i {
+    color: #A79A7C;
     font-size: 0.85rem;
 }
 
-.admin-count-badge {
-    padding: 6px 12px;
-    background-color: var(--green-pale);
-    color: var(--green-dark);
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    white-space: nowrap;
+.topbar-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
 }
 
-/* ===================== TOOLBAR ===================== */
+.topbar-search input::placeholder {
+    color: #A79A7C;
+}
 
-.admin-toolbar {
+.topbar-actions {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
+    margin-left: auto;
 }
 
-.admin-toolbar .dashboard-search {
+.topbar-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background-color: #FBF9F2;
+    border: 1px solid var(--paper-line);
+    border-radius: 50%;
+    color: var(--pine);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.topbar-icon-btn:hover {
+    background-color: var(--pine);
+    color: var(--paper);
+}
+
+.topbar-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background-color: var(--paper);
+    border: 2px solid var(--moss);
+    border-radius: 50%;
+    color: var(--pine);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+@media (max-width: 560px) {
+    .topbar-search {
+        max-width: none;
+    }
+}
+
+/* ===================== VIEW SWITCHING ===================== */
+/* All views stay on the page; sidebar links scroll to them
+   instead of toggling visibility. scroll-margin-top keeps the
+   section heading clear of the page-header when it lands.
+   min-height guarantees each section spans close to a full
+   screen, so there's always somewhere to actually scroll to —
+   without it, short sections that already fit on screen leave
+   scrollIntoView() with nothing to do. */
+
+.admin-view {
+    display: block;
+    min-height: calc(100vh - 64px);
+    scroll-margin-top: 24px;
+}
+
+.admin-view:last-child {
+    min-height: auto;
+}
+
+.admin-view + .admin-view {
+    margin-top: 36px;
+    padding-top: 36px;
+    border-top: 1px solid var(--paper-line);
+}
+
+/* ===================== SIDEBAR ===================== */
+
+.sidebar-bg {
+    background: var(--pine);
+    box-shadow: none;
+    border-right: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.brand-title {
+    font-family: var(--font-serif) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    color: var(--paper) !important;
+}
+
+.ledger-role {
+    margin: 2px 0 0;
+    color: var(--lichen);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.sidebar-bg .nav-link {
+    border-radius: 2px;
+    border-left: 3px solid transparent;
+    padding: 9px 12px 9px 13px;
+    color: rgba(244, 241, 230, 0.72) !important;
+    font-family: var(--font-sans);
+    font-size: 0.88rem !important;
+    font-weight: 500;
+}
+
+.sidebar-bg .nav-link i {
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+.sidebar-bg .nav-link:hover {
+    background-color: rgba(143, 174, 132, 0.14);
+    border-left-color: rgba(143, 174, 132, 0.5);
+    color: var(--paper) !important;
+}
+
+.sidebar-bg .nav-link.active,
+.sidebar-bg .nav-link[aria-current="page"] {
+    background: rgba(143, 174, 132, 0.12);
+    border-left-color: var(--lichen);
+    color: var(--paper) !important;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.sidebar-bg #logoutButton {
+    color: rgba(244, 241, 230, 0.72) !important;
+    border-left: 3px solid transparent;
+    border-radius: 2px;
+}
+
+.sidebar-bg #logoutButton:hover {
+    background-color: rgba(139, 58, 47, 0.35);
+    border-left-color: var(--stamp);
+    color: var(--paper) !important;
+}
+
+/* ===================== PAGE HEADER ===================== */
+
+.page-header {
+    align-items: flex-end;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--paper-line);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 0 20px;
+}
+
+.eyebrow {
+    color: var(--moss);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.page-header h1 {
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 2.1rem;
+    font-weight: 600;
+}
+
+.page-header h1 span {
+    font-family: var(--font-serif);
+}
+
+.page-header p {
+    color: #6B6250;
+}
+
+.ledger-link-btn {
+    padding: 9px 16px;
+    background: transparent;
+    border: 1px solid var(--pine);
+    border-radius: 2px;
+    color: var(--pine);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ledger-link-btn:hover {
+    background-color: var(--pine);
+    color: var(--paper);
+}
+
+/* ===================== LEDGER STRIP (overall statistics) ===================== */
+
+.ledger-strip {
+    display: flex;
+    margin-bottom: 26px;
+    background-color: #FBF9F2;
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
+}
+
+.ledger-figure {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 22px;
+    border-right: 1px solid var(--paper-line);
+}
+
+.ledger-figure:last-child {
+    border-right: none;
+}
+
+.figure-label {
+    margin-bottom: 10px;
+    color: var(--moss);
+    font-family: var(--font-sans);
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.figure-value {
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.figure-meta {
+    margin-top: 8px;
+    color: #877B63;
+    font-family: var(--font-sans);
+    font-size: 0.76rem;
+}
+
+/* ===================== PANELS ===================== */
+
+.panel {
+    background-color: #FBF9F2;
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
+    box-shadow: none;
+    padding: 22px 24px;
+}
+
+.panel-title {
+    border-bottom: 1px solid var(--paper-line);
+}
+
+.panel-title h2 {
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.panel-title a {
+    color: var(--moss);
+    font-family: var(--font-sans);
+    font-weight: 600;
+}
+
+.panel-title a:hover {
+    color: var(--pine);
+}
+
+/* Top performers list */
+
+.goal-item {
+    border-bottom: 1px solid var(--paper-line);
+    font-family: var(--font-sans);
+}
+
+.goal-item .dot {
+    width: 3px;
+    height: 14px;
+    border-radius: 0;
+    background-color: var(--lichen);
+}
+
+.goal-item .score {
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-weight: 700;
+}
+
+/* Recent activity feed */
+
+.lesson-item {
+    background-color: transparent;
+    border: none;
+    border-left: none;
+    border-bottom: 1px solid var(--paper-line);
+    border-radius: 0;
+    padding: 12px 2px;
+}
+
+.lesson-item:not(:last-child)::after {
+    display: none;
+}
+
+.lesson-item:hover {
+    background-color: rgba(143, 174, 132, 0.1);
+    transform: none;
+    box-shadow: none;
+}
+
+.lesson-icon {
+    background-color: transparent;
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+    color: var(--pine);
+}
+
+.lesson-name {
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 600;
+}
+
+.lesson-meta {
+    color: #877B63;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+}
+
+.pill {
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.pill.live {
+    background-color: transparent;
+    border: 1px solid var(--moss);
+    color: var(--moss);
+}
+
+.pill.todo {
+    background-color: transparent;
+    border: 1px solid var(--stamp);
+    color: var(--stamp);
+}
+
+/* ===================== SECTION HEADER / TOOLBAR ===================== */
+
+.admin-section-header {
+    border-bottom: 1px solid var(--paper-line);
+    padding-bottom: 16px;
+}
+
+.admin-section-header h2 {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.admin-section-header p {
+    color: #6B6250;
+}
+
+.admin-count-badge {
+    background-color: transparent;
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+    color: var(--moss);
+    font-family: var(--font-mono);
+}
+
+.admin-toolbar {
+    align-items: stretch;
+}
+
+.ledger-search {
     flex: 1;
     min-width: 220px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--pine);
+    padding: 8px 2px;
+}
+
+.ledger-search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+}
+
+.ledger-search input::placeholder {
+    color: #A79A7C;
 }
 
 .admin-select {
-    padding: 10px 13px;
-    color: var(--text-dark);
-    background: #f7faf8;
-    border: 1px solid var(--border);
-    border-radius: 9px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--pine);
+    border-radius: 0;
+    color: var(--ink);
+    font-family: var(--font-sans);
     font-size: 0.82rem;
+    padding: 9px 4px;
 }
 
 .admin-select:focus {
-    outline: none;
-    border-color: var(--green-light);
-    box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.12);
+    box-shadow: none;
+    border-color: var(--moss);
 }
 
 /* ===================== TABLE ===================== */
 
-.admin-table-wrap {
-    overflow-x: auto;
-}
-
 .admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
+    font-family: var(--font-sans);
 }
 
 .admin-table thead th {
-    padding: 10px 14px;
-    color: var(--green-dark);
-    background-color: var(--green-soft);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    text-align: left;
-    white-space: nowrap;
+    background-color: transparent;
+    border-bottom: 2px solid var(--pine);
+    color: var(--pine);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .admin-table tbody td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-dark);
-    vertical-align: middle;
+    border-bottom: 1px solid var(--paper-line);
+    font-size: 0.86rem;
 }
 
 .admin-table tbody tr:hover {
-    background-color: var(--green-soft);
+    background-color: rgba(143, 174, 132, 0.08);
 }
 
 .admin-empty-row {
-    padding: 24px !important;
-    color: var(--text-muted);
-    text-align: center;
+    color: #877B63;
+    font-family: var(--font-serif);
+    font-style: italic;
 }
 
-/* ===================== STUDENT CELL ===================== */
+/* Student identity cell */
 
 .student-cell {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    align-items: baseline;
+    gap: 12px;
 }
 
-.student-avatar {
-    width: 34px;
-    height: 34px;
+.catalog-no {
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--green-light), var(--green));
-    color: var(--white);
-    font-size: 0.72rem;
-    font-weight: 700;
-}
-
-.student-avatar.muted {
-    background: #c8d6cd;
-    color: #4b5c52;
+    width: 52px;
+    color: var(--moss);
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
 }
 
 .student-name {
-    color: var(--green-dark);
-    font-weight: 700;
-    font-size: 0.85rem;
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 0.98rem;
+    font-weight: 500;
 }
 
 .student-email {
-    color: var(--text-muted);
-    font-size: 0.75rem;
+    color: #877B63;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
 }
 
-/* ===================== STATUS BADGE ===================== */
+/* Status stamp */
 
 .status-badge {
     display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
+    padding: 3px 9px;
+    background: transparent;
+    border-radius: 2px;
+    font-family: var(--font-sans);
     font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
 }
 
 .status-badge.active {
-    background-color: var(--green-pale);
-    color: var(--green-dark);
+    border: 1px solid var(--moss);
+    color: var(--moss);
 }
 
 .status-badge.inactive {
-    background-color: #FCEBEA;
-    color: #B3261E;
+    border: 1px solid var(--stamp);
+    color: var(--stamp);
+    transform: rotate(-2deg);
 }
 
-/* ===================== ACTIONS ===================== */
+/* Data columns rendered as monospace figures */
+
+.admin-table td:nth-child(2),
+.admin-table td:nth-child(3),
+.admin-table td:nth-child(4),
+.admin-table td:nth-child(6) {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink);
+}
+
+/* ===================== TEXT ACTIONS ===================== */
 
 .admin-actions-cell {
     display: flex;
     align-items: center;
-    gap: 6px;
     white-space: nowrap;
 }
 
-.admin-icon-btn {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #FAFCFB;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--green-dark);
-    cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-
-.admin-icon-btn:hover {
-    background-color: var(--green-pale);
-    border-color: var(--green-light);
-}
-
-.admin-icon-btn.danger:hover {
-    background-color: #FCEBEA;
-    border-color: #E5A6A0;
-    color: #B3261E;
-}
-
-.admin-text-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 12px;
-    background-color: var(--green-pale);
+.ledger-action {
+    padding: 0 10px;
+    background: none;
     border: none;
-    border-radius: 8px;
-    color: var(--green-dark);
+    border-right: 1px solid var(--paper-line);
+    color: var(--pine);
+    font-family: var(--font-sans);
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.15s ease;
 }
 
-.admin-text-btn:hover {
-    background-color: #b7e4c7;
+.ledger-action:last-child {
+    border-right: none;
 }
 
-/* ===================== PROGRESS ROW (in modal) ===================== */
-
-.progress-row {
-    margin-bottom: 14px;
+.ledger-action:hover {
+    color: var(--moss);
+    text-decoration: underline;
 }
 
-.progress-row:last-child {
-    margin-bottom: 0;
+.ledger-action.danger {
+    color: var(--stamp);
 }
 
-.progress-row-label {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    color: var(--text-dark);
-    font-size: 0.82rem;
+.ledger-action.danger:hover {
+    color: #6E2E24;
+}
+
+/* legacy classes kept in case referenced elsewhere; visually neutralized */
+.admin-icon-btn, .admin-text-btn {
+    background: none;
+    border: none;
+    color: var(--pine);
+}
+
+/* ===================== MODALS ===================== */
+
+.admin-modal .lesson-modal-dialog {
+    border-radius: 3px;
+    box-shadow: 0 20px 44px rgba(28, 46, 34, 0.22);
+}
+
+.admin-modal .lesson-modal-header {
+    background-color: #FBF9F2;
+    border-bottom: 1px solid var(--paper-line);
+}
+
+.admin-modal .lesson-modal-kicker {
+    color: var(--moss);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.admin-modal .lesson-modal-header h3 {
+    font-family: var(--font-serif);
+    color: var(--ink);
+}
+
+.admin-modal .lesson-modal-close {
+    width: auto;
+    height: auto;
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+    color: var(--pine);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
-.progress-row-label span:last-child {
-    color: var(--green-dark);
-    font-weight: 700;
+.admin-modal .lesson-modal-close:hover {
+    background-color: var(--pine);
+    color: var(--paper);
 }
 
-/* ===================== SCORE PILL (quiz modal) ===================== */
-
-.score-pill {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 700;
-}
-
-.score-pill.good { background-color: var(--green-pale); color: var(--green-dark); }
-.score-pill.ok { background-color: #FFF4D6; color: #8A6100; }
-.score-pill.low { background-color: #FCEBEA; color: #B3261E; }
-
-/* ===================== FORM (manage account modal) ===================== */
-
-.admin-form-group {
-    margin-bottom: 16px;
-}
-
-.admin-form-group label {
+.admin-modal .lesson-modal-body {
     display: block;
-    margin-bottom: 6px;
-    color: var(--green-dark);
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+    max-height: calc(86vh - 120px);
+    overflow-y: auto;
 }
 
-.admin-form-group input,
-.admin-form-group select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.88rem;
-    color: var(--text-dark);
-    background-color: #FAFCFB;
+.admin-modal .lesson-modal-content {
+    border-right: none;
+    overflow-y: visible;
+    font-family: var(--font-sans);
 }
 
-.admin-form-group input:focus,
-.admin-form-group select:focus {
-    outline: none;
-    border-color: var(--green-light);
-    box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.12);
+.admin-modal .lesson-summary {
+    color: #6B6250;
+    font-family: var(--font-sans);
 }
-
-.admin-form-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-top: 6px;
-}
-
-.admin-btn-primary {
-    padding: 10px 18px;
-    background-color: var(--green-dark);
-    border: none;
-    border-radius: 8px;
-    color: var(--white);
-    font-size: 0.82rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.admin-btn-primary:hover {
-    background-color: var(--green);
-}
-
-.admin-btn-danger-ghost {
-    padding: 10px 16px;
-    background-color: transparent;
-    border: 1px solid #E5A6A0;
-    border-radius: 8px;
-    color: #B3261E;
-    font-size: 0.82rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.admin-btn-danger-ghost:hover {
-    background-color: #FCEBEA;
-}
-
-/* ===================== SMALL MODAL SIZE VARIANT ===================== */
 
 .admin-modal-dialog.is-small {
     width: min(460px, calc(100vw - 32px));
@@ -372,25 +705,116 @@
     width: min(640px, calc(100vw - 32px));
 }
 
-/* Admin modals reuse .lesson-modal but need a single-column body
-   (the lesson modal's default is a two-column layout with a
-   model preview panel, which these modals don't have). */
-.admin-modal .lesson-modal-body {
-    display: block;
-    max-height: calc(86vh - 120px);
-    overflow-y: auto;
+/* Progress rows */
+
+.progress-row-label {
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
 }
 
-.admin-modal .lesson-modal-content {
-    border-right: none;
-    overflow-y: visible;
+.progress-row-label span:last-child {
+    color: var(--moss);
+    font-family: var(--font-mono);
+}
+
+.admin-modal .lesson-progress {
+    height: 3px;
+    background: var(--paper-line);
+    border-radius: 0;
+}
+
+.admin-modal .lesson-progress span {
+    background: var(--moss);
+    border-radius: 0;
+}
+
+/* Quiz score, rendered as ink figures rather than pills */
+
+.score-pill {
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    font-family: var(--font-mono);
+    font-weight: 700;
+}
+
+.score-pill::before {
+    content: "\2022";
+    margin-right: 5px;
+}
+
+.score-pill.good { color: var(--moss); }
+.score-pill.ok { color: var(--stamp-gold); }
+.score-pill.low { color: var(--stamp); }
+
+/* ===================== FORM ===================== */
+
+.admin-form-group label {
+    color: var(--pine);
+    font-family: var(--font-sans);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.admin-form-group input,
+.admin-form-group select {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--paper-line);
+    border-radius: 0;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    padding: 8px 2px;
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus {
+    box-shadow: none;
+    border-color: var(--moss);
+}
+
+.admin-btn-primary {
+    background-color: var(--pine);
+    border-radius: 2px;
+    font-family: var(--font-sans);
+}
+
+.admin-btn-primary:hover {
+    background-color: var(--moss);
+}
+
+.admin-btn-danger-ghost {
+    border: 1px solid var(--stamp);
+    border-radius: 2px;
+    color: var(--stamp);
+    font-family: var(--font-sans);
+    background-color: transparent;
+}
+
+.admin-btn-danger-ghost:hover {
+    background-color: rgba(139, 58, 47, 0.08);
 }
 
 /* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 860px) {
+    .ledger-strip {
+        flex-wrap: wrap;
+    }
+    .ledger-figure {
+        flex: 1 1 50%;
+        border-right: 1px solid var(--paper-line);
+        border-bottom: 1px solid var(--paper-line);
+    }
+}
 
 @media (max-width: 768px) {
     .admin-section-header {
         flex-direction: column;
         align-items: flex-start;
     }
+    .admin-table td:nth-child(2) { display: none; }
 }
