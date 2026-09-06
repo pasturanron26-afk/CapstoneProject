@@ -1,21 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cell Biology Lesson - EcoLearn</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BioLearn • Lessons</title>
 
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/sidebar.css">
-    <link rel="stylesheet" href="css/lesson.css">
+    <!-- =========================================
+         BOOTSTRAP 5 CSS
+    ========================================= -->
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/auth.js"></script>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
-    <style>
+
+    <!-- =========================================
+         BOOTSTRAP ICONS
+    ========================================= -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+  <!-- Keep your site-wide styles first -->
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/global.css" />
+  <!-- Page-specific styles -->
+  <link rel="stylesheet" href="css/lessons.css" />
+</head>
+        <style>
         /* =========================================
            ACTIVE TAB
         ========================================= */
@@ -25,17 +40,10 @@
             font-weight: 600;
         }
     </style>
-</head>
-
 <body>
-    <!-- =========================================
-         SIDEBAR (Fixed, Non-Collapsible)
-    ========================================= -->
-    <!-- =========================================
-         SIDEBAR
-    ========================================= -->
 
-    <nav
+  <!-- Your existing sidebar is handled globally (no extra <aside> here) -->
+      <nav
         class="d-flex flex-column align-items-center p-3 sidebar-bg"
     >
         
@@ -153,658 +161,55 @@
 
     </nav>
 
-    <!-- Main Lesson Content -->
-    <main class="lesson-page">
-        
-        <!-- HERO SECTION -->
-        <section class="lesson-hero">
-            <div class="hero-content">
-                <h1 class="hero-title">Cell Biology: Animal & Plant Cells</h1>
-                <p class="hero-intro">
-                    Explore the fascinating world of cells! This interactive lesson compares animal and plant cells, 
-                    examining their unique structures, shared organelles, and specialized functions through 3D models.
-                </p>
-                <div class="hero-badges">
-                    <span class="hero-badge">
-                        <i class="bi bi-clock"></i> 25 min read
-                    </span>
-                    <span class="hero-badge">
-                        <i class="bi bi-boxes"></i> 13 3D models
-                    </span>
-                </div>
-            </div>
-        </section>
+  <main class="lessons-main" id="main-content">
+    <header class="lessons-header">
+      <h1 class="lessons-title">Explore Biology</h1>
+      <p class="lessons-subtitle">Choose a topic to start learning.</p>
+    </header>
 
-        <!-- COMPARISON TABLE -->
-        <section class="comparison-section">
-            <h2 class="section-title">Animal Cell vs Plant Cell</h2>
-            <div class="table-responsive">
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th>Animal Cell</th>
-                            <th>Plant Cell</th>
-                        </tr>
-                    </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Cell Wall</strong></td>
-                                <td><span class="absent">Absent</span></td>
-                                <td><span class="present">Present (cellulose)</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Cell Membrane</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Nucleus</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Mitochondria</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Ribosomes</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Endoplasmic Reticulum</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Golgi Apparatus</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
+    <div class="lessons-list">
 
-                            <!-- Added -->
-                            <tr>
-                                <td><strong>Cytoskeleton</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Peroxisomes</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
-
-                            <tr>
-                                <td><strong>Lysosomes</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="absent">Absent</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Centrioles</strong></td>
-                                <td><span class="present">Present</span></td>
-                                <td><span class="absent">Absent</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Chloroplasts</strong></td>
-                                <td><span class="absent">Absent</span></td>
-                                <td><span class="present">Present</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Central Vacuole</strong></td>
-                                <td><span class="absent">Small/absent</span></td>
-                                <td><span class="present">Present (large)</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Shape</strong></td>
-                                <td>Irregular, round</td>
-                                <td>Rectangular, fixed</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Nutrition</strong></td>
-                                <td>Heterotrophic</td>
-                                <td>Autotrophic</td>
-                            </tr>
-                        </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Section Divider -->
-        <div class="section-divider">
-            <span>Shared Organelles</span>
+      <!-- CARD 1 -->
+      <article class="lesson-card">
+        <div class="card-thumbnail">
+          <img src="imgs/animalVSplant.jpg" alt="Illustration comparing animal and plant cells" loading="lazy" />
         </div>
 
-        <!-- ORGANELLE 1: NUCLEUS -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Nucleus</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>The nucleus is the most prominent, double-membrane-bound genetic organelle inside eukaryotic cells. 
-                    It acts as the cell's control center, storing linear DNA (genetic blueprint) and directing metabolism, 
-                    growth, protein synthesis, and reproduction.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Controls gene expression and directs all cell activity. It transcribes genetic DNA sequences into 
-                        messenger RNA (mRNA) transcripts, which exit through nuclear pores into the cytoplasm to guide 
-                        ribosomal protein synthesis.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="nucleus" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/0130c1dcee47436bac0dca3bfa4307f5/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/nucleus-0130c1dcee47436bac0dca3bfa4307f5" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">nucleus</a> by 
-                            <a href="https://sketchfab.com/MajoraMaster" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">MajoraMaster</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <div class="card-content">
+          <p class="card-eyebrow">MODULE 01 • Cellular Structure</p>
+          <h2 class="card-title">Animal Cell vs Plant Cell</h2>
+          <p class="card-desc">
+            Compare organelles, structures, and functions in animal and plant cells.
+            Includes interactive diagrams and quick checks.
+          </p>
+          <a class="card-btn" href="lessonModuleOne.html" aria-label="Open lesson: Animal Cell vs Plant Cell">
+            Learn <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </article>
 
-        <!-- ORGANELLE 2: MITOCHONDRIA -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Mitochondria</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>Mitochondria are double-membrane-bound, rod- or oval-shaped cytoplasmic organelles present in 
-                    eukaryotic cells. They are the "powerhouses" of the cell, responsible for making adenosine 
-                    triphosphate (ATP), the primary short-term energy currency of the cell.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Produces ATP energy through cellular respiration. The fluid-filled matrix hosts the Krebs cycle 
-                        to break down nutrients, while the folded inner cristae host the Electron Transport Chain to 
-                        generate large amounts of ATP via oxidative phosphorylation.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="Mitochondria" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/440fe0417b46478c9f31423656fc8d65/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/mitochondria-440fe0417b46478c9f31423656fc8d65" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Mitochondria</a> by 
-                            <a href="https://sketchfab.com/efarabaugh" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">efarabaugh</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ORGANELLE 3: RIBOSOMES -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Ribosomes</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>Ribosomes are small, non-membrane-bound cellular structures made of RNA and proteins. They are 
-                    complex macromolecular structures that serve as the sites of translation, responsible for protein synthesis.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Synthesizes polypeptide chains (proteins). They receive trans-located mRNA strands from the 
-                        nucleus and translate the triplet codon sequence into a specific sequence of amino acids, 
-                        utilizing tRNA to bring and hook amino acids into a polypeptide chain.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="Ribosome" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/2df1aeea00a64530af37f10daf0210fe/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/ribosome-2df1aeea00a64530af37f10daf0210fe" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Ribosome</a> by 
-                            <a href="https://sketchfab.com/madmicrobe" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Madmicrobe</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ORGANELLE 4: GOLGI APPARATUS -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Golgi Apparatus</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>The Golgi apparatus is an endomembrane system organelle consisting of compact stacks of flattened 
-                    membranes. It modifies, sorts, packages, tags, and distributes proteins and lipids synthesized in 
-                    the ER to their proper destinations inside or outside the cell.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Processes and modifies proteins by adding sugar chains to make glycoproteins. Transport vesicles 
-                        from the ER fuse with the cis face, cargo travels through cisternae where enzymes modify it, then 
-                        it's sorted, tagged, packed into secretory vesicles, and shipped from the trans face.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="Golgi Apparatus/Complex" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/f9a893dac37e43a487bc92e7f828db50/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/golgi-apparatuscomplex-f9a893dac37e43a487bc92e7f828db50" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Golgi Apparatus/Complex</a> by 
-                            <a href="https://sketchfab.com/MajoraMaster" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">MajoraMaster</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ORGANELLE 5: ENDOPLASMIC RETICULUM -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Endoplasmic Reticulum</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>The ER is an extensive, folded network of interconnected membranous sacs and tubules extending 
-                    from the outer nuclear envelope. It provides a supporting framework and serves as the primary site 
-                    for the synthesis, folding, modification, and transport of lipids, proteins, and carbohydrates.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Rough ER uses attached ribosomes to synthesize proteins directly into its lumen, where they 
-                        are folded, combined with sugars, packed into vesicles, and sent to the Golgi. Smooth ER uses 
-                        bound membrane enzymes to synthesize lipids/steroids and metabolize carbohydrates and toxins.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="Endoplasmic Reticulum" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/5bca14c45315412ba53345419becb3a1/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/endoplasmic-reticulum-5bca14c45315412ba53345419becb3a1" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Endoplasmic Reticulum</a> by 
-                            <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ORGANELLE 6: CELL MEMBRANE -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Cell Membrane</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>The cell membrane is a thin, selectively permeable biological barrier that encloses the cytoplasm. 
-                    It separates the internal contents of the cell from its external environment and strictly regulates 
-                    the passage of materials entering and exiting the cell.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Regulates and transports nutrients, mineral ions, and water inside while expelling cellular waste. 
-                        The hydrophobic lipid bilayer allows small and non-polar molecules to pass through passively, while 
-                        embedded trans-membrane proteins act as transport channels or pumps.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="cell_membrane" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/26e7fe432b25423493a286614245b09a/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/cell-membrane-26e7fe432b25423493a286614245b09a" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">cell_membrane</a> by 
-                            <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ORGANELLE 7: VACUOLE -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Vacuole</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>A vacuole is a membrane-bound, fluid-filled storage sac located in the cytoplasm of eukaryotic cells. 
-                    Its primary function is to store water, nutrients, carbohydrates, and enzymes, while isolating toxic 
-                    wastes and poorly folded proteins to protect the rest of the cell.</p>
-                    
-                    <p><strong>Animal vs. Plant Cells:</strong> While both cell types contain vacuoles, they differ significantly 
-                    in size and function. Animal cells contain multiple small, temporary vacuoles used for short-term storage, 
-                    transport, and waste removal (such as in endocytosis). In contrast, mature plant cells feature a single, 
-                    massive <strong>central vacuole</strong> that can occupy up to 90% of the cell's total volume.</p>
-                    
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>The surrounding membrane (tonoplast) utilizes active transport to strictly control the passage of materials. 
-                        In plant cells, when the central vacuole is filled with water, it exerts vital <strong>turgor pressure</strong> 
-                        against the rigid cell wall, stretching the cell and providing crucial structural support without the need 
-                        to synthesize new cytoplasm. In animal cells, vacuoles are highly dynamic, rapidly changing shape to sequester 
-                        toxic substances or aid in cellular digestion.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="vacuole" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/1f15870c90794a0f8e8a7e33e9c60d45/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/vacuole-1f15870c90794a0f8e8a7e33e9c60d45" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">vacuole</a> by 
-                            <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ORGANELLE 8: CYTOSKELETON -->
-        <section class="organelle-section" id="cytoskeleton">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Cytoskeleton</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            
-            <!-- General Description -->
-            <div class="organelle-text" style="margin-bottom: 30px;">
-                <p>The cytoskeleton is an intricate, non-membrane-bound network of structural protein fibers that spans the entire cytoplasm from the cell membrane to the nucleus. Its primary function is to maintain cell shape, structurally reinforce the cell, anchor organelles, and coordinate cell movement and internal transport.</p>
-                
-                <div class="function-box">
-                    <h4><i class="bi bi-lightning-charge-fill"></i> Overall Function</h4>
-                    <p>It maintains the cell's physical shape, structurally reinforces the cell against external pressure, anchors organelles in specific positions, and coordinates internal transport and cellular movement (such as muscle contraction or cell crawling).</p>
-                </div>
-            </div>
-
-            <hr style="border: 0; border-top: 1px solid #E0E0E0; margin: 25px 0;">
-            <h4 style="color: #1B4332; font-size: 1.2rem; margin-bottom: 25px; text-align: center;">The 3 Components of the Cytoskeleton</h4>
-
-            <!-- Part 1: Microtubules -->
-            <div class="cyto-row">
-                <div style="flex: 1; min-width: 300px;">
-                    <h4 style="color: #1B4332; font-size: 1.15rem; margin-bottom: 10px;">1. Microtubules</h4>
-                    <p><strong>What it is:</strong> The thickest of the cytoskeletal fibers, composed of hollow cylinders made of the protein tubulin.</p>
-                    <p><strong>Function:</strong> They resist compression and serve as the cell's internal "transit tracks." Motor proteins (like kinesin and dynein) walk along them to transport vesicles and organelles. They also form the mitotic spindle that pulls chromosomes apart during cell division, and make up the core structure of cilia and flagella.</p>
-                </div>
-                <div style="flex: 1; min-width: 300px;">
-                    <div class="organelle-embed">
-                        <div class="sketchfab-embed-wrapper">
-                            <iframe title="microtubules" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="350" src="https://sketchfab.com/models/6e6ee3d814c949fbb19b628bb54d55d5/embed?ui_theme=dark" style="height: 350px;"></iframe>
-                            <p>
-                                <a href="https://sketchfab.com/3d-models/microtubules-6e6ee3d814c949fbb19b628bb54d55d5" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">microtubules</a> by 
-                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Part 2: Intermediate Filaments -->
-            <div class="cyto-row" id="intermediate-filaments">
-                <div style="flex: 1; min-width: 300px;">
-                    <h4 style="color: #1B4332; font-size: 1.15rem; margin-bottom: 10px; margin-top: 40px;">2. Intermediate Filaments</h4>
-                    <p><strong>What it is:</strong> Mid-sized, rope-like fibers made of various fibrous proteins (such as keratin in animal cells). They are the most permanent and stable of the three filament types.</p>
-                    <p><strong>Function:</strong> They provide tensile strength and elasticity, helping the cell withstand mechanical stress and stretching. They also act as a structural scaffold to anchor organelles (like the nucleus) firmly in place.</p>
-                </div>
-                <div style="flex: 1; min-width: 300px;">
-                    <div class="organelle-embed">
-                        <div class="sketchfab-embed-wrapper">
-                            <iframe title="Intermediate Filament" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="350" src="https://sketchfab.com/models/3d12e4e6e9804b9c9d55efc34a1559b4/embed?ui_theme=dark" style="height: 350px;"></iframe>
-                            <p>
-                                <a href="https://sketchfab.com/3d-models/intermediate-filament-3d12e4e6e9804b9c9d55efc34a1559b4" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Intermediate Filament</a> by 
-                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Part 3: Microfilaments -->
-            <div class="cyto-row" id="microfilaments">
-                <div style="flex: 1; min-width: 300px;">
-                    <h4 style="color: #1B4332; font-size: 1.15rem; margin-bottom: 10px; margin-top: 40px;">3. Microfilaments (Actin Filaments)</h4>
-                    <p><strong>What it is:</strong> The thinnest cytoskeletal fibers, composed of two intertwined strands of the globular protein actin.</p>
-                    <p><strong>Function:</strong> They resist tension and are crucial for cell motility (crawling). In muscle cells, they pair with myosin to drive rapid contractions. They also facilitate cytoplasmic streaming and form the "cleavage furrow" that pinches a cell in two during division.</p>
-                </div>
-                <div style="flex: 1; min-width: 300px;">
-                    <div class="organelle-embed">
-                        <div class="sketchfab-embed-wrapper">
-                            <iframe title="Microfilaments" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="350" src="https://sketchfab.com/models/6d519e65400a4176bf2c2b337ad18d32/embed?ui_theme=dark" style="height: 350px;"></iframe>
-                            <p>
-                                <a href="https://sketchfab.com/3d-models/microfilaments-6d519e65400a4176bf2c2b337ad18d32" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Microfilaments</a> by 
-                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ORGANELLE 9: PEROXISOME -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Peroxisome</h3>
-                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>A peroxisome is a small, single-membrane-bound organelle found in the cytoplasm of most eukaryotic cells. 
-                    It contains enzymes that perform <strong>oxidative reactions</strong> and help break down fatty acids and other molecules.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Breaks down <strong>fatty acids and certain molecules</strong>, while also protecting the cell by converting harmful 
-                        <strong>hydrogen peroxide (H₂O₂)</strong> into harmless water and oxygen using the enzyme <strong>catalase</strong>. 
-                        In plants, it also contributes to <strong>photorespiration, the glyoxylate cycle, and hormone production</strong>, 
-                        while in animals it helps with <strong>very-long-chain fatty acid breakdown and lipid synthesis</strong>.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="peroxisome" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/6325c466792240ae90300e9cc1a43a81/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/peroxisome-6325c466792240ae90300e9cc1a43a81" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">peroxisome</a> by 
-                            <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section Divider -->
-        <div class="section-divider">
-            <span>Animal Cell Only</span>
+     
+        <!-- CARD 2 -->
+        <article class="lesson-card">
+        <div class="card-thumbnail">
+          <img src="imgs/cellDivision.jpg" alt="Illustration of cell division" loading="lazy" />
         </div>
 
-        <!-- ORGANELLE 9: LYSOSOME -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Lysosome</h3>
-                <span class="cell-tag tag-animal"><i class="bi bi-heart-pulse"></i> Animal Only</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>The lysosome is a small, spherical, single-membrane-bound vesicle found primarily in animal cells 
-                    that contains an array of highly acidic digestive enzymes. It serves as the cellular waste disposal 
-                    and recycling facility.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Digests old or damaged cellular components, breaks down food particles, and destroys foreign 
-                        pathogens. It maintains an internal acidic pH of 5 using a specialized membrane-bound proton pump 
-                        that activates hydrolytic enzymes to safely break down macromolecules.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="lysosome" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/62aa7eff4a1c4be7b0bf7f84642cd6db/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/lysosome-62aa7eff4a1c4be7b0bf7f84642cd6db" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">lysosome</a> by 
-                            <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ORGANELLE 10: CENTRIOLE -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Centriole</h3>
-                <span class="cell-tag tag-animal"><i class="bi bi-heart-pulse"></i> Animal Only</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>A centriole is a small, hollow, cylindrical, non-membrane-bound structure that resides inside the 
-                    centrosome of animal cells. It functions as the principal microtubule-organizing center (MTOC), 
-                    coordinating the cellular microtubule network.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Organizes the mitotic spindle during cell division and builds locomotory structures like cilia 
-                        and flagella. It anchors existing microtubules and uses molecular factors in its surrounding matrix 
-                        to synthesize and grow new tubules outward.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="centriole" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/56d05f328ebf41c8b84e2e39b2b10e44/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/centriole-56d05f328ebf41c8b84e2e39b2b10e44" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">centriole</a> by 
-                            <a href="https://sketchfab.com/amirezahadian" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">amirezahadian</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section Divider -->
-        <div class="section-divider">
-            <span>Plant Cell Only</span>
+        <div class="card-content">
+            <p class="card-eyebrow">MODULE 02 • Cell Division</p>
+            <h2 class="card-title">Cell Division: Mitosis vs Meiosis</h2>
+            <p class="card-desc">
+            Walk through the cell cycle (G1, S, G2, M), compare mitosis and meiosis,
+            and see how checkpoints help prevent errors.
+            </p>
+            <a class="card-btn" href="lesson-cell-division.html" aria-label="Open lesson: Cell Division — Mitosis vs Meiosis">
+            Learn <span aria-hidden="true">→</span>
+            </a>
         </div>
+        </article>
 
-        <!-- ORGANELLE 11: CELL WALL -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Cell Wall</h3>
-                <span class="cell-tag tag-plant"><i class="bi bi-flower3"></i> Plant Only</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>The cell wall is the outermost, rigid protective layer located outside the cell membrane in plants, 
-                    algae, fungi, and some bacteria. It provides mechanical strength, support, rigidity, and protection, 
-                    and maintains the cell's distinct shape and overall integrity.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Provides mechanical strength and maintains cell shape. Microtubules guide the assembly of cellulose 
-                        fibers, which are laid down by enzymes to form the primary wall. When cell growth is complete, some 
-                        plants build a secondary wall containing lignin to offer permanent stiff mechanical support.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="cell-wall" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/074a756715f44fa39391c467d04547a2/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/cell-wall-074a756715f44fa39391c467d04547a2" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">cell-wall</a> by 
-                            <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+    </div>
+  </main>
 
-        <!-- ORGANELLE 12: CHLOROPLAST -->
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Chloroplast</h3>
-                <span class="cell-tag tag-plant"><i class="bi bi-flower3"></i> Plant Only</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-                    <p>The chloroplast is a double-membrane-bound, pigment-containing plastid unique to photosynthetic plants 
-                    and algae. It is the site of photosynthesis, capturing solar energy to convert water and carbon dioxide 
-                    into organic sugars (like glucose) and oxygen.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Performs photosynthesis. During light-dependent reactions, chlorophyll in the thylakoid membranes 
-                        absorbs sunlight to create molecular energy. During light-independent reactions, this energy is used 
-                        in the stroma to synthesize glucose from carbon dioxide and water.</p>
-                    </div>
-                </div>
-                <div class="organelle-embed">
-                    <div class="sketchfab-embed-wrapper">
-                        <iframe title="Chloroplast" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/30bc55b2f763415f9222f876c564be97/embed?ui_theme=dark"></iframe>
-                        <p>
-                            <a href="https://sketchfab.com/3d-models/chloroplast-30bc55b2f763415f9222f876c564be97" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Chloroplast</a> by 
-                            <a href="https://sketchfab.com/arloopa" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">arloopa</a> on 
-                            <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- REFERENCES SECTION -->
-        <section class="references-section">
-            <h2 class="section-title">References</h2>
-            
-            <div class="references-group">
-                <h3>Animal Cell Sources</h3>
-                <ul class="references-list">
-                    <li>Bailey, R. (2024, August 2). All about animal cells. ThoughtCo. https://www.thoughtco.com/all-about-animal-cells</li>
-                    <li>Fields, D. (2026, August 18). What are organelles? (A. Khetrapal, Rev.). News-Medical. https://www.news-medical.net/life-sciences/What-Are-Organelles.aspx</li>
-                    <li>GeeksforGeeks. (2026, April 24). Cell organelles. https://www.geeksforgeeks.org/biology/cell-organelles-definition-structure-types-functions/</li>
-                    <li>Helmenstine, A. (2026, August 9). Animal cell – diagram, organelles, and characteristics. Science Notes and Projects. https://sciencenotes.org/animal-cell-diagram-organelles-and-characteristics/</li>
-                    <li>Khan Academy. (n.d.). Cellular organelles and structure. https://www.khanacademy.org/test-prep/mcat/cells/eukaryotic-cells/a/organelles-article</li>
-                    <li>Lumen Learning. (n.d.). Organelles. Biology for Majors I. https://courses.lumenlearning.com/suny-wmopen-biology1/chapter/outcome-organelles/</li>
-                    <li>Lumen Learning. (n.d.). The cytoplasm and cellular organelles. Anatomy and Physiology I. https://courses.lumenlearning.com/suny-ap1/chapter/the-cytoplasm-and-cellular-organelles/</li>
-                    <li>Maharjan, A. (2025, October 28). Plant and animal cell organelles with structure, functions (S. Aryal, Ed.). Microbe Notes. https://microbenotes.com/organelles-plant-and-animal/</li>
-                    <li>Mokobi, F. (2026, July 21). Animal cell: Structure, parts, functions, labeled diagram (S. Aryal, Ed.). Microbe Notes. https://microbenotes.com/animal-cell-definition-structure-parts-functions-and-diagram/</li>
-                    <li>RMIT University. (2026). Organelles and their functions. RMIT University Learning Lab. https://learninglab.rmit.edu.au/life-science/structure-and-function-of-cells/organelles/</li>
-                    <li>Save My Exams. (2025, March 5). Animal cells - GCSE biology definition (C. Head, Rev.). Save My Exams. https://www.savemyexams.com/</li>
-                </ul>
-            </div>
-
-            <div class="references-group">
-                <h3>Plant Cell Sources</h3>
-                <ul class="references-list">
-                    <li>Bailey, R. (2025, May 7). Learn about plant cell types and organelles. ThoughtCo. https://www.thoughtco.com/what-is-a-plant-cell-373384</li>
-                    <li>GeeksforGeeks. (2026, April 23). Plant cell. https://www.geeksforgeeks.org/biology/plant-cell/</li>
-                    <li>Ha, M., Morrow, M., & Algiers, K. (2025, July 28). 3.1.2: Plant cell structure. Biology LibreTexts. https://bio.libretexts.org/Bookshelves/Botany/Botany_(Ha_Morrow_and_Algiers)/03:_Plant_Structure/3.01:_Cells_and_Tissues/3.1.02:_Plant_Cell_Structure</li>
-                    <li>Lumen Learning. (2020). Unique features of animal and plant cells. Biology for Majors I. https://courses.lumenlearning.com/wm-biology1/chapter/reading-unique-features-of-plant-cells/</li>
-                    <li>Mokobi, F. (2026, July 21). Plant cell: Structure, parts, functions, labeled diagram (S. Aryal, Ed.). Microbe Notes. https://microbenotes.com/plant-cell/</li>
-                    <li>MyEdSpace. (2024, May 2). Plant cell structure notes and diagrams: A-level Biology. https://myedspace.co.uk/myresources/a-level/biology/aqa/revision-notes/plant-cell-structure</li>
-                    <li>Physics Wallah. (2022, October 28). Plant cells - Definition, diagram, structure and function. https://www.pw.live/school-prep/exams/biology-articles-plant-cells</li>
-                    <li>Sanjeev. (2024, October 17). Plant cell diagram, structure, types and functions. Career Power. https://www.careerpower.in/school/biology/plant-cell</li>
-                    <li>Science Facts. (2021, October 21). Plant cell: Parts and structure with functions. https://www.sciencefacts.net/plant-cell.html</li>
-                    <li>Wilkin, D. (2026, August 1). Plant cell structure. CK-12 Foundation. https://flexbooks.ck12.org/cbook/ck-12-biology-flexbook-2.0/section/2.9/primary/lesson/plant-cell-structures-bio/</li>
-                </ul>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- =========================================
-        LOGOUT BUTTON SCRIPT
-    ========================================= -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const logoutButton = document.getElementById('logoutButton');
-            
-            if (logoutButton) {
-                logoutButton.addEventListener('click', async () => {
-                    await window.ecoAuth.signOut();
-                });
-            }
-        });
-    </script>
 </body>
 </html>
