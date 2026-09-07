@@ -1,3 +1,9 @@
+/* =====================================================
+   ECOLEARN — 3D CELL VIEWER (LEDGER THEME)
+   Uses the tokens defined in css/ledger-theme.css
+   (loaded before this file).
+===================================================== */
+
 /* =========================================
    MAIN GRID
 ========================================= */
@@ -33,7 +39,7 @@
     position: relative;
     overflow: hidden;
 
-    background: linear-gradient(135deg, #edf8f1 0%, #dff0e5 100%);
+    background: var(--paper);
 }
 
 
@@ -48,10 +54,10 @@
     grid-column-start: 4;
     grid-row-start: 1;
 
-    background: #f8fbf9;
+    background: var(--panel-bg);
 
     padding: 40px;
-    border-left: 1px solid #d8ebe0;
+    border-left: 1px solid var(--paper-line);
 
     overflow-y: auto;
 
@@ -93,10 +99,11 @@
 #infoTitle {
     margin: 0;
 
-    color: #1B4332;
+    color: var(--ink);
 
+    font-family: var(--font-serif);
     font-size: 30px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 
@@ -110,8 +117,9 @@
 
     margin-top: 5px;
 
-    color: #777;
+    color: var(--ink-muted);
 
+    font-family: var(--font-serif);
     font-size: 16px;
     font-style: italic;
 }
@@ -130,11 +138,11 @@
     margin-top: 12px;
     padding: 0;
 
-    border: none;
+    border: 1px solid var(--pine);
     border-radius: 50%;
 
-    background: #40916C;
-    color: white;
+    background: var(--pine);
+    color: var(--paper);
 
     align-items: center;
     justify-content: center;
@@ -157,7 +165,8 @@
 
 
 .speakButton:hover {
-    background: #2D6A4F;
+    background: var(--moss);
+    border-color: var(--moss);
 
     transform: scale(1.05);
 }
@@ -175,10 +184,11 @@
 .infoContent {
     margin-top: 10px;
 
+    font-family: var(--font-sans);
     font-size: 16px;
     line-height: 1.8;
 
-    color: #444;
+    color: var(--ink);
 }
 
 
@@ -209,8 +219,9 @@
 .infoSectionHeading {
     margin: 0 0 6px 0;
 
-    color: #2D6A4F;
+    color: var(--pine);
 
+    font-family: var(--font-sans);
     font-size: 12px;
 
     font-weight: 700;
@@ -228,7 +239,7 @@
 .infoSectionBody {
     margin: 0;
 
-    color: #333;
+    color: var(--ink);
 
     font-size: 15px;
 
@@ -245,7 +256,7 @@
     grid-column-start: 1;
     grid-row-start: 1;
 
-    background: #1B4332;
+    background: var(--pine);
     padding: 25px 10px;
     overflow: hidden;
 
@@ -265,10 +276,10 @@
     right: 10px;
     background: none;
     border: none;
-    color: white;
+    color: var(--paper);
     width: 32px;
     height: 32px;
-    border-radius: 6px;
+    border-radius: 2px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -278,7 +289,7 @@
 }
 
 .sidebar-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(143, 174, 132, 0.2);
 }
 
 .parent.sidebar-collapsed .sidebar-toggle-btn {
@@ -304,7 +315,8 @@
 }
 
 .organelleNav h3 {
-    color: white;
+    color: var(--paper);
+    font-family: var(--font-serif);
     font-size: 20px;
     font-weight: 600;
     margin: 0 0 20px 5px;
@@ -334,16 +346,18 @@
 
 .organelleButton {
     width: 100%;
-    padding: 11px 12px;
+    padding: 10px 12px;
 
     border: none;
-    border-radius: 7px;
+    border-left: 3px solid transparent;
+    border-radius: 2px;
 
     background: transparent;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(244, 241, 230, 0.72);
 
     text-align: left;
-    font-size: 14px;
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
     cursor: pointer;
 
     white-space: nowrap;
@@ -351,6 +365,7 @@
     transition:
         background 0.2s ease,
         color 0.2s ease,
+        border-color 0.2s ease,
         padding 0.3s ease-in-out,
         opacity 0.2s ease;
 }
@@ -361,16 +376,17 @@
 }
 
 .organelleButton:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(143, 174, 132, 0.14);
 
-    color: white;
+    color: var(--paper);
 }
 
 
 .organelleButton.active {
-    background: #40916C;
+    background: rgba(143, 174, 132, 0.12);
+    border-left-color: var(--lichen);
 
-    color: white;
+    color: var(--paper);
 
     font-weight: 600;
 }
@@ -386,7 +402,7 @@
 
 
 .organelleList::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(244, 241, 230, 0.25);
 
     border-radius: 10px;
 }
@@ -449,12 +465,13 @@
     width: 45px;
     height: 45px;
 
-    border: none;
-    border-radius: 8px;
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
 
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--panel-bg);
 
     font-size: 20px;
+    color: var(--pine);
 
     cursor: pointer;
 
@@ -463,9 +480,7 @@
     align-items: center;
     justify-content: center;
 
-    box-shadow:
-        0 3px 10px
-        rgba(0, 0, 0, 0.15);
+    box-shadow: none;
 
     transition:
         background 0.2s ease,
@@ -474,7 +489,8 @@
 
 
 .zoomControls button:hover {
-    background: white;
+    background: var(--pine);
+    color: var(--paper);
 
     transform: scale(1.05);
 }
@@ -486,16 +502,16 @@
 
 
 .zoomControls button.active {
-    background: #40916C;
-    color: white;
-    box-shadow:
-        0 3px 10px
-        rgba(64, 145, 108, 0.3);
+    background: var(--pine);
+    color: var(--paper);
+    border-color: var(--pine);
+    box-shadow: none;
 }
 
 
 .zoomControls button.active:hover {
-    background: #2d6a52;
+    background: var(--moss);
+    border-color: var(--moss);
 }
 
 
@@ -510,7 +526,7 @@
 
     z-index: 50;
 
-    background: #F3F8F5;
+    background: var(--paper);
 
     display: flex;
 
@@ -564,18 +580,18 @@
     width: 58px;
     height: 58px;
 
-    border: 2px solid rgba(64, 145, 108, 0.65);
+    border: 2px solid rgba(79, 122, 91, 0.55);
 
     background:
         linear-gradient(
             135deg,
-            rgba(64, 145, 108, 0.10),
-            rgba(27, 67, 50, 0.04)
+            rgba(79, 122, 91, 0.12),
+            rgba(28, 46, 34, 0.05)
         );
 
     box-shadow:
         inset 0 0 15px
-        rgba(64, 145, 108, 0.08);
+        rgba(79, 122, 91, 0.10);
 }
 
 
@@ -668,9 +684,9 @@
     position: relative;
 
     width: 100%;
-    height: 9px;
+    height: 6px;
 
-    background: #D8E8DF;
+    background: var(--paper-line);
 
     border-radius: 20px;
 
@@ -678,9 +694,7 @@
 
     flex: 1;
 
-    box-shadow:
-        inset 0 1px 2px
-        rgba(27, 67, 50, 0.08);
+    box-shadow: none;
 }
 
 
@@ -702,22 +716,14 @@
 
     min-width: 0;
 
-    background:
-        linear-gradient(
-            90deg,
-            #2D6A4F,
-            #40916C,
-            #52B788
-        );
+    background: var(--moss);
 
     border-radius: 20px;
 
     transition:
         width 0.15s ease;
 
-    box-shadow:
-        0 0 8px
-        rgba(64, 145, 108, 0.35);
+    box-shadow: none;
 
     z-index: 2;
 }
@@ -730,8 +736,9 @@
 .loadingPercentage {
     min-width: 42px;
 
-    color: #1B4332;
+    color: var(--ink);
 
+    font-family: var(--font-mono);
     font-size: 14px;
 
     font-weight: 700;
@@ -747,8 +754,9 @@
 #modelLoading p {
     margin: 14px 0 0 0;
 
-    color: #1B4332;
+    color: var(--ink);
 
+    font-family: var(--font-serif);
     font-size: 15px;
 
     font-weight: 600;
@@ -776,9 +784,9 @@
     background:
         linear-gradient(
             90deg,
-            #DCEBE3 0%,
-            #EEF7F2 45%,
-            #DCEBE3 80%
+            var(--paper-line) 0%,
+            var(--paper) 45%,
+            var(--paper-line) 80%
         );
 
     background-size: 200% 100%;
@@ -786,7 +794,7 @@
     animation:
         skeletonLoading 1.6s ease-in-out infinite;
 
-    border-radius: 8px;
+    border-radius: 2px;
 }
 
 
@@ -801,7 +809,7 @@
 
     margin-bottom: 35px;
 
-    border-radius: 9px;
+    border-radius: 2px;
 }
 
 
@@ -816,7 +824,7 @@
 
     margin-bottom: 12px;
 
-    border-radius: 6px;
+    border-radius: 2px;
 }
 
 
@@ -864,7 +872,7 @@
 
     margin-bottom: 25px;
 
-    border-radius: 7px;
+    border-radius: 2px;
 }
 
 
@@ -879,7 +887,7 @@
 
     margin-bottom: 8px;
 
-    border-radius: 7px;
+    border-radius: 2px;
 }
 
 
@@ -935,7 +943,7 @@
 
     padding-top: 22px;
 
-    border-top: 1px solid #E0EDE6;
+    border-top: 1px solid var(--paper-line);
 }
 
 
@@ -952,8 +960,9 @@
 
     margin-bottom: 12px;
 
-    color: #2D6A4F;
+    color: var(--pine);
 
+    font-family: var(--font-sans);
     font-size: 12px;
 
     font-weight: 700;
@@ -1010,8 +1019,9 @@
 .sourceNumber {
     flex-shrink: 0;
 
-    color: #888;
+    color: var(--ink-faint);
 
+    font-family: var(--font-mono);
     font-size: 11.5px;
 
     line-height: 1.6;
@@ -1025,7 +1035,7 @@
 ===================================================== */
 
 .sourceText {
-    color: #666;
+    color: var(--ink-muted);
 
     font-size: 11.5px;
 
@@ -1036,7 +1046,7 @@
 .sourceText em {
     font-style: italic;
 
-    color: #555;
+    color: var(--ink);
 }
 
 
@@ -1051,7 +1061,7 @@
 
     margin-left: 4px;
 
-    color: #40916C;
+    color: var(--moss);
 
     font-size: 10px;
 
@@ -1059,7 +1069,7 @@
 
     vertical-align: middle;
 
-    opacity: 0.75;
+    opacity: 0.85;
 
     transition:
         opacity 0.15s ease,
@@ -1070,7 +1080,7 @@
 .sourceLink:hover {
     opacity: 1;
 
-    color: #1B4332;
+    color: var(--pine);
 }
 
 /* =========================================
@@ -1088,19 +1098,20 @@
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.95);
-    border: none;
-    border-radius: 8px;
+    background: var(--panel-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+    font-family: var(--font-sans);
     font-size: 14px;
     font-weight: 600;
-    color: #1B4332;
+    color: var(--ink);
     cursor: pointer;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
     transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .modeButton:hover {
-    background: #ffffff;
+    background: var(--paper);
     transform: scale(1.02);
 }
 
@@ -1113,29 +1124,31 @@
 }
 
 .dropdown-menu {
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    border: 1px solid var(--paper-line);
+    box-shadow: none;
+    border-radius: 2px;
     padding: 4px;
     min-width: 140px;
+    background: var(--panel-bg);
 }
 
 .dropdown-item {
-    border-radius: 6px;
+    border-radius: 2px;
     padding: 8px 12px;
+    font-family: var(--font-sans);
     font-size: 14px;
-    color: #333;
+    color: var(--ink);
     transition: background 0.2s ease;
 }
 
 .dropdown-item:hover {
-    background: #F3F8F5;
-    color: #1B4332;
+    background: var(--paper);
+    color: var(--pine);
 }
 
 .dropdown-item.active {
-    background: #40916C;
-    color: white;
+    background: var(--pine);
+    color: var(--paper);
 }
 
 /* =========================================
@@ -1163,24 +1176,25 @@
 ========================================= */
 .main-nav-section {
     padding: 0 10px 20px 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(244, 241, 230, 0.14);
     margin-bottom: 20px;
     transition: all 0.3s ease-in-out;
 }
 
 .main-nav-section .nav-link {
-    color: rgba(255, 255, 255, 0.75) !important;
+    color: rgba(244, 241, 230, 0.72) !important;
     transition: all 0.2s ease;
 }
 
 .main-nav-section .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff !important;
+    background-color: rgba(143, 174, 132, 0.14);
+    color: var(--paper) !important;
 }
 
 .main-nav-section .nav-link.CellModel {
-    background-color: #40916C !important;
-    color: #ffffff !important;
+    background: rgba(143, 174, 132, 0.12) !important;
+    border-left: 3px solid var(--lichen);
+    color: var(--paper) !important;
     font-weight: 600;
 }
 

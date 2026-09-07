@@ -18,6 +18,11 @@
    replace `buildMockStudents()` with a real
    `ecoAuth.client.from('profiles').select(...)` query and keep
    the rest of this file (rendering/filtering/modals) as-is.
+
+   NOTE ON NAVIGATION: Overview / Students / Archived are no
+   longer separate hidden panels — all three stay on the page
+   and the sidebar links smooth-scroll to them (see
+   setActiveView + the IntersectionObserver scroll-spy below).
 ===================================================== */
 
 const MODULE_NAMES = [
@@ -84,6 +89,7 @@ function buildMockStudents(count = 16) {
 
         students.push({
             id: `stu-${i + 1}`,
+            catalogNo: String(i + 1).padStart(3, '0'),
             name: fullName,
             email,
             joined: joined.toISOString().slice(0, 10),
@@ -199,7 +205,7 @@ function renderStudentTable() {
         tr.innerHTML = `
             <td>
                 <div class="student-cell">
-                    <div class="student-avatar">${s.name.split(' ').map(p => p[0]).join('')}</div>
+                    <span class="catalog-no">No. ${s.catalogNo}</span>
                     <div>
                         <div class="student-name">${s.name}</div>
                         <div class="student-email">${s.email}</div>
@@ -212,10 +218,10 @@ function renderStudentTable() {
             <td><span class="status-badge ${s.status}">${s.status}</span></td>
             <td>${s.lastActiveDaysAgo === 0 ? 'Today' : s.lastActiveDaysAgo + 'd ago'}</td>
             <td class="admin-actions-cell">
-                <button class="admin-icon-btn" title="View progress" data-action="progress" data-id="${s.id}"><i class="bi bi-graph-up"></i></button>
-                <button class="admin-icon-btn" title="Quiz performance" data-action="quiz" data-id="${s.id}"><i class="bi bi-patch-check"></i></button>
-                <button class="admin-icon-btn" title="Manage account" data-action="manage" data-id="${s.id}"><i class="bi bi-person-gear"></i></button>
-                <button class="admin-icon-btn danger" title="Archive student" data-action="archive" data-id="${s.id}"><i class="bi bi-archive"></i></button>
+                <button class="ledger-action" title="View progress" data-action="progress" data-id="${s.id}">Progress</button>
+                <button class="ledger-action" title="Quiz performance" data-action="quiz" data-id="${s.id}">Quiz</button>
+                <button class="ledger-action" title="Manage account" data-action="manage" data-id="${s.id}">Manage</button>
+                <button class="ledger-action danger" title="Archive student" data-action="archive" data-id="${s.id}">Archive</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -240,7 +246,7 @@ function renderArchivedTable() {
         tr.innerHTML = `
             <td>
                 <div class="student-cell">
-                    <div class="student-avatar muted">${s.name.split(' ').map(p => p[0]).join('')}</div>
+                    <span class="catalog-no">No. ${s.catalogNo}</span>
                     <div>
                         <div class="student-name">${s.name}</div>
                         <div class="student-email">${s.email}</div>
@@ -251,7 +257,7 @@ function renderArchivedTable() {
             <td>${s.modulesCompleted}/12</td>
             <td>${s.avgScore !== null ? s.avgScore + '%' : '&mdash;'}</td>
             <td class="admin-actions-cell">
-                <button class="admin-text-btn" data-action="restore" data-id="${s.id}"><i class="bi bi-arrow-counterclockwise"></i> Restore</button>
+                <button class="ledger-action" data-action="restore" data-id="${s.id}">Restore</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -264,13 +270,36 @@ function renderAll() {
     renderArchivedTable();
 }
 
-/* ===================== VIEW SWITCHING ===================== */
+/* ===================== NAVIGATION (scroll, not show/hide) ===================== */
 
 function setActiveView(view) {
-    document.querySelectorAll('.admin-view').forEach(el => el.classList.toggle('is-active', el.dataset.view === view));
+    const section = document.querySelector(`.admin-view[data-view="${view}"]`);
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     document.querySelectorAll('.sidebar-bg .nav-link[data-view]').forEach(el => {
         el.classList.toggle('active', el.dataset.view === view);
     });
+}
+
+function setupScrollSpy() {
+    const sections = Array.from(document.querySelectorAll('.admin-view'));
+    const navLinksByView = {};
+    document.querySelectorAll('.sidebar-bg .nav-link[data-view]').forEach(link => {
+        navLinksByView[link.dataset.view] = link;
+    });
+
+    const scrollSpy = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const view = entry.target.dataset.view;
+                Object.values(navLinksByView).forEach(l => l.classList.remove('active'));
+                navLinksByView[view]?.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+    sections.forEach(section => scrollSpy.observe(section));
 }
 
 /* ===================== MODALS ===================== */
@@ -401,7 +430,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             const { data } = await ecoAuth.client.auth.getSession();
             const user = data?.session?.user;
             if (user) {
-                document.getElementById('adminName').textContent = user.user_metadata?.full_name || user.email || 'Admin';
+                const displayName = user.user_metadata?.full_name || user.email || 'Admin';
+                document.getElementById('adminName').textContent = displayName;
+
+                const avatarEl = document.getElementById('topbarAvatar');
+                if (avatarEl) {
+                    const initials = displayName
+                        .trim()
+                        .split(/\s+/)
+                        .map(part => part[0])
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .join('')
+                        .toUpperCase();
+                    avatarEl.textContent = initials || 'A';
+                    avatarEl.title = displayName;
+                }
             }
         } catch (e) { /* keep default label */ }
 
@@ -412,6 +456,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     renderAll();
+    setupScrollSpy();
+
+    const topbarSearch = document.getElementById('topbarSearch');
+    const studentSearchInput = document.getElementById('studentSearch');
+    topbarSearch?.addEventListener('input', (e) => {
+        const value = e.target.value;
+        if (studentSearchInput) studentSearchInput.value = value;
+        currentFilter.search = value.trim().toLowerCase();
+        renderStudentTable();
+    });
+    topbarSearch?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            setActiveView('students');
+        }
+    });
 
     document.querySelectorAll('.sidebar-bg .nav-link[data-view]').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -426,6 +486,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('studentSearch').addEventListener('input', (e) => {
         currentFilter.search = e.target.value.trim().toLowerCase();
         renderStudentTable();
+        if (topbarSearch) topbarSearch.value = e.target.value;
     });
 
     document.getElementById('statusFilter').addEventListener('change', (e) => {
@@ -446,5 +507,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    document.getElementById('goToStudentsBtn')?.addEventListener('click', () => setActiveView('students'));
+    document.getElementById('goToStudentsBtn')?.addEventListener('click', (e) => { e.preventDefault(); setActiveView('students'); });
+    document.getElementById('headerLedgerLink')?.addEventListener('click', () => setActiveView('students'));
 });

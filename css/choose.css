@@ -1,3 +1,11 @@
+/* =====================================================
+   ECOLEARN — 3D CELL EXPLORER (LEDGER THEME)
+   Recolored from the dark-green gradient look to match
+   the admin ledger: aged paper, ink text, serif headings,
+   pine/moss accents. Uses the tokens defined in
+   css/ledger-theme.css (loaded before this file).
+===================================================== */
+
 /* =========================================
    MAIN CONTAINER
 ========================================= */
@@ -7,8 +15,8 @@
     flex-direction: column;
     padding: 30px;
     min-height: 100vh;
-    background: linear-gradient(135deg, #08251d 0%, #0d382b 58%, #061c17 100%);
-    /* Width is controlled by sidebar.css */
+    max-width: 1180px;
+    background: var(--paper);
 }
 
 /* =========================================
@@ -22,15 +30,17 @@
 
 .HeaderAndSubTDiv h1 {
     margin: 0;
-    color: #f4fff7;
-    font-weight: bold;
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-weight: 600;
     font-size: 32px;
 }
 
 .HeaderAndSubTDiv p {
     margin: 5px 0 0 0;
+    font-family: var(--font-serif);
     font-style: italic;
-    color: #b8d6c3;
+    color: var(--moss);
     font-size: 16px;
 }
 
@@ -59,17 +69,18 @@
     width: 100%;
     max-width: 430px;
     overflow: hidden;
-    border: 1px solid rgba(183, 228, 199, 0.18);
-    border-radius: 14px;
-    background: #102f29;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
+    background: var(--panel-bg);
+    box-shadow: none;
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .AnimalCellBox:hover,
 .PlantCellBox:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 26px rgba(27, 67, 50, 0.16);
+    border-color: var(--moss);
 }
 
 /* =========================================
@@ -82,7 +93,8 @@
     width: 100%;
     height: 300px;
     object-fit: contain;
-    background-color: #F3F8F5;
+    background-color: var(--paper);
+    border-bottom: 1px solid var(--paper-line);
 }
 
 /* =========================================
@@ -93,8 +105,8 @@
     display: flex;
     flex-direction: column;
     padding: 20px 25px;
-    background: linear-gradient(180deg, #12392f 0%, #0c2c24 100%);
-    border-radius: 0 0 14px 14px;
+    background: var(--panel-bg);
+    border-radius: 0;
 }
 
 /* =========================================
@@ -103,9 +115,10 @@
 
 .cellBottomBox h3 {
     margin: 0;
-    color: #f4fff7;
+    color: var(--ink);
+    font-family: var(--font-serif);
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 /* =========================================
@@ -114,7 +127,7 @@
 
 .cellBottomBox p {
     margin: 4px 0 0 0;
-    color: #b8d6c3;
+    color: var(--ink-muted);
     font-size: 14px;
     font-style: italic;
 }
@@ -141,10 +154,11 @@
     gap: 9px;
     width: 100%;
     padding: 10px 15px;
-    border: none;
-    border-radius: 7px;
-    background: linear-gradient(100deg, #1b4332 0%, #2d8a5b 100%);
-    color: white;
+    border: 1px solid var(--pine);
+    border-radius: 2px;
+    background: var(--pine);
+    color: var(--paper);
+    font-family: var(--font-sans);
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
@@ -156,7 +170,8 @@
 ========================================= */
 
 .exploreButton button:hover {
-    background: linear-gradient(100deg, #245f43 0%, #40916c 100%);
+    background: var(--moss);
+    border-color: var(--moss);
     transform: translateY(-1px);
 }
 
@@ -179,20 +194,21 @@
     gap: 9px;
     width: min(340px, 100%);
     margin-top: 20px;
-    padding: 11px 13px;
-    color: #b8d6c3;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(183, 228, 199, 0.22);
-    border-radius: 9px;
+    padding: 9px 16px;
+    color: var(--ink-faint);
+    background: var(--panel-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 999px;
 }
 
 .model-search input {
     width: 100%;
     border: 0;
     outline: 0;
-    color: #f4fff7;
+    color: var(--ink);
     background: transparent;
     font: inherit;
+    font-family: var(--font-sans);
     font-size: 13px;
 }
 
@@ -205,11 +221,12 @@
     position: absolute;
     top: 15px;
     right: 15px;
-    padding: 7px 10px;
-    color: #b7e4c7;
-    background: rgba(7, 40, 30, 0.82);
-    border: 1px solid rgba(82, 183, 136, 0.45);
-    border-radius: 7px;
+    padding: 5px 9px;
+    color: var(--pine);
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 700;
 }
@@ -222,11 +239,12 @@
 }
 
 .model-tags span {
-    padding: 5px 8px;
-    color: #b7e4c7;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(183, 228, 199, 0.18);
-    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--moss);
+    background: transparent;
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
 }
@@ -239,14 +257,15 @@
     margin: 28px auto 0;
     padding: 24px 28px;
     width: min(885px, 100%);
-    background: rgba(16, 47, 41, 0.88);
-    border: 1px solid rgba(183, 228, 199, 0.18);
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(27, 67, 50, 0.08);
+    background: var(--panel-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
+    box-shadow: none;
 }
 
 .support-kicker {
-    color: #40916c;
+    color: var(--moss);
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.12em;
@@ -254,7 +273,9 @@
 
 .explorer-support h2 {
     margin: 5px 0 14px;
-    color: #f4fff7;
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-weight: 600;
     font-size: 20px;
 }
 
@@ -262,21 +283,22 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 9px 24px;
-    color: #b8d6c3;
+    color: var(--ink-muted);
     font-size: 12px;
 }
 
 .support-points i {
     margin-right: 5px;
-    color: #2d8a5b;
+    color: var(--moss);
     font-weight: 800;
 }
 
 .explorer-support blockquote {
     max-width: 220px;
     margin: 0;
-    color: #b7e4c7;
-    font-size: 14px;
+    color: var(--moss);
+    font-family: var(--font-serif);
+    font-size: 15px;
     font-style: italic;
     line-height: 1.5;
 }

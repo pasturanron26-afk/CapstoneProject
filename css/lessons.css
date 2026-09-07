@@ -1,25 +1,15 @@
-:root{
-  --muted: #64748b;
-  --border: #e5e7eb;
-  --card-bg: #ffffff;
-
-  --green-600: #188652;
-  --green-700: #0f6e3c;
-
-  --focus: #22c55e;
-
-  --radius-12: 12px;
-  --radius-16: 16px;
-
-  --shadow-1: 0 1px 2px rgba(16,24,40,.06), 0 1px 1px rgba(16,24,40,.04);
-  --shadow-2: 0 8px 24px rgba(16,24,40,.08), 0 2px 8px rgba(16,24,40,.06);
-}
+/* =====================================================
+   ECOLEARN — LESSONS LIST (LEDGER THEME)
+   Uses the tokens defined in css/ledger-theme.css
+   (loaded before this file).
+===================================================== */
 
 * { box-sizing: border-box; }
 
 /* Page wrapper */
 .lessons-main {
   padding: clamp(16px, 2.5vw, 32px);
+  max-width: 1180px;
   display: block;
 }
 
@@ -28,6 +18,8 @@
   max-width: 1100px;
   margin-inline: auto;
   margin-bottom: clamp(16px, 2vw, 24px);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--paper-line);
 }
 
 .lessons-title {
@@ -37,7 +29,9 @@
 
 .lessons-subtitle {
   margin: 0;
-  color: var(--muted);
+  color: var(--ink-muted);
+  font-family: var(--font-serif);
+  font-style: italic;
   font-size: clamp(0.95rem, 0.9rem + .4vw, 1.05rem);
 }
 
@@ -53,23 +47,23 @@
 .lesson-card {
   display: grid;
   grid-template-columns: 2fr 3fr; /* ~40% / 60% */
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-16);
-  box-shadow: var(--shadow-1);
+  background: var(--panel-bg);
+  border: 1px solid var(--paper-line);
+  border-radius: 3px;
+  box-shadow: none;
   overflow: hidden;
-  transition: border-color .2s ease, box-shadow .25s ease, transform .25s ease;
+  transition: border-color .2s ease, transform .2s ease;
 }
 
 .lesson-card:hover {
-  box-shadow: var(--shadow-2);
+  border-color: var(--moss);
   transform: translateY(-2px);
 }
 
 .lesson-card:focus-within {
   outline: none;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus) 20%, transparent), var(--shadow-2);
-  border-color: color-mix(in srgb, var(--focus) 60%, var(--border));
+  border-color: var(--moss);
+  box-shadow: 0 0 0 3px var(--moss-tint);
 }
 
 /* Thumbnail (with top, left, and bottom inner spacing) */
@@ -111,21 +105,26 @@
 
 .card-eyebrow {
   margin: 0;
-  font-size: 0.8rem;
-  letter-spacing: .12em;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--moss);
+  font-weight: 700;
 }
 
 .card-title {
   margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--ink);
   font-size: clamp(1.15rem, 1rem + 1vw, 1.5rem);
   line-height: 1.25;
 }
 
 .card-desc {
   margin: 0 0 4px 0;
-  color: var(--muted);
+  color: var(--ink-muted);
   font-size: 0.98rem;
 }
 
@@ -137,14 +136,15 @@
   gap: 8px;
   width: 100%;
   padding: 12px 16px;
-  background: linear-gradient(100deg, #1b4332 0%, #2d8a5b 100%);
-  color: #fff;
-  border-radius: var(--radius-12);
+  background: var(--pine);
+  color: var(--paper);
+  border: 1px solid var(--pine);
+  border-radius: 2px;
   text-decoration: none;
+  font-family: var(--font-sans);
   font-weight: 600;
   letter-spacing: .2px;
   transition: background-color 0.2s ease, transform 0.2s ease;
-  box-shadow: 0 1px 0 rgba(0,0,0,.05);
 }
 
 .card-btn:hover { 
@@ -156,14 +156,15 @@
 
 .card-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus) 25%, transparent);
+  box-shadow: 0 0 0 3px var(--moss-tint);
 }
 
 /* Coming soon / disabled look */
 .lesson-card.is-soon { opacity: .9; }
 .card-btn.is-disabled {
-  background: #c7d5cc;
-  color: #364e42;
+  background: transparent;
+  color: var(--ink-faint);
+  border-color: var(--paper-line);
   cursor: not-allowed;
   box-shadow: none;
 }

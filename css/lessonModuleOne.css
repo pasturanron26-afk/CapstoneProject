@@ -1,33 +1,13 @@
-/* =========================================
-   EcoLearn Theme Tokens (Consistency Layer)
-========================================= */
-:root{
-  --eco-bg: #F3FAF6;
-  --eco-surface: #FFFFFF;
-
-  --eco-900: #081C15;
-  --eco-800: #1B4332;
-  --eco-700: #2D6A4F;
-  --eco-600: #40916C;
-  --eco-500: #52B788;
-
-  --eco-text: #102A22;
-  --eco-muted: #6B7280;
-  --eco-border: #E3EFE8;
-
-  --radius-md: 12px;
-  --radius-lg: 16px;
-
-  --shadow-sm: 0 4px 14px rgba(8, 28, 21, 0.08);
-  --shadow-md: 0 10px 28px rgba(8, 28, 21, 0.14);
-
-  --focus: 0 0 0 4px rgba(64, 145, 108, 0.18);
-}
+/* =====================================================
+   ECOLEARN — LESSON MODULE (LEDGER THEME)
+   Uses the tokens defined in css/ledger-theme.css
+   (loaded before this file).
+===================================================== */
 
 /* Page background + typography */
 body{
-  background: var(--eco-bg);
-  color: var(--eco-text);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 /* Only affect icons inside the lesson page content (NOT the sidebar) */
@@ -41,7 +21,7 @@ body{
 ========================================= */
 .lesson-page {
   padding: 40px 32px;
-  max-width: 1200px;
+  max-width: 1180px;
   margin-right: auto;
   min-height: 100vh;
   background: transparent;
@@ -51,34 +31,34 @@ body{
    HERO SECTION
 ========================================= */
 .lesson-hero {
-  background: linear-gradient(135deg, var(--eco-800) 0%, var(--eco-600) 100%);
-  color: #fff;
-  padding: 60px 44px;
-  border-radius: var(--radius-lg);
+  background: var(--pine);
+  color: var(--paper);
+  padding: 50px 44px;
+  border-radius: 3px;
   margin-bottom: 50px;
-  box-shadow: var(--shadow-md);
-  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: none;
+  border: 1px solid var(--paper-line);
 }
 
 .hero-content { max-width: 920px; }
 
 .hero-title {
-  font-size: 2.6rem;
-  font-weight: 800;
+  font-family: var(--font-serif);
+  font-size: 2.4rem;
+  font-weight: 600;
   margin: 0 0 16px 0;
   line-height: 1.15;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .hero-intro {
-  font-size: 1.08rem;
+  font-size: 1.02rem;
   line-height: 1.7;
   margin-bottom: 26px;
-  opacity: 0.95;
+  opacity: 0.92;
   max-width: 820px;
 }
 
-/* IMPORTANT: avoid Bootstrap badge collision by using hero-badge */
 .hero-badges {
   display: flex;
   gap: 12px;
@@ -89,30 +69,30 @@ body{
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
-  background: rgba(255,255,255,0.14);
-  border: 1px solid rgba(255,255,255,0.22);
-  border-radius: 999px;
-  font-size: 0.92rem;
-  font-weight: 700;
-  backdrop-filter: blur(10px);
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--lichen);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .hero-badge i { font-size: 1rem; opacity: 0.95; }
 
 /* =========================================
-   SECTION TITLES & DIVIDERS (line only, no bg box)
+   SECTION TITLES & DIVIDERS
 ========================================= */
 
-/* Title with a clean line (NOT border-bottom) */
 .section-title{
   position: relative;
-  font-size: 2.1rem;
-  font-weight: 900;
-  color: var(--eco-800);
+  font-family: var(--font-serif);
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--ink);
   margin: 0 0 26px 0;
   padding-bottom: 16px;
-  border: none;                 /* remove border underline */
+  border: none;
 }
 
 .section-title::after{
@@ -121,12 +101,11 @@ body{
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 3px;                  /* line thickness */
-  background: var(--eco-600);   /* line color */
-  opacity: 0.75;
+  height: 1px;
+  background: var(--paper-line);
+  opacity: 1;
 }
 
-/* Divider with lines and plain text (no background, no border) */
 .section-divider{
   display: flex;
   align-items: center;
@@ -139,20 +118,22 @@ body{
 .section-divider::after{
   content: "";
   flex: 1;
-  height: 2px;
-  background: var(--eco-600);
-  opacity: 0.55;
+  height: 1px;
+  background: var(--paper-line);
+  opacity: 1;
 }
 
 .section-divider span{
-  padding: 0 6px;              /* small spacing, no box */
-  background: transparent;     /* remove background color */
-  border: none;                /* remove border */
-  color: var(--eco-700);
-  font-weight: 900;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  padding: 0 6px;
+  background: transparent;
+  border: none;
+  color: var(--moss);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.95rem;
+  text-transform: none;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -164,41 +145,45 @@ body{
 .comparison-table {
   width: 100%;
   border-collapse: collapse;
-  background: var(--eco-surface);
-  border-radius: var(--radius-lg);
+  background: var(--panel-bg);
+  border-radius: 3px;
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--eco-border);
+  box-shadow: none;
+  border: 1px solid var(--paper-line);
 }
 
 .comparison-table thead {
-  background: linear-gradient(135deg, var(--eco-800) 0%, var(--eco-600) 100%);
-  color: #fff;
+  background: var(--pine);
+  color: var(--paper);
 }
 
 .comparison-table th,
 .comparison-table td {
-  padding: 16px 18px;
+  padding: 14px 18px;
   text-align: left;
-  border-bottom: 1px solid var(--eco-border);
+  border-bottom: 1px solid var(--paper-line);
+  font-family: var(--font-sans);
 }
 
 .comparison-table th {
-  font-weight: 800;
-  font-size: 1.02rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .comparison-table tbody tr:nth-child(even){
-  background: rgba(82, 183, 136, 0.06);
+  background: rgba(79, 122, 91, 0.05);
 }
 
 .present {
-  color: var(--eco-800);
+  color: var(--moss);
+  font-family: var(--font-mono);
   font-weight: 700;
 }
 
 .absent {
-  color: var(--eco-muted);
+  color: var(--ink-faint);
   font-style: italic;
 }
 
@@ -206,18 +191,17 @@ body{
    ORGANELLE SECTIONS (Cards)
 ========================================= */
 .organelle-section {
-  background: var(--eco-surface);
-  border-radius: var(--radius-lg);
+  background: var(--panel-bg);
+  border-radius: 3px;
   padding: 34px;
   margin-bottom: 30px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--eco-border);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: none;
+  border: 1px solid var(--paper-line);
+  transition: border-color 0.18s ease;
 }
 
 @media (prefers-reduced-motion: reduce){
   .organelle-section{ transition: none; }
-  .organelle-section:hover{ transform:none; }
 }
 
 /* Header */
@@ -227,67 +211,67 @@ body{
   justify-content: space-between;
   margin-bottom: 22px;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--eco-border);
+  border-bottom: 1px solid var(--paper-line);
 }
 
 .organelle-name {
-  font-size: 1.65rem;
-  font-weight: 900;
-  color: var(--eco-800);
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--ink);
   margin: 0;
   letter-spacing: -0.01em;
 }
 
-/* Tags (make them feel part of the same theme) */
+/* Tags */
 .cell-tag {
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 900;
+  padding: 5px 12px;
+  border-radius: 2px;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.06em;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   border: 1px solid transparent;
   white-space: nowrap;
+  background: transparent;
 }
 
 .tag-both {
-  background: rgba(64, 145, 108, 0.12);
-  border-color: rgba(64, 145, 108, 0.26);
-  color: var(--eco-800);
+  border-color: var(--moss);
+  color: var(--moss);
 }
 
 .tag-animal {
-  background: rgba(27, 67, 50, 0.10);
-  border-color: rgba(27, 67, 50, 0.20);
-  color: var(--eco-800);
+  border-color: var(--pine);
+  color: var(--pine);
 }
 
 .tag-plant {
-  background: rgba(82, 183, 136, 0.14);
-  border-color: rgba(82, 183, 136, 0.28);
-  color: var(--eco-800);
+  border-color: var(--lichen);
+  color: var(--moss);
 }
 
 /* Content grid */
 .organelle-content{
   display: grid;
-  grid-template-columns: 1fr;  /* one column = embed goes below text */
+  grid-template-columns: 1fr;
   gap: 22px;
   align-items: start;
 }
 
 .organelle-text { min-width: 0; }
 
-/* Function box (you used it in HTML but didn’t style it here) */
+/* Function box */
 .function-box{
   margin-top: 18px;
   padding: 16px 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(64,145,108,0.25);
-  background: linear-gradient(180deg, rgba(82,183,136,0.12), rgba(82,183,136,0.05));
+  border-radius: 2px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
 }
 
 .function-box h4{
@@ -295,24 +279,27 @@ body{
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1rem;
-  font-weight: 900;
-  color: var(--eco-800);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pine);
 }
 
 .function-box i{
-  color: var(--eco-600);
+  color: var(--moss);
   font-size: 1.05rem;
 }
 
 /* Model embed */
 .organelle-embed {
   width: 100%;
-  border-radius: var(--radius-lg);
+  border-radius: 3px;
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--eco-border);
-  background-color: var(--eco-surface);
+  box-shadow: none;
+  border: 1px solid var(--paper-line);
+  background-color: var(--panel-bg);
 }
 
 .organelle-embed iframe {
@@ -323,7 +310,7 @@ body{
   border: none;
 }
 
-/* Sketchfab attribution (override inline styles consistently) */
+/* Sketchfab attribution */
 .sketchfab-embed-wrapper{
   width: 100%;
   display: flex;
@@ -335,22 +322,23 @@ body{
   width: 100%;
   margin: 0;
   padding: 10px 12px;
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-size: 12px;
   line-height: 1.35;
-  color: var(--eco-muted);
+  color: var(--ink-faint);
   text-align: center;
-  background: rgba(243, 250, 246, 0.6);
-  border-top: 1px solid var(--eco-border);
+  background: var(--paper);
+  border-top: 1px solid var(--paper-line);
 }
 
 .sketchfab-embed-wrapper p a{
-  color: var(--eco-600) !important;
-  font-weight: 800 !important;
+  color: var(--moss) !important;
+  font-weight: 700 !important;
   text-decoration: none !important;
 }
 
 .sketchfab-embed-wrapper p a:hover{
-  color: var(--eco-800) !important;
+  color: var(--pine) !important;
   text-decoration: underline !important;
 }
 
@@ -360,17 +348,19 @@ body{
 .references-section {
   margin-top: 70px;
   padding-top: 50px;
-  border-top: 3px solid var(--eco-border);
+  border-top: 1px solid var(--paper-line);
 }
 
 .references-group { margin-bottom: 40px; }
 
 .references-group h3 {
-  font-size: 1.35rem;
-  color: var(--eco-800);
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--ink);
   margin-bottom: 18px;
   padding-bottom: 10px;
-  border-bottom: 2px solid var(--eco-600);
+  border-bottom: 1px solid var(--paper-line);
 }
 
 .references-list {
@@ -382,17 +372,18 @@ body{
 .references-list li {
   padding: 12px 0 12px 26px;
   position: relative;
-  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
   line-height: 1.65;
-  color: #4B5563;
-  border-bottom: 1px solid rgba(227,239,232,0.9);
+  color: var(--ink-muted);
+  border-bottom: 1px solid var(--paper-line);
 }
 
 .references-list li::before {
   content: '•';
   position: absolute;
   left: 10px;
-  color: var(--eco-600);
+  color: var(--moss);
   font-weight: 900;
   font-size: 1.2rem;
 }
@@ -404,7 +395,6 @@ body{
 ========================================= */
 @media (max-width: 1024px) {
   .organelle-content { grid-template-columns: 1fr; }
-  /* remove the order:-1 rule so embed stays below text */
 }
 
 @media (max-width: 768px) {
@@ -413,9 +403,9 @@ body{
     padding: 20px;
   }
 
-  .lesson-hero { padding: 44px 22px; }
+  .lesson-hero { padding: 40px 22px; }
 
-  .hero-title { font-size: 2rem; }
+  .hero-title { font-size: 1.9rem; }
 
   .organelle-header {
     flex-direction: column;
@@ -429,8 +419,8 @@ body{
 
 @media (max-width: 480px) {
   .hero-title { font-size: 1.6rem; }
-  .section-title { font-size: 1.45rem; }
+  .section-title { font-size: 1.4rem; }
   .organelle-section { padding: 24px; }
-  .organelle-name { font-size: 1.35rem; }
+  .organelle-name { font-size: 1.3rem; }
   .organelle-embed iframe { height: 300px; min-height: 300px; }
 }
