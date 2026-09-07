@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EcoLearn • Quiz</title>
+
+  <!-- Bootstrap and Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/quiz.css" />
+
+  <!-- Supabase & Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
+
+  <style>
+    /* Active tab highlight */
+    nav .nav-link.Quiz {
+      background-color: #40916C;
+      color: #ffffff !important;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
+    <img src="imgs/Logo.jpg" alt="Logo" class="rounded-circle logo-img mb-2" />
+    <h3 class="h5 brand-title mb-4">EcoLearn</h3>
+
+    <ul class="nav nav-pills flex-column w-100">
+      <li class="nav-item mb-1">
+        <a class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2" href="dashboard.html">
+          <i class="bi bi-grid-1x2"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a class="nav-link CellModel text-white-50 d-flex align-items-center gap-2" href="choose.html">
+          <i class="bi bi-boxes"></i> Cell Models
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a class="nav-link Lesson text-white-50 d-flex align-items-center gap-2" href="lesson.html">
+          <i class="bi bi-book"></i> Lessons
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a class="nav-link Quiz text-white-50 d-flex align-items-center gap-2" href="quiz.html" aria-current="page">
+          <i class="bi bi-question-circle"></i> Quizzes
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="#">
+          <i class="bi bi-person"></i> Profile
+        </a>
+      </li>
+      <li class="nav-item mt-auto">
+        <button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background: none; cursor: pointer;">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main -->
+  <main class="quiz-main" id="main-content">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="dashboard.html">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="quiz.html">Quizzes</a></li>
+        <li class="breadcrumb-item" aria-current="page">Animal Cell vs Plant Cell</li>
+      </ol>
+    </nav>
+
+    <!-- Page header -->
+    <header class="quiz-header">
+      <div class="quiz-header-text">
+        <h1 class="quiz-title">Animal Cell vs Plant Cell — Quiz</h1>
+        <p class="quiz-subtitle">Test your understanding of organelles, structures, and key differences between animal and plant cells.</p>
+      </div>
+    </header>
+
+    <!-- Info strip -->
+    <section class="quiz-info-strip" aria-label="Quiz info">
+      <div class="info-card">
+        <span class="info-value">10</span>
+        <span class="info-label">Questions</span>
+      </div>
+      <div class="info-card">
+        <span class="info-value">5:00</span>
+        <span class="info-label">Time limit</span>
+      </div>
+      <div class="info-card">
+        <span class="info-value">75%</span>
+        <span class="info-label">Passing score</span>
+      </div>
+      <div class="info-card">
+        <span class="info-value">2</span>
+        <span class="info-label">Attempts max</span>
+      </div>
+    </section>
+
+    <!-- Quiz embed card -->
+    <section class="quiz-embed-card">
+      <div class="quiz-embed-header">
+        <div class="embed-icon" aria-hidden="true">
+          <i class="bi bi-ui-checks-grid"></i>
+        </div>
+        <div class="embed-info">
+          <span class="embed-title">Animal Cell vs Plant Cell</span>
+          <span class="embed-sub">Powered by Wayground</span>
+        </div>
+      </div>
+
+      <div class="quiz-embed-body">
+        <!-- Wayground embed -->
+        <iframe
+          class="quiz-iframe"
+          src="https://wayground.com/embed/quiz/6a9d14a9a9390745abbad75d"
+          loading="lazy"
+          frameborder="0"
+          allowfullscreen
+          allow="fullscreen; clipboard-write"
+          referrerpolicy="strict-origin-when-cross-origin"
+          title="Animal Cell vs Plant Cell — Quiz (Wayground)"
+        ></iframe>
+
+        <!-- Optional fallback -->
+        <p class="embed-fallback" style="margin-top:8px;">
+          Having trouble loading the embed?
+          <a href="https://wayground.com/admin?source=embedFrame" target="_blank" rel="noopener">Open on Wayground</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- Bottom note -->
+    <div class="quiz-note">
+      <i class="bi bi-info-circle" aria-hidden="true"></i>
+      <p>Your responses are saved on Wayground.</p>
+    </div>
+
+  </main>
+
+  <!-- Logout -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutButton = document.getElementById('logoutButton');
+      if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+          await window.ecoAuth?.signOut?.();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

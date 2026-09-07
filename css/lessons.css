@@ -17,7 +17,7 @@
 
 * { box-sizing: border-box; }
 
-/* Page wrapper (no body/grid overrides; respects your 250px left margin) */
+/* Page wrapper */
 .lessons-main {
   padding: clamp(16px, 2.5vw, 32px);
   display: block;
@@ -31,8 +31,8 @@
 }
 
 .lessons-title {
-    font-weight: bold;
-    font-size: 32px;
+  font-weight: bold;
+  font-size: 32px;
 }
 
 .lessons-subtitle {
@@ -72,22 +72,30 @@
   border-color: color-mix(in srgb, var(--focus) 60%, var(--border));
 }
 
-/* Thumbnail */
+/* Thumbnail (with top, left, and bottom inner spacing) */
 .card-thumbnail {
   min-height: 220px;
-  background: #d1fae5;
+  background: #F3F8F5;
   position: relative;
+  padding: 18px 18px 18px 18px; /* Top, Right(0), Bottom, Left */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-thumbnail img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  max-height: 240px;
+  object-fit: contain; /* Prevents diagrams & labels from getting cropped */
+  border-radius: var(--radius-12);
   display: block;
 }
 
 /* Placeholder thumbnail (no image) */
 .card-thumbnail.placeholder {
+  margin: 18px 0 18px 18px;
+  border-radius: var(--radius-12);
   background:
     linear-gradient(135deg, rgba(24,134,82,.12), rgba(11,90,50,.12)),
     repeating-linear-gradient(45deg, rgba(24,134,82,.12) 0 10px, rgba(255,255,255,.25) 10px 20px);
@@ -97,7 +105,7 @@
 .card-content {
   padding: clamp(16px, 2.5vw, 24px);
   display: grid;
-  grid-template-rows: auto auto 1fr auto; /* eyebrow, title, desc, button */
+  grid-template-rows: auto auto 1fr auto;
   gap: 10px;
 }
 
@@ -140,10 +148,12 @@
 }
 
 .card-btn:hover { 
-    background: linear-gradient(100deg, #245f43 0%, #40916c 100%);
-    transform: translateY(-1px);
- }
+  background: linear-gradient(100deg, #245f43 0%, #40916c 100%);
+  transform: translateY(-1px);
+}
+
 .card-btn:active { transform: translateY(1px); }
+
 .card-btn:focus-visible {
   outline: none;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus) 25%, transparent);
@@ -158,8 +168,14 @@
   box-shadow: none;
 }
 
-/* Responsive: stack image over content on narrow screens */
+/* Responsive */
 @media (max-width: 780px) {
   .lesson-card { grid-template-columns: 1fr; }
-  .card-thumbnail { min-height: 180px; }
+  .card-thumbnail { 
+    min-height: 180px; 
+    padding: 16px 16px 0 16px; /* On mobile: evenly space top, left, right */
+  }
+  .card-thumbnail.placeholder {
+    margin: 16px 16px 0 16px;
+  }
 }
