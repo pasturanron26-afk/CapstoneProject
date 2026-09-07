@@ -1,0 +1,102 @@
+/* =====================================================
+   ECOLEARN — SHARED LEDGER THEME
+   The same "field biologist's specimen ledger" palette
+   and sidebar treatment used on admin.html, applied here
+   so the student-facing pages match it. Load this AFTER
+   sidebar.css / global.css and BEFORE the page's own
+   stylesheet, so the page stylesheet can layer its own
+   layout on top of these tokens and the recolored sidebar.
+===================================================== */
+
+:root {
+    --ink: #1C2E22;
+    --pine: #2F4C39;
+    --moss: #4F7A5B;
+    --lichen: #8FAE84;
+    --paper: #F4F1E6;
+    --paper-line: #DED6C0;
+    --panel-bg: #FBF9F2;
+    --stamp: #8B3A2F;
+    --stamp-gold: #93701F;
+    --ink-muted: #6B6250;
+    --ink-faint: #877B63;
+    --moss-tint: rgba(79, 122, 91, 0.12);
+
+    --font-serif: 'Newsreader', Georgia, serif;
+    --font-mono: 'Space Mono', 'Courier New', monospace;
+    --font-sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+}
+
+/* ===================== BODY ===================== */
+
+body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+}
+
+/* ===================== SIDEBAR ===================== */
+/* Same recoloring as admin.html: solid pine background,
+   thin left-border accent on the active link instead of
+   the bright green gradient pill. */
+
+.sidebar-bg {
+    background: var(--pine);
+    box-shadow: none;
+    border-right: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-bg .brand-title {
+    font-family: var(--font-serif) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    color: var(--paper) !important;
+}
+
+.sidebar-bg .nav-link {
+    border-radius: 2px;
+    border-left: 3px solid transparent;
+    padding: 9px 12px 9px 13px;
+    color: rgba(244, 241, 230, 0.72) !important;
+    font-family: var(--font-sans);
+    font-size: 0.88rem !important;
+    font-weight: 500;
+}
+
+.sidebar-bg .nav-link i {
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+.sidebar-bg .nav-link:hover {
+    background-color: rgba(143, 174, 132, 0.14);
+    border-left-color: rgba(143, 174, 132, 0.5);
+    color: var(--paper) !important;
+}
+
+.sidebar-bg .nav-link.active,
+.sidebar-bg .nav-link[aria-current="page"] {
+    background: rgba(143, 174, 132, 0.12);
+    border-left-color: var(--lichen);
+    color: var(--paper) !important;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.sidebar-bg #logoutButton {
+    color: rgba(244, 241, 230, 0.72) !important;
+    border-left: 3px solid transparent;
+    border-radius: 2px;
+}
+
+.sidebar-bg #logoutButton:hover {
+    background-color: rgba(139, 58, 47, 0.35);
+    border-left-color: var(--stamp);
+    color: var(--paper) !important;
+}
+
+.sidebar-bg .nav-link:focus-visible,
+.sidebar-bg #logoutButton:focus-visible {
+    outline: 2px solid var(--lichen);
+    outline-offset: 2px;
+}

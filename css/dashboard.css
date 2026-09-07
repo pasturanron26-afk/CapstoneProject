@@ -9,19 +9,22 @@
 ===================================================== */
 
 :root {
-    --green-dark: #1B4332;
-    --green: #2D6A4F;
-    --green-light: #40916C;
-    --green-pale: #D8F3DC;
-    --green-soft: #F3F8F5;
+    --ink: #1C2E22;
+    --pine: #2F4C39;
+    --moss: #4F7A5B;
+    --lichen: #8FAE84;
+    --paper: #F4F1E6;
+    --paper-line: #DED6C0;
+    --panel-bg: #FBF9F2;
+    --stamp: #8B3A2F;
+    --stamp-gold: #93701F;
+    --ink-muted: #6B6250;
+    --ink-faint: #877B63;
+    --moss-tint: rgba(79, 122, 91, 0.12);
 
-    --white: #FFFFFF;
-    --text: #1B4332;
-    --text-dark: #333333;
-    --text-muted: #666666;
-
-    --border: #DDEBE2;
-    --shadow: rgba(27, 67, 50, 0.10);
+    --font-serif: 'Newsreader', Georgia, serif;
+    --font-mono: 'Space Mono', 'Courier New', monospace;
+    --font-sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
 }
 
 
@@ -33,16 +36,11 @@ body {
     margin-left: 250px;
     min-height: 100vh;
 
-    background-color: #F3F8F5;
+    background-color: var(--paper);
 
-    color: var(--text-dark);
+    color: var(--ink);
 
-    font-family:
-        'Segoe UI',
-        Tahoma,
-        Geneva,
-        Verdana,
-        sans-serif;
+    font-family: var(--font-sans);
 }
 
 
@@ -52,6 +50,7 @@ body {
 
 .dashboard-content {
     min-height: 100vh;
+    max-width: 1180px;
 
     padding: 32px;
 }
@@ -72,13 +71,12 @@ body {
 
     padding: 24px 28px;
 
-    background-color: var(--white);
+    background-color: var(--panel-bg);
 
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
 
-    box-shadow:
-        0 4px 14px var(--shadow);
+    box-shadow: none;
 }
 
 
@@ -87,10 +85,11 @@ body {
 .page-header h1 {
     margin: 0;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
+    font-family: var(--font-serif);
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 
@@ -99,7 +98,7 @@ body {
 .page-header p {
     margin: 7px 0 0;
 
-    color: var(--text-muted);
+    color: var(--ink-muted);
 
     font-size: 0.95rem;
 }
@@ -107,10 +106,13 @@ body {
 .eyebrow {
     display: block;
     margin-bottom: 8px;
-    color: var(--green-light);
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
+    color: var(--moss);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .header-tools {
@@ -125,25 +127,25 @@ body {
     gap: 9px;
     min-width: 225px;
     padding: 10px 13px;
-    color: var(--text-muted);
-    background: #f7faf8;
-    border: 1px solid var(--border);
-    border-radius: 9px;
+    color: var(--ink-muted);
+    background: var(--panel-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
 }
 
 .dashboard-search input {
     width: 100%;
     border: 0;
     outline: 0;
-    color: var(--text-dark);
+    color: var(--ink);
     background: transparent;
     font: inherit;
     font-size: 0.78rem;
 }
 
 .dashboard-search:focus-within {
-    border-color: var(--green-light);
-    box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.12);
+    border-color: var(--moss);
+    box-shadow: 0 0 0 3px var(--moss-tint);
 }
 
 
@@ -158,11 +160,11 @@ body {
 
     padding: 9px 16px;
 
-    background-color: var(--green-pale);
+    background-color: var(--moss-tint);
 
-    color: var(--green-dark);
+    color: var(--ink);
 
-    border-radius: 999px;
+    border-radius: 2px;
 
     font-size: 0.78rem;
     font-weight: 700;
@@ -198,15 +200,14 @@ body {
 .stat-card {
     position: relative;
 
-    background-color: var(--white);
+    background-color: var(--panel-bg);
 
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
 
     padding: 20px;
 
-    box-shadow:
-        0 4px 14px var(--shadow);
+    box-shadow: none;
 
     transition:
         transform 0.2s ease,
@@ -218,10 +219,10 @@ body {
 .stat-card:hover {
     transform: translateY(-2px);
 
-    border-color: rgba(64, 145, 108, 0.35);
+    border-color: var(--moss);
 
     box-shadow:
-        0 8px 20px rgba(27, 67, 50, 0.13);
+        0 8px 20px rgba(28, 46, 34, 0.10);
 }
 
 
@@ -249,11 +250,11 @@ body {
 
 
 .stat-card-toggle:focus-visible {
-    outline: 2px solid rgba(64, 145, 108, 0.45);
+    outline: 2px solid var(--moss);
 
     outline-offset: 5px;
 
-    border-radius: 8px;
+    border-radius: 2px;
 }
 
 
@@ -271,7 +272,7 @@ body {
 
     margin-bottom: 14px;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 0.78rem;
 
@@ -297,11 +298,11 @@ body {
 
     flex-shrink: 0;
 
-    border-radius: 9px;
+    border-radius: 2px;
 
-    background-color: var(--green-pale);
+    background-color: var(--moss-tint);
 
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 1.05rem;
 }
@@ -312,8 +313,9 @@ body {
 ===================================================== */
 
 .stat-card .value {
-    color: var(--green-dark);
+    color: var(--ink);
 
+    font-family: var(--font-mono);
     font-size: 2rem;
 
     font-weight: 700;
@@ -329,7 +331,7 @@ body {
 .stat-card .meta {
     margin-top: 7px;
 
-    color: var(--text-muted);
+    color: var(--ink-muted);
 
     font-size: 0.78rem;
 
@@ -357,7 +359,7 @@ body {
 
     padding-top: 12px;
 
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--paper-line);
 }
 
 
@@ -373,7 +375,7 @@ body {
 .folder-panel-header {
     margin-bottom: 10px;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 0.72rem;
 
@@ -395,7 +397,7 @@ body {
 
     list-style: none;
 
-    color: var(--text-muted);
+    color: var(--ink-muted);
 
     font-size: 0.82rem;
 
@@ -417,17 +419,17 @@ body {
 
     padding: 9px 11px;
 
-    background-color: #FAFCFB;
+    background-color: var(--panel-bg);
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
-    border-left: 3px solid var(--green-light);
+    border-left: 3px solid var(--moss);
 
-    border-radius: 7px;
+    border-radius: 2px;
 
     text-align: left;
 
-    color: var(--text-dark);
+    color: var(--ink);
 
     font: inherit;
 
@@ -442,9 +444,9 @@ body {
 
 .folder-item:hover,
 .folder-item:focus-visible {
-    background-color: var(--green-soft);
+    background-color: var(--panel-bg);
 
-    border-color: rgba(64, 145, 108, 0.4);
+    border-color: var(--moss);
 
     transform: translateX(2px);
 
@@ -473,16 +475,15 @@ body {
 .panel {
     position: relative;
 
-    background-color: var(--white);
+    background-color: var(--panel-bg);
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
-    border-radius: 12px;
+    border-radius: 3px;
 
     padding: 22px;
 
-    box-shadow:
-        0 4px 14px var(--shadow);
+    box-shadow: none;
 }
 
 
@@ -502,23 +503,24 @@ body {
 
     padding-bottom: 13px;
 
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--paper-line);
 }
 
 
 .panel-title h2 {
     margin: 0;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
-    font-size: 1.15rem;
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
 
-    font-weight: 700;
+    font-weight: 600;
 }
 
 
 .panel-title a {
-    color: var(--green-light);
+    color: var(--moss);
 
     font-size: 0.82rem;
 
@@ -529,7 +531,7 @@ body {
 
 
 .panel-title a:hover {
-    color: var(--green-dark);
+    color: var(--ink);
 }
 
 
@@ -560,13 +562,13 @@ body {
 
     padding: 14px;
 
-    background-color: #FAFCFB;
+    background-color: var(--panel-bg);
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
-    border-left: 4px solid var(--green-light);
+    border-left: 4px solid var(--moss);
 
-    border-radius: 8px;
+    border-radius: 2px;
 
     text-align: left;
 
@@ -594,7 +596,7 @@ body {
     top: 56px;
     bottom: -13px;
     width: 1px;
-    background: #b7d9c3;
+    background: var(--paper-line);
 }
 
 .lesson-progress {
@@ -602,39 +604,39 @@ body {
     height: 5px;
     margin-top: 8px;
     overflow: hidden;
-    background: #dcebe1;
+    background: var(--paper-line);
     border-radius: 4px;
 }
 
 .lesson-progress span {
     display: block;
     height: 100%;
-    background: var(--green-light);
+    background: var(--moss);
     border-radius: inherit;
 }
 
 .lesson-status {
     margin-top: 5px;
-    color: var(--green-light);
+    color: var(--moss);
     font-size: 0.7rem;
 }
 
 .lesson-status strong {
-    color: var(--text-muted);
+    color: var(--ink-muted);
     font-weight: 500;
 }
 
 
 .lesson-item:hover,
 .lesson-item:focus-visible {
-    background-color: var(--green-soft);
+    background-color: var(--panel-bg);
 
-    border-color: rgba(64, 145, 108, 0.4);
+    border-color: var(--moss);
 
     transform: translateY(-1px);
 
     box-shadow:
-        0 5px 14px rgba(27, 67, 50, 0.08);
+        0 5px 14px rgba(28, 46, 34, 0.06);
 
     outline: none;
 }
@@ -659,9 +661,9 @@ body {
     height: 48px;
     flex-shrink: 0;
     object-fit: cover;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    background: #eaf5ee;
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+    background: var(--paper-line);
 }
 
 
@@ -679,11 +681,11 @@ body {
 
     flex-shrink: 0;
 
-    border-radius: 9px;
+    border-radius: 2px;
 
-    background-color: var(--green-pale);
+    background-color: var(--moss-tint);
 
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 1rem;
 }
@@ -696,9 +698,11 @@ body {
 .lesson-name {
     margin-bottom: 3px;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
-    font-weight: 700;
+    font-family: var(--font-serif);
+    font-size: 1.02rem;
+    font-weight: 500;
 }
 
 
@@ -707,7 +711,7 @@ body {
 ===================================================== */
 
 .lesson-meta {
-    color: var(--text-muted);
+    color: var(--ink-muted);
 
     font-size: 0.78rem;
 }
@@ -722,7 +726,7 @@ body {
 
     padding: 6px 10px;
 
-    border-radius: 999px;
+    border-radius: 2px;
 
     font-size: 0.68rem;
 
@@ -737,18 +741,18 @@ body {
 /* LIVE */
 
 .pill.live {
-    background-color: var(--green-pale);
+    background-color: var(--moss-tint);
 
-    color: var(--green-dark);
+    color: var(--ink);
 }
 
 
 /* TODO / IN PROGRESS */
 
 .pill.todo {
-    background-color: #EEF1EF;
+    background-color: transparent;
 
-    color: #5F6B64;
+    color: var(--ink-faint);
 }
 
 
@@ -757,13 +761,13 @@ body {
 ===================================================== */
 
 .mini-card {
-    background-color: var(--green-soft);
+    background-color: var(--panel-bg);
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
-    border-left: 4px solid var(--green-light);
+    border-left: 4px solid var(--moss);
 
-    border-radius: 8px;
+    border-radius: 2px;
 
     padding: 18px;
 
@@ -774,11 +778,12 @@ body {
 .mini-card h3 {
     margin: 0 0 10px;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
-    font-size: 1rem;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
 
-    font-weight: 700;
+    font-weight: 600;
 }
 
 
@@ -799,8 +804,8 @@ body {
 
     background:
         conic-gradient(
-            var(--green-light) 0 72%,
-            #D8E8DE 72% 100%
+            var(--moss) 0 72%,
+            var(--paper-line) 72% 100%
         );
 
     position: relative;
@@ -814,7 +819,7 @@ body {
 
     inset: 10px;
 
-    background-color: var(--white);
+    background-color: #FFFFFF;
 
     border-radius: 50%;
 }
@@ -825,8 +830,9 @@ body {
 
     z-index: 1;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
+    font-family: var(--font-mono);
     font-size: 1.1rem;
 
     font-weight: 700;
@@ -854,9 +860,9 @@ body {
 
     padding-bottom: 9px;
 
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--paper-line);
 
-    color: var(--text-dark);
+    color: var(--ink);
 
     font-size: 0.9rem;
 }
@@ -892,13 +898,14 @@ body {
 
     border-radius: 50%;
 
-    background-color: var(--green-light);
+    background-color: var(--moss);
 }
 
 
 .goal-item .score {
-    color: var(--green-dark);
+    color: var(--ink);
 
+    font-family: var(--font-mono);
     font-weight: 700;
 }
 
@@ -928,7 +935,7 @@ body {
 
     inset: 0;
 
-    background-color: rgba(27, 67, 50, 0.35);
+    background-color: rgba(28, 46, 34, 0.32);
 
     backdrop-filter: blur(2px);
 }
@@ -945,14 +952,14 @@ body {
 
     overflow: hidden;
 
-    background-color: var(--white);
+    background-color: var(--panel-bg);
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
-    border-radius: 12px;
+    border-radius: 3px;
 
     box-shadow:
-        0 20px 50px rgba(27, 67, 50, 0.18);
+        0 20px 50px rgba(28, 46, 34, 0.16);
 }
 
 
@@ -970,20 +977,21 @@ body {
 
     padding: 18px 20px;
 
-    background-color: var(--green-soft);
+    background-color: var(--panel-bg);
 
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--paper-line);
 }
 
 
 .folder-popup-header h3 {
     margin: 0;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
+    font-family: var(--font-serif);
     font-size: 1.2rem;
 
-    font-weight: 700;
+    font-weight: 600;
 }
 
 
@@ -1001,13 +1009,13 @@ body {
 
     padding: 0;
 
-    background-color: var(--white);
+    background-color: #FFFFFF;
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
     border-radius: 50%;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 1.4rem;
 
@@ -1022,9 +1030,9 @@ body {
 
 
 .folder-popup-close:hover {
-    background-color: var(--green-dark);
+    background-color: var(--ink);
 
-    color: var(--white);
+    color: #FFFFFF;
 }
 
 
@@ -1079,7 +1087,7 @@ body {
 
     inset: 0;
 
-    background-color: rgba(27, 67, 50, 0.4);
+    background-color: rgba(28, 46, 34, 0.35);
 
     backdrop-filter: blur(2px);
 }
@@ -1098,14 +1106,14 @@ body {
 
     overflow: hidden;
 
-    background-color: var(--white);
+    background-color: #FFFFFF;
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
-    border-radius: 14px;
+    border-radius: 3px;
 
     box-shadow:
-        0 24px 60px rgba(27, 67, 50, 0.20);
+        0 24px 60px rgba(28, 46, 34, 0.18);
 }
 
 
@@ -1123,35 +1131,38 @@ body {
 
     padding: 20px 24px 16px;
 
-    background-color: var(--green-soft);
+    background-color: var(--panel-bg);
 
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--paper-line);
 }
 
 
 .lesson-modal-kicker {
     display: inline-block;
 
-    color: var(--green-light);
+    color: var(--moss);
 
-    font-size: 0.7rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.85rem;
 
-    font-weight: 700;
+    font-weight: 400;
 
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
 
-    text-transform: uppercase;
+    text-transform: none;
 }
 
 
 .lesson-modal-header h3 {
     margin: 5px 0 0;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
+    font-family: var(--font-serif);
     font-size: clamp(1.4rem, 2vw, 2rem);
 
-    font-weight: 700;
+    font-weight: 600;
 }
 
 
@@ -1169,13 +1180,13 @@ body {
 
     padding: 0;
 
-    background-color: var(--white);
+    background-color: #FFFFFF;
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
     border-radius: 50%;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 1.7rem;
 
@@ -1190,9 +1201,9 @@ body {
 
 
 .lesson-modal-close:hover {
-    background-color: var(--green-dark);
+    background-color: var(--ink);
 
-    color: var(--white);
+    color: #FFFFFF;
 }
 
 
@@ -1220,9 +1231,9 @@ body {
 
     overflow-y: auto;
 
-    border-right: 1px solid var(--border);
+    border-right: 1px solid var(--paper-line);
 
-    background-color: var(--white);
+    background-color: #FFFFFF;
 }
 
 
@@ -1241,7 +1252,7 @@ body {
 
     margin-bottom: 14px;
 
-    color: var(--green-light);
+    color: var(--moss);
 
     font-size: 0.78rem;
 
@@ -1260,7 +1271,7 @@ body {
 .lesson-summary {
     margin: 0 0 20px;
 
-    color: var(--text-muted);
+    color: var(--ink-muted);
 
     font-size: 0.95rem;
 
@@ -1280,7 +1291,7 @@ body {
 .lesson-section h4 {
     margin: 0 0 9px;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 0.92rem;
 
@@ -1297,7 +1308,7 @@ body {
 
     padding-left: 18px;
 
-    color: var(--text-muted);
+    color: var(--ink-muted);
 
     line-height: 1.8;
 }
@@ -1306,7 +1317,7 @@ body {
 .lesson-section p {
     margin: 0;
 
-    color: var(--text-muted);
+    color: var(--ink-muted);
 
     line-height: 1.8;
 }
@@ -1323,14 +1334,14 @@ body {
 
     padding: 20px;
 
-    background-color: var(--green-soft);
+    background-color: var(--panel-bg);
 }
 
 
 .lesson-model-header {
     margin-bottom: 12px;
 
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 0.78rem;
 
@@ -1353,11 +1364,11 @@ body {
 
     min-height: 420px;
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--paper-line);
 
-    border-radius: 10px;
+    border-radius: 2px;
 
-    background-color: var(--white);
+    background-color: #FFFFFF;
 }
 
 
@@ -1379,27 +1390,27 @@ body {
 
     padding: 20px;
 
-    background-color: rgba(255, 255, 255, 0.65);
+    background-color: rgba(244, 241, 230, 0.6);
 
-    border: 1px dashed rgba(64, 145, 108, 0.35);
+    border: 1px dashed var(--moss);
 
-    border-radius: 10px;
+    border-radius: 2px;
 
-    color: var(--text-muted);
+    color: var(--ink-muted);
 
     text-align: center;
 }
 
 
 .lesson-model-placeholder i {
-    color: var(--green-light);
+    color: var(--moss);
 
     font-size: 2rem;
 }
 
 
 .lesson-model-placeholder span {
-    color: var(--green-dark);
+    color: var(--ink);
 
     font-size: 0.85rem;
 
@@ -1425,11 +1436,11 @@ body {
 
     padding: 10px 14px;
 
-    background-color: var(--green-dark);
+    background-color: var(--ink);
 
-    border-radius: 7px;
+    border-radius: 2px;
 
-    color: var(--white);
+    color: #FFFFFF;
 
     font-size: 0.8rem;
 
@@ -1448,9 +1459,9 @@ body {
 
 
 .lesson-full-link:hover {
-    background-color: var(--green);
+    background-color: var(--pine);
 
-    color: var(--white);
+    color: #FFFFFF;
 
     transform: translateY(-1px);
 }
@@ -1487,7 +1498,7 @@ body {
     .lesson-modal-content {
         border-right: none;
 
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--paper-line);
     }
 
 }
@@ -1592,10 +1603,10 @@ body {
     align-items: center;
     gap: 10px;
     padding: 13px 12px;
-    color: var(--green-dark);
-    background: #f7faf8;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    color: var(--ink);
+    background: var(--panel-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
     font-size: 0.78rem;
     font-weight: 700;
     text-decoration: none;
@@ -1603,13 +1614,13 @@ body {
 }
 
 .quick-access-item i {
-    color: var(--green-light);
+    color: var(--moss);
     font-size: 1rem;
 }
 
 .quick-access-item:hover {
     transform: translateY(-2px);
-    border-color: var(--green-light);
+    border-color: var(--moss);
 }
 
 .featured-learning {
@@ -1620,8 +1631,8 @@ body {
     overflow: hidden;
     padding: 28px;
     color: white;
-    background: linear-gradient(105deg, #1b4332 0%, #2d6a4f 65%, #40916c 100%);
-    border-radius: 12px;
+    background: linear-gradient(105deg, var(--pine) 0%, var(--moss) 100%);
+    border-radius: 3px;
     box-shadow: 0 8px 20px rgba(27, 67, 50, 0.14);
 }
 
@@ -1631,17 +1642,19 @@ body {
     max-width: 60%;
 }
 
-.featured-learning .eyebrow { color: #b7e4c7; }
+.featured-learning .eyebrow { color: var(--lichen); }
 
 .featured-learning h2 {
     margin: 0 0 8px;
-    font-size: 1.45rem;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
     line-height: 1.2;
 }
 
 .featured-learning p {
     margin: 0 0 18px;
-    color: #e1f2e7;
+    color: rgba(244, 241, 230, 0.85);
     font-size: 0.82rem;
     line-height: 1.5;
 }
@@ -1660,9 +1673,9 @@ body {
     align-items: center;
     gap: 8px;
     padding: 10px 14px;
-    color: var(--green-dark);
-    background: white;
-    border-radius: 7px;
+    color: var(--ink);
+    background: var(--paper);
+    border-radius: 2px;
     font-size: 0.75rem;
     font-weight: 800;
     text-decoration: none;
