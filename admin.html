@@ -78,9 +78,18 @@
             <div>
                 <span class="eyebrow">Administration ledger</span>
                 <h1><span id="adminName">Admin</span></h1>
-                <p>Records for every student enrolled in the biology course.</p>
+                <p id="sectionSubtitle">Records for every student enrolled in the biology course.</p>
             </div>
             <div class="header-tools">
+                <label class="section-picker">
+                    <span class="section-picker-label">Managing</span>
+                    <select id="sectionSelect" class="admin-select">
+                        <option value="all">All sections</option>
+                        <option value="1-A">Section 1-A</option>
+                        <option value="1-B">Section 1-B</option>
+                        <option value="1-C">Section 1-C</option>
+                    </select>
+                </label>
                 <button class="ledger-link-btn" id="headerLedgerLink">Open student ledger</button>
             </div>
         </div>
@@ -164,6 +173,7 @@
                         <thead>
                             <tr>
                                 <th>Student</th>
+                                <th>Section</th>
                                 <th>Joined</th>
                                 <th>Modules</th>
                                 <th>Avg. score</th>
@@ -198,6 +208,7 @@
                         <thead>
                             <tr>
                                 <th>Student</th>
+                                <th>Section</th>
                                 <th>Inactive for</th>
                                 <th>Modules</th>
                                 <th>Avg. score</th>

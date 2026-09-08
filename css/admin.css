@@ -269,6 +269,46 @@ body {
     color: var(--paper);
 }
 
+/* ===================== SECTION PICKER ===================== */
+
+.section-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #FBF9F2;
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+}
+
+.section-picker-label {
+    color: var(--moss);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.section-picker .admin-select {
+    border-bottom: none;
+    padding: 0;
+    font-weight: 600;
+}
+
+/* Section badge shown in the Student / Archived tables */
+.section-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--paper-line);
+    border-radius: 2px;
+    color: var(--pine);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
 /* ===================== LEDGER STRIP (overall statistics) ===================== */
 
 .ledger-strip {
@@ -581,10 +621,10 @@ body {
 
 /* Data columns rendered as monospace figures */
 
-.admin-table td:nth-child(2),
 .admin-table td:nth-child(3),
 .admin-table td:nth-child(4),
-.admin-table td:nth-child(6) {
+.admin-table td:nth-child(5),
+.admin-table td:nth-child(7) {
     font-family: var(--font-mono);
     font-size: 0.8rem;
     color: var(--ink);
@@ -816,5 +856,5 @@ body {
         flex-direction: column;
         align-items: flex-start;
     }
-    .admin-table td:nth-child(2) { display: none; }
+    .admin-table td:nth-child(3) { display: none; }
 }

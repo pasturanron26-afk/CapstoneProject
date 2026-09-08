@@ -39,6 +39,7 @@ const QUIZ_NAMES = [
 
 const FIRST_NAMES = ['Maria', 'Jose', 'Angel', 'Carlo', 'Nica', 'Renz', 'Kyla', 'Miguel', 'Trisha', 'Paolo', 'Bea', 'Jerico', 'Angelica', 'Mark', 'Dyan', 'Ronan'];
 const LAST_NAMES = ['Santos', 'Reyes', 'Cruz', 'Bautista', 'Villanueva', 'Garcia', 'Mendoza', 'Torres', 'Flores', 'Rivera', 'Aquino', 'Domingo', 'Salazar', 'Castro'];
+const SECTIONS = ['1-A', '1-B', '1-C'];
 
 function seededRandom(seed) {
     let value = seed;
@@ -86,12 +87,14 @@ function buildMockStudents(count = 16) {
             : null;
 
         const status = lastActiveDaysAgo > 30 ? 'inactive' : 'active';
+        const section = SECTIONS[i % SECTIONS.length];
 
         students.push({
             id: `stu-${i + 1}`,
             catalogNo: String(i + 1).padStart(3, '0'),
             name: fullName,
             email,
+            section,
             joined: joined.toISOString().slice(0, 10),
             lastActive: lastActive.toISOString().slice(0, 10),
             lastActiveDaysAgo,
@@ -107,20 +110,35 @@ function buildMockStudents(count = 16) {
 }
 
 let STUDENTS = buildMockStudents();
-let currentFilter = { search: '', status: 'all' };
+let currentFilter = { search: '', status: 'all', section: 'all' };
+
+function getSectionStudents() {
+    return currentFilter.section === 'all'
+        ? STUDENTS
+        : STUDENTS.filter(s => s.section === currentFilter.section);
+}
+
+function updateSectionSubtitle() {
+    const subtitle = document.getElementById('sectionSubtitle');
+    if (!subtitle) return;
+    subtitle.textContent = currentFilter.section === 'all'
+        ? 'Records for every student enrolled in the biology course.'
+        : `Records for Section ${currentFilter.section} of the biology course.`;
+}
 
 /* ===================== RENDER: OVERVIEW STATS ===================== */
 
 function renderOverview() {
-    const active = STUDENTS.filter(s => !s.archived && s.status === 'active');
-    const inactive = STUDENTS.filter(s => !s.archived && s.status === 'inactive');
-    const archived = STUDENTS.filter(s => s.archived);
-    const allScored = STUDENTS.filter(s => s.avgScore !== null);
+    const scoped = getSectionStudents();
+    const active = scoped.filter(s => !s.archived && s.status === 'active');
+    const inactive = scoped.filter(s => !s.archived && s.status === 'inactive');
+    const archived = scoped.filter(s => s.archived);
+    const allScored = scoped.filter(s => s.avgScore !== null);
     const avgOverall = allScored.length
         ? Math.round(allScored.reduce((sum, s) => sum + s.avgScore, 0) / allScored.length)
         : 0;
 
-    document.getElementById('statTotalStudents').textContent = STUDENTS.filter(s => !s.archived).length;
+    document.getElementById('statTotalStudents').textContent = scoped.filter(s => !s.archived).length;
     document.getElementById('statActiveStudents').textContent = active.length;
     document.getElementById('statAvgScore').textContent = `${avgOverall}%`;
     document.getElementById('statArchived').textContent = archived.length;
@@ -129,7 +147,7 @@ function renderOverview() {
     // Top performers
     const topList = document.getElementById('topPerformersList');
     topList.innerHTML = '';
-    [...STUDENTS]
+    [...scoped]
         .filter(s => !s.archived && s.avgScore !== null)
         .sort((a, b) => b.avgScore - a.avgScore)
         .slice(0, 5)
@@ -152,7 +170,7 @@ function renderOverview() {
     // Recent activity feed
     const feed = document.getElementById('activityFeed');
     feed.innerHTML = '';
-    [...STUDENTS]
+    [...scoped]
         .filter(s => !s.archived)
         .sort((a, b) => a.lastActiveDaysAgo - b.lastActiveDaysAgo)
         .slice(0, 6)
@@ -178,7 +196,7 @@ function renderOverview() {
 /* ===================== RENDER: STUDENT TABLE ===================== */
 
 function getFilteredStudents() {
-    return STUDENTS.filter(s => {
+    return getSectionStudents().filter(s => {
         if (s.archived) return false;
         const matchesSearch = !currentFilter.search ||
             s.name.toLowerCase().includes(currentFilter.search) ||
@@ -196,7 +214,7 @@ function renderStudentTable() {
     document.getElementById('studentCountBadge').textContent = `${rows.length} student${rows.length === 1 ? '' : 's'}`;
 
     if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="7" class="admin-empty-row">No students match this filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="admin-empty-row">No students match this filter.</td></tr>`;
         return;
     }
 
@@ -212,6 +230,7 @@ function renderStudentTable() {
                     </div>
                 </div>
             </td>
+            <td><span class="section-tag">${s.section}</span></td>
             <td>${s.joined}</td>
             <td>${s.modulesCompleted}/12</td>
             <td>${s.avgScore !== null ? s.avgScore + '%' : '&mdash;'}</td>
@@ -232,12 +251,12 @@ function renderStudentTable() {
 
 function renderArchivedTable() {
     const tbody = document.getElementById('archivedTableBody');
-    const rows = STUDENTS.filter(s => s.archived);
+    const rows = getSectionStudents().filter(s => s.archived);
     tbody.innerHTML = '';
     document.getElementById('archivedCountBadge').textContent = `${rows.length} archived`;
 
     if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="admin-empty-row">No archived accounts.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="admin-empty-row">No archived accounts.</td></tr>`;
         return;
     }
 
@@ -253,6 +272,7 @@ function renderArchivedTable() {
                     </div>
                 </div>
             </td>
+            <td><span class="section-tag">${s.section}</span></td>
             <td>${s.lastActiveDaysAgo}d before archiving</td>
             <td>${s.modulesCompleted}/12</td>
             <td>${s.avgScore !== null ? s.avgScore + '%' : '&mdash;'}</td>
@@ -455,6 +475,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    updateSectionSubtitle();
     renderAll();
     setupScrollSpy();
 
@@ -492,6 +513,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('statusFilter').addEventListener('change', (e) => {
         currentFilter.status = e.target.value;
         renderStudentTable();
+    });
+
+    document.getElementById('sectionSelect').addEventListener('change', (e) => {
+        currentFilter.section = e.target.value;
+        updateSectionSubtitle();
+        renderAll();
     });
 
     document.getElementById('manageForm').addEventListener('submit', handleManageFormSubmit);
