@@ -62,7 +62,7 @@
 /* Thumbnail column */
 .quiz-thumb {
   padding: 16px;
-  background: #F3F8F5;
+  background: var(--paper);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,7 +74,7 @@
   min-height: 210px;
   border: 1px solid var(--paper-line);
   border-radius: 2px;
-  background: #FFFFFF;
+  background: var(--panel-bg);
   display: grid;
   place-items: center;
   padding: 12px;
@@ -110,24 +110,33 @@
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--moss);
-  font-weight: 800;
+  font-weight: 700;
 }
 
+/* Difficulty badge — outlined "stamp" style, matching
+   .status-badge / .cell-tag / .pill elsewhere in the app */
 .level-badge {
   display: inline-flex;
   align-items: center;
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: 2px;
-  font-size: 0.72rem;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: capitalize;
-  background: var(--panel-bg);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: transparent;
   border: 1px solid var(--paper-line);
-  color: var(--ink);
+  color: var(--ink-muted);
 }
-.level-primary { background: rgba(79,122,91,0.10); }
-.level-advanced { background: rgba(147,112,31,0.10); }
+.level-primary {
+  border-color: var(--moss);
+  color: var(--moss);
+}
+.level-advanced {
+  border-color: var(--stamp-gold);
+  color: var(--stamp-gold);
+}
 
 .content-title {
   margin: 0;
@@ -160,6 +169,7 @@
   border: 1px solid var(--paper-line);
   border-radius: 2px;
   color: var(--ink);
+  font-family: var(--font-sans);
   font-size: 0.78rem;
   font-weight: 600;
 }
@@ -175,19 +185,19 @@
 }
 
 .progress-rail {
-  height: 16px;
-  background: #e7efe9;
-  border: 1px solid var(--paper-line);
+  height: 10px;
+  background: var(--paper-line);
+  border: none;
   border-radius: 2px;
   overflow: hidden;
 }
 .progress-fill {
   display: block;
   height: 100%;
-  background: var(--pine);
+  background: var(--moss);
 }
 
-/* Start button (ledger-green) */
+/* Start button (ledger pine) */
 .start-btn {
   display: inline-flex;
   align-items: center;
@@ -198,12 +208,17 @@
   border: 1px solid var(--pine);
   border-radius: 2px;
   text-decoration: none;
-  font-weight: 700;
+  font-family: var(--font-sans);
+  font-weight: 600;
   letter-spacing: .02em;
   white-space: nowrap;
-  transition: transform .15s ease, filter .15s ease;
+  transition: background-color .15s ease, transform .15s ease;
 }
-.start-btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+.start-btn:hover {
+  background: var(--moss);
+  border-color: var(--moss);
+  transform: translateY(-1px);
+}
 
 /* Focus ring */
 .quiz-card:focus-within {

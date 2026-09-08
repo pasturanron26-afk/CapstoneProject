@@ -38,6 +38,19 @@
             </div>
 
             <div class="form-group">
+                <label for="sectionField">Section</label>
+                <div class="input-wrapper select-wrapper">
+                    <select id="sectionField" required>
+                        <option value="" disabled selected>Select your section</option>
+                        <option value="1-A">Section 1-A</option>
+                        <option value="1-B">Section 1-B</option>
+                        <option value="1-C">Section 1-C</option>
+                    </select>
+                    <i class="bi bi-chevron-down select-caret" aria-hidden="true"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label for="passField">Password</label>
                 <div class="input-wrapper">
                     <input type="password" id="passField" placeholder="Create a password" autocomplete="new-password" required>
@@ -81,11 +94,12 @@
 
             const fullName = document.getElementById('fullName').value.trim();
             const email = document.getElementById('emailField').value.trim();
+            const section = document.getElementById('sectionField').value;
             const password = passField.value;
             const confirmPassword = document.getElementById('confirmPassField').value;
 
-            if (!fullName || !email || !password || !confirmPassword) {
-                alert('Please complete all fields.');
+            if (!fullName || !email || !section || !password || !confirmPassword) {
+                alert('Please complete all fields, including your section.');
                 return;
             }
 
@@ -110,6 +124,7 @@
                     options: {
                         data: {
                             full_name: fullName,
+                            section,
                             role: 'student'
                         }
                     }
@@ -123,6 +138,7 @@
                         id: userId,
                         email,
                         full_name: fullName,
+                        section,
                         role: 'student',
                         created_at: new Date().toISOString()
                     }, { onConflict: 'id' });
