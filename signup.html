@@ -132,20 +132,24 @@
 
                 if (error) throw error;
 
-                const userId = data?.user?.id;
-                if (userId) {
-                    await ecoAuth.client.from('profiles').upsert({
-                        id: userId,
-                        email,
-                        full_name: fullName,
-                        section,
-                        role: 'student',
-                        created_at: new Date().toISOString()
-                    }, { onConflict: 'id' });
-                }
+                // NOTE: the profile row (including section) is created
+                // server-side by a database trigger (see fix-profile-trigger.sql)
+                // that reads full_name/section/role straight from this signUp
+                // call's metadata.
+                //
+                // Email confirmation is required for this project, so signUp()
+                // does NOT log the student in yet -- data.session comes back
+                // empty until they click the confirmation link. We sign out
+                // here regardless of whether a session came back, so a signup
+                // can never silently land on whatever account happened to
+                // already be logged in on this browser (that's what caused
+                // "different account" showing on the dashboard). Students
+                // always land on the login page and sign in explicitly with
+                // their own new account.
+                await ecoAuth.client.auth.signOut();
 
-                alert('Account created successfully! Welcome to EcoLearn.');
-                window.location.href = 'dashboard.html'; // REDIRECTS TO DASHBOARD
+                alert('Account created! Check your email for a confirmation link, then sign in below.');
+                window.location.href = 'login.html?confirm=1';
             } catch (error) {
                 alert(error.message || 'Unable to create account. Please try again.');
                 submitBtn.disabled = false;

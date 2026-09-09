@@ -22,6 +22,11 @@
             <p class="auth-subtitle">Sign in to access your cell models, specimen records, and coursework.</p>
         </div>
 
+        <div id="authNotice" class="auth-notice" hidden>
+            <i class="bi bi-envelope-check"></i>
+            <span id="authNoticeText"></span>
+        </div>
+
         <div class="auth-tabs" id="tabs">
             <div class="tab-slider"></div>
             <button type="button" class="tab-btn active" data-role="student" id="tabStudent">
@@ -72,6 +77,21 @@
     </div>
 
     <script>
+        // Show a notice banner when arriving from signup (?confirm=1),
+        // reminding the student to confirm their email before they can
+        // sign in. The query param is stripped right after so refreshing
+        // the page doesn't keep showing it.
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('confirm') === '1') {
+                const notice = document.getElementById('authNotice');
+                const noticeText = document.getElementById('authNoticeText');
+                noticeText.textContent = 'Account created! Check your email for a confirmation link before signing in.';
+                notice.hidden = false;
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        })();
+
         const tabs = document.getElementById('tabs');
         const tabStudent = document.getElementById('tabStudent');
         const tabAdmin = document.getElementById('tabAdmin');
