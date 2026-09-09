@@ -227,28 +227,6 @@ body {
     text-decoration: underline;
 }
 
-/* Notice banner (e.g. "check your email" after signup) */
-.auth-notice {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 18px;
-    padding: 10px 12px;
-    background: var(--moss-tint);
-    border: 1px solid var(--moss);
-    border-radius: 2px;
-    color: var(--pine);
-    font-family: var(--font-sans);
-    font-size: 0.76rem;
-    line-height: 1.5;
-}
-
-.auth-notice i {
-    margin-top: 1px;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-}
-
 .btn-primary {
     width: 100%;
     padding: 11px;
