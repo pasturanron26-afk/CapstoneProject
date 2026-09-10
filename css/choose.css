@@ -194,11 +194,11 @@
     gap: 9px;
     width: min(340px, 100%);
     margin-top: 20px;
-    padding: 9px 16px;
-    color: var(--ink-faint);
+    padding: 10px 13px;
+    color: var(--ink-muted);
     background: var(--panel-bg);
     border: 1px solid var(--paper-line);
-    border-radius: 999px;
+    border-radius: 2px;
 }
 
 .model-search input {
@@ -209,7 +209,12 @@
     background: transparent;
     font: inherit;
     font-family: var(--font-sans);
-    font-size: 13px;
+    font-size: 0.78rem;
+}
+
+.model-search:focus-within {
+    border-color: var(--moss);
+    box-shadow: 0 0 0 3px var(--moss-tint);
 }
 
 .AnimalCellBox,
