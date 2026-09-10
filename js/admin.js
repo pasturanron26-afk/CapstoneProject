@@ -9,15 +9,22 @@
      - Manage Student Accounts
      - Archive Inactive Students
 
-   NOTE ON DATA: student records, progress and quiz scores are
-   demo/mock data generated below. The current `profiles` table
-   only stores { id, role }, and its RLS policy only allows a
-   user to read their own row — so there is no live source for
-   a student roster yet. When a `profiles/lessons/quizzes`
-   schema with an "admins can read all rows" policy exists,
-   replace `buildMockStudents()` with a real
-   `ecoAuth.client.from('profiles').select(...)` query and keep
-   the rest of this file (rendering/filtering/modals) as-is.
+   NOTE ON DATA: student records now come from a real query
+   against the `profiles` table (role = 'student'), populated
+   by newly signed-up accounts via the on_auth_user_created
+   trigger. This requires the "Admins can read all profiles"
+   RLS policy (see add-section-column.sql) to already be
+   applied — without it, this query silently returns 0 rows
+   for anyone other than the admin's own profile.
+
+   Progress and quiz scores are NOT wired up yet — there is no
+   `lesson_progress` / `quiz_attempts` schema, so every real
+   student currently shows 0 modules completed and no quiz
+   history until that's built. Likewise, Archive/Manage actions
+   in this file are still local-only: there's no `archived` or
+   `status` column on `profiles` yet, so those changes don't
+   persist to Supabase on refresh. Say the word when you want
+   that schema and I'll wire it up the same way section was.
 
    NOTE ON NAVIGATION: Overview / Students / Archived are no
    longer separate hidden panels — all three stay on the page
@@ -37,79 +44,42 @@ const QUIZ_NAMES = [
     'Cell Cycle', 'Genetics', 'Lab Skills', 'Final Review'
 ];
 
-const FIRST_NAMES = ['Maria', 'Jose', 'Angel', 'Carlo', 'Nica', 'Renz', 'Kyla', 'Miguel', 'Trisha', 'Paolo', 'Bea', 'Jerico', 'Angelica', 'Mark', 'Dyan', 'Ronan'];
-const LAST_NAMES = ['Santos', 'Reyes', 'Cruz', 'Bautista', 'Villanueva', 'Garcia', 'Mendoza', 'Torres', 'Flores', 'Rivera', 'Aquino', 'Domingo', 'Salazar', 'Castro'];
-const SECTIONS = ['1-A', '1-B', '1-C'];
+async function fetchStudents() {
+    if (!window.ecoAuth) return [];
 
-function seededRandom(seed) {
-    let value = seed;
-    return () => {
-        value = (value * 9301 + 49297) % 233280;
-        return value / 233280;
-    };
-}
+    const { data, error } = await ecoAuth.client
+        .from('profiles')
+        .select('id, full_name, email, section, role, created_at')
+        .eq('role', 'student')
+        .order('created_at', { ascending: false });
 
-function buildMockStudents(count = 16) {
-    const students = [];
-    const today = new Date('2026-09-06');
-
-    for (let i = 0; i < count; i++) {
-        const rand = seededRandom(i * 97 + 13);
-        const first = FIRST_NAMES[i % FIRST_NAMES.length];
-        const last = LAST_NAMES[(i * 3) % LAST_NAMES.length];
-        const fullName = `${first} ${last}`;
-        const email = `${first.toLowerCase()}.${last.toLowerCase()}@parsu.edu.ph`;
-
-        const joinedDaysAgo = Math.floor(rand() * 180) + 5;
-        const joined = new Date(today);
-        joined.setDate(joined.getDate() - joinedDaysAgo);
-
-        const lastActiveDaysAgo = Math.floor(rand() * 60);
-        const lastActive = new Date(today);
-        lastActive.setDate(lastActive.getDate() - lastActiveDaysAgo);
-
-        const modulesCompleted = Math.min(12, Math.floor(rand() * 13));
-        const moduleProgress = MODULE_NAMES.map((name, idx) => ({
-            name,
-            percent: idx < modulesCompleted ? 100 : (idx === modulesCompleted ? Math.floor(rand() * 80) + 10 : 0)
-        }));
-
-        const quizAttempts = Math.floor(rand() * (QUIZ_NAMES.length + 1));
-        const quizzes = QUIZ_NAMES.slice(0, quizAttempts).map((name, idx) => {
-            const score = Math.floor(rand() * 41) + 60;
-            const attemptDaysAgo = Math.floor(rand() * 150) + 1;
-            const date = new Date(today);
-            date.setDate(date.getDate() - attemptDaysAgo);
-            return { name, score, date: date.toISOString().slice(0, 10), retakes: Math.floor(rand() * 3) };
-        });
-        const avgScore = quizzes.length
-            ? Math.round(quizzes.reduce((sum, q) => sum + q.score, 0) / quizzes.length)
-            : null;
-
-        const status = lastActiveDaysAgo > 30 ? 'inactive' : 'active';
-        const section = SECTIONS[i % SECTIONS.length];
-
-        students.push({
-            id: `stu-${i + 1}`,
-            catalogNo: String(i + 1).padStart(3, '0'),
-            name: fullName,
-            email,
-            section,
-            joined: joined.toISOString().slice(0, 10),
-            lastActive: lastActive.toISOString().slice(0, 10),
-            lastActiveDaysAgo,
-            modulesCompleted,
-            moduleProgress,
-            quizzes,
-            avgScore,
-            status,
-            archived: false
-        });
+    if (error) {
+        console.error('Failed to load students from Supabase:', error.message);
+        return [];
     }
-    return students;
+
+    return (data || []).map((row, idx) => {
+        const joined = row.created_at ? row.created_at.slice(0, 10) : '—';
+        return {
+            id: row.id,
+            catalogNo: String(idx + 1).padStart(3, '0'),
+            name: row.full_name || row.email || 'Unnamed student',
+            email: row.email || '—',
+            section: row.section || 'Unassigned',
+            joined,
+            lastActive: joined,
+            lastActiveDaysAgo: 0,
+            modulesCompleted: 0,
+            moduleProgress: MODULE_NAMES.map(name => ({ name, percent: 0 })),
+            quizzes: [],
+            avgScore: null,
+            status: 'active',
+            archived: false
+        };
+    });
 }
 
-let STUDENTS = buildMockStudents();
+let STUDENTS = [];
 let currentFilter = { search: '', status: 'all', section: 'all' };
 
 function getSectionStudents() {
@@ -474,6 +444,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             logoutButton.addEventListener('click', () => window.ecoAuth.signOut());
         }
     }
+
+    STUDENTS = await fetchStudents();
 
     updateSectionSubtitle();
     renderAll();
