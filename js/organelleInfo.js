@@ -913,12 +913,39 @@ function renderSections(sections) {
         return;
     }
 
-    infoDefinition.innerHTML = sections.map(section => `
+    // First section starts expanded so the student sees an answer right
+    // away; the rest start collapsed to keep the panel scannable.
+    infoDefinition.innerHTML = sections.map((section, index) => `
         <div class="infoSection">
-            <h4 class="infoSectionHeading">${section.heading}</h4>
-            <p class="infoSectionBody">${section.body}</p>
+            <button type="button" class="infoSectionToggle" aria-expanded="${index === 0 ? "true" : "false"}">
+                <h4 class="infoSectionHeading">${section.heading}</h4>
+                <i class="bi bi-chevron-down infoSectionChevron" aria-hidden="true"></i>
+            </button>
+            <p class="infoSectionBody"${index === 0 ? "" : " hidden"}>${section.body}</p>
         </div>
     `).join("");
+}
+
+// ======================================================
+// SECTION ACCORDION TOGGLE
+// The container itself is never replaced (only its
+// innerHTML), so one delegated listener here keeps
+// working across every re-render triggered by
+// updateOrganelleInformation / resetOrganelleInformation.
+// ======================================================
+
+if (infoDefinition) {
+    infoDefinition.addEventListener("click", function (event) {
+        const toggle = event.target.closest(".infoSectionToggle");
+        if (!toggle) return;
+
+        const body = toggle.nextElementSibling;
+        if (!body || !body.classList.contains("infoSectionBody")) return;
+
+        const isExpanded = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!isExpanded));
+        body.hidden = isExpanded;
+    });
 }
 
 // ======================================================
