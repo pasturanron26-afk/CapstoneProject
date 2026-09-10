@@ -39,7 +39,16 @@
 
     </style>
 </head>
-
+    <style>
+        /* =========================================
+           ACTIVE TAB
+        ========================================= */
+        nav .nav-link.Dashboard {
+            background-color: #40916C;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+    </style>
 <body>
     <!-- =========================================
          SIDEBAR
@@ -167,8 +176,11 @@
         <div class="page-header">
             <div>
                 <span class="eyebrow">Student dashboard</span>
-                <h1><span id="studentName">student@email.com</span></h1>
-                <p id="studentSubtitle">Keep exploring the amazing world of cells!</p>
+                <h1>
+                    <span id="studentName">Student</span>
+                    <span id="studentSection" class="student-section"></span>
+                </h1>
+                <p id="studentSubtitle" class="student-email"><i class="bi bi-envelope"></i> <span id="studentEmail">student@email.com</span></p>
             </div>
             <div class="header-tools">
                 <label class="dashboard-search">
@@ -208,6 +220,15 @@
                 </div>
                 <div class="value">72%</div>
                 <div class="meta">On target</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">
+                    <span>Streak</span>
+                    <span class="icon"><i class="bi bi-fire"></i></span>
+                </div>
+                <div class="value">5</div>
+                <div class="meta">Days in a row</div>
             </div>
         </section>
 
@@ -258,7 +279,7 @@
                                 <div class="lesson-status">0% <strong>Up Next</strong></div>
                             </div>
                         </div>
-                        <span class="pill live">Next</span>
+                        <span class="pill next">Next</span>
                     </button>
                 </div>
             </div>
@@ -361,7 +382,13 @@
         <div class="folder-popup-backdrop" data-close="true"></div>
         <div class="folder-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="folderPopupTitle">
             <div class="folder-popup-header">
-                <h3 id="folderPopupTitle">Folder</h3>
+                <div class="folder-popup-heading">
+                    <span class="folder-popup-icon" id="folderPopupIcon" aria-hidden="true"><i class="bi bi-book"></i></span>
+                    <div>
+                        <h3 id="folderPopupTitle">Folder</h3>
+                        <p id="folderPopupSubtitle" class="folder-popup-subtitle">Tap an item to open it.</p>
+                    </div>
+                </div>
                 <button class="folder-popup-close" type="button" aria-label="Close folder">&times;</button>
             </div>
             <div class="folder-popup-body">
@@ -379,9 +406,36 @@
             
             if (data?.session?.user) {
                 const user = data.session.user;
-                const fullName = user.user_metadata?.full_name || 'Student';
+                let fullName = user.user_metadata?.full_name || 'Student';
+                let section = user.user_metadata?.section || '';
+                const email = user.email || user.user_metadata?.email || '';
+
+                // The signup trigger writes full_name/section into the
+                // profiles table, which is the source of truth -- the
+                // auth session's user_metadata can be stale or empty,
+                // so prefer the profiles row when it's available.
+                try {
+                    const { data: profile, error: profileError } = await ecoAuth.client
+                        .from('profiles')
+                        .select('full_name, section')
+                        .eq('id', user.id)
+                        .maybeSingle();
+
+                    if (!profileError && profile) {
+                        fullName = profile.full_name || fullName;
+                        section = profile.section || section;
+                    }
+                } catch (profileFetchError) {
+                    // Fall back silently to user_metadata values above.
+                }
+
                 // Update page header with student info
                 document.getElementById('studentName').textContent = fullName;
+
+                const sectionEl = document.getElementById('studentSection');
+                sectionEl.textContent = section ? `Section ${section}` : '';
+
+                document.getElementById('studentEmail').textContent = email;
             }
 
             const logoutButton = document.getElementById('logoutButton');
@@ -410,6 +464,8 @@
         const lessonModalClose = document.querySelector('.lesson-modal-close');
         const folderPopup = document.getElementById('folderPopup');
         const folderPopupTitle = document.getElementById('folderPopupTitle');
+        const folderPopupSubtitle = document.getElementById('folderPopupSubtitle');
+        const folderPopupIcon = document.getElementById('folderPopupIcon');
         const folderPopupList = document.getElementById('folderPopupList');
         const folderPopupClose = document.querySelector('.folder-popup-close');
 
@@ -441,24 +497,49 @@
 
         function openFolderPopup(card) {
             const title = card.dataset.title || 'Folder';
+            const folderType = card.dataset.folder || '';
+            const isQuizFolder = folderType === 'quizzes';
+            const destination = isQuizFolder ? 'quiz.html' : 'lesson.html';
             const list = (card.dataset.list || '').split('|').filter(Boolean);
+
             folderPopupTitle.textContent = title;
+            folderPopupIcon.innerHTML = isQuizFolder
+                ? '<i class="bi bi-patch-check"></i>'
+                : '<i class="bi bi-book"></i>';
+            folderPopupSubtitle.textContent = isQuizFolder
+                ? 'Tap a quiz to head to the Quizzes page and start it.'
+                : 'Tap a module to head to the Lessons page and start it.';
+
             folderPopupList.innerHTML = '';
             list.forEach((item) => {
                 const li = document.createElement('li');
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'folder-item';
-                button.textContent = item;
-                button.dataset.title = item;
-                button.dataset.module = title;
-                button.dataset.time = '10 min';
-                button.dataset.summary = 'This item is part of your current ' + title.toLowerCase() + ' collection.';
-                button.dataset.objectives = 'Review the main concept|Understand the key idea|Complete the task';
+
+                const icon = document.createElement('span');
+                icon.className = 'folder-item-icon';
+                icon.innerHTML = isQuizFolder
+                    ? '<i class="bi bi-question-circle"></i>'
+                    : '<i class="bi bi-journal-text"></i>';
+
+                const label = document.createElement('span');
+                label.className = 'folder-item-label';
+                label.textContent = item;
+
+                const trailing = document.createElement('i');
+                trailing.className = 'bi bi-box-arrow-up-right folder-item-trailing';
+
+                button.append(icon, label, trailing);
+
+                // Neither the lesson nor quiz folder lists map 1:1 to a
+                // per-item detail page, so send the student to the real
+                // Lessons/Quizzes page instead of a generic preview modal.
                 button.addEventListener('click', () => {
                     closeFolderPopup();
-                    openLessonModal(button);
+                    window.location.href = destination;
                 });
+
                 li.appendChild(button);
                 folderPopupList.appendChild(li);
             });
@@ -471,7 +552,7 @@
             folderPopup.setAttribute('aria-hidden', 'true');
         }
 
-        document.querySelectorAll('.lesson-item, .folder-item').forEach((item) => {
+        document.querySelectorAll('.lesson-item').forEach((item) => {
             item.addEventListener('click', () => openLessonModal(item));
         });
 

@@ -115,6 +115,32 @@ body {
     text-transform: none;
 }
 
+.student-section {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 3px 10px;
+    vertical-align: middle;
+    color: var(--moss);
+    background-color: var(--moss-tint);
+    border-radius: 2px;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.student-email {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.student-email i {
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+}
+
 .header-tools {
     display: flex;
     align-items: center;
@@ -185,7 +211,7 @@ body {
     display: grid;
 
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(4, minmax(0, 1fr));
 
     gap: 18px;
 
@@ -415,6 +441,12 @@ body {
 ===================================================== */
 
 .folder-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
     width: 100%;
 
     padding: 9px 11px;
@@ -451,6 +483,46 @@ body {
     transform: translateX(2px);
 
     outline: none;
+}
+
+
+/* =====================================================
+   FOLDER ITEM ICON / LABEL / TRAILING
+===================================================== */
+
+.folder-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    flex-shrink: 0;
+
+    border-radius: 2px;
+
+    background-color: var(--moss-tint);
+
+    color: var(--moss);
+
+    font-size: 0.88rem;
+}
+
+.folder-item-label {
+    flex: 1;
+
+    min-width: 0;
+
+    font-size: 0.86rem;
+}
+
+.folder-item-trailing {
+    flex-shrink: 0;
+
+    color: var(--ink-faint);
+
+    font-size: 0.82rem;
 }
 
 
@@ -722,11 +794,19 @@ body {
 ===================================================== */
 
 .pill {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
     flex-shrink: 0;
 
-    padding: 6px 10px;
+    padding: 0;
 
-    border-radius: 2px;
+    background: none;
+
+    border-radius: 0;
 
     font-size: 0.68rem;
 
@@ -735,24 +815,43 @@ body {
     letter-spacing: 0.05em;
 
     text-transform: uppercase;
+
+    /* Status label, not a control -- no pointer affordance */
+    cursor: default;
+}
+
+.pill::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background-color: currentColor;
 }
 
 
-/* LIVE */
+/* LIVE / COMPLETED */
 
 .pill.live {
-    background-color: var(--moss-tint);
-
-    color: var(--ink);
+    color: var(--moss);
 }
 
 
 /* TODO / IN PROGRESS */
 
 .pill.todo {
-    background-color: transparent;
-
     color: var(--ink-faint);
+}
+
+
+/* NEXT / UP NEXT */
+
+.pill.next {
+    color: var(--stamp-gold);
 }
 
 
@@ -970,7 +1069,7 @@ body {
 .folder-popup-header {
     display: flex;
 
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
 
     gap: 16px;
@@ -983,6 +1082,37 @@ body {
 }
 
 
+.folder-popup-heading {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 13px;
+}
+
+
+.folder-popup-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    margin-top: 2px;
+
+    border-radius: 2px;
+
+    background-color: var(--moss-tint);
+
+    color: var(--moss);
+
+    font-size: 1.05rem;
+}
+
+
 .folder-popup-header h3 {
     margin: 0;
 
@@ -992,6 +1122,15 @@ body {
     font-size: 1.2rem;
 
     font-weight: 600;
+}
+
+
+.folder-popup-subtitle {
+    margin: 3px 0 0;
+
+    color: var(--ink-muted);
+
+    font-size: 0.8rem;
 }
 
 
