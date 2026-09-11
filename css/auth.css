@@ -46,14 +46,13 @@ body {
 .auth-container {
     width: 100%;
     max-width: 336px;
-    min-height: 100vh;
     background: var(--panel-bg);
-    border-radius: 0;
+    border-radius: 3px;
     padding: 24px 25px 25px;
-    box-shadow: none;
-    border: none;
-    border-right: 1px solid var(--paper-line);
+    box-shadow: 0 20px 44px rgba(28, 46, 34, 0.12);
+    border: 1px solid var(--paper-line);
     overflow: hidden;
+    margin: 40px 0;
 }
 
 .auth-header {
@@ -384,9 +383,16 @@ body {
 
 
 @media (max-width: 480px) {
+    body {
+        align-items: stretch;
+    }
     .auth-container {
-        max-width: 336px;
+        max-width: none;
+        min-height: 100vh;
+        margin: 0;
+        border: none;
         border-radius: 0;
+        box-shadow: none;
     }
     .auth-title {
         font-size: 22px;

@@ -149,7 +149,7 @@
                 await ecoAuth.client.auth.signOut();
 
                 alert('Account created! Check your email for a confirmation link, then sign in below.');
-                window.location.href = 'login.html?confirm=1';
+                window.location.href = 'login.html';
             } catch (error) {
                 alert(error.message || 'Unable to create account. Please try again.');
                 submitBtn.disabled = false;
