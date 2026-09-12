@@ -413,7 +413,7 @@ body{
     gap: 12px;
   }
 
-  .comparison-table { font-size: 0.92rem; }
+  .comparison-table { font-size: 0.92rem; min-width: 480px; }
   .comparison-table th, .comparison-table td { padding: 12px 14px; }
 }
 

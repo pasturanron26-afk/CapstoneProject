@@ -536,8 +536,15 @@ body {
 
 /* ===================== TABLE ===================== */
 
+.admin-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .admin-table {
     font-family: var(--font-sans);
+    min-width: 640px;
 }
 
 .admin-table thead th {

@@ -1,5 +1,43 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 body {
     margin-left: 250px;
+    max-width: 100%;
+    overflow-x: hidden;
     background: linear-gradient(135deg, #f3faf6 0%, #e6f3eb 100%);
     color: #20352a;
+}
+
+img,
+video,
+svg {
+    max-width: 100%;
+    height: auto;
+}
+
+iframe {
+    max-width: 100%;
+}
+
+/* =========================================
+   RESPONSIVE SIDEBAR OFFSET
+   Pages that rely on this shared body offset
+   (rather than defining their own) collapse it
+   to 0 once the sidebar goes off-canvas.
+========================================= */
+
+@media (max-width: 768px) {
+    body {
+        margin-left: 0;
+        padding-top: 56px;
+    }
 }

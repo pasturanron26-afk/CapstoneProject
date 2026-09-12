@@ -95,3 +95,77 @@
   outline: 2px solid #b7e4c7;
   outline-offset: 2px;
 }
+
+/* =========================================
+   RESPONSIVE / OFF-CANVAS SIDEBAR
+   Below 768px the sidebar slides in over the
+   content instead of pushing it, controlled by
+   a hamburger button injected by js/auth.js.
+========================================= */
+
+.sidebar-toggle-global {
+  display: none;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-bg {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease-in-out;
+    z-index: 1200;
+  }
+
+  .sidebar-bg.is-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-toggle-global {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 14px;
+    left: 14px;
+
+    width: 42px;
+    height: 42px;
+
+    background: linear-gradient(180deg, #1b4332 0%, #245f43 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+
+    font-size: 1.2rem;
+
+    box-shadow: 0 4px 12px rgba(27, 67, 50, 0.28);
+
+    cursor: pointer;
+
+    z-index: 1300;
+  }
+
+  .sidebar-backdrop {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(15, 26, 20, 0.45);
+
+    z-index: 1100;
+  }
+
+  .sidebar-backdrop.is-visible {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .sidebar-bg {
+    transform: none;
+  }
+}
