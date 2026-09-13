@@ -1319,31 +1319,83 @@
     }
 
     .div1 {
-        order: 1;
+        order: 2;
 
         width: 100%;
         height: 55vh;
         min-height: 340px;
     }
 
+    /* The desktop width-collapse toggle doesn't apply once the
+       panel is full-width and stacked, so hide it here instead
+       of leaving a control that visibly does nothing useful. */
+    .sidebar-toggle-btn {
+        display: none;
+    }
+
     .div5,
     .parent.sidebar-collapsed .div5 {
-        order: 2;
+        order: 1;
 
         width: 100%;
-        max-height: 220px;
-        padding: 16px 12px;
+        max-height: none;
+        padding: 14px 16px;
 
-        overflow-y: auto;
+        overflow: visible;
     }
 
     .organelleNav {
         min-height: 0;
     }
 
+    .organelleNav h3 {
+        margin: 0 0 10px 2px;
+        font-size: 15px;
+    }
+
+    /* A vertical list with its own scrollbar reads as cramped and
+       "cut off" once squeezed under the 3D viewer. A horizontal
+       chip row is the more familiar mobile pattern here, and it
+       shows the active organelle without needing to scroll at all. */
     .organelleList {
-        flex: 1 1 auto;
+        flex: none;
+        flex-direction: row;
+
         min-height: 0;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        gap: 8px;
+
+        padding: 2px 4px 6px;
+        margin: 0 -4px;
+
+        -webkit-mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
+        mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
+    }
+
+    .organelleList::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .organelleButton {
+        flex: 0 0 auto;
+
+        width: auto;
+
+        padding: 8px 14px;
+
+        border: 1px solid rgba(244, 241, 230, 0.22);
+        border-left: 1px solid rgba(244, 241, 230, 0.22);
+        border-radius: 999px;
+
+        font-size: 0.82rem;
+    }
+
+    .organelleButton.active {
+        border-color: var(--lichen);
+        background: rgba(143, 174, 132, 0.22);
     }
 
     .div2 {
@@ -1375,10 +1427,6 @@
     .div1 {
         height: 46vh;
         min-height: 280px;
-    }
-
-    .div5 {
-        max-height: 180px;
     }
 
     .div2 {
