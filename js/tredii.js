@@ -44,6 +44,25 @@ let currentMode = "separate"; // "separate" or "whole"
 const MODEL_ROTATION = { x: 0.5, y: -1.0, z: 0.0 };
 
 // ======================================================
+// PER-ORGANELLE ROTATION OVERRIDES
+// The whole-cell rotation above doesn't flatter every
+// isolated organelle equally -- some were modeled/exported
+// at different original angles. Add an entry here (keyed by
+// the button's data-organelle value) to give that specific
+// organelle its own viewing angle when it's isolated. Leave
+// an organelle out of this table and it just uses
+// MODEL_ROTATION like before.
+// ======================================================
+const ORGANELLE_ROTATION_OVERRIDES = {
+    // centriole: { x: 0.5, y: -1.0, z: 0.0 },
+    // golgiApparatus: { x: 0.5, y: -1.0, z: 0.0 },
+};
+
+function getRotationFor(organelleKey) {
+    return ORGANELLE_ROTATION_OVERRIDES[organelleKey] || MODEL_ROTATION;
+}
+
+// ======================================================
 // SCENE
 // ======================================================
 const scene = new THREE.Scene();
@@ -96,6 +115,26 @@ controls.zoomSpeed = 3.0;      // Smoother zoom
 controls.enableRotate = true;  // Left-click drag to rotate
 controls.enablePan = true;     // Right-click drag to pan
 controls.enableZoom = true;    // Mouse wheel to zoom
+
+// ======================================================
+// SNAP CONTROLS UPDATE
+// When switching organelles we jump the camera/target to a
+// brand new position. If the student had been dragging the
+// view around beforehand, OrbitControls' damping keeps a bit
+// of leftover spin momentum queued up internally. Normally
+// that's fine -- it decays smoothly over the next dozen or so
+// frames -- but here it plays out ON TOP of the freshly
+// re-centered organelle, which looks like the model spins
+// away and then settles back into place. Briefly turning
+// damping off for a single update() flushes that leftover
+// momentum immediately instead of letting it animate out.
+// ======================================================
+function snapControlsUpdate() {
+    const wasDamping = controls.enableDamping;
+    controls.enableDamping = false;
+    controls.update();
+    controls.enableDamping = wasDamping;
+}
 
 // ======================================================
 // ZOOM BUTTONS
@@ -195,7 +234,7 @@ function resetView() {
     controls.target.set(0, 0, 0);
     controls.minDistance = originalMaxDimension * 0.5;
     controls.maxDistance = originalMaxDimension * 4.5;
-    controls.update();
+    snapControlsUpdate();
 
     organelleButtons.forEach(button => {
         button.classList.remove("active");
@@ -349,13 +388,15 @@ function meshBelongsToOrganelles(mesh, organelleNames) {
 // ======================================================
 // SEPARATE MODE: SHOW ONLY SELECTED ORGANELLES
 // ======================================================
-function showOnlyOrganelles(organelleNames) {
+function showOnlyOrganelles(organelleNames, organelleKey) {
     if (!animalCell) return;
 
+    const rotation = getRotationFor(organelleKey);
+
     animalCell.position.copy(originalAnimalPosition);
-    animalCell.rotation.x = MODEL_ROTATION.x;
-    animalCell.rotation.y = MODEL_ROTATION.y;
-    animalCell.rotation.z = MODEL_ROTATION.z;
+    animalCell.rotation.x = rotation.x;
+    animalCell.rotation.y = rotation.y;
+    animalCell.rotation.z = rotation.z;
     animalCell.updateMatrixWorld(true);
 
     clearAllEffects(); // Resets visibility and removes glows
@@ -408,19 +449,21 @@ function showOnlyOrganelles(organelleNames) {
     controls.minDistance = maxDimension * 0.5;
     controls.maxDistance = maxDimension * 4.5;
 
-    controls.update();
+    snapControlsUpdate();
 }
 
 // ======================================================
 // WHOLE MODE: HIGHLIGHT SELECTED ORGANELLE (NO ZOOM)
 // ======================================================
-function highlightOrganelleWholeMode(organelleNames) {
+function highlightOrganelleWholeMode(organelleNames, organelleKey) {
     if (!animalCell) return;
 
+    const rotation = getRotationFor(organelleKey);
+
     animalCell.position.copy(originalAnimalPosition);
-    animalCell.rotation.x = MODEL_ROTATION.x;
-    animalCell.rotation.y = MODEL_ROTATION.y;
-    animalCell.rotation.z = MODEL_ROTATION.z;
+    animalCell.rotation.x = rotation.x;
+    animalCell.rotation.y = rotation.y;
+    animalCell.rotation.z = rotation.z;
     animalCell.updateMatrixWorld(true);
 
     clearAllEffects();
@@ -474,9 +517,9 @@ organelleButtons.forEach(button => {
         }
 
         if (currentMode === "separate") {
-            showOnlyOrganelles(targetOrganelles);
+            showOnlyOrganelles(targetOrganelles, organelle);
         } else {
-            highlightOrganelleWholeMode(targetOrganelles);
+            highlightOrganelleWholeMode(targetOrganelles, organelle);
         }
 
         if (window.updateOrganelleInformation) {
