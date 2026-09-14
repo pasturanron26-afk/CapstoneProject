@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Plant Cell 3D Model</title>
+    <title>Animal Cell 3D Model</title>
 
 
     <!-- =========================================
@@ -182,7 +182,7 @@
             </li>
 
             <li class="nav-item mb-1">
-                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="#">
+                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
                     <i class="bi bi-person"></i>
                     Profile
                 </a>
@@ -240,9 +240,7 @@
                 </div>
             </div>
 
-            <!-- =================================
-                 LOADING SCREEN
-            ================================== -->
+            <!-- LOADING SKELETON -->
 
             <div
                 id="modelLoading"
@@ -299,24 +297,18 @@
                 <!-- LOADING TEXT -->
 
                 <p>
-                    Loading 3D Plant Cell...
+                    Loading 3D Animal Cell...
                 </p>
 
             </div>
 
 
-
-            <!-- =================================
-                 THREE.JS VIEWER
-            ================================== -->
+            <!-- THREE.JS VIEWER -->
 
             <div id="animalViewer"></div>
 
 
-
-            <!-- =================================
-                 ZOOM CONTROLS
-            ================================== -->
+            <!-- ZOOM CONTROLS -->
 
             <div class="zoomControls">
 
@@ -344,7 +336,6 @@
                     <i class="bi bi-zoom-in"></i>
                 </button>
 
-
                 <button
                     id="zoomOut"
                     aria-label="Zoom out"
@@ -356,7 +347,6 @@
             </div>
 
         </div>
-
 
 
         <!-- =====================================
@@ -384,10 +374,7 @@
             </div>
 
 
-
-            <!-- =================================
-                 ACTUAL INFORMATION
-            ================================== -->
+            <!-- ACTUAL INFORMATION -->
 
             <div
                 class="organelleInfo"
@@ -399,7 +386,7 @@
                     <div>
 
                         <h1 id="infoTitle">
-                            Plant Cell
+                            Animal Cell
                         </h1>
 
 
@@ -422,25 +409,18 @@
                         aria-label="Pronounce"
                         title="Pronounce"
                     >
-
                         <i class="bi bi-volume-up"></i>
-
                     </button>
 
                 </div>
 
 
-
-                <!-- DEFINITION -->
+                <!-- DEFINITION / SECTIONS -->
 
                 <div class="infoContent">
 
-                    <p id="infoDefinition">
-
-                        A plant cell is the basic structural
-                        and functional unit of plants.
-
-                    </p>
+                    <!-- Populated dynamically by organelleInfo.js -->
+                    <div id="infoDefinition"></div>
 
                 </div>
 
@@ -461,14 +441,13 @@
         </div>
 
 
-
         <!-- =====================================
              ORGANELLE NAVIGATION
         ====================================== -->
 
         <div class="div5">
 
-             <!-- TOGGLE BUTTON -->
+            <!-- TOGGLE BUTTON -->
             <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle organelle sidebar">
                 <i class="bi bi-chevron-left"></i>
             </button>
@@ -497,10 +476,7 @@
             </div>
 
 
-
-            <!-- =================================
-                 ACTUAL NAVIGATION
-            ================================== -->
+            <!-- ACTUAL ORGANELLE NAVIGATION -->
 
             <div
                 class="organelleNav"
@@ -511,31 +487,14 @@
                     Organelles
                 </h3>
 
-
                 <div class="organelleList">
 
-
-                    <!-- CELL WALL -->
-
                     <button
                         class="organelleButton"
-                        data-organelle="cellwall"
-                    >
-                        Cell Wall
-                    </button>
-
-
-                    <!-- CELL MEMBRANE -->
-
-                    <button
-                        class="organelleButton"
-                        data-organelle="cellmem"
+                        data-organelle="cellMem"
                     >
                         Cell Membrane
                     </button>
-
-
-                    <!-- CYTOPLASM -->
 
                     <button
                         class="organelleButton"
@@ -544,9 +503,6 @@
                         Cytoplasm
                     </button>
 
-
-                    <!-- CYTOSKELETON -->
-
                     <button
                         class="organelleButton"
                         data-organelle="cytoskeleton"
@@ -554,27 +510,26 @@
                         Cytoskeleton
                     </button>
 
-
-                    <!-- CHLOROPLAST -->
-
                     <button
                         class="organelleButton"
-                        data-organelle="chloroplas"
+                        data-organelle="centriole"
                     >
-                        Chloroplast
+                        Centriole
                     </button>
 
-
-                    <!-- GOLGI -->
-
                     <button
                         class="organelleButton"
-                        data-organelle="GolgiApparatus"
+                        data-organelle="golgiApparatus"
                     >
                         Golgi Apparatus
                     </button>
 
-                    <!-- MITOCHONDRIA -->
+                    <button
+                        class="organelleButton"
+                        data-organelle="lysosome"
+                    >
+                        Lysosome
+                    </button>
 
                     <button
                         class="organelleButton"
@@ -583,9 +538,6 @@
                         Mitochondria
                     </button>
 
-
-                    <!-- NUCLEUS -->
-
                     <button
                         class="organelleButton"
                         data-organelle="nucleus"
@@ -593,18 +545,12 @@
                         Nucleus
                     </button>
 
-
-                    <!-- NUCLEOLUS -->
-
                     <button
                         class="organelleButton"
-                        data-organelle="nucleolus"
+                        data-organelle="Nucleolus"
                     >
                         Nucleolus
                     </button>
-
-
-                    <!-- PEROXISOME -->
 
                     <button
                         class="organelleButton"
@@ -613,18 +559,12 @@
                         Peroxisome
                     </button>
 
-
-                    <!-- RIBOSOMES -->
-
                     <button
                         class="organelleButton"
                         data-organelle="ribosomes"
                     >
                         Ribosomes
                     </button>
-
-
-                    <!-- ENDOPLASMIC RETICULUM -->
 
                     <button
                         class="organelleButton"
@@ -633,16 +573,12 @@
                         Endoplasmic Reticulum
                     </button>
 
-
-                    <!-- VACUOLE -->
-
                     <button
                         class="organelleButton"
                         data-organelle="vacuole"
                     >
                         Vacuole
                     </button>
-
 
                 </div>
 
@@ -685,23 +621,17 @@
 
 
     <!-- =========================================
-         INFORMATION JAVASCRIPT
-    ========================================= -->
-
-    <script
-        type="module"
-        src="js/plantOrganelleInfo.js"
-    ></script>
-
-
-
-    <!-- =========================================
          THREE.JS JAVASCRIPT
     ========================================= -->
 
     <script
         type="module"
-        src="js/plantTredii.js"
+        src="js/organelleInfo.js"
+    ></script>
+
+    <script
+        type="module"
+        src="js/tredii.js"
     ></script>
 
     <!-- =========================================
@@ -712,13 +642,13 @@
     <!-- =========================================
          INFORMATION JAVASCRIPT
     ========================================= -->
-    <script type="module" src="js/plantOrganelleInfo.js"></script> 
+    <script type="module" src="js/organelleInfo.js"></script> 
     <!-- OR js/organelleInfo.js for AnimalCell.html -->
 
     <!-- =========================================
          THREE.JS JAVASCRIPT
     ========================================= -->
-    <script type="module" src="js/plantTredii.js"></script> 
+    <script type="module" src="js/tredii.js"></script> 
     <!-- OR js/tredii.js for AnimalCell.html -->
 
     <!-- =========================================
@@ -786,14 +716,12 @@
             }
         });
 
-        // Export auto-rotation state for use in plantTredii.js
+        // Export auto-rotation state for use in tredii.js
         window.modelRotationState = {
             isAutoRotating: () => isAutoRotating,
             getSpeed: () => autoRotationSpeed
         };
     </script>
-</body>
-</html>
 </body>
 
 </html>

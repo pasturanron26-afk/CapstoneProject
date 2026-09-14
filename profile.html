@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoLearn • Profile</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/ledger-theme.css">
+    <link rel="stylesheet" href="css/profile.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/auth.js"></script>
+
+    <style>
+        nav .nav-link.Profile {
+            background: rgba(143, 174, 132, 0.12);
+            border-left: 3px solid var(--lichen);
+            color: var(--paper) !important;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
+        <img src="imgs/Logo.jpg" alt="Logo" class="rounded-circle logo-img mb-2">
+        <h3 class="h5 brand-title mb-4">EcoLearn</h3>
+
+        <ul class="nav nav-pills flex-column w-100">
+            <li class="nav-item mb-1">
+                <a class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2" href="dashboard.html">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link CellModel text-white-50 d-flex align-items-center gap-2" href="choose.html">
+                    <i class="bi bi-boxes"></i> Cell Models
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link Lesson text-white-50 d-flex align-items-center gap-2" href="lesson.html">
+                    <i class="bi bi-book"></i> Lessons
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link Quiz text-white-50 d-flex align-items-center gap-2" href="quiz.html">
+                    <i class="bi bi-question-circle"></i> Quizzes
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
+                    <i class="bi bi-person"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background: none; cursor: pointer;">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="profile-content">
+        <div class="page-header">
+            <div>
+                <span class="eyebrow">Student profile</span>
+                <h1 id="profileName">Student</h1>
+                <p class="profile-email"><i class="bi bi-envelope"></i> <span id="profileEmail">student@email.com</span></p>
+            </div>
+            <div class="profile-avatar" id="profileAvatar" aria-hidden="true">S</div>
+        </div>
+
+        <section class="profile-grid">
+            <div class="panel">
+                <div class="panel-title">
+                    <h2>Account details</h2>
+                </div>
+
+                <form id="profileForm">
+                    <div class="profile-field">
+                        <label for="fullNameInput">Full name</label>
+                        <input type="text" id="fullNameInput" name="fullName" autocomplete="name">
+                    </div>
+
+                    <div class="profile-field">
+                        <label for="sectionInput">Section</label>
+                        <input type="text" id="sectionInput" value="—" disabled>
+                        <span class="profile-field-note">Assigned by your instructor</span>
+                    </div>
+
+                    <div class="profile-field">
+                        <label for="emailInput">Email</label>
+                        <input type="text" id="emailInput" value="—" disabled>
+                    </div>
+
+                    <div class="profile-field">
+                        <label for="roleInput">Role</label>
+                        <input type="text" id="roleInput" value="Student" disabled>
+                    </div>
+
+                    <div class="profile-form-actions">
+                        <span class="profile-save-status" id="profileSaveStatus"></span>
+                        <button type="submit" class="profile-save-btn" id="profileSaveBtn">
+                            <i class="bi bi-check2"></i> Save changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div>
+                <div class="panel">
+                    <div class="panel-title">
+                        <h2>Quiz progress</h2>
+                    </div>
+
+                    <div class="quiz-progress-item">
+                        <div class="quiz-progress-label">
+                            <span>Animal Cell vs Plant Cell</span>
+                            <span class="quiz-progress-score" id="quizOneScore">Not attempted</span>
+                        </div>
+                        <div class="quiz-progress-track">
+                            <div class="quiz-progress-fill" id="quizOneFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-progress-item">
+                        <div class="quiz-progress-label">
+                            <span>Cell Division: Mitosis vs Meiosis</span>
+                            <span class="quiz-progress-score" id="quizTwoScore">Locked</span>
+                        </div>
+                        <div class="quiz-progress-track">
+                            <div class="quiz-progress-fill is-locked" id="quizTwoFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <a href="quiz.html" class="profile-link-out">Go to Quizzes <i class="bi bi-arrow-right"></i></a>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">
+                        <h2>Account</h2>
+                    </div>
+                    <p class="profile-account-note">Signed in with Supabase authentication. Use the button below to sign out of EcoLearn on this device.</p>
+                    <button type="button" class="profile-logout-btn" id="profileLogoutBtn">
+                        <i class="bi bi-box-arrow-right"></i> Log out
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        ecoAuth.requireStudent();
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data, error } = await ecoAuth.client.auth.getSession();
+            const user = data?.session?.user;
+            if (!user) return;
+
+            const email = user.email || user.user_metadata?.email || '—';
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('emailInput').value = email;
+
+            let fullName = user.user_metadata?.full_name || 'Student';
+            let section = user.user_metadata?.section || '';
+
+            try {
+                const { data: profile, error: profileError } = await ecoAuth.client
+                    .from('profiles')
+                    .select('full_name, section')
+                    .eq('id', user.id)
+                    .maybeSingle();
+
+                if (!profileError && profile) {
+                    fullName = profile.full_name || fullName;
+                    section = profile.section || section;
+                }
+            } catch (profileFetchError) {
+                // Fall back silently to user_metadata values above.
+            }
+
+            document.getElementById('profileName').textContent = fullName;
+            document.getElementById('fullNameInput').value = fullName;
+            document.getElementById('sectionInput').value = section ? `Section ${section}` : '—';
+
+            const initial = fullName.trim().charAt(0).toUpperCase() || 'S';
+            document.getElementById('profileAvatar').textContent = initial;
+
+            // ---- Save name changes ----
+            const profileForm = document.getElementById('profileForm');
+            const saveStatus = document.getElementById('profileSaveStatus');
+
+            profileForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const newName = document.getElementById('fullNameInput').value.trim();
+                if (!newName) return;
+
+                saveStatus.textContent = 'Saving...';
+
+                const { error: updateError } = await ecoAuth.client
+                    .from('profiles')
+                    .update({ full_name: newName })
+                    .eq('id', user.id);
+
+                if (updateError) {
+                    saveStatus.textContent = 'Could not save changes.';
+                    saveStatus.classList.add('is-error');
+                    return;
+                }
+
+                saveStatus.classList.remove('is-error');
+                saveStatus.textContent = 'Saved!';
+                document.getElementById('profileName').textContent = newName;
+                document.getElementById('profileAvatar').textContent = newName.trim().charAt(0).toUpperCase() || 'S';
+
+                setTimeout(() => { saveStatus.textContent = ''; }, 2500);
+            });
+
+            // ---- Quiz progress (from localStorage, set by the quiz pages) ----
+            const bestScore = Number(localStorage.getItem('ecolearn-quiz-animal-plant-best') || 0);
+            const isPerfect = localStorage.getItem('ecolearn-quiz-animal-plant-perfect') === 'true';
+
+            const quizOneScore = document.getElementById('quizOneScore');
+            const quizOneFill = document.getElementById('quizOneFill');
+            if (bestScore > 0) {
+                quizOneScore.textContent = `${bestScore}% best`;
+                quizOneFill.style.width = `${bestScore}%`;
+            }
+
+            const quizTwoScore = document.getElementById('quizTwoScore');
+            const quizTwoFill = document.getElementById('quizTwoFill');
+            if (isPerfect) {
+                quizTwoScore.textContent = 'Unlocked';
+                quizTwoFill.classList.remove('is-locked');
+                quizTwoFill.style.width = '0%';
+            }
+
+            // ---- Logout ----
+            const logoutHandler = async () => { await window.ecoAuth.signOut(); };
+            document.getElementById('logoutButton')?.addEventListener('click', logoutHandler);
+            document.getElementById('profileLogoutBtn')?.addEventListener('click', logoutHandler);
+        });
+    </script>
+</body>
+</html>
