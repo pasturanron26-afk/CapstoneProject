@@ -203,7 +203,7 @@
       </article>
 
       <!-- QUIZ CARD 2 -->
-      <article class="quiz-card">
+      <article class="quiz-card" id="quizCardCellDivision">
         <div class="quiz-thumb">
           <div class="thumb-frame">
             <img src="imgs/cellDivision.jpg" alt="Cell division diagrams showing mitosis and meiosis">
@@ -252,6 +252,54 @@
         });
       }
     });
+  </script>
+
+  <!-- =========================================
+       QUIZ LOCK LOGIC
+       "Cell Division" stays locked until the
+       student gets a perfect score on the first
+       quiz. quiz-animal-plant.html sets this flag
+       in localStorage on a 100% result.
+  ========================================= -->
+  <script>
+    const CELL_DIVISION_UNLOCK_KEY = 'ecolearn-quiz-animal-plant-perfect';
+
+    function applyQuizLockState() {
+      const card = document.getElementById('quizCardCellDivision');
+      if (!card) return;
+
+      const unlocked = localStorage.getItem(CELL_DIVISION_UNLOCK_KEY) === 'true';
+      if (unlocked) return;
+
+      card.classList.add('is-locked');
+
+      const thumbFrame = card.querySelector('.thumb-frame');
+      if (thumbFrame) {
+        const overlay = document.createElement('div');
+        overlay.className = 'lock-overlay';
+        overlay.innerHTML = '<i class="bi bi-lock-fill"></i>';
+        thumbFrame.appendChild(overlay);
+      }
+
+      const startBtn = card.querySelector('.start-btn');
+      if (startBtn) {
+        startBtn.classList.add('is-disabled');
+        startBtn.setAttribute('aria-disabled', 'true');
+        startBtn.removeAttribute('href');
+        startBtn.innerHTML = '<i class="bi bi-lock-fill"></i> Locked';
+        startBtn.addEventListener('click', (event) => event.preventDefault());
+      }
+
+      const actions = card.querySelector('.card-actions');
+      if (actions) {
+        const note = document.createElement('p');
+        note.className = 'lock-note';
+        note.innerHTML = '<i class="bi bi-info-circle"></i> Get a perfect score on "Animal Cell vs Plant Cell" to unlock this quiz.';
+        actions.insertAdjacentElement('afterend', note);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', applyQuizLockState);
   </script>
 </body>
 </html>

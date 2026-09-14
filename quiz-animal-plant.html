@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EcoLearn • Animal Cell vs Plant Cell Quiz</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <!-- Fonts (same as quiz.html) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/ledger-theme.css" />
+  <link rel="stylesheet" href="css/quiz.css" />
+
+  <!-- Supabase & Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
+
+  <style>
+    nav .nav-link.Quiz {
+        background: rgba(143, 174, 132, 0.12);
+        border-left: 3px solid var(--lichen);
+        color: var(--paper) !important;
+        font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
+    <img src="imgs/Logo.jpg" alt="Logo" class="rounded-circle logo-img mb-2">
+    <h3 class="h5 brand-title mb-4">EcoLearn</h3>
+
+    <ul class="nav nav-pills flex-column w-100">
+      <li class="nav-item mb-1">
+        <a class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2" href="dashboard.html">
+          <i class="bi bi-grid-1x2"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a class="nav-link CellModel text-white-50 d-flex align-items-center gap-2" href="choose.html">
+          <i class="bi bi-boxes"></i> Cell Models
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a class="nav-link Lesson text-white-50 d-flex align-items-center gap-2" href="lesson.html">
+          <i class="bi bi-book"></i> Lessons
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a class="nav-link Quiz text-white-50 d-flex align-items-center gap-2" href="quiz.html">
+          <i class="bi bi-question-circle"></i> Quizzes
+        </a>
+      </li>
+      <li class="nav-item mb-1">
+        <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="#">
+          <i class="bi bi-person"></i> Profile
+        </a>
+      </li>
+      <li class="nav-item mt-auto">
+        <button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background: none; cursor: pointer;">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="quiz-play-main" id="main-content">
+    <a class="quiz-play-back" href="quiz.html"><i class="bi bi-arrow-left"></i> Back to Quizzes</a>
+    <h1 class="quiz-play-title">Animal Cell vs Plant Cell</h1>
+    <p class="quiz-play-subtitle">Get every question right to unlock the Cell Division quiz.</p>
+
+    <div class="quiz-progress-track">
+      <div class="quiz-progress-fill" id="quizProgressFill" style="width: 10%;"></div>
+    </div>
+
+    <!-- QUESTION VIEW -->
+    <div class="quiz-question-panel" id="quizQuestionPanel">
+      <p class="quiz-question-count" id="quizQuestionCount">Question 1 of 10</p>
+      <h2 class="quiz-question-text" id="quizQuestionText"></h2>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-nav-row">
+        <button class="quiz-next-btn" id="quizNextButton" disabled>Next <i class="bi bi-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- RESULTS VIEW -->
+    <div class="quiz-question-panel quiz-results-panel" id="quizResultsPanel" style="display: none;">
+      <p class="quiz-results-eyebrow">Your score</p>
+      <p class="quiz-results-score" id="quizResultsScore">0 / 10</p>
+      <span class="quiz-results-badge" id="quizResultsBadge"></span>
+      <p class="quiz-results-note" id="quizResultsNote"></p>
+      <div class="quiz-results-actions">
+        <button class="retry-btn" id="quizRetryButton" type="button"><i class="bi bi-arrow-repeat"></i> Retry quiz</button>
+        <a class="start-btn" href="quiz.html">Back to Quizzes <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutButton = document.getElementById('logoutButton');
+      if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+          await window.ecoAuth?.signOut?.();
+        });
+      }
+    });
+  </script>
+
+  <!-- =========================================
+       QUIZ DATA + LOGIC
+  ========================================= -->
+  <script>
+    const UNLOCK_KEY = 'ecolearn-quiz-animal-plant-perfect';
+    const BEST_SCORE_KEY = 'ecolearn-quiz-animal-plant-best';
+
+    const QUESTIONS = [
+      {
+        text: "Which structure is found in plant cells but not in animal cells?",
+        options: ["Cell wall", "Nucleus", "Mitochondria", "Ribosomes"],
+        correct: 0
+      },
+      {
+        text: "What organelle allows plant cells to make their own food through photosynthesis?",
+        options: ["Lysosome", "Chloroplast", "Golgi apparatus", "Centriole"],
+        correct: 1
+      },
+      {
+        text: "Animal cells typically have a shape that is:",
+        options: ["Fixed and rectangular", "Irregular and round", "Perfectly cubic", "Star-shaped only"],
+        correct: 1
+      },
+      {
+        text: "Which organelle is responsible for producing energy (ATP) in both plant and animal cells?",
+        options: ["Nucleolus", "Vacuole", "Mitochondria", "Ribosome"],
+        correct: 2
+      },
+      {
+        text: "Plant cells usually have one large central vacuole. What is its main function?",
+        options: ["Store genetic material", "Maintain turgor pressure and store water/nutrients", "Produce proteins", "Break down waste only"],
+        correct: 1
+      },
+      {
+        text: "Which structure controls what enters and exits the cell in both plant and animal cells?",
+        options: ["Cell wall", "Cell membrane", "Chloroplast", "Centriole"],
+        correct: 1
+      },
+      {
+        text: "Centrioles, which help organize cell division, are typically found in:",
+        options: ["Plant cells only", "Animal cells", "Neither plant nor animal cells", "Only bacteria"],
+        correct: 1
+      },
+      {
+        text: "What is the main function of ribosomes?",
+        options: ["Protein synthesis", "Photosynthesis", "Water storage", "Cell division"],
+        correct: 0
+      },
+      {
+        text: "Why do plant cells maintain a fixed, rectangular shape while animal cells don't?",
+        options: [
+          "Plant cells lack a nucleus",
+          "The rigid cell wall supports and constrains plant cell shape",
+          "Plant cells have no cytoplasm",
+          "Animal cells are always larger"
+        ],
+        correct: 1
+      },
+      {
+        text: "Which of these organelles is involved in packaging and shipping proteins in both cell types?",
+        options: ["Golgi apparatus", "Cell wall", "Chloroplast", "Large central vacuole"],
+        correct: 0
+      }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const questionCountEl = document.getElementById('quizQuestionCount');
+    const questionTextEl = document.getElementById('quizQuestionText');
+    const optionsEl = document.getElementById('quizOptions');
+    const nextButton = document.getElementById('quizNextButton');
+    const progressFill = document.getElementById('quizProgressFill');
+
+    const questionPanel = document.getElementById('quizQuestionPanel');
+    const resultsPanel = document.getElementById('quizResultsPanel');
+    const resultsScore = document.getElementById('quizResultsScore');
+    const resultsBadge = document.getElementById('quizResultsBadge');
+    const resultsNote = document.getElementById('quizResultsNote');
+    const retryButton = document.getElementById('quizRetryButton');
+
+    function renderQuestion() {
+      answered = false;
+      nextButton.disabled = true;
+
+      const question = QUESTIONS[currentIndex];
+      questionCountEl.textContent = `Question ${currentIndex + 1} of ${QUESTIONS.length}`;
+      questionTextEl.textContent = question.text;
+      progressFill.style.width = `${((currentIndex) / QUESTIONS.length) * 100 + (100 / QUESTIONS.length)}%`;
+
+      optionsEl.innerHTML = '';
+      question.options.forEach((optionText, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'quiz-option';
+        button.textContent = optionText;
+        button.addEventListener('click', () => selectAnswer(index, button));
+        optionsEl.appendChild(button);
+      });
+
+      nextButton.textContent = currentIndex === QUESTIONS.length - 1 ? 'See results' : 'Next';
+      const icon = document.createElement('i');
+      icon.className = 'bi bi-arrow-right';
+      nextButton.appendChild(document.createTextNode(' '));
+      nextButton.appendChild(icon);
+    }
+
+    function selectAnswer(selectedIndex, button) {
+      if (answered) return;
+      answered = true;
+
+      const question = QUESTIONS[currentIndex];
+      const optionButtons = optionsEl.querySelectorAll('.quiz-option');
+
+      optionButtons.forEach((btn, index) => {
+        btn.disabled = true;
+        if (index === question.correct) {
+          btn.classList.add('correct');
+        } else if (index === selectedIndex) {
+          btn.classList.add('incorrect');
+        }
+      });
+
+      if (selectedIndex === question.correct) {
+        score += 1;
+      }
+
+      nextButton.disabled = false;
+    }
+
+    function showResults() {
+      questionPanel.style.display = 'none';
+      resultsPanel.style.display = 'block';
+
+      const percentage = Math.round((score / QUESTIONS.length) * 100);
+      resultsScore.textContent = `${score} / ${QUESTIONS.length}`;
+
+      const previousBest = Number(localStorage.getItem(BEST_SCORE_KEY) || 0);
+      if (percentage > previousBest) {
+        localStorage.setItem(BEST_SCORE_KEY, String(percentage));
+      }
+
+      if (percentage === 100) {
+        localStorage.setItem(UNLOCK_KEY, 'true');
+        resultsBadge.className = 'quiz-results-badge perfect';
+        resultsBadge.innerHTML = '<i class="bi bi-trophy-fill"></i> Perfect score!';
+        resultsNote.textContent = 'Nice work -- the Cell Division quiz is now unlocked.';
+      } else if (percentage >= 75) {
+        resultsBadge.className = 'quiz-results-badge pass';
+        resultsBadge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Passed';
+        resultsNote.textContent = 'You passed! Get a perfect 10/10 to unlock the Cell Division quiz.';
+      } else {
+        resultsBadge.className = 'quiz-results-badge fail';
+        resultsBadge.innerHTML = '<i class="bi bi-arrow-repeat"></i> Keep practicing';
+        resultsNote.textContent = 'Review the lesson and try again -- a perfect score unlocks the next quiz.';
+      }
+    }
+
+    nextButton.addEventListener('click', () => {
+      if (currentIndex < QUESTIONS.length - 1) {
+        currentIndex += 1;
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    retryButton.addEventListener('click', () => {
+      currentIndex = 0;
+      score = 0;
+      resultsPanel.style.display = 'none';
+      questionPanel.style.display = 'block';
+      renderQuestion();
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>
