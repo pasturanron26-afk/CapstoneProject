@@ -119,16 +119,16 @@
 .level-badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  border-radius: 2px;
+  padding: 0;
   font-family: var(--font-sans);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: transparent;
-  border: 1px solid var(--paper-line);
+  background: none;
+  border: none;
   color: var(--ink-muted);
+  cursor: default;
 }
 .level-primary {
   border-color: var(--moss);
@@ -165,14 +165,15 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
-  background: var(--panel-bg);
-  border: 1px solid var(--paper-line);
-  border-radius: 2px;
-  color: var(--ink);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--ink-muted);
   font-family: var(--font-sans);
   font-size: 0.78rem;
   font-weight: 600;
+  /* Informational label, not a control -- no pointer affordance */
+  cursor: default;
 }
 .chip i { color: var(--moss); }
 
