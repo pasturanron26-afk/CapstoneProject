@@ -20,7 +20,27 @@
     <script src="js/auth.js"></script>
 
     <style>
+
         /* =========================================
+           ACTIVE SIDEBAR TAB
+        ========================================= */
+
+        nav .nav-link.Dashboard {
+
+            background: rgba(143, 174, 132, 0.12);
+
+            border-left: 3px solid var(--lichen);
+
+            color: var(--paper) !important;
+
+            font-weight: 600;
+
+        }
+
+    </style>
+</head>
+    <style>
+            /* =========================================
            ACTIVE TAB
         ========================================= */
         nav .nav-link.Dashboard {
@@ -30,16 +50,6 @@
         }
     </style>
 </head>
-    <style>
-        /* =========================================
-           ACTIVE TAB
-        ========================================= */
-        nav .nav-link.Dashboard {
-            background-color: #40916C;
-            color: #ffffff !important;
-            font-weight: 600;
-        }
-    </style>
 <body>
     <!-- =========================================
          SIDEBAR
@@ -595,6 +605,20 @@
         }
 
         addPublishedContent();
+    </script>
+        <!-- =========================================
+        LOGOUT BUTTON SCRIPT
+    ========================================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    await window.ecoAuth.signOut();
+                });
+            }
+        });
     </script>
 </body>
 </html>

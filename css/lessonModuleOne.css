@@ -59,27 +59,6 @@ body{
   max-width: 820px;
 }
 
-.hero-badges {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 14px;
-  background: transparent;
-  border: 1px solid var(--lichen);
-  border-radius: 2px;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.hero-badge i { font-size: 1rem; opacity: 0.95; }
-
 /* =========================================
    SECTION TITLES & DIVIDERS
 ========================================= */
@@ -225,8 +204,8 @@ body{
 
 /* Tags */
 .cell-tag {
-  padding: 5px 12px;
-  border-radius: 2px;
+  padding: 0;
+  border-radius: 0;
   font-family: var(--font-sans);
   font-size: 0.72rem;
   font-weight: 700;
@@ -234,24 +213,23 @@ body{
   letter-spacing: 0.06em;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid transparent;
+  gap: 6px;
+  border: none;
   white-space: nowrap;
-  background: transparent;
+  background: none;
+  /* Informational label, not a control -- no pointer affordance */
+  cursor: default;
 }
 
 .tag-both {
-  border-color: var(--moss);
   color: var(--moss);
 }
 
 .tag-animal {
-  border-color: var(--pine);
   color: var(--pine);
 }
 
 .tag-plant {
-  border-color: var(--lichen);
   color: var(--moss);
 }
 
