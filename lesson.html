@@ -5,233 +5,501 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BioLearn • Lessons</title>
 
-    <!-- =========================================
-         BOOTSTRAP 5 CSS
-    ========================================= -->
+  <!-- BOOTSTRAP 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-
-    <!-- =========================================
-         BOOTSTRAP ICONS
-    ========================================= -->
-
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    >
+  <!-- BOOTSTRAP ICONS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
 
-  <!-- Keep your site-wide styles first -->
   <link rel="stylesheet" href="css/sidebar.css" />
   <link rel="stylesheet" href="css/global.css" />
   <link rel="stylesheet" href="css/ledger-theme.css" />
-  <!-- Page-specific styles -->
   <link rel="stylesheet" href="css/lessons.css" />
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/auth.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
 </head>
-    <style>
-        /* =========================================
-           ACTIVE TAB
-        ========================================= */
-        nav .nav-link.Lesson {
-            background-color: #40916C;
-            color: #ffffff !important;
-            font-weight: 600;
-        }
-    </style>
+
+<style>
+  nav .nav-link.Lesson {
+    background-color: #40916C;
+    color: #ffffff !important;
+    font-weight: 600;
+  }
+</style>
+
 <body>
 
-  <!-- Your existing sidebar is handled globally (no extra <aside> here) -->
-      <nav
-        class="d-flex flex-column align-items-center p-3 sidebar-bg"
+  <!-- SIDEBAR -->
+  <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
+
+    <img
+      src="imgs/Logo.jpg"
+      alt="Logo"
+      class="rounded-circle logo-img mb-2"
     >
-        
-        <img
-            src="imgs/Logo.jpg"
-            alt="Logo"
-            class="rounded-circle logo-img mb-2"
+
+    <h3 class="h5 brand-title mb-4">
+      EcoLearn
+    </h3>
+
+    <ul class="nav nav-pills flex-column w-100">
+
+      <!-- DASHBOARD -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
+          href="dashboard.html"
         >
+          <i class="bi bi-grid-1x2"></i>
+          Dashboard
+        </a>
+      </li>
+
+      <!-- CELL MODELS -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
+          href="choose.html"
+        >
+          <i class="bi bi-boxes"></i>
+          Cell Models
+        </a>
+      </li>
+
+      <!-- LESSONS -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
+          href="lesson.html"
+        >
+          <i class="bi bi-book"></i>
+          Lessons
+        </a>
+      </li>
+
+      <!-- QUIZZES -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
+          href="quiz.html"
+        >
+          <i class="bi bi-question-circle"></i>
+          Quizzes
+        </a>
+      </li>
+
+      <!-- PROFILE -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link Profile text-white-50 d-flex align-items-center gap-2"
+          href="profile.html"
+        >
+          <i class="bi bi-person"></i>
+          Profile
+        </a>
+      </li>
+
+      <!-- LOGOUT -->
+      <li class="nav-item mt-auto">
+        <button
+          id="logoutButton"
+          class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
+          style="background: none; cursor: pointer;"
+        >
+          <i class="bi bi-box-arrow-right"></i>
+          Logout
+        </button>
+      </li>
+
+    </ul>
+  </nav>
 
 
-        <h3 class="h5 brand-title mb-4">
-            EcoLearn
-        </h3>
-
-
-        <ul class="nav nav-pills flex-column w-100">
-
-
-            <!-- DASHBOARD -->
-
-            <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
-                    href="dashboard.html"
-                >
-
-                    <i class="bi bi-grid-1x2"></i>
-
-                    Dashboard
-
-                </a>
-
-            </li>
-
-
-            <!-- CELL MODELS -->
-
-            <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
-                    href="choose.html"
-                >
-
-                    <i class="bi bi-boxes"></i>
-
-                    Cell Models
-
-                </a>
-
-            </li>
-
-
-            <!-- Lesson -->
-
-            <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
-                    href="lesson.html"
-                >
-
-                    <i class="bi bi-book"></i>
-
-                    Lessons
-
-                </a>
-
-            </li>
-
-            <!-- QUIZ -->
-
-            <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
-                    href="quiz.html"
-                >
-
-                    <i class="bi bi-question-circle"></i>
-
-                    Quizzes
-
-                </a>
-
-            </li>
-
-            <li class="nav-item mb-1">
-                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
-                    <i class="bi bi-person"></i>
-                    Profile
-                </a>
-            </li>
-
-            <!-- LOGOUT -->
-
-            <li class="nav-item mt-auto">
-
-                <button
-                    id="logoutButton"
-                    class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
-                    style="background: none; cursor: pointer;"
-                >
-
-                    <i class="bi bi-box-arrow-right"></i>
-
-                    Logout
-
-                </button>
-
-            </li>
-
-        </ul>
-
-    </nav>
-
+  <!-- MAIN CONTENT -->
   <main class="lessons-main" id="main-content">
+
     <header class="lessons-header">
       <h1 class="lessons-title">Explore Biology</h1>
-      <p class="lessons-subtitle">Choose a topic to start learning.</p>
+      <p class="lessons-subtitle">
+        Choose a topic to start learning.
+      </p>
     </header>
+
 
     <div class="lessons-list">
 
-      <!-- CARD 1 -->
+      <!-- =========================================
+           MODULE 01
+      ========================================== -->
       <article class="lesson-card">
+
         <div class="card-thumbnail">
-          <img src="imgs/animalVSplant.jpg" alt="Illustration comparing animal and plant cells" loading="lazy" />
+          <img
+            src="imgs/animalVSplant.jpg"
+            alt="Illustration comparing animal and plant cells"
+            loading="lazy"
+          >
         </div>
 
         <div class="card-content">
-          <p class="card-eyebrow">MODULE 01 • Cellular Structure</p>
-          <h2 class="card-title">Animal Cell vs Plant Cell</h2>
-          <p class="card-desc">
-            Compare organelles, structures, and functions in animal and plant cells.
-            Includes interactive diagrams and quick checks.
+
+          <p class="card-eyebrow">
+            MODULE 01 • CELLULAR STRUCTURE
           </p>
-          <a class="card-btn" href="lessonModuleOne.html" aria-label="Open lesson: Animal Cell vs Plant Cell">
+
+          <h2 class="card-title">
+            Animal Cell vs Plant Cell
+          </h2>
+
+          <p class="card-desc">
+            Compare organelles, structures, and functions in animal and plant
+            cells. Includes interactive diagrams and quick checks.
+          </p>
+
+          <a
+            class="card-btn"
+            href="lessonModuleOne.html"
+            aria-label="Open lesson: Animal Cell vs Plant Cell"
+          >
             Learn <span aria-hidden="true">→</span>
           </a>
+
         </div>
       </article>
 
-     
-        <!-- CARD 2 -->
-        <article class="lesson-card">
+
+      <!-- =========================================
+           MODULE 02
+      ========================================== -->
+      <article class="lesson-card">
+
         <div class="card-thumbnail">
-          <img src="imgs/cellDivision.jpg" alt="Illustration of cell division" loading="lazy" />
+          <img
+            src="imgs/cellDivision.jpg"
+            alt="Illustration of cell division"
+            loading="lazy"
+          >
         </div>
 
         <div class="card-content">
-            <p class="card-eyebrow">MODULE 02 • Cell Division</p>
-            <h2 class="card-title">Cell Division: Mitosis vs Meiosis</h2>
-            <p class="card-desc">
-            Walk through the cell cycle (G1, S, G2, M), compare mitosis and meiosis,
-            and see how checkpoints help prevent errors.
-            </p>
-            <a class="card-btn" href="lesson-cell-division.html" aria-label="Open lesson: Cell Division — Mitosis vs Meiosis">
+
+          <p class="card-eyebrow">
+            MODULE 02 • CELL DIVISION
+          </p>
+
+          <h2 class="card-title">
+            Mitosis of Plant and Animal Cells
+          </h2>
+
+          <p class="card-desc">
+            Explore the stages of mitosis in plant and animal cells, from chromosome duplication to the formation of two identical daughter cells. Learn how each stage contributes to accurate cell division.
+
+          </p>
+
+          <a
+            class="card-btn"
+            href="lesson-cell-division.html"
+            aria-label="Open lesson: Cell Division: Mitosis vs Meiosis"
+          >
             Learn <span aria-hidden="true">→</span>
-            </a>
+          </a>
+
         </div>
-        </article>
+      </article>
+
+
+      <!-- =========================================
+           MODULE 03
+      ========================================== -->
+      <article class="lesson-card">
+
+        <div class="card-thumbnail">
+          <img
+            src="imgs/cellMembrane.jpg"
+            alt="Diagram of a cell membrane with phospholipid bilayer and transport proteins"
+            loading="lazy"
+          >
+        </div>
+
+        <div class="card-content">
+
+          <p class="card-eyebrow">
+            MODULE 03 • CELL PROCESSES
+          </p>
+
+          <h2 class="card-title">
+            Cell Membrane and Transport
+          </h2>
+
+          <p class="card-desc">
+            Discover how substances move in and out of cells through
+            <span class="highlight">passive and active transport</span>.
+            Covers diffusion, osmosis, and endocytosis with
+            <span class="highlight">interactive 3D membrane models</span>
+            and quick checks.
+          </p>
+
+          <a
+            class="card-btn"
+            href="lesson-cell-membrane.html"
+            aria-label="Open lesson: Cell Membrane and Transport"
+          >
+            Learn <span aria-hidden="true">→</span>
+          </a>
+
+        </div>
+      </article>
+
+
+      <!-- =========================================
+           MODULE 04
+      ========================================== -->
+      <article class="lesson-card">
+
+        <div class="card-thumbnail">
+          <img
+            src="imgs/cellRespiration.jpg"
+            alt="Diagram of mitochondria showing stages of cellular respiration"
+            loading="lazy"
+          >
+        </div>
+
+        <div class="card-content">
+
+          <p class="card-eyebrow">
+            MODULE 04 • CELL ENERGY
+          </p>
+
+          <h2 class="card-title">
+            Cell Respiration
+          </h2>
+
+          <p class="card-desc">
+            Understand how cells convert glucose into energy through aerobic
+            and anaerobic respiration. Explore the role of the
+            <span class="highlight">mitochondria</span>
+            in ATP production with
+            <span class="highlight">step-by-step visual breakdowns</span>
+            and quick checks.
+          </p>
+
+          <a
+            class="card-btn"
+            href="lesson-cell-respiration.html"
+            aria-label="Open lesson: Cell Respiration"
+          >
+            Learn <span aria-hidden="true">→</span>
+          </a>
+
+        </div>
+      </article>
+
+
+      <!-- =========================================
+           MODULE 05
+      ========================================== -->
+      <article class="lesson-card">
+
+        <div class="card-thumbnail">
+          <img
+            src="imgs/photosynthesis.jpg"
+            alt="Diagram of a chloroplast showing thylakoid and stroma"
+            loading="lazy"
+          >
+        </div>
+
+        <div class="card-content">
+
+          <p class="card-eyebrow">
+            MODULE 05 • CELL ENERGY
+          </p>
+
+          <h2 class="card-title">
+            Photosynthesis
+          </h2>
+
+          <p class="card-desc">
+            Explore how plant cells use sunlight to produce food through
+            light-dependent and light-independent reactions. Focuses on the
+            role of <span class="highlight">chloroplasts</span>
+            with <span class="highlight">interactive diagrams</span>
+            and quick checks.
+          </p>
+
+          <a
+            class="card-btn"
+            href="lesson-photosynthesis.html"
+            aria-label="Open lesson: Photosynthesis"
+          >
+            Learn <span aria-hidden="true">→</span>
+          </a>
+
+        </div>
+      </article>
+
+
+      <!-- =========================================
+           MODULE 06
+      ========================================== -->
+      <article class="lesson-card">
+
+        <div class="card-thumbnail">
+          <img
+            src="imgs/cellCycle.jpg"
+            alt="Circular diagram of the cell cycle with checkpoints"
+            loading="lazy"
+          >
+        </div>
+
+        <div class="card-content">
+
+          <p class="card-eyebrow">
+            MODULE 06 • CELL CYCLE
+          </p>
+
+          <h2 class="card-title">
+            Cell Cycle and Cancer
+          </h2>
+
+          <p class="card-desc">
+            Walk through the G1, S, G2, and M phases of the cell cycle and
+            learn how <span class="highlight">checkpoints prevent errors</span>.
+            Understand what happens when cell division goes wrong and how
+            <span class="highlight">cancer develops</span>.
+          </p>
+
+          <a
+            class="card-btn"
+            href="lesson-cell-cycle.html"
+            aria-label="Open lesson: Cell Cycle and Cancer"
+          >
+            Learn <span aria-hidden="true">→</span>
+          </a>
+
+        </div>
+      </article>
+
+
+      <!-- =========================================
+           MODULE 07
+      ========================================== -->
+      <article class="lesson-card">
+
+        <div class="card-thumbnail">
+          <img
+            src="imgs/cellDifferentiation.jpg"
+            alt="Diagram showing stem cells differentiating into specialized cell types"
+            loading="lazy"
+          >
+        </div>
+
+        <div class="card-content">
+
+          <p class="card-eyebrow">
+            MODULE 07 • CELL DEVELOPMENT
+          </p>
+
+          <h2 class="card-title">
+            Cell Differentiation and Specialization
+          </h2>
+
+          <p class="card-desc">
+            Learn how cells become specialized after division into skin,
+            muscle, nerve, and plant cells. Covers
+            <span class="highlight">stem cells</span>
+            and how differentiation shapes multicellular organisms through
+            <span class="highlight">interactive comparisons</span>.
+          </p>
+
+          <a
+            class="card-btn"
+            href="lesson-cell-differentiation.html"
+            aria-label="Open lesson: Cell Differentiation and Specialization"
+          >
+            Learn <span aria-hidden="true">→</span>
+          </a>
+
+        </div>
+      </article>
+
+
+      <!-- =========================================
+           MODULE 08
+      ========================================== -->
+      <article class="lesson-card">
+
+        <div class="card-thumbnail">
+          <img
+            src="imgs/cellSignaling.jpg"
+            alt="Diagram of cell membrane receptor proteins and signaling molecules"
+            loading="lazy"
+          >
+        </div>
+
+        <div class="card-content">
+
+          <p class="card-eyebrow">
+            MODULE 08 • CELL COMMUNICATION
+          </p>
+
+          <h2 class="card-title">
+            Cell Signaling and Communication
+          </h2>
+
+          <p class="card-desc">
+            Explore how cells send and receive signals through receptor
+            proteins and signal transduction pathways. Compare how
+            <span class="highlight">animal and plant cells</span>
+            communicate differently with
+            <span class="highlight">interactive models</span>
+            and quick checks.
+          </p>
+
+          <a
+            class="card-btn"
+            href="lesson-cell-signaling.html"
+            aria-label="Open lesson: Cell Signaling and Communication"
+          >
+            Learn <span aria-hidden="true">→</span>
+          </a>
+
+        </div>
+      </article>
 
     </div>
   </main>
-    <!-- =========================================
-        LOGOUT BUTTON SCRIPT
-    ========================================= -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const logoutButton = document.getElementById('logoutButton');
-            
-            if (logoutButton) {
-                logoutButton.addEventListener('click', async () => {
-                    await window.ecoAuth.signOut();
-                });
-            }
+
+
+  <!-- LOGOUT SCRIPT -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const logoutButton = document.getElementById('logoutButton');
+
+      if (logoutButton) {
+
+        logoutButton.addEventListener('click', async () => {
+          await window.ecoAuth.signOut();
         });
-    </script>
+
+      }
+
+    });
+  </script>
+
 </body>
 </html>

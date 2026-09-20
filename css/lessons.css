@@ -1,19 +1,27 @@
 /* =====================================================
-   ECOLEARN — LESSONS LIST (LEDGER THEME)
-   Uses the tokens defined in css/ledger-theme.css
-   (loaded before this file).
-===================================================== */
+   ECOLEARN — LESSONS LIST
+   ===================================================== */
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
-/* Page wrapper */
+
+/* =====================================================
+   PAGE WRAPPER
+   ===================================================== */
+
 .lessons-main {
   padding: clamp(16px, 2.5vw, 32px);
   max-width: 1180px;
   display: block;
 }
 
-/* Header */
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
 .lessons-header {
   max-width: 1100px;
   margin-inline: auto;
@@ -32,151 +40,268 @@
   color: var(--ink-muted);
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: clamp(0.95rem, 0.9rem + .4vw, 1.05rem);
+  font-size: clamp(
+    0.95rem,
+    0.9rem + .4vw,
+    1.05rem
+  );
 }
 
-/* Card list */
+
+/* =====================================================
+   CARD LIST
+   ===================================================== */
+
 .lessons-list {
   max-width: 1100px;
   margin-inline: auto;
+
   display: grid;
   gap: 16px;
 }
 
-/* Card */
+
+/* =====================================================
+   LESSON CARD
+   ===================================================== */
+
 .lesson-card {
   display: grid;
-  grid-template-columns: 2fr 3fr; /* ~40% / 60% */
-  background: var(--panel-bg);
-  border: 1px solid var(--paper-line);
-  border-radius: 3px;
-  box-shadow: none;
+
+  grid-template-columns: 40% 60%;
+
+  background: #f5f0e8;
+
+  border: 1px solid #e0d8c8;
+
+  border-radius: 0px;
+
   overflow: hidden;
-  transition: border-color .2s ease, transform .2s ease;
+
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .lesson-card:hover {
-  border-color: var(--moss);
+  border-color: #2f4c39;
+
   transform: translateY(-2px);
 }
 
 .lesson-card:focus-within {
   outline: none;
-  border-color: var(--moss);
-  box-shadow: 0 0 0 3px var(--moss-tint);
+
+  border-color: #8a7a3a;
+
+  box-shadow:
+    0 0 0 3px rgba(138, 122, 58, 0.15);
 }
 
-/* Thumbnail (with top, left, and bottom inner spacing) */
+
+/* =====================================================
+   THUMBNAIL
+   ===================================================== */
+
 .card-thumbnail {
-  min-height: 220px;
-  background: #F3F8F5;
+  min-height: 260px;
+
+  background: #ffffff;
+
   position: relative;
-  padding: 18px 18px 18px 18px; /* Top, Right(0), Bottom, Left */
+
+  padding: 18px;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 }
 
 .card-thumbnail img {
   width: 100%;
   height: 100%;
-  max-height: 240px;
-  object-fit: contain; /* Prevents diagrams & labels from getting cropped */
-  border-radius: var(--radius-12);
+
+  max-height: 280px;
+
+  object-fit: contain;
+
   display: block;
+
+  border-radius: 4px;
 }
 
-/* Placeholder thumbnail (no image) */
-.card-thumbnail.placeholder {
-  margin: 18px 0 18px 18px;
-  border-radius: var(--radius-12);
-  background:
-    linear-gradient(135deg, rgba(24,134,82,.12), rgba(11,90,50,.12)),
-    repeating-linear-gradient(45deg, rgba(24,134,82,.12) 0 10px, rgba(255,255,255,.25) 10px 20px);
-}
 
-/* Content */
+/* =====================================================
+   CARD CONTENT
+   ===================================================== */
+
 .card-content {
-  padding: clamp(16px, 2.5vw, 24px);
+  padding: 24px;
+
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 10px;
+
+  grid-template-rows:
+    auto
+    auto
+    1fr
+    auto;
+
+  gap: 0;
 }
+
+
+/* =====================================================
+   MODULE LABEL
+   ===================================================== */
 
 .card-eyebrow {
-  margin: 0;
+  margin: 0 0 8px 0;
+
   font-family: var(--font-sans);
-  font-size: 0.75rem;
-  letter-spacing: .1em;
+
+  font-size: 0.72rem;
+
+  letter-spacing: 0.12em;
+
   text-transform: uppercase;
-  color: var(--moss);
-  font-weight: 700;
+
+  color: #8a7a3a;
+
+  font-weight: 500;
 }
+
+
+/* =====================================================
+   TITLE
+   ===================================================== */
 
 .card-title {
-  margin: 0;
+  margin: 0 0 12px 0;
+
   font-family: var(--font-serif);
+
   font-weight: 600;
-  color: var(--ink);
-  font-size: clamp(1.15rem, 1rem + 1vw, 1.5rem);
-  line-height: 1.25;
+
+  color: #1a1a2e;
+
+  font-size: clamp(
+    1.55rem,
+    1.25rem + 1vw,
+    2rem
+  );
+
+  line-height: 1.2;
 }
+
+
+/* =====================================================
+   DESCRIPTION
+   ===================================================== */
 
 .card-desc {
-  margin: 0 0 4px 0;
-  color: var(--ink-muted);
-  font-size: 0.98rem;
-}
+  margin: 0 0 20px 0;
 
-/* Button */
-.card-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px 16px;
-  background: var(--pine);
-  color: var(--paper);
-  border: 1px solid var(--pine);
-  border-radius: 2px;
-  text-decoration: none;
+  color: #555555;
+
   font-family: var(--font-sans);
-  font-weight: 600;
-  letter-spacing: .2px;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+
+  font-size: 0.98rem;
+
+  line-height: 1.6;
 }
 
-.card-btn:hover { 
-  background: linear-gradient(100deg, #245f43 0%, #40916c 100%);
+
+/* Highlighted terms */
+
+.card-desc .highlight {
+  color: #c47a2a;
+
+  font-weight: 400;
+}
+
+
+/* =====================================================
+   BUTTON
+   ===================================================== */
+
+.card-btn {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  width: 100%;
+
+  padding: 13px 16px;
+
+  background: #2f4c39;
+
+  color: #ffffff;
+
+  border: 1px solid #2f4c39;
+
+  border-radius: 0px;
+
+  text-decoration: none;
+
+  font-family: var(--font-sans);
+
+  font-weight: 600;
+
+  letter-spacing: 0.2px;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.card-btn:hover {
+  background: #3b603b;
+
+  color: #ffffff;
+
   transform: translateY(-1px);
 }
 
-.card-btn:active { transform: translateY(1px); }
+.card-btn:active {
+  transform: translateY(1px);
+}
 
 .card-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px var(--moss-tint);
+
+  box-shadow:
+    0 0 0 3px rgba(45, 74, 45, 0.2);
 }
 
-/* Coming soon / disabled look */
-.lesson-card.is-soon { opacity: .9; }
-.card-btn.is-disabled {
-  background: transparent;
-  color: var(--ink-faint);
-  border-color: var(--paper-line);
-  cursor: not-allowed;
-  box-shadow: none;
-}
 
-/* Responsive */
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
 @media (max-width: 780px) {
-  .lesson-card { grid-template-columns: 1fr; }
-  .card-thumbnail { 
-    min-height: 180px; 
-    padding: 16px 16px 0 16px; /* On mobile: evenly space top, left, right */
+
+  .lesson-card {
+    grid-template-columns: 1fr;
   }
-  .card-thumbnail.placeholder {
-    margin: 16px 16px 0 16px;
+
+  .card-thumbnail {
+    min-height: 220px;
+
+    padding: 16px;
   }
+
+  .card-thumbnail img {
+    max-height: 220px;
+  }
+
+  .card-content {
+    padding: 20px;
+  }
+
 }
