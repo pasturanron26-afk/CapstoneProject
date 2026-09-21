@@ -312,45 +312,6 @@
         </section>
     </main>
 
-    <div id="lessonModal" class="lesson-modal" aria-hidden="true">
-        <div class="lesson-modal-backdrop" data-close="true"></div>
-        <div class="lesson-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle">
-            <div class="lesson-modal-header">
-                <div>
-                    <span class="lesson-modal-kicker" id="lessonModalModule">Module</span>
-                    <h3 id="lessonModalTitle">Lesson title</h3>
-                </div>
-                <button class="lesson-modal-close" type="button" aria-label="Close lesson">&times;</button>
-            </div>
-            <div class="lesson-modal-body">
-                <div class="lesson-modal-content">
-                    <div class="lesson-meta-row">
-                        <span id="lessonModalTime">25 min</span>
-                    </div>
-                    <p id="lessonModalSummary" class="lesson-summary"></p>
-
-                    <div class="lesson-section">
-                        <h4>Learning objectives</h4>
-                        <ul id="lessonObjectives"></ul>
-                    </div>
-
-                    <div class="lesson-section">
-                        <h4>Key idea</h4>
-                        <p>Cells are the basic units of life, and their internal structures are specialized to carry out essential processes for growth, energy, repair, and reproduction.</p>
-                    </div>
-                </div>
-
-                <div class="lesson-model-panel">
-                    <div class="lesson-model-header">Preview</div>
-                    <div class="lesson-model-placeholder">
-                        <i class="bi bi-diagram-3"></i>
-                        <span>3D model preview coming soon</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="folderPopup" class="folder-popup" aria-hidden="true">
         <div class="folder-popup-backdrop" data-close="true"></div>
         <div class="folder-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="folderPopupTitle">
@@ -428,45 +389,12 @@
             });
         }
 
-        const lessonModal = document.getElementById('lessonModal');
-        const lessonModalTitle = document.getElementById('lessonModalTitle');
-        const lessonModalModule = document.getElementById('lessonModalModule');
-        const lessonModalTime = document.getElementById('lessonModalTime');
-        const lessonModalSummary = document.getElementById('lessonModalSummary');
-        const lessonObjectives = document.getElementById('lessonObjectives');
-        const lessonModalClose = document.querySelector('.lesson-modal-close');
         const folderPopup = document.getElementById('folderPopup');
         const folderPopupTitle = document.getElementById('folderPopupTitle');
         const folderPopupSubtitle = document.getElementById('folderPopupSubtitle');
         const folderPopupIcon = document.getElementById('folderPopupIcon');
         const folderPopupList = document.getElementById('folderPopupList');
         const folderPopupClose = document.querySelector('.folder-popup-close');
-
-        function openLessonModal(button) {
-            const title = button.dataset.title || 'Lesson';
-            const module = button.dataset.module || 'Module';
-            const time = button.dataset.time || '10 min';
-            const summary = button.dataset.summary || 'Lesson details will appear here.';
-            const objectives = (button.dataset.objectives || '').split('|').filter(Boolean);
-
-            lessonModalTitle.textContent = title;
-            lessonModalModule.textContent = module;
-            lessonModalTime.textContent = time;
-            lessonModalSummary.textContent = summary;
-            lessonObjectives.innerHTML = '';
-            objectives.forEach((objective) => {
-                const item = document.createElement('li');
-                item.textContent = objective;
-                lessonObjectives.appendChild(item);
-            });
-            lessonModal.classList.add('is-open');
-            lessonModal.setAttribute('aria-hidden', 'false');
-        }
-
-        function closeLessonModal() {
-            lessonModal.classList.remove('is-open');
-            lessonModal.setAttribute('aria-hidden', 'true');
-        }
 
         function openFolderPopup(card) {
             const title = card.dataset.title || 'Folder';
@@ -526,7 +454,9 @@
         }
 
         document.querySelectorAll('.lesson-item').forEach((item) => {
-            item.addEventListener('click', () => openLessonModal(item));
+            item.addEventListener('click', () => {
+                window.location.href = 'lesson.html';
+            });
         });
 
         document.querySelectorAll('.folder-card .stat-card-toggle').forEach((toggle) => {
@@ -543,13 +473,7 @@
             });
         });
 
-        lessonModalClose.addEventListener('click', closeLessonModal);
         folderPopupClose.addEventListener('click', closeFolderPopup);
-        lessonModal.addEventListener('click', (event) => {
-            if (event.target.matches('[data-close="true"]')) {
-                closeLessonModal();
-            }
-        });
         folderPopup.addEventListener('click', (event) => {
             if (event.target.matches('[data-close="true"]')) {
                 closeFolderPopup();
@@ -558,7 +482,6 @@
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
-                closeLessonModal();
                 closeFolderPopup();
             }
         });
