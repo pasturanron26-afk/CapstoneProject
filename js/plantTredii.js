@@ -61,10 +61,19 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // ======================================================
+// MOBILE DETECTION
+// ======================================================
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
+// ======================================================
 // RENDERER
 // ======================================================
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const renderer = new THREE.WebGLRenderer({
+    antialias: !isMobile,
+    powerPreference: isMobile ? "low-power" : "high-performance",
+    precision: isMobile ? "mediump" : "highp",
+});
+renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
 renderer.setSize(viewer.clientWidth, viewer.clientHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -312,13 +321,18 @@ loader.load(
         if (organelleInfo) organelleInfo.classList.add("loaded");
     },
     function (xhr) {
-        if (xhr.total) {
-            const percentage = (xhr.loaded / xhr.total) * 100;
-            const formattedPercentage = percentage.toFixed(0);
-            console.log("Loading:", formattedPercentage + "%");
-            if (loadingPercentage) loadingPercentage.textContent = formattedPercentage + "%";
-            if (loadingProgress) loadingProgress.style.width = formattedPercentage + "%";
+        // Vercel doesn't send Content-Length, so xhr.total is 0.
+        // Use real progress when available, otherwise simulate it.
+        let percentage = 0;
+        if (xhr.total && xhr.total > 0) {
+            percentage = (xhr.loaded / xhr.total) * 100;
+        } else if (xhr.loaded > 0) {
+            const estimatedTotal = isMobile ? 18 * 1024 * 1024 : 30 * 1024 * 1024;
+            percentage = Math.min((xhr.loaded / estimatedTotal) * 100, 90);
         }
+        const formattedPercentage = percentage.toFixed(0);
+        if (loadingPercentage) loadingPercentage.textContent = formattedPercentage + "%";
+        if (loadingProgress) loadingProgress.style.width = formattedPercentage + "%";
     },
     function (error) {
         console.error("Error loading Plant Cell:", error);
