@@ -1,304 +1,418 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EcoLearn • Quizzes</title>
-
-  <!-- Bootstrap + Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-
-  <!-- Fonts (same as lessons/dashboard) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Your CSS -->
-  <link rel="stylesheet" href="css/sidebar.css" />
-  <link rel="stylesheet" href="css/global.css" />
-  <link rel="stylesheet" href="css/ledger-theme.css" />
-  <link rel="stylesheet" href="css/quiz.css" />
-
-  <!-- Supabase & Auth -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/auth.js"></script>
-
-    <style>
-        /* =========================================
-           ACTIVE TAB
-        ========================================= */
-        nav .nav-link.Quiz {
-            background-color: #40916C;
-            color: #ffffff !important;
-            font-weight: 600;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EcoLearn • Quizzes</title>
+<!-- Bootstrap + Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<!-- Fonts (same as lessons/dashboard) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Your CSS -->
+<link rel="stylesheet" href="css/sidebar.css" />
+<link rel="stylesheet" href="css/global.css" />
+<link rel="stylesheet" href="css/ledger-theme.css" />
+<link rel="stylesheet" href="css/quiz.css" />
+<!-- Supabase & Auth -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/auth.js"></script>
+<style>
+/* =========================================
+ACTIVE TAB
+========================================= */
+nav .nav-link.Quiz {
+background-color: #40916C;
+color: #ffffff !important;
+font-weight: 600;
+}
+</style>
 </head>
 <body>
-  <!-- Your existing sidebar is handled globally (no extra <aside> here) -->
-      <nav
-        class="d-flex flex-column align-items-center p-3 sidebar-bg"
-    >
-        
-        <img
-            src="imgs/Logo.jpg"
-            alt="Logo"
-            class="rounded-circle logo-img mb-2"
-        >
-
-
-        <h3 class="h5 brand-title mb-4">
-            EcoLearn
-        </h3>
-
-
-        <ul class="nav nav-pills flex-column w-100">
-
-
-            <!-- DASHBOARD -->
-
-            <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
-                    href="dashboard.html"
-                >
-
-                    <i class="bi bi-grid-1x2"></i>
-
-                    Dashboard
-
-                </a>
-
-            </li>
-
-
-            <!-- CELL MODELS -->
-
-            <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
-                    href="choose.html"
-                >
-
-                    <i class="bi bi-boxes"></i>
-
-                    Cell Models
-
-                </a>
-
-            </li>
-
-
-            <!-- Lesson -->
-
-            <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
-                    href="lesson.html"
-                >
-
-                    <i class="bi bi-book"></i>
-
-                    Lessons
-
-                </a>
-
-            </li>
-
-            <!-- QUIZ -->
-
-            <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
-                    href="quiz.html"
-                >
-
-                    <i class="bi bi-question-circle"></i>
-
-                    Quizzes
-
-                </a>
-
-            </li>
-
-            <li class="nav-item mb-1">
-                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
-                    <i class="bi bi-person"></i>
-                    Profile
-                </a>
-            </li>
-
-            <!-- LOGOUT -->
-
-            <li class="nav-item mt-auto">
-
-                <button
-                    id="logoutButton"
-                    class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
-                    style="background: none; cursor: pointer;"
-                >
-
-                    <i class="bi bi-box-arrow-right"></i>
-
-                    Logout
-
-                </button>
-
-            </li>
-
-        </ul>
-
-    </nav>
-
-  <!-- Main -->
-  <main class="quizzes-main" id="main-content">
-    <!-- Header -->
-    <header class="quizzes-header">
-      <h1 class="quizzes-title">Quizzes</h1>
-      <p class="quizzes-subtitle">Choose a topic and test your biology knowledge</p>
-    </header>
-
-    <!-- Quiz list -->
-    <section class="quizzes-list">
-      <!-- QUIZ CARD 1 -->
-      <article class="quiz-card">
-        <div class="quiz-thumb">
-          <div class="thumb-frame">
-            <img src="imgs/animalVSplant.jpg" alt="Animal vs Plant cell comparison diagram">
-          </div>
-        </div>
-
-        <div class="quiz-content">
-          <div class="content-top">
-            <p class="content-eyebrow">MODULE 01 • Cellular Structure</p>
-            <span class="level-badge level-primary">Primary Standard</span>
-          </div>
-
-          <h2 class="content-title">Animal Cell vs Plant Cell</h2>
-
-          <p class="content-desc">
-            Test your knowledge on organelles, structures, and the key differences between animal and plant eukaryotic cells. Covers all topics from the lesson.
-          </p>
-
-          <div class="meta-chips">
-            <span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-            <span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-            <span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-            <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-          </div>
-
-          <div class="card-actions">
-            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 88%"></span></div>
-            <a class="start-btn" href="quiz-animal-plant.html" aria-label="Start quiz: Animal Cell vs Plant Cell">
-              Start quiz <i class="bi bi-arrow-right"></i>
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <!-- QUIZ CARD 2 -->
-      <article class="quiz-card" id="quizCardCellDivision">
-        <div class="quiz-thumb">
-          <div class="thumb-frame">
-            <img src="imgs/cellDivision.jpg" alt="Cell division diagrams showing mitosis and meiosis">
-          </div>
-        </div>
-
-        <div class="quiz-content">
-          <div class="content-top">
-            <p class="content-eyebrow">MODULE 02 • Cell Division</p>
-            <span class="level-badge level-advanced">Advanced Theory</span>
-          </div>
-
-          <h2 class="content-title">Cell Division: Mitosis vs Meiosis</h2>
-
-          <p class="content-desc">
-            Walk through the cell cycle (G1, S, G2, M), compare mitosis and meiosis, and see how checkpoints help prevent errors.
-          </p>
-
-          <div class="meta-chips">
-            <span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-            <span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-            <span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-            <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-          </div>
-
-          <div class="card-actions">
-            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 88%"></span></div>
-            <a class="start-btn" href="quiz-cell-division.html" aria-label="Start quiz: Cell Division — Mitosis vs Meiosis">
-              Start quiz <i class="bi bi-arrow-right"></i>
-            </a>
-          </div>
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <script>
-    // Optional: require auth like other pages
-    // ecoAuth.requireStudent?.();
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const logoutButton = document.getElementById('logoutButton');
-      if (logoutButton) {
-        logoutButton.addEventListener('click', async () => {
-          await window.ecoAuth?.signOut?.();
-        });
-      }
-    });
-  </script>
-
-  <!-- =========================================
-       QUIZ LOCK LOGIC
-       "Cell Division" stays locked until the
-       student gets a perfect score on the first
-       quiz. quiz-animal-plant.html sets this flag
-       in localStorage on a 100% result.
-  ========================================= -->
-  <script>
-    const CELL_DIVISION_UNLOCK_KEY = 'ecolearn-quiz-animal-plant-perfect';
-
-    function applyQuizLockState() {
-      const card = document.getElementById('quizCardCellDivision');
-      if (!card) return;
-
-      const unlocked = localStorage.getItem(CELL_DIVISION_UNLOCK_KEY) === 'true';
-      if (unlocked) return;
-
-      card.classList.add('is-locked');
-
-      const thumbFrame = card.querySelector('.thumb-frame');
-      if (thumbFrame) {
-        const overlay = document.createElement('div');
-        overlay.className = 'lock-overlay';
-        overlay.innerHTML = '<i class="bi bi-lock-fill"></i>';
-        thumbFrame.appendChild(overlay);
-      }
-
-      const startBtn = card.querySelector('.start-btn');
-      if (startBtn) {
-        startBtn.classList.add('is-disabled');
-        startBtn.setAttribute('aria-disabled', 'true');
-        startBtn.removeAttribute('href');
-        startBtn.innerHTML = '<i class="bi bi-lock-fill"></i> Locked';
-        startBtn.addEventListener('click', (event) => event.preventDefault());
-      }
-
-      const actions = card.querySelector('.card-actions');
-      if (actions) {
-        const note = document.createElement('p');
-        note.className = 'lock-note';
-        note.innerHTML = '<i class="bi bi-info-circle"></i> Get a perfect score on "Animal Cell vs Plant Cell" to unlock this quiz.';
-        actions.insertAdjacentElement('afterend', note);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', applyQuizLockState);
-  </script>
+<!-- Your existing sidebar is handled globally (no extra <aside> here) -->
+<nav
+class="d-flex flex-column align-items-center p-3 sidebar-bg"
+>
+<img
+src="imgs/Logo.jpg"
+alt="Logo"
+class="rounded-circle logo-img mb-2"
+>
+<h3 class="h5 brand-title mb-4">
+EcoLearn
+</h3>
+<ul class="nav nav-pills flex-column w-100">
+<!-- DASHBOARD -->
+<li class="nav-item mb-1">
+<a
+class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
+href="dashboard.html"
+>
+<i class="bi bi-grid-1x2"></i>
+Dashboard
+</a>
+</li>
+<!-- CELL MODELS -->
+<li class="nav-item mb-1">
+<a
+class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
+href="choose.html"
+>
+<i class="bi bi-boxes"></i>
+Cell Models
+</a>
+</li>
+<!-- Lesson -->
+<li class="nav-item mb-1">
+<a
+class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
+href="lesson.html"
+>
+<i class="bi bi-book"></i>
+Lessons
+</a>
+</li>
+<!-- QUIZ -->
+<li class="nav-item mb-1">
+<a
+class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
+href="quiz.html"
+>
+<i class="bi bi-question-circle"></i>
+Quizzes
+</a>
+</li>
+<li class="nav-item mb-1">
+<a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
+<i class="bi bi-person"></i>
+Profile
+</a>
+</li>
+<!-- LOGOUT -->
+<li class="nav-item mt-auto">
+<button
+id="logoutButton"
+class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
+style="background: none; cursor: pointer;"
+>
+<i class="bi bi-box-arrow-right"></i>
+Logout
+</button>
+</li>
+</ul>
+</nav>
+<!-- Main -->
+<main class="quizzes-main" id="main-content">
+<!-- Header -->
+<header class="quizzes-header">
+<h1 class="quizzes-title">Quizzes</h1>
+<p class="quizzes-subtitle">Choose a topic and test your biology knowledge</p>
+</header>
+<!-- Quiz list -->
+<section class="quizzes-list">
+<!-- QUIZ CARD 1 -->
+<article class="quiz-card" id="quizCard01">
+<div class="quiz-thumb">
+<div class="thumb-frame">
+<img src="imgs/animalVSplant.jpg" alt="Animal vs Plant cell comparison diagram">
+</div>
+</div>
+<div class="quiz-content">
+<div class="content-top">
+<p class="content-eyebrow">MODULE 01 • CELLULAR STRUCTURE</p>
+<span class="level-badge level-primary">Primary Standard</span>
+</div>
+<h2 class="content-title">Animal Cell vs Plant Cell</h2>
+<p class="content-desc">
+Compare organelles, structures, and functions in animal and plant cells. Includes interactive diagrams and quick checks.
+</p>
+<div class="meta-chips">
+<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+</div>
+<div class="card-actions">
+<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<a class="start-btn" href="quiz-animal-plant.html" aria-label="Start quiz: Animal Cell vs Plant Cell">
+Start quiz <i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</article>
+<!-- QUIZ CARD 2 -->
+<article class="quiz-card" id="quizCard02">
+<div class="quiz-thumb">
+<div class="thumb-frame">
+<img src="imgs/cellDivision.jpg" alt="Illustration of cell division">
+</div>
+</div>
+<div class="quiz-content">
+<div class="content-top">
+<p class="content-eyebrow">MODULE 02 • CELL DIVISION</p>
+<span class="level-badge level-advanced">Advanced Theory</span>
+</div>
+<h2 class="content-title">Mitosis of Plant and Animal Cells</h2>
+<p class="content-desc">
+Explore the stages of mitosis in plant and animal cells, from chromosome duplication to the formation of two identical daughter cells. Learn how each stage contributes to accurate cell division.
+</p>
+<div class="meta-chips">
+<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+</div>
+<div class="card-actions">
+<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<a class="start-btn" href="quiz-mitosis.html" aria-label="Start quiz: Mitosis of Plant and Animal Cells">
+Start quiz <i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</article>
+<!-- QUIZ CARD 3 -->
+<article class="quiz-card" id="quizCard03">
+<div class="quiz-thumb">
+<div class="thumb-frame">
+<img src="imgs/cellMembrane.jpg" alt="Diagram of a cell membrane with phospholipid bilayer and transport proteins">
+</div>
+</div>
+<div class="quiz-content">
+<div class="content-top">
+<p class="content-eyebrow">MODULE 03 • CELL PROCESSES</p>
+<span class="level-badge level-primary">Primary Standard</span>
+</div>
+<h2 class="content-title">Cell Membrane and Transport</h2>
+<p class="content-desc">
+Discover how substances move in and out of cells through passive and active transport. Covers diffusion, osmosis, and endocytosis with interactive 3D membrane models and quick checks.
+</p>
+<div class="meta-chips">
+<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+</div>
+<div class="card-actions">
+<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<a class="start-btn" href="quiz-membrane.html" aria-label="Start quiz: Cell Membrane and Transport">
+Start quiz <i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</article>
+<!-- QUIZ CARD 4 -->
+<article class="quiz-card" id="quizCard04">
+<div class="quiz-thumb">
+<div class="thumb-frame">
+<img src="imgs/cellRespiration.jpg" alt="Diagram of mitochondria showing stages of cellular respiration">
+</div>
+</div>
+<div class="quiz-content">
+<div class="content-top">
+<p class="content-eyebrow">MODULE 04 • CELL ENERGY</p>
+<span class="level-badge level-advanced">Advanced Theory</span>
+</div>
+<h2 class="content-title">Cell Respiration</h2>
+<p class="content-desc">
+Understand how cells convert glucose into energy through aerobic and anaerobic respiration. Explore the role of the mitochondria in ATP production with step-by-step visual breakdowns and quick checks.
+</p>
+<div class="meta-chips">
+<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+</div>
+<div class="card-actions">
+<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<a class="start-btn" href="quiz-respiration.html" aria-label="Start quiz: Cell Respiration">
+Start quiz <i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</article>
+<!-- QUIZ CARD 5 -->
+<article class="quiz-card" id="quizCard05">
+<div class="quiz-thumb">
+<div class="thumb-frame">
+<img src="imgs/photosynthesis.jpg" alt="Diagram of a chloroplast showing thylakoid and stroma">
+</div>
+</div>
+<div class="quiz-content">
+<div class="content-top">
+<p class="content-eyebrow">MODULE 05 • CELL ENERGY</p>
+<span class="level-badge level-primary">Primary Standard</span>
+</div>
+<h2 class="content-title">Photosynthesis</h2>
+<p class="content-desc">
+Explore how plant cells use sunlight to produce food through light-dependent and light-independent reactions. Focuses on the role of chloroplasts with interactive diagrams and quick checks.
+</p>
+<div class="meta-chips">
+<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+</div>
+<div class="card-actions">
+<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<a class="start-btn" href="quiz-photosynthesis.html" aria-label="Start quiz: Photosynthesis">
+Start quiz <i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</article>
+<!-- QUIZ CARD 6 -->
+<article class="quiz-card" id="quizCard06">
+<div class="quiz-thumb">
+<div class="thumb-frame">
+<img src="imgs/cellCycle.jpg" alt="Circular diagram of the cell cycle with checkpoints">
+</div>
+</div>
+<div class="quiz-content">
+<div class="content-top">
+<p class="content-eyebrow">MODULE 06 • CELL CYCLE</p>
+<span class="level-badge level-advanced">Advanced Theory</span>
+</div>
+<h2 class="content-title">Cell Cycle and Cancer</h2>
+<p class="content-desc">
+Walk through the G1, S, G2, and M phases of the cell cycle and learn how checkpoints prevent errors. Understand what happens when cell division goes wrong and how cancer develops.
+</p>
+<div class="meta-chips">
+<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+</div>
+<div class="card-actions">
+<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<a class="start-btn" href="quiz-cell-cycle.html" aria-label="Start quiz: Cell Cycle and Cancer">
+Start quiz <i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</article>
+<!-- QUIZ CARD 7 -->
+<article class="quiz-card" id="quizCard07">
+<div class="quiz-thumb">
+<div class="thumb-frame">
+<img src="imgs/cellDifferentiation.jpg" alt="Diagram showing stem cells differentiating into specialized cell types">
+</div>
+</div>
+<div class="quiz-content">
+<div class="content-top">
+<p class="content-eyebrow">MODULE 07 • CELL DEVELOPMENT</p>
+<span class="level-badge level-primary">Primary Standard</span>
+</div>
+<h2 class="content-title">Cell Differentiation and Specialization</h2>
+<p class="content-desc">
+Learn how cells become specialized after division into skin, muscle, nerve, and plant cells. Covers stem cells and how differentiation shapes multicellular organisms through interactive comparisons.
+</p>
+<div class="meta-chips">
+<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+</div>
+<div class="card-actions">
+<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<a class="start-btn" href="quiz-differentiation.html" aria-label="Start quiz: Cell Differentiation and Specialization">
+Start quiz <i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</article>
+<!-- QUIZ CARD 8 -->
+<article class="quiz-card" id="quizCard08">
+<div class="quiz-thumb">
+<div class="thumb-frame">
+<img src="imgs/cellSignaling.jpg" alt="Diagram of cell membrane receptor proteins and signaling molecules">
+</div>
+</div>
+<div class="quiz-content">
+<div class="content-top">
+<p class="content-eyebrow">MODULE 08 • CELL COMMUNICATION</p>
+<span class="level-badge level-advanced">Advanced Theory</span>
+</div>
+<h2 class="content-title">Cell Signaling and Communication</h2>
+<p class="content-desc">
+Explore how cells send and receive signals through receptor proteins and signal transduction pathways. Compare how animal and plant cells communicate differently with interactive models and quick checks.
+</p>
+<div class="meta-chips">
+<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+</div>
+<div class="card-actions">
+<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<a class="start-btn" href="quiz-signaling.html" aria-label="Start quiz: Cell Signaling and Communication">
+Start quiz <i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</article>
+</section>
+</main>
+<script>
+// Optional: require auth like other pages
+// ecoAuth.requireStudent?.();
+document.addEventListener('DOMContentLoaded', () => {
+const logoutButton = document.getElementById('logoutButton');
+if (logoutButton) {
+logoutButton.addEventListener('click', async () => {
+await window.ecoAuth?.signOut?.();
+});
+}
+});
+</script>
+<!-- =========================================
+QUIZ LOCK LOGIC
+Each quiz stays locked until the previous
+quiz gets a perfect score (100%).
+========================================= -->
+<script>
+const QUIZ_UNLOCK_KEYS = {
+2: 'ecolearn-quiz-01-perfect',
+3: 'ecolearn-quiz-02-perfect',
+4: 'ecolearn-quiz-03-perfect',
+5: 'ecolearn-quiz-04-perfect',
+6: 'ecolearn-quiz-05-perfect',
+7: 'ecolearn-quiz-06-perfect',
+8: 'ecolearn-quiz-07-perfect',
+};
+function applyQuizLockState() {
+for (let i = 2; i <= 8; i++) {
+const card = document.getElementById(`quizCard0${i}`);
+if (!card) continue;
+const unlocked = localStorage.getItem(QUIZ_UNLOCK_KEYS[i]) === 'true';
+if (unlocked) continue;
+card.classList.add('is-locked');
+const thumbFrame = card.querySelector('.thumb-frame');
+if (thumbFrame) {
+const overlay = document.createElement('div');
+overlay.className = 'lock-overlay';
+overlay.innerHTML = '<i class="bi bi-lock-fill"></i>';
+thumbFrame.appendChild(overlay);
+}
+const startBtn = card.querySelector('.start-btn');
+if (startBtn) {
+startBtn.classList.add('is-disabled');
+startBtn.setAttribute('aria-disabled', 'true');
+startBtn.removeAttribute('href');
+startBtn.innerHTML = '<i class="bi bi-lock-fill"></i> Locked';
+startBtn.addEventListener('click', (event) => event.preventDefault());
+}
+const actions = card.querySelector('.card-actions');
+if (actions) {
+const note = document.createElement('p');
+note.className = 'lock-note';
+note.innerHTML = `<i class="bi bi-info-circle"></i> Get a perfect score on Module ${String(i-1).padStart(2, '0')} to unlock this quiz.`;
+actions.insertAdjacentElement('afterend', note);
+}
+}
+}
+document.addEventListener('DOMContentLoaded', applyQuizLockState);
+</script>
 </body>
 </html>
