@@ -681,6 +681,79 @@ body {
     color: var(--pine);
 }
 
+/* ===================== MODAL BASE ===================== */
+/* Self-contained modal shell: previously relied on the
+   `.lesson-modal` base rules that lived in dashboard.css.
+   Those were removed when the dashboard's lesson-preview
+   modal was deleted, which silently broke these admin
+   panels too since they shared the same classes. Keeping
+   the base rules here instead decouples admin.html from
+   dashboard.css entirely. */
+
+.admin-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    z-index: 1200;
+}
+
+.admin-modal.is-open {
+    display: block;
+}
+
+.admin-modal .lesson-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(28, 46, 34, 0.35);
+    backdrop-filter: blur(2px);
+}
+
+.admin-modal .lesson-modal-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(700px, calc(100vw - 40px));
+    max-height: min(86vh, 820px);
+    margin: 7vh auto;
+    overflow: hidden;
+    background-color: #FFFFFF;
+    border: 1px solid var(--paper-line);
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-modal .lesson-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px 16px;
+}
+
+.admin-modal .lesson-modal-kicker {
+    display: inline-block;
+}
+
+.admin-modal .lesson-modal-header h3 {
+    margin: 5px 0 0;
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+}
+
+.admin-modal .lesson-modal-close {
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-modal .lesson-modal-content {
+    padding: 24px;
+}
+
+.admin-modal .lesson-summary {
+    margin: 0 0 16px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
 /* ===================== MODALS ===================== */
 
 .admin-modal .lesson-modal-dialog {
