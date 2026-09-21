@@ -159,7 +159,7 @@ const meshNameMap = {
     Nucleolus: "Nucleolus",
     peroxisome: "peroxisome",
     ribosomes: "ribosomes",
-    endoplasmicReticulum: ["roughER", "smoothER", "ribosomesER"],
+    endoplasmicReticulum: "ER",
     vacuole: "vacuole"
 };
 
@@ -292,7 +292,7 @@ dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5
 loader.setDRACOLoader(dracoLoader);
 
 loader.load(
-    "./threeDyModels/ANIMALCELLtry01.glb",
+    "./threeDyModels/ANIMALCELLtry03.glb",
     function (gltf) {
         animalCell = gltf.scene;
         scene.add(animalCell);
@@ -504,10 +504,10 @@ organelleButtons.forEach(button => {
         else if (organelle === "endoplasmicReticulum") {
             if (currentMode === "separate") {
                 // Separate Mode: Keep ribosomes visible along with the ER
-                targetOrganelles = ["roughER", "smoothER", "ribosomesER"];
+                targetOrganelles = ["ER", "ribosomesER"];
             } else {
                 // Whole Mode: Only glow the ER membranes, leave ribosomes un-glowed
-                targetOrganelles = ["roughER", "smoothER"];
+                targetOrganelles = ["ER", "ribosomesER"];
             }
         }
         else {

@@ -19,9 +19,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
     <style>
-            /* =========================================
-           ACTIVE TAB
-        ========================================= */
         nav .nav-link.Dashboard {
             background-color: #40916C;
             color: #ffffff !important;
@@ -30,126 +27,42 @@
     </style>
 </head>
 <body>
-    <!-- =========================================
-         SIDEBAR
-    ========================================= -->
 
-    <nav
-        class="d-flex flex-column align-items-center p-3 sidebar-bg"
-    >
-        
-        <img
-            src="imgs/Logo.jpg"
-            alt="Logo"
-            class="rounded-circle logo-img mb-2"
-        >
-
-
-        <h3 class="h5 brand-title mb-4">
-            EcoLearn
-        </h3>
-
-
+    <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
+        <img src="imgs/Logo.jpg" alt="Logo" class="rounded-circle logo-img mb-2">
+        <h3 class="h5 brand-title mb-4">EcoLearn</h3>
         <ul class="nav nav-pills flex-column w-100">
-
-
-            <!-- DASHBOARD -->
-
             <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
-                    href="dashboard.html"
-                >
-
-                    <i class="bi bi-grid-1x2"></i>
-
-                    Dashboard
-
+                <a class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2" href="dashboard.html">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
                 </a>
-
             </li>
-
-
-            <!-- CELL MODELS -->
-
             <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
-                    href="choose.html"
-                >
-
-                    <i class="bi bi-boxes"></i>
-
-                    Cell Models
-
+                <a class="nav-link CellModel text-white-50 d-flex align-items-center gap-2" href="choose.html">
+                    <i class="bi bi-boxes"></i> Cell Models
                 </a>
-
             </li>
-
-
-            <!-- Lesson -->
-
             <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
-                    href="lesson.html"
-                >
-
-                    <i class="bi bi-book"></i>
-
-                    Lessons
-
+                <a class="nav-link Lesson text-white-50 d-flex align-items-center gap-2" href="lesson.html">
+                    <i class="bi bi-book"></i> Lessons
                 </a>
-
             </li>
-
-            <!-- QUIZ -->
-
             <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
-                    href="quiz.html"
-                >
-
-                    <i class="bi bi-question-circle"></i>
-
-                    Quizzes
-
+                <a class="nav-link Quiz text-white-50 d-flex align-items-center gap-2" href="quiz.html">
+                    <i class="bi bi-question-circle"></i> Quizzes
                 </a>
-
             </li>
-
             <li class="nav-item mb-1">
                 <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
-                    <i class="bi bi-person"></i>
-                    Profile
+                    <i class="bi bi-person"></i> Profile
                 </a>
             </li>
-
-            <!-- LOGOUT -->
-
             <li class="nav-item mt-auto">
-
-                <button
-                    id="logoutButton"
-                    class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
-                    style="background: none; cursor: pointer;"
-                >
-
-                    <i class="bi bi-box-arrow-right"></i>
-
-                    Logout
-
+                <button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background: none; cursor: pointer;">
+                    <i class="bi bi-box-arrow-right"></i> Logout
                 </button>
-
             </li>
-
         </ul>
-
     </nav>
 
     <main class="dashboard-content">
@@ -171,89 +84,46 @@
         </div>
 
         <section class="stats-grid">
-            <div class="stat-card folder-card" data-folder="lessons" data-title="Lessons" data-list="Module 1 • Cell Structure Basics|Module 2 • Cell Functions|Module 3 • Plant vs Animal Cells|Module 4 • DNA and Genetic Code|Module 5 • Cell Division|Module 6 • Cellular Energy|Module 7 • Transport Systems|Module 8 • Tissue Organization|Module 9 • Special Cells|Module 10 • Microscopy|Module 11 • Lab Review|Module 12 • Final Assessment">
+            <div class="stat-card folder-card" data-folder="lessons" data-title="Lessons" data-list="Module 01 • Animal Cell vs Plant Cell|Module 02 • Mitosis of Plant and Animal Cells|Module 03 • Cell Membrane and Transport|Module 04 • Cell Respiration|Module 05 • Photosynthesis|Module 06 • Cell Cycle and Cancer|Module 07 • Cell Differentiation and Specialization|Module 08 • Cell Signaling and Communication">
                 <button class="stat-card-toggle" type="button" aria-expanded="false">
                     <div class="label">
                         <span>Lessons</span>
                         <span class="icon"><i class="bi bi-book"></i></span>
                     </div>
-                    <div class="value">12</div>
-                    <div class="meta">+3 from last week</div>
+                    <div class="value">8</div>
+                    <div class="meta">8 modules available</div>
                 </button>
             </div>
 
-            <div class="stat-card folder-card" data-folder="quizzes" data-title="Quizzes" data-list="Quiz 1 • Cell basics|Quiz 2 • Organelles|Quiz 3 • Membranes|Quiz 4 • Energy|Quiz 5 • Cell cycle|Quiz 6 • Genetics|Quiz 7 • Lab skills|Quiz 8 • Final review">
+            <div class="stat-card folder-card" data-folder="quizzes" data-title="Quizzes" data-list="Quiz 01 • Animal Cell vs Plant Cell|Quiz 02 • Mitosis (coming soon)|Quiz 03 • Cell Membrane (coming soon)|Quiz 04 • Cell Respiration (coming soon)|Quiz 05 • Photosynthesis (coming soon)|Quiz 06 • Cell Cycle (coming soon)|Quiz 07 • Cell Differentiation (coming soon)|Quiz 08 • Cell Signaling (coming soon)">
                 <button class="stat-card-toggle" type="button" aria-expanded="false">
                     <div class="label">
                         <span>Quizzes</span>
                         <span class="icon"><i class="bi bi-patch-check"></i></span>
                     </div>
                     <div class="value">8</div>
-                    <div class="meta">Best score: 92%</div>
+                    <div class="meta" id="quizBestScoreMeta">Best score: —</div>
                 </button>
             </div>
 
-            <div class="stat-card">
+            <div class="stat-card" id="progressStatCard">
                 <div class="label">
                     <span>Progress</span>
                     <span class="icon"><i class="bi bi-graph-up-arrow"></i></span>
                 </div>
-                <div class="value">72%</div>
-                <div class="meta">On target</div>
+                <div class="value" id="overallProgressValue">—</div>
+                <div class="meta" id="overallProgressMeta">Loading...</div>
             </div>
-
-            
         </section>
 
         <section class="content-grid">
             <div class="panel">
                 <div class="panel-title">
-                        <h2>Current Learning Path</h2>
-                    <a href="#">View all</a>
+                    <h2>Current Learning Path</h2>
+                    <a href="lesson.html">View all</a>
                 </div>
-
                 <div class="lesson-list">
-                    <button class="lesson-item" type="button" data-title="Cell Structure Basics" data-module="Module 1" data-time="25 min" data-summary="Explore how cells are organized into membranes, cytoplasm, organelles, and genetic material, and how each part supports life." data-objectives="Identify the main parts of a cell|Compare cell membrane and nucleus roles|Explain how organelles work together" data-model="AnimalCell.html">
-                        <div class="lesson-left">
-                            <img class="lesson-thumb" src="imgs/animal-cell.png" alt="">
-                            <div class="lesson-icon"><i class="bi bi-microscope"></i></div>
-                            <div>
-                                <div class="lesson-name">Cell Structure Basics</div>
-                                <div class="lesson-meta">Module 1 • 25 min</div>
-                                <div class="lesson-progress"><span style="width: 100%"></span></div>
-                                <div class="lesson-status">100% <strong>Completed</strong></div>
-                            </div>
-                        </div>
-                        <span class="pill live">Live</span>
-                    </button>
-
-                    <button class="lesson-item" type="button" data-title="Cell Functions" data-module="Module 2" data-time="18 min" data-summary="Understand how cells move materials, convert energy, and maintain internal balance through specialized functions and organelles." data-objectives="Explain cellular respiration|Describe transport across membranes|Recognize how organelles support function" data-model="AnimalCell.html">
-                        <div class="lesson-left">
-                            <img class="lesson-thumb" src="imgs/animal-cell.png" alt="">
-                            <div class="lesson-icon"><i class="bi bi-activity"></i></div>
-                            <div>
-                                <div class="lesson-name">Cell Functions</div>
-                                <div class="lesson-meta">Module 2 • 15 min</div>
-                                <div class="lesson-progress"><span style="width: 60%"></span></div>
-                                <div class="lesson-status">60% <strong>In Progress</strong></div>
-                            </div>
-                        </div>
-                        <span class="pill todo">In progress</span>
-                    </button>
-
-                    <button class="lesson-item" type="button" data-title="Plant vs Animal Cells" data-module="Module 3" data-time="30 min" data-summary="Compare the similarities and differences between plant and animal cells and examine how structure reflects biological function." data-objectives="Identify cell wall and chloroplast roles|Compare lysosome and vacuole functions|Explain how cell shape supports purpose" data-model="AnimalCell.html">
-                        <div class="lesson-left">
-                            <img class="lesson-thumb" src="imgs/plant-cell.png" alt="">
-                            <div class="lesson-icon"><i class="bi bi-diagram-3"></i></div>
-                            <div>
-                                <div class="lesson-name">Plant vs Animal Cells</div>
-                                <div class="lesson-meta">Module 3 • 20 min</div>
-                                <div class="lesson-progress"><span style="width: 0%"></span></div>
-                                <div class="lesson-status">0% <strong>Up Next</strong></div>
-                            </div>
-                        </div>
-                        <span class="pill next">Next</span>
-                    </button>
+                    <!-- Populated by syncLessonsFromLessonPage() -->
                 </div>
             </div>
 
@@ -262,28 +132,26 @@
                     <div class="panel-title">
                         <h2>Overall completion</h2>
                     </div>
-
                     <div class="mini-card">
                         <h3>Course progress</h3>
-                        <div class="progress-ring"><span>72%</span></div>
+                        <div class="progress-ring" id="progressRing"><span id="progressRingValue">—</span></div>
                     </div>
-
                     <div class="goal-list">
                         <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Cell Theory</div>
-                            <span class="score">90%</span>
+                            <div class="label-row"><span class="dot"></span> Cell Structure</div>
+                            <span class="score" id="goal-0">0%</span>
                         </div>
                         <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Cell Organelles</div>
-                            <span class="score">70%</span>
+                            <div class="label-row"><span class="dot"></span> Cell Division &amp; Cycle</div>
+                            <span class="score" id="goal-1">0%</span>
                         </div>
                         <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Cell Division</div>
-                            <span class="score">50%</span>
+                            <div class="label-row"><span class="dot"></span> Cell Energy</div>
+                            <span class="score" id="goal-2">0%</span>
                         </div>
                         <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Cell Transport</div>
-                            <span class="score">65%</span>
+                            <div class="label-row"><span class="dot"></span> Cell Processes &amp; Communication</div>
+                            <span class="score" id="goal-3">0%</span>
                         </div>
                     </div>
                 </div>
@@ -312,6 +180,7 @@
         </section>
     </main>
 
+    <!-- FOLDER POPUP -->
     <div id="folderPopup" class="folder-popup" aria-hidden="true">
         <div class="folder-popup-backdrop" data-close="true"></div>
         <div class="folder-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="folderPopupTitle">
@@ -331,46 +200,137 @@
         </div>
     </div>
 
+    <!-- =========================================
+         SYNC LESSONS FROM lesson.html
+    ========================================= -->
     <script>
-        ecoAuth.requireStudent();
+    async function syncLessonsFromLessonPage() {
+        try {
+            const res = await fetch('lesson.html', { cache: 'no-store' });
+            if (!res.ok) throw new Error('Failed to load lesson.html');
+            const html = await res.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Get current user session
-            const { data, error } = await ecoAuth.client.auth.getSession();
-            
-            if (data?.session?.user) {
-                const user = data.session.user;
-                let fullName = user.user_metadata?.full_name || 'Student';
-                let section = user.user_metadata?.section || '';
-                const email = user.email || user.user_metadata?.email || '';
+            const cards = Array.from(doc.querySelectorAll('.lessons-list .lesson-card'));
+            if (!cards.length) return;
 
-                // The signup trigger writes full_name/section into the
-                // profiles table, which is the source of truth -- the
-                // auth session's user_metadata can be stale or empty,
-                // so prefer the profiles row when it's available.
-                try {
-                    const { data: profile, error: profileError } = await ecoAuth.client
-                        .from('profiles')
-                        .select('full_name, section')
-                        .eq('id', user.id)
-                        .maybeSingle();
+            const modules = cards.map((card, idx) => {
+                const eyebrow = card.querySelector('.card-eyebrow')?.textContent.trim() || `Module ${idx + 1}`;
+                const number = (() => {
+                    const m = eyebrow.match(/module\s*(\d+)/i);
+                    return m ? parseInt(m[1], 10) : (idx + 1);
+                })();
+                const moduleLabel = `Module ${String(number).padStart(2, '0')}`;
+                const title = card.querySelector('.card-title')?.textContent.trim() || `Lesson ${idx + 1}`;
+                const desc  = card.querySelector('.card-desc')?.textContent.trim() || '';
+                const href  = card.querySelector('.card-btn')?.getAttribute('href') || 'lesson.html';
+                const img   = card.querySelector('.card-thumbnail img')?.getAttribute('src') || '';
+                return { moduleLabel, title, desc, href, img };
+            });
 
-                    if (!profileError && profile) {
-                        fullName = profile.full_name || fullName;
-                        section = profile.section || section;
-                    }
-                } catch (profileFetchError) {
-                    // Fall back silently to user_metadata values above.
-                }
-
-                // Update page header with student info
-                document.getElementById('studentName').textContent = fullName;
-
-                const sectionEl = document.getElementById('studentSection');
-                sectionEl.textContent = section ? `Section ${section}` : '';
-
-                document.getElementById('studentEmail').textContent = email;
+            const lessonsCard = document.querySelector('.stat-card.folder-card[data-folder="lessons"]');
+            if (lessonsCard) {
+                lessonsCard.dataset.list = modules.map(m => `${m.moduleLabel} • ${m.title}`).join('|');
+                const valueEl = lessonsCard.querySelector('.value');
+                if (valueEl) valueEl.textContent = modules.length;
             }
+
+            const listEl = document.querySelector('.lesson-list');
+            if (listEl) {
+                listEl.innerHTML = '';
+                modules.forEach((m) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'lesson-item';
+                    btn.dataset.title   = m.title;
+                    btn.dataset.module  = m.moduleLabel;
+                    btn.dataset.time    = '—';
+                    btn.dataset.summary = m.desc;
+                    btn.dataset.objectives = '';
+                    btn.dataset.link    = m.href;
+
+                    const left = document.createElement('div');
+                    left.className = 'lesson-left';
+
+                    const img = document.createElement('img');
+                    img.className = 'lesson-thumb';
+                    img.src = m.img;
+                    img.alt = m.title;
+
+                    const icon = document.createElement('div');
+                    icon.className = 'lesson-icon';
+                    icon.innerHTML = '<i class="bi bi-journal-text"></i>';
+
+                    const info = document.createElement('div');
+                    const name = document.createElement('div');
+                    name.className = 'lesson-name';
+                    name.textContent = m.title;
+
+                    const meta = document.createElement('div');
+                    meta.className = 'lesson-meta';
+                    meta.textContent = `${m.moduleLabel} • —`;
+
+                    const progress = document.createElement('div');
+                    progress.className = 'lesson-progress';
+                    progress.innerHTML = '<span style="width:0%"></span>';
+
+                    const status = document.createElement('div');
+                    status.className = 'lesson-status';
+                    status.innerHTML = '0% <strong>Up Next</strong>';
+
+                    info.append(name, meta, progress, status);
+                    left.append(img, icon, info);
+                    btn.append(left);
+                    listEl.appendChild(btn);
+                });
+
+                listEl.querySelectorAll('.lesson-item').forEach((item) => {
+                    if (!item.dataset.bound) {
+                        item.addEventListener('click', () => openLessonModal(item));
+                        item.dataset.bound = '1';
+                    }
+                });
+            }
+        } catch (err) {
+            console.error('Sync lessons failed:', err);
+        }
+    }
+    document.addEventListener('DOMContentLoaded', syncLessonsFromLessonPage);
+    </script>
+
+    <!-- =========================================
+         STUDENT INFO + UI INTERACTIONS
+    ========================================= -->
+    <script>
+    ecoAuth.requireStudent();
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const { data, error } = await ecoAuth.client.auth.getSession();
+
+        if (data?.session?.user) {
+            const user = data.session.user;
+            let fullName = user.user_metadata?.full_name || 'Student';
+            let section  = user.user_metadata?.section || '';
+            const email  = user.email || '';
+
+            try {
+                const { data: profile } = await ecoAuth.client
+                    .from('profiles')
+                    .select('full_name, section')
+                    .eq('id', user.id)
+                    .maybeSingle();
+                if (profile) {
+                    fullName = profile.full_name || fullName;
+                    section  = profile.section  || section;
+                }
+            } catch (_) {}
+
+            document.getElementById('studentName').textContent = fullName;
+            const sectionEl = document.getElementById('studentSection');
+            if (sectionEl) sectionEl.textContent = section ? `Section ${section}` : '';
+            document.getElementById('studentEmail').textContent = email;
+        }
 
             const logoutButton = document.getElementById('logoutButton');
             
@@ -396,62 +356,33 @@
         const folderPopupList = document.getElementById('folderPopupList');
         const folderPopupClose = document.querySelector('.folder-popup-close');
 
-        function openFolderPopup(card) {
-            const title = card.dataset.title || 'Folder';
-            const folderType = card.dataset.folder || '';
-            const isQuizFolder = folderType === 'quizzes';
-            const destination = isQuizFolder ? 'quiz.html' : 'lesson.html';
-            const list = (card.dataset.list || '').split('|').filter(Boolean);
+    function openFolderPopup(card) {
+        const isQuiz = card.dataset.folder === 'quizzes';
+        document.getElementById('folderPopupTitle').textContent = card.dataset.title || 'Folder';
+        document.getElementById('folderPopupIcon').innerHTML = isQuiz
+            ? '<i class="bi bi-patch-check"></i>' : '<i class="bi bi-book"></i>';
+        document.getElementById('folderPopupSubtitle').textContent = isQuiz
+            ? 'Tap a quiz to head to the Quizzes page and start it.'
+            : 'Tap a module to head to the Lessons page and start it.';
+        const list = (card.dataset.list || '').split('|').filter(Boolean);
+        const ul = document.getElementById('folderPopupList');
+        ul.innerHTML = '';
+        list.forEach(item => {
+            const li  = document.createElement('li');
+            const btn = document.createElement('button');
+            btn.type = 'button'; btn.className = 'folder-item';
+            btn.innerHTML = `<span class="folder-item-icon"><i class="bi bi-${isQuiz ? 'question-circle' : 'journal-text'}"></i></span><span class="folder-item-label">${item}</span><i class="bi bi-box-arrow-up-right folder-item-trailing"></i>`;
+            btn.addEventListener('click', () => { closeFolderPopup(); window.location.href = isQuiz ? 'quiz.html' : 'lesson.html'; });
+            li.appendChild(btn); ul.appendChild(li);
+        });
+        folderPopup.classList.add('is-open');
+        folderPopup.setAttribute('aria-hidden', 'false');
+    }
 
-            folderPopupTitle.textContent = title;
-            folderPopupIcon.innerHTML = isQuizFolder
-                ? '<i class="bi bi-patch-check"></i>'
-                : '<i class="bi bi-book"></i>';
-            folderPopupSubtitle.textContent = isQuizFolder
-                ? 'Tap a quiz to head to the Quizzes page and start it.'
-                : 'Tap a module to head to the Lessons page and start it.';
-
-            folderPopupList.innerHTML = '';
-            list.forEach((item) => {
-                const li = document.createElement('li');
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'folder-item';
-
-                const icon = document.createElement('span');
-                icon.className = 'folder-item-icon';
-                icon.innerHTML = isQuizFolder
-                    ? '<i class="bi bi-question-circle"></i>'
-                    : '<i class="bi bi-journal-text"></i>';
-
-                const label = document.createElement('span');
-                label.className = 'folder-item-label';
-                label.textContent = item;
-
-                const trailing = document.createElement('i');
-                trailing.className = 'bi bi-box-arrow-up-right folder-item-trailing';
-
-                button.append(icon, label, trailing);
-
-                // Neither the lesson nor quiz folder lists map 1:1 to a
-                // per-item detail page, so send the student to the real
-                // Lessons/Quizzes page instead of a generic preview modal.
-                button.addEventListener('click', () => {
-                    closeFolderPopup();
-                    window.location.href = destination;
-                });
-
-                li.appendChild(button);
-                folderPopupList.appendChild(li);
-            });
-            folderPopup.classList.add('is-open');
-            folderPopup.setAttribute('aria-hidden', 'false');
-        }
-
-        function closeFolderPopup() {
-            folderPopup.classList.remove('is-open');
-            folderPopup.setAttribute('aria-hidden', 'true');
-        }
+    function closeFolderPopup() {
+        folderPopup.classList.remove('is-open');
+        folderPopup.setAttribute('aria-hidden', 'true');
+    }
 
         document.querySelectorAll('.lesson-item').forEach((item) => {
             item.addEventListener('click', () => {
@@ -508,19 +439,101 @@
 
         addPublishedContent();
     </script>
-        <!-- =========================================
-        LOGOUT BUTTON SCRIPT
+
+    <!-- =========================================
+         REAL PROGRESS — from Supabase quiz_attempts
     ========================================= -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const logoutButton = document.getElementById('logoutButton');
-            
-            if (logoutButton) {
-                logoutButton.addEventListener('click', async () => {
-                    await window.ecoAuth.signOut();
-                });
+    document.addEventListener('DOMContentLoaded', async () => {
+
+        // ── LESSON UUID MAP ──────────────────────────────────
+        const LESSON_IDS = {
+            1: 'e43f6bee-bcff-4692-b5e2-396b4176eacd', // Animal Cell vs Plant Cell
+            2: 'fc3f6b43-fb9d-420d-9060-9529ba395621', // Mitosis of Plant and Animal Cells
+            3: '46254ff2-c787-4792-94db-5d33181f6b55', // Cell Membrane and Transport
+            4: '1b15a414-7e6c-4992-b17c-1c924745366d', // Cell Respiration
+            5: '81ece535-7d0b-47e9-a95a-ed8e0f25cc76', // Photosynthesis
+            6: '26dc1e4f-4a8b-45fc-8e12-ab7fd326eea1', // Cell Cycle and Cancer
+            7: '5149863c-8971-49ef-afa2-085cec2f3d1e', // Cell Differentiation
+            8: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9', // Cell Signaling
+        };
+
+        // ── GOAL GROUPS ──────────────────────────────────────
+        const GOAL_GROUPS = [
+            { id: 'goal-0', label: 'Cell Structure',                 modules: [1] },
+            { id: 'goal-1', label: 'Cell Division & Cycle',          modules: [2, 6] },
+            { id: 'goal-2', label: 'Cell Energy',                    modules: [4, 5] },
+            { id: 'goal-3', label: 'Cell Processes & Communication', modules: [3, 7, 8] },
+        ];
+
+        const client = window.ecoAuth?.client;
+        if (!client) return;
+
+        const { data: { user } } = await client.auth.getUser();
+        if (!user) return;
+
+        // ── FETCH ATTEMPTS ───────────────────────────────────
+        const { data: attempts, error } = await client
+            .from('quiz_attempts')
+            .select('lesson_id, score')
+            .eq('user_id', user.id);
+
+        if (error) { console.error('Progress load failed:', error); return; }
+
+        // ── BEST SCORE PER LESSON ────────────────────────────
+        const bestScores = {};
+        (attempts || []).forEach(a => {
+            const pct = Math.round((a.score / 10) * 100);
+            if (!bestScores[a.lesson_id] || pct > bestScores[a.lesson_id]) {
+                bestScores[a.lesson_id] = pct;
             }
         });
+
+        function getBest(moduleNum) {
+            return bestScores[LESSON_IDS[moduleNum]] ?? 0;
+        }
+
+        // ── OVERALL PROGRESS ─────────────────────────────────
+        const allScores  = [1,2,3,4,5,6,7,8].map(getBest);
+        const overallPct = Math.round(allScores.reduce((a,b) => a+b, 0) / 8);
+
+        // Update stat card
+        const valEl  = document.getElementById('overallProgressValue');
+        const metaEl = document.getElementById('overallProgressMeta');
+        if (valEl)  valEl.textContent  = `${overallPct}%`;
+        if (metaEl) metaEl.textContent =
+            overallPct === 0 ? 'No quizzes taken yet' :
+            overallPct >= 80 ? 'Excellent progress!'  :
+            overallPct >= 50 ? 'On target'            : 'Keep going!';
+
+        // Update ring
+        const ringSpan = document.getElementById('progressRingValue');
+        const ringEl   = document.getElementById('progressRing');
+        if (ringSpan) ringSpan.textContent = `${overallPct}%`;
+        if (ringEl) {
+            ringEl.style.setProperty('--progress', `${overallPct}%`);
+            ringEl.style.background =
+                `conic-gradient(var(--canopy, #40916C) ${overallPct}%, var(--parchment, #e8e0d0) ${overallPct}%)`;
+        }
+
+        // ── GOAL LIST ────────────────────────────────────────
+        GOAL_GROUPS.forEach(group => {
+            const scores = group.modules.map(getBest);
+            const avg    = Math.round(scores.reduce((a,b) => a+b, 0) / scores.length);
+            const el     = document.getElementById(group.id);
+            if (el) el.textContent = `${avg}%`;
+        });
+
+        // ── QUIZZES BEST SCORE META ──────────────────────────
+        const metaBest = document.getElementById('quizBestScoreMeta');
+        if (metaBest) {
+            const allBest = Object.values(bestScores);
+            metaBest.textContent = allBest.length === 0
+                ? 'No quizzes taken yet'
+                : `Best score: ${Math.max(...allBest)}%`;
+        }
+    });
     </script>
+
 </body>
 </html>
