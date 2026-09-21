@@ -9,7 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
-  <!-- Fonts (same as quiz.html) -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -78,11 +78,16 @@
     <p class="quiz-play-subtitle">Get every question right to unlock the Cell Division quiz.</p>
 
     <div class="quiz-progress-track">
-      <div class="quiz-progress-fill" id="quizProgressFill" style="width: 10%;"></div>
+      <div class="quiz-progress-fill" id="quizProgressFill" style="width: 0%;"></div>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div class="quiz-question-panel" id="quizLoadingPanel">
+      <p class="quiz-question-count">Loading questions...</p>
     </div>
 
     <!-- QUESTION VIEW -->
-    <div class="quiz-question-panel" id="quizQuestionPanel">
+    <div class="quiz-question-panel" id="quizQuestionPanel" style="display: none;">
       <p class="quiz-question-count" id="quizQuestionCount">Question 1 of 10</p>
       <h2 class="quiz-question-text" id="quizQuestionText"></h2>
       <div class="quiz-options" id="quizOptions"></div>
@@ -116,143 +121,251 @@
   </script>
 
   <!-- =========================================
-       QUIZ DATA + LOGIC
+       QUIZ LOGIC — Supabase version
+       100-question bank, 10 random per session
   ========================================= -->
   <script>
-    const UNLOCK_KEY = 'ecolearn-quiz-animal-plant-perfect';
-    const BEST_SCORE_KEY = 'ecolearn-quiz-animal-plant-best';
+    // ── CONFIG ──────────────────────────────────────────────
+    const LESSON_ID            = 'e43f6bee-bcff-4692-b5e2-396b4176eacd';
+    const QUESTIONS_PER_SESSION = 10;
+    const UNLOCK_KEY           = 'ecolearn-quiz-animal-plant-perfect';
+    const BEST_SCORE_KEY       = 'ecolearn-quiz-animal-plant-best';
 
-    const QUESTIONS = [
-      {
-        text: "Which structure is found in plant cells but not in animal cells?",
-        options: ["Cell wall", "Nucleus", "Mitochondria", "Ribosomes"],
-        correct: 0
-      },
-      {
-        text: "What organelle allows plant cells to make their own food through photosynthesis?",
-        options: ["Lysosome", "Chloroplast", "Golgi apparatus", "Centriole"],
-        correct: 1
-      },
-      {
-        text: "Animal cells typically have a shape that is:",
-        options: ["Fixed and rectangular", "Irregular and round", "Perfectly cubic", "Star-shaped only"],
-        correct: 1
-      },
-      {
-        text: "Which organelle is responsible for producing energy (ATP) in both plant and animal cells?",
-        options: ["Nucleolus", "Vacuole", "Mitochondria", "Ribosome"],
-        correct: 2
-      },
-      {
-        text: "Plant cells usually have one large central vacuole. What is its main function?",
-        options: ["Store genetic material", "Maintain turgor pressure and store water/nutrients", "Produce proteins", "Break down waste only"],
-        correct: 1
-      },
-      {
-        text: "Which structure controls what enters and exits the cell in both plant and animal cells?",
-        options: ["Cell wall", "Cell membrane", "Chloroplast", "Centriole"],
-        correct: 1
-      },
-      {
-        text: "Centrioles, which help organize cell division, are typically found in:",
-        options: ["Plant cells only", "Animal cells", "Neither plant nor animal cells", "Only bacteria"],
-        correct: 1
-      },
-      {
-        text: "What is the main function of ribosomes?",
-        options: ["Protein synthesis", "Photosynthesis", "Water storage", "Cell division"],
-        correct: 0
-      },
-      {
-        text: "Why do plant cells maintain a fixed, rectangular shape while animal cells don't?",
-        options: [
-          "Plant cells lack a nucleus",
-          "The rigid cell wall supports and constrains plant cell shape",
-          "Plant cells have no cytoplasm",
-          "Animal cells are always larger"
-        ],
-        correct: 1
-      },
-      {
-        text: "Which of these organelles is involved in packaging and shipping proteins in both cell types?",
-        options: ["Golgi apparatus", "Cell wall", "Chloroplast", "Large central vacuole"],
-        correct: 0
-      }
-    ];
+    // ── STATE ────────────────────────────────────────────────
+    let sessionQuestions = [];
+    let currentIndex     = 0;
+    let selectedChoiceId = null;
+    let answers          = [];
+    let answered         = false;
 
-    let currentIndex = 0;
-    let score = 0;
-    let answered = false;
-
-    const questionCountEl = document.getElementById('quizQuestionCount');
+    // ── ELEMENTS ─────────────────────────────────────────────
+    const loadingPanel   = document.getElementById('quizLoadingPanel');
+    const questionPanel  = document.getElementById('quizQuestionPanel');
+    const resultsPanel   = document.getElementById('quizResultsPanel');
+    const questionCountEl= document.getElementById('quizQuestionCount');
     const questionTextEl = document.getElementById('quizQuestionText');
-    const optionsEl = document.getElementById('quizOptions');
-    const nextButton = document.getElementById('quizNextButton');
-    const progressFill = document.getElementById('quizProgressFill');
+    const optionsEl      = document.getElementById('quizOptions');
+    const nextButton     = document.getElementById('quizNextButton');
+    const progressFill   = document.getElementById('quizProgressFill');
+    const resultsScore   = document.getElementById('quizResultsScore');
+    const resultsBadge   = document.getElementById('quizResultsBadge');
+    const resultsNote    = document.getElementById('quizResultsNote');
+    const retryButton    = document.getElementById('quizRetryButton');
 
-    const questionPanel = document.getElementById('quizQuestionPanel');
-    const resultsPanel = document.getElementById('quizResultsPanel');
-    const resultsScore = document.getElementById('quizResultsScore');
-    const resultsBadge = document.getElementById('quizResultsBadge');
-    const resultsNote = document.getElementById('quizResultsNote');
-    const retryButton = document.getElementById('quizRetryButton');
+    // ── STEP 1: Load 10 random questions from Supabase ───────
+    async function loadQuiz() {
+      // Reset UI
+      loadingPanel.style.display  = 'block';
+      questionPanel.style.display = 'none';
+      resultsPanel.style.display  = 'none';
+      progressFill.style.width    = '0%';
 
+      // Get supabase client from auth.js
+      const client = window.ecoAuth?.client;
+      if (!client) {
+        loadingPanel.querySelector('p').textContent = 'Auth error. Please refresh.';
+        return;
+      }
+
+      // 1a. Fetch all question IDs for this lesson
+      const { data: allIds, error: idErr } = await client
+        .from('questions')
+        .select('id')
+        .eq('lesson_id', LESSON_ID);
+
+      if (idErr || !allIds || allIds.length === 0) {
+        loadingPanel.querySelector('p').textContent = 'Could not load questions. Please try again.';
+        console.error(idErr);
+        return;
+      }
+
+      // 1b. Shuffle and pick 10
+      const shuffled  = allIds.sort(() => Math.random() - 0.5);
+      const pickedIds = shuffled.slice(0, QUESTIONS_PER_SESSION).map(q => q.id);
+
+      // 1c. Fetch full data for those 10 (question + choices)
+      const { data: questions, error: qErr } = await client
+        .from('questions')
+        .select(`
+          id,
+          question_text,
+          choices (
+            id,
+            choice_text,
+            is_correct
+          )
+        `)
+        .in('id', pickedIds);
+
+      if (qErr || !questions || questions.length === 0) {
+        loadingPanel.querySelector('p').textContent = 'Could not load questions. Please try again.';
+        console.error(qErr);
+        return;
+      }
+
+      // Shuffle choices so correct answer isn't always in the same position
+      sessionQuestions = questions.map(q => ({
+        ...q,
+        choices: q.choices.sort(() => Math.random() - 0.5)
+      }));
+
+      // Reset state
+      currentIndex     = 0;
+      selectedChoiceId = null;
+      answers          = [];
+      answered         = false;
+
+      // Show question panel
+      loadingPanel.style.display  = 'none';
+      questionPanel.style.display = 'block';
+      renderQuestion();
+    }
+
+    // ── STEP 2: Render current question ──────────────────────
     function renderQuestion() {
       answered = false;
       nextButton.disabled = true;
 
-      const question = QUESTIONS[currentIndex];
-      questionCountEl.textContent = `Question ${currentIndex + 1} of ${QUESTIONS.length}`;
-      questionTextEl.textContent = question.text;
-      progressFill.style.width = `${((currentIndex) / QUESTIONS.length) * 100 + (100 / QUESTIONS.length)}%`;
+      const q = sessionQuestions[currentIndex];
 
+      // Progress label
+      questionCountEl.textContent = `Question ${currentIndex + 1} of ${QUESTIONS_PER_SESSION}`;
+
+      // Progress bar
+      progressFill.style.width =
+        `${((currentIndex + 1) / QUESTIONS_PER_SESSION) * 100}%`;
+
+      // Question text
+      questionTextEl.textContent = q.question_text;
+
+      // Render choice buttons
       optionsEl.innerHTML = '';
-      question.options.forEach((optionText, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'quiz-option';
-        button.textContent = optionText;
-        button.addEventListener('click', () => selectAnswer(index, button));
-        optionsEl.appendChild(button);
+      q.choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.type      = 'button';
+        btn.className = 'quiz-option';
+        btn.textContent = choice.choice_text;
+        btn.dataset.choiceId  = choice.id;
+        btn.dataset.isCorrect = choice.is_correct;
+        btn.addEventListener('click', () => handleChoiceSelect(btn));
+        optionsEl.appendChild(btn);
       });
 
-      nextButton.textContent = currentIndex === QUESTIONS.length - 1 ? 'See results' : 'Next';
-      const icon = document.createElement('i');
-      icon.className = 'bi bi-arrow-right';
-      nextButton.appendChild(document.createTextNode(' '));
-      nextButton.appendChild(icon);
+      // Next/Submit label
+      nextButton.innerHTML =
+        currentIndex === QUESTIONS_PER_SESSION - 1
+          ? 'See results <i class="bi bi-arrow-right"></i>'
+          : 'Next <i class="bi bi-arrow-right"></i>';
     }
 
-    function selectAnswer(selectedIndex, button) {
+    // ── STEP 3: Handle choice selection ──────────────────────
+    function handleChoiceSelect(selectedBtn) {
       if (answered) return;
-      answered = true;
 
-      const question = QUESTIONS[currentIndex];
-      const optionButtons = optionsEl.querySelectorAll('.quiz-option');
+      // Clear previous selection highlight
+      optionsEl.querySelectorAll('.quiz-option').forEach(b =>
+        b.classList.remove('selected')
+      );
 
-      optionButtons.forEach((btn, index) => {
-        btn.disabled = true;
-        if (index === question.correct) {
-          btn.classList.add('correct');
-        } else if (index === selectedIndex) {
-          btn.classList.add('incorrect');
-        }
-      });
-
-      if (selectedIndex === question.correct) {
-        score += 1;
-      }
-
+      selectedBtn.classList.add('selected');
+      selectedChoiceId = selectedBtn.dataset.choiceId;
       nextButton.disabled = false;
     }
 
-    function showResults() {
+    // ── STEP 4: Next / Submit ─────────────────────────────────
+    nextButton.addEventListener('click', async () => {
+      if (!selectedChoiceId) return;
+
+      answered = true;
+
+      const q              = sessionQuestions[currentIndex];
+      const selectedChoice = q.choices.find(c => c.id === selectedChoiceId);
+
+      // Show correct / incorrect feedback on the buttons
+      optionsEl.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.choiceId === selectedChoiceId) {
+          btn.classList.add(selectedChoice.is_correct ? 'correct' : 'incorrect');
+        }
+        if (btn.dataset.isCorrect === 'true') {
+          btn.classList.add('correct');
+        }
+      });
+
+      // Record answer
+      answers.push({
+        question_id:        q.id,
+        selected_choice_id: selectedChoiceId,
+        is_correct:         selectedChoice.is_correct
+      });
+
+      // Brief pause so student sees the feedback, then advance
+      nextButton.disabled = true;
+      setTimeout(async () => {
+        if (currentIndex < QUESTIONS_PER_SESSION - 1) {
+          currentIndex++;
+          renderQuestion();
+        } else {
+          await submitQuiz();
+        }
+      }, 700);
+    });
+
+    // ── STEP 5: Save attempt to Supabase ─────────────────────
+    async function submitQuiz() {
+      const score  = answers.filter(a => a.is_correct).length;
+      const client = window.ecoAuth?.client;
+
+      if (!client) { showResults(score); return; }
+
+      try {
+        const { data: { user } } = await client.auth.getUser();
+        if (!user) { showResults(score); return; }
+
+        // Insert attempt row
+        const { data: attempt, error: attemptErr } = await client
+          .from('quiz_attempts')
+          .insert({ user_id: user.id, lesson_id: LESSON_ID, score })
+          .select()
+          .single();
+
+        if (attemptErr || !attempt) {
+          console.error('Failed to save attempt:', attemptErr);
+          showResults(score);
+          return;
+        }
+
+        // Insert one detail row per question
+        const details = answers.map(a => ({
+          attempt_id:         attempt.id,
+          question_id:        a.question_id,
+          selected_choice_id: a.selected_choice_id,
+          is_correct:         a.is_correct
+        }));
+
+        const { error: detailsErr } = await client
+          .from('quiz_attempt_details')
+          .insert(details);
+
+        if (detailsErr) console.error('Failed to save details:', detailsErr);
+
+      } catch (err) {
+        console.error('Submit error:', err);
+      }
+
+      showResults(score);
+    }
+
+    // ── STEP 6: Results screen ────────────────────────────────
+    function showResults(score) {
       questionPanel.style.display = 'none';
-      resultsPanel.style.display = 'block';
+      resultsPanel.style.display  = 'block';
+      progressFill.style.width    = '100%';
 
-      const percentage = Math.round((score / QUESTIONS.length) * 100);
-      resultsScore.textContent = `${score} / ${QUESTIONS.length}`;
+      const percentage = Math.round((score / QUESTIONS_PER_SESSION) * 100);
+      resultsScore.textContent = `${score} / ${QUESTIONS_PER_SESSION}`;
 
+      // Update best score in localStorage
       const previousBest = Number(localStorage.getItem(BEST_SCORE_KEY) || 0);
       if (percentage > previousBest) {
         localStorage.setItem(BEST_SCORE_KEY, String(percentage));
@@ -262,36 +375,27 @@
         localStorage.setItem(UNLOCK_KEY, 'true');
         resultsBadge.className = 'quiz-results-badge perfect';
         resultsBadge.innerHTML = '<i class="bi bi-trophy-fill"></i> Perfect score!';
-        resultsNote.textContent = 'Nice work -- the Cell Division quiz is now unlocked.';
-      } else if (percentage >= 75) {
+        resultsNote.textContent = 'Nice work — the Cell Division quiz is now unlocked.';
+      } else if (percentage >= 70) {
         resultsBadge.className = 'quiz-results-badge pass';
         resultsBadge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Passed';
         resultsNote.textContent = 'You passed! Get a perfect 10/10 to unlock the Cell Division quiz.';
       } else {
         resultsBadge.className = 'quiz-results-badge fail';
         resultsBadge.innerHTML = '<i class="bi bi-arrow-repeat"></i> Keep practicing';
-        resultsNote.textContent = 'Review the lesson and try again -- a perfect score unlocks the next quiz.';
+        resultsNote.textContent = 'Review the lesson and try again — a perfect score unlocks the next quiz.';
       }
     }
 
-    nextButton.addEventListener('click', () => {
-      if (currentIndex < QUESTIONS.length - 1) {
-        currentIndex += 1;
-        renderQuestion();
-      } else {
-        showResults();
-      }
-    });
-
+    // ── RETRY: shuffle a new set of 10 ───────────────────────
     retryButton.addEventListener('click', () => {
-      currentIndex = 0;
-      score = 0;
-      resultsPanel.style.display = 'none';
-      questionPanel.style.display = 'block';
-      renderQuestion();
+      loadQuiz();
     });
 
-    renderQuestion();
+    // ── INIT ─────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      loadQuiz();
+    });
   </script>
 </body>
 </html>

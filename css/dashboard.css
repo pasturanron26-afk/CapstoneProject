@@ -1820,6 +1820,29 @@ body {
     text-decoration: none;
 }
 
+/* Fixed-height, scrollable Current Learning Path list */
+.content-grid .panel .lesson-list {
+  height: 420px;               /* set your preferred fixed height */
+  overflow-y: auto;            /* vertical scroll */
+  overflow-x: hidden;          /* prevent horizontal scroll */
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+  overscroll-behavior: contain;      /* avoid scroll chaining */
+  padding-right: 6px;          /* space for scrollbar */
+  margin-right: -6px;          /* keep visual alignment */
+}
+
+/* Optional: nicer scrollbar on WebKit/Blink */
+.content-grid .panel .lesson-list::-webkit-scrollbar {
+  width: 8px;
+}
+.content-grid .panel .lesson-list::-webkit-scrollbar-thumb {
+  background-color: rgba(64, 145, 108, 0.45);
+  border-radius: 8px;
+}
+.content-grid .panel .lesson-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 @media (max-width: 820px) {
     .header-tools,
     .dashboard-lower-grid {
