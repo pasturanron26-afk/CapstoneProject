@@ -180,43 +180,6 @@
         </section>
     </main>
 
-    <!-- LESSON MODAL -->
-    <div id="lessonModal" class="lesson-modal" aria-hidden="true">
-        <div class="lesson-modal-backdrop" data-close="true"></div>
-        <div class="lesson-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle">
-            <div class="lesson-modal-header">
-                <div>
-                    <span class="lesson-modal-kicker" id="lessonModalModule">Module</span>
-                    <h3 id="lessonModalTitle">Lesson title</h3>
-                </div>
-                <button class="lesson-modal-close" type="button" aria-label="Close lesson">&times;</button>
-            </div>
-            <div class="lesson-modal-body">
-                <div class="lesson-modal-content">
-                    <div class="lesson-meta-row">
-                        <span id="lessonModalTime">25 min</span>
-                    </div>
-                    <p id="lessonModalSummary" class="lesson-summary"></p>
-                    <div class="lesson-section">
-                        <h4>Learning objectives</h4>
-                        <ul id="lessonObjectives"></ul>
-                    </div>
-                    <div class="lesson-section">
-                        <h4>Key idea</h4>
-                        <p>Cells are the basic units of life, and their internal structures are specialized to carry out essential processes for growth, energy, repair, and reproduction.</p>
-                    </div>
-                </div>
-                <div class="lesson-model-panel">
-                    <div class="lesson-model-header">Next Step</div>
-                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:20px;">
-                        <p style="color:var(--ink-muted);margin-bottom:16px;font-size:0.95rem;line-height:1.6;">Open the full lesson page to continue your learning path.</p>
-                        <a id="lessonModalLink" href="lesson.html" class="lesson-full-link">Start Lesson <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- FOLDER POPUP -->
     <div id="folderPopup" class="folder-popup" aria-hidden="true">
         <div class="folder-popup-backdrop" data-close="true"></div>
@@ -369,36 +332,29 @@
             document.getElementById('studentEmail').textContent = email;
         }
 
-        document.getElementById('logoutButton')?.addEventListener('click', async () => {
-            await window.ecoAuth.signOut();
+            const logoutButton = document.getElementById('logoutButton');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    await window.ecoAuth.signOut();
+                });
+            }
         });
-    });
 
-    // Modal & popup helpers
-    const lessonModal    = document.getElementById('lessonModal');
-    const folderPopup    = document.getElementById('folderPopup');
-    const lessonModalClose = document.querySelector('.lesson-modal-close');
-    const folderPopupClose = document.querySelector('.folder-popup-close');
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                ecoAuth.signOut();
+            });
+        }
 
-    function openLessonModal(button) {
-        document.getElementById('lessonModalTitle').textContent  = button.dataset.title   || 'Lesson';
-        document.getElementById('lessonModalModule').textContent = button.dataset.module  || 'Module';
-        document.getElementById('lessonModalTime').textContent   = button.dataset.time    || '—';
-        document.getElementById('lessonModalSummary').textContent= button.dataset.summary || '';
-        const link = button.dataset.link || button.dataset.model || 'lesson.html';
-        document.getElementById('lessonModalLink').href = link;
-        const objectives = (button.dataset.objectives || '').split('|').filter(Boolean);
-        const ul = document.getElementById('lessonObjectives');
-        ul.innerHTML = '';
-        objectives.forEach(o => { const li = document.createElement('li'); li.textContent = o; ul.appendChild(li); });
-        lessonModal.classList.add('is-open');
-        lessonModal.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeLessonModal() {
-        lessonModal.classList.remove('is-open');
-        lessonModal.setAttribute('aria-hidden', 'true');
-    }
+        const folderPopup = document.getElementById('folderPopup');
+        const folderPopupTitle = document.getElementById('folderPopupTitle');
+        const folderPopupSubtitle = document.getElementById('folderPopupSubtitle');
+        const folderPopupIcon = document.getElementById('folderPopupIcon');
+        const folderPopupList = document.getElementById('folderPopupList');
+        const folderPopupClose = document.querySelector('.folder-popup-close');
 
     function openFolderPopup(card) {
         const isQuiz = card.dataset.folder === 'quizzes';
@@ -428,19 +384,60 @@
         folderPopup.setAttribute('aria-hidden', 'true');
     }
 
-    document.querySelectorAll('.lesson-item').forEach(item => item.addEventListener('click', () => openLessonModal(item)));
-    document.querySelectorAll('.folder-card .stat-card-toggle').forEach(toggle => {
-        toggle.addEventListener('click', () => openFolderPopup(toggle.closest('.folder-card')));
-    });
-    document.getElementById('dashboardSearch').addEventListener('input', e => {
-        const q = e.target.value.trim().toLowerCase();
-        document.querySelectorAll('.lesson-item').forEach(item => { item.hidden = q && !item.textContent.toLowerCase().includes(q); });
-    });
-    lessonModalClose.addEventListener('click', closeLessonModal);
-    folderPopupClose.addEventListener('click', closeFolderPopup);
-    lessonModal.addEventListener('click', e => { if (e.target.matches('[data-close="true"]')) closeLessonModal(); });
-    folderPopup.addEventListener('click', e => { if (e.target.matches('[data-close="true"]')) closeFolderPopup(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLessonModal(); closeFolderPopup(); } });
+        document.querySelectorAll('.lesson-item').forEach((item) => {
+            item.addEventListener('click', () => {
+                window.location.href = 'lesson.html';
+            });
+        });
+
+        document.querySelectorAll('.folder-card .stat-card-toggle').forEach((toggle) => {
+            toggle.addEventListener('click', () => {
+                const card = toggle.closest('.folder-card');
+                openFolderPopup(card);
+            });
+        });
+
+        document.getElementById('dashboardSearch').addEventListener('input', (event) => {
+            const query = event.target.value.trim().toLowerCase();
+            document.querySelectorAll('.lesson-item').forEach((item) => {
+                item.hidden = query && !item.textContent.toLowerCase().includes(query);
+            });
+        });
+
+        folderPopupClose.addEventListener('click', closeFolderPopup);
+        folderPopup.addEventListener('click', (event) => {
+            if (event.target.matches('[data-close="true"]')) {
+                closeFolderPopup();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeFolderPopup();
+            }
+        });
+
+        function addPublishedContent() {
+            let uploads = [];
+            try { uploads = JSON.parse(localStorage.getItem('ecolearn-published-content') || '[]'); } catch (error) { return; }
+            const cards = {
+                lesson: document.querySelector('[data-folder="lessons"]'),
+                quizizz: document.querySelector('[data-folder="quizzes"]')
+            };
+            const counts = { lesson: 12, quizizz: 8 };
+            uploads.forEach((upload) => {
+                const card = cards[upload.type];
+                if (!card) return;
+                counts[upload.type] += 1;
+                card.dataset.list = `${card.dataset.list}|${upload.module} - ${upload.title}`;
+            });
+            Object.entries(cards).forEach(([type, card]) => {
+                const value = card.querySelector('.value');
+                if (value) value.textContent = counts[type];
+            });
+        }
+
+        addPublishedContent();
     </script>
 
     <!-- =========================================
