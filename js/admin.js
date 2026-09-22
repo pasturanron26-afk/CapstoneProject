@@ -17,14 +17,22 @@
    applied — without it, this query silently returns 0 rows
    for anyone other than the admin's own profile.
 
-   Progress and quiz scores are NOT wired up yet — there is no
-   `lesson_progress` / `quiz_attempts` schema, so every real
-   student currently shows 0 modules completed and no quiz
-   history until that's built. Likewise, Archive/Manage actions
-   in this file are still local-only: there's no `archived` or
-   `status` column on `profiles` yet, so those changes don't
-   persist to Supabase on refresh. Say the word when you want
-   that schema and I'll wire it up the same way section was.
+   Quiz scores now come from a real query against the
+   `quiz_attempts` table (same table quiz-animal-plant.html
+   and dashboard.html write to / read from). This requires an
+   "Admins can read all quiz_attempts" RLS policy — without it
+   this query silently returns 0 rows, exactly like the profiles
+   issue above, so every student will keep showing "No quiz
+   attempts recorded yet." until that policy is applied.
+
+   Module/lesson *progress* is still NOT wired up — there is no
+   `lesson_progress` schema yet, so every real student still
+   shows 0 modules completed until that's built. Likewise,
+   Archive/Manage actions in this file are still local-only:
+   there's no `archived` or `status` column on `profiles` yet,
+   so those changes don't persist to Supabase on refresh. Say
+   the word when you want that schema and I'll wire it up the
+   same way section and quiz_attempts were.
 
    NOTE ON NAVIGATION: Overview / Students / Archived are no
    longer separate hidden panels — all three stay on the page
@@ -39,10 +47,74 @@ const MODULE_NAMES = [
     'Microscopy', 'Lab Review', 'Final Assessment'
 ];
 
-const QUIZ_NAMES = [
-    'Cell Basics', 'Organelles', 'Membranes', 'Energy',
-    'Cell Cycle', 'Genetics', 'Lab Skills', 'Final Review'
-];
+// Same lesson_id -> display name mapping dashboard.html uses
+// (LESSON_IDS there, inverted here) so admin sees real quiz names
+// instead of made-up ones.
+const LESSON_NAMES = {
+    'e43f6bee-bcff-4692-b5e2-396b4176eacd': 'Animal Cell vs Plant Cell',
+    'fc3f6b43-fb9d-420d-9060-9529ba395621': 'Mitosis of Plant and Animal Cells',
+    '46254ff2-c787-4792-94db-5d33181f6b55': 'Cell Membrane and Transport',
+    '1b15a414-7e6c-4992-b17c-1c924745366d': 'Cell Respiration',
+    '81ece535-7d0b-47e9-a95a-ed8e0f25cc76': 'Photosynthesis',
+    '26dc1e4f-4a8b-45fc-8e12-ab7fd326eea1': 'Cell Cycle and Cancer',
+    '5149863c-8971-49ef-afa2-085cec2f3d1e': 'Cell Differentiation and Specialization',
+    '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9': 'Cell Signaling and Communication',
+};
+
+// Fetch every quiz_attempts row (all students) and group by user_id.
+// Requires the "Admins can read all quiz_attempts" RLS policy — see
+// grant-admin-quiz-attempts.sql.
+// Set when fetchQuizAttemptsByUser hits a real Supabase error (bad
+// column, RLS block that returns an error, etc.) so the UI can tell
+// "query failed" apart from "this student truly has no attempts".
+let QUIZ_LOAD_ERROR = null;
+
+async function fetchQuizAttemptsByUser() {
+    const { data, error } = await ecoAuth.client
+        .from('quiz_attempts')
+        .select('user_id, lesson_id, score, taken_at')
+        .order('taken_at', { ascending: true });
+
+    if (error) {
+        console.error('Failed to load quiz attempts from Supabase:', error.message);
+        QUIZ_LOAD_ERROR = error.message;
+        return {};
+    }
+
+    QUIZ_LOAD_ERROR = null;
+    const byUser = {};
+    (data || []).forEach(row => {
+        if (!byUser[row.user_id]) byUser[row.user_id] = [];
+        byUser[row.user_id].push(row);
+    });
+    return byUser;
+}
+
+// Collapse one student's raw attempts into one row per lesson:
+// best score, retake count, and most recent attempt date (taken_at).
+function summarizeQuizzes(attempts) {
+    const byLesson = {};
+    attempts.forEach(a => {
+        const pct = Math.round((a.score / 10) * 100);
+        const existing = byLesson[a.lesson_id];
+        if (!existing) {
+            byLesson[a.lesson_id] = { score: pct, retakes: 0, date: a.taken_at || null };
+        } else {
+            existing.retakes += 1;
+            if (pct > existing.score) existing.score = pct;
+            if (a.taken_at && (!existing.date || a.taken_at > existing.date)) {
+                existing.date = a.taken_at;
+            }
+        }
+    });
+
+    return Object.entries(byLesson).map(([lessonId, info]) => ({
+        name: LESSON_NAMES[lessonId] || 'Quiz',
+        score: info.score,
+        retakes: info.retakes,
+        date: info.date ? info.date.slice(0, 10) : '—'
+    }));
+}
 
 async function fetchStudents() {
     if (!window.ecoAuth) return [];
@@ -58,8 +130,15 @@ async function fetchStudents() {
         return [];
     }
 
+    const attemptsByUser = await fetchQuizAttemptsByUser();
+
     return (data || []).map((row, idx) => {
         const joined = row.created_at ? row.created_at.slice(0, 10) : '—';
+        const quizzes = summarizeQuizzes(attemptsByUser[row.id] || []);
+        const avgScore = quizzes.length
+            ? Math.round(quizzes.reduce((sum, q) => sum + q.score, 0) / quizzes.length)
+            : null;
+
         return {
             id: row.id,
             catalogNo: String(idx + 1).padStart(3, '0'),
@@ -71,8 +150,8 @@ async function fetchStudents() {
             lastActiveDaysAgo: 0,
             modulesCompleted: 0,
             moduleProgress: MODULE_NAMES.map(name => ({ name, percent: 0 })),
-            quizzes: [],
-            avgScore: null,
+            quizzes,
+            avgScore,
             status: 'active',
             archived: false
         };
@@ -332,12 +411,15 @@ function openQuizModal(student) {
     document.getElementById('quizModalName').textContent = student.name;
     document.getElementById('quizModalMeta').textContent = student.avgScore !== null
         ? `Average score: ${student.avgScore}% across ${student.quizzes.length} quiz${student.quizzes.length === 1 ? '' : 'zes'}`
-        : 'No quiz attempts recorded yet.';
+        : (QUIZ_LOAD_ERROR ? `Couldn't load quiz data: ${QUIZ_LOAD_ERROR}` : 'No quiz attempts recorded yet.');
 
     const body = document.getElementById('quizModalTableBody');
     body.innerHTML = '';
     if (!student.quizzes.length) {
-        body.innerHTML = `<tr><td colspan="4" class="admin-empty-row">No quiz attempts yet.</td></tr>`;
+        const message = QUIZ_LOAD_ERROR
+            ? `Couldn't load quiz data — ${QUIZ_LOAD_ERROR}`
+            : 'No quiz attempts yet.';
+        body.innerHTML = `<tr><td colspan="4" class="admin-empty-row">${message}</td></tr>`;
     } else {
         student.quizzes.forEach(q => {
             const tr = document.createElement('tr');
