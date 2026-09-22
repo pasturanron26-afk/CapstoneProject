@@ -27,12 +27,18 @@
 
    Module/lesson *progress* is still NOT wired up — there is no
    `lesson_progress` schema yet, so every real student still
-   shows 0 modules completed until that's built. Likewise,
-   Archive/Manage actions in this file are still local-only:
-   there's no `archived` or `status` column on `profiles` yet,
-   so those changes don't persist to Supabase on refresh. Say
-   the word when you want that schema and I'll wire it up the
-   same way section and quiz_attempts were.
+   shows 0 modules completed until that's built.
+
+   Archive/Manage actions now persist to Supabase (profiles.archived
+   / profiles.status), via persistProfileUpdate(). This requires
+   an "Admins can update any profile" RLS policy (see
+   persist-archive-status.sql) — without it every archive/restore/
+   manage save fails with a visible alert (it no longer fails
+   silently the way the old local-only version did).
+
+   "Last active" / online-offline status comes from
+   profiles.last_seen_at, updated by a heartbeat in js/auth.js
+   (see add-last-seen-heartbeat.sql) — not from quiz activity.
 
    NOTE ON NAVIGATION: Overview / Students / Archived are no
    longer separate hidden panels — all three stay on the page
@@ -146,7 +152,7 @@ async function fetchStudents() {
 
     const { data, error } = await ecoAuth.client
         .from('profiles')
-        .select('id, full_name, email, section, role, created_at, last_seen_at')
+        .select('id, full_name, email, section, role, created_at, last_seen_at, archived, status')
         .eq('role', 'student')
         .order('created_at', { ascending: false });
 
@@ -182,8 +188,8 @@ async function fetchStudents() {
             moduleProgress: MODULE_NAMES.map(name => ({ name, percent: 0 })),
             quizzes,
             avgScore,
-            status: 'active',
-            archived: false
+            status: row.status || 'active',
+            archived: !!row.archived
         };
     });
 }
@@ -479,6 +485,25 @@ function findStudent(id) {
     return STUDENTS.find(s => s.id === id);
 }
 
+// Writes a partial change (archived, status, full_name, email, ...) to
+// this student's profiles row. Returns true on success. On failure,
+// leaves local STUDENTS state untouched and tells the admin why —
+// silently keeping a change in memory only (the old behavior) is what
+// made Archive look like it "worked" until the next refresh undid it.
+async function persistProfileUpdate(id, patch) {
+    const { error } = await ecoAuth.client
+        .from('profiles')
+        .update(patch)
+        .eq('id', id);
+
+    if (error) {
+        console.error('Failed to save change to Supabase:', error.message);
+        alert(`Couldn't save that change: ${error.message}`);
+        return false;
+    }
+    return true;
+}
+
 function handleTableClick(event) {
     const btn = event.target.closest('button[data-action]');
     if (!btn) return;
@@ -490,33 +515,50 @@ function handleTableClick(event) {
     if (action === 'quiz') openQuizModal(student);
     if (action === 'manage') openManageModal(student);
     if (action === 'archive') {
-        student.archived = true;
-        renderAll();
+        persistProfileUpdate(id, { archived: true }).then(ok => {
+            if (!ok) return;
+            student.archived = true;
+            renderAll();
+        });
     }
     if (action === 'restore') {
-        student.archived = false;
-        renderAll();
+        persistProfileUpdate(id, { archived: false }).then(ok => {
+            if (!ok) return;
+            student.archived = false;
+            renderAll();
+        });
     }
 }
 
-function handleManageFormSubmit(event) {
+async function handleManageFormSubmit(event) {
     event.preventDefault();
     const id = document.getElementById('manageModalId').value;
     const student = findStudent(id);
     if (!student) return;
 
-    student.name = document.getElementById('manageModalName').value.trim() || student.name;
-    student.email = document.getElementById('manageModalEmail').value.trim() || student.email;
-    student.status = document.getElementById('manageModalStatus').value;
+    const name = document.getElementById('manageModalName').value.trim() || student.name;
+    const email = document.getElementById('manageModalEmail').value.trim() || student.email;
+    const status = document.getElementById('manageModalStatus').value;
+
+    const ok = await persistProfileUpdate(id, { full_name: name, email, status });
+    if (!ok) return;
+
+    student.name = name;
+    student.email = email;
+    student.status = status;
 
     closeModal('manageModal');
     renderAll();
 }
 
-function handleManageDeactivate() {
+async function handleManageDeactivate() {
     const id = document.getElementById('manageModalId').value;
     const student = findStudent(id);
     if (!student) return;
+
+    const ok = await persistProfileUpdate(id, { archived: true });
+    if (!ok) return;
+
     student.archived = true;
     closeModal('manageModal');
     renderAll();
