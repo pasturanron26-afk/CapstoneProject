@@ -116,12 +116,37 @@ function summarizeQuizzes(attempts) {
     }));
 }
 
+// How long with no heartbeat before we call a student "offline".
+// Heartbeats fire every 60s (see js/auth.js), so this gives some
+// slack for network hiccups before flipping the dot to gray.
+const OFFLINE_AFTER_MS = 2 * 60 * 1000;
+
+// Turns a profiles.last_seen_at timestamp into display text + an
+// online flag. Null (no heartbeat ever recorded — e.g. an account
+// backfilled before this feature existed, or one that's never
+// loaded a page since) reads as "Not yet active", not a fake date.
+function formatLastSeen(lastSeenAt) {
+    if (!lastSeenAt) return { text: 'Not yet active', online: false, minutesAgo: Infinity };
+
+    const ms = Date.now() - new Date(lastSeenAt).getTime();
+    const minutesAgo = Math.max(0, Math.floor(ms / 60000));
+
+    if (ms <= OFFLINE_AFTER_MS) return { text: 'Active now', online: true, minutesAgo };
+    if (minutesAgo < 60) return { text: `Active ${minutesAgo}m ago`, online: false, minutesAgo };
+
+    const hoursAgo = Math.floor(minutesAgo / 60);
+    if (hoursAgo < 24) return { text: `Active ${hoursAgo}h ago`, online: false, minutesAgo };
+
+    const daysAgoVal = Math.floor(hoursAgo / 24);
+    return { text: `Active ${daysAgoVal}d ago`, online: false, minutesAgo };
+}
+
 async function fetchStudents() {
     if (!window.ecoAuth) return [];
 
     const { data, error } = await ecoAuth.client
         .from('profiles')
-        .select('id, full_name, email, section, role, created_at')
+        .select('id, full_name, email, section, role, created_at, last_seen_at')
         .eq('role', 'student')
         .order('created_at', { ascending: false });
 
@@ -134,10 +159,13 @@ async function fetchStudents() {
 
     return (data || []).map((row, idx) => {
         const joined = row.created_at ? row.created_at.slice(0, 10) : '—';
-        const quizzes = summarizeQuizzes(attemptsByUser[row.id] || []);
+        const attempts = attemptsByUser[row.id] || [];
+        const quizzes = summarizeQuizzes(attempts);
         const avgScore = quizzes.length
             ? Math.round(quizzes.reduce((sum, q) => sum + q.score, 0) / quizzes.length)
             : null;
+
+        const presence = formatLastSeen(row.last_seen_at);
 
         return {
             id: row.id,
@@ -146,8 +174,10 @@ async function fetchStudents() {
             email: row.email || '—',
             section: row.section || 'Unassigned',
             joined,
-            lastActive: joined,
-            lastActiveDaysAgo: 0,
+            lastActive: presence.text,
+            lastActiveDaysAgo: presence.minutesAgo === Infinity ? Infinity : Math.floor(presence.minutesAgo / 1440),
+            lastActiveMinutesAgo: presence.minutesAgo,
+            isOnline: presence.online,
             modulesCompleted: 0,
             moduleProgress: MODULE_NAMES.map(name => ({ name, percent: 0 })),
             quizzes,
@@ -221,22 +251,21 @@ function renderOverview() {
     feed.innerHTML = '';
     [...scoped]
         .filter(s => !s.archived)
-        .sort((a, b) => a.lastActiveDaysAgo - b.lastActiveDaysAgo)
+        .sort((a, b) => a.lastActiveMinutesAgo - b.lastActiveMinutesAgo)
         .slice(0, 6)
         .forEach(s => {
             const item = document.createElement('div');
             item.className = 'lesson-item';
             item.style.cursor = 'default';
-            const when = s.lastActiveDaysAgo === 0 ? 'Today' : `${s.lastActiveDaysAgo}d ago`;
             item.innerHTML = `
                 <div class="lesson-left">
                     <div class="lesson-icon"><i class="bi bi-person-check"></i></div>
                     <div>
                         <div class="lesson-name">${s.name}</div>
-                        <div class="lesson-meta">Last active &middot; ${when}</div>
+                        <div class="lesson-meta">${s.lastActive}</div>
                     </div>
                 </div>
-                <span class="pill ${s.status === 'active' ? 'live' : 'todo'}">${s.status}</span>
+                <span class="pill ${s.isOnline ? 'live' : 'todo'}">${s.isOnline ? 'online' : 'offline'}</span>
             `;
             feed.appendChild(item);
         });
@@ -284,7 +313,7 @@ function renderStudentTable() {
             <td>${s.modulesCompleted}/12</td>
             <td>${s.avgScore !== null ? s.avgScore + '%' : '&mdash;'}</td>
             <td><span class="status-badge ${s.status}">${s.status}</span></td>
-            <td>${s.lastActiveDaysAgo === 0 ? 'Today' : s.lastActiveDaysAgo + 'd ago'}</td>
+            <td>${s.lastActive}</td>
             <td class="admin-actions-cell">
                 <button class="ledger-action" title="View progress" data-action="progress" data-id="${s.id}">Progress</button>
                 <button class="ledger-action" title="Quiz performance" data-action="quiz" data-id="${s.id}">Quiz</button>
@@ -322,7 +351,7 @@ function renderArchivedTable() {
                 </div>
             </td>
             <td><span class="section-tag">${s.section}</span></td>
-            <td>${s.lastActiveDaysAgo}d before archiving</td>
+            <td>${Number.isFinite(s.lastActiveDaysAgo) ? s.lastActiveDaysAgo + 'd before archiving' : s.lastActive}</td>
             <td>${s.modulesCompleted}/12</td>
             <td>${s.avgScore !== null ? s.avgScore + '%' : '&mdash;'}</td>
             <td class="admin-actions-cell">
@@ -532,6 +561,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSectionSubtitle();
     renderAll();
     setupScrollSpy();
+
+    // Keep online/offline status and Recent activity feeling live without
+    // requiring a manual page refresh. Re-fetches profiles (for
+    // last_seen_at) + quiz_attempts and re-renders. Doesn't touch any
+    // modal that's currently open.
+    setInterval(async () => {
+        STUDENTS = await fetchStudents();
+        renderAll();
+    }, 30000);
 
     const topbarSearch = document.getElementById('topbarSearch');
     const studentSearchInput = document.getElementById('studentSearch');

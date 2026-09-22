@@ -117,3 +117,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.innerWidth > 768) closeSidebar();
   });
 });
+
+// =========================================
+// HEARTBEAT (presence / "last seen")
+// Runs on every page that includes this file. If there's an active
+// session, pings touch_last_seen() (see add-last-seen-heartbeat.sql)
+// right away and then every 60s while the tab stays open, so
+// admin.html can show real "Active now" / "Active 9m ago" status
+// instead of a guess. No-ops entirely on pages with no session
+// (e.g. login.html), and never throws — a failed heartbeat just
+// means that student's status goes stale, not a broken page.
+// =========================================
+(async function startHeartbeat() {
+  const { data } = await ecoSupabase.auth.getSession();
+  if (!data.session) return;
+
+  const beat = () => {
+    ecoSupabase.rpc('touch_last_seen').then(({ error }) => {
+      if (error) console.error('Heartbeat failed:', error.message);
+    });
+  };
+
+  beat();
+  setInterval(beat, 60000);
+})();
