@@ -1,7 +1,14 @@
 /* Fixed Sidebar Container */
 .sidebar-bg {
   width: 250px;
-  height: 100vh;
+  height: 100vh;    /* fallback for older browsers */
+  height: 100dvh;   /* real visible height on mobile — 100vh can be taller
+                        than what's on-screen while the browser's address
+                        bar is showing, which is exactly what was pushing
+                        the Logout button (pinned to the bottom via
+                        .mt-auto below) off the bottom of the screen */
+  overflow-y: auto; /* safety net: sidebar scrolls instead of hiding
+                        content if it's ever taller than the viewport */
   background: linear-gradient(180deg, #1b4332 0%, #245f43 100%);
   box-shadow: 4px 0 18px rgba(27, 67, 50, 0.14);
   position: fixed;
