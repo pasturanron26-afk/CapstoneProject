@@ -350,13 +350,19 @@ loader.load(
         if (organelleInfo) organelleInfo.classList.add("loaded");
     },
     function (xhr) {
-        if (xhr.total) {
-            const percentage = (xhr.loaded / xhr.total) * 100;
-            const formattedPercentage = percentage.toFixed(0);
-            console.log("Loading:", formattedPercentage + "%");
-            if (loadingPercentage) loadingPercentage.textContent = formattedPercentage + "%";
-            if (loadingProgress) loadingProgress.style.width = formattedPercentage + "%";
+        // Vercel doesn't send Content-Length, so xhr.total is 0.
+        // Use real progress when available, otherwise simulate it.
+        let percentage = 0;
+        if (xhr.total && xhr.total > 0) {
+            percentage = (xhr.loaded / xhr.total) * 100;
+        } else if (xhr.loaded > 0) {
+            const estimatedTotal = 35 * 1024 * 1024;
+            percentage = Math.min((xhr.loaded / estimatedTotal) * 100, 90);
         }
+        const formattedPercentage = percentage.toFixed(0);
+        console.log("Loading:", formattedPercentage + "%");
+        if (loadingPercentage) loadingPercentage.textContent = formattedPercentage + "%";
+        if (loadingProgress) loadingProgress.style.width = formattedPercentage + "%";
     },
     function (error) {
         console.error("Error loading Animal Cell:", error);
