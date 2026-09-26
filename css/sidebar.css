@@ -9,8 +9,8 @@
                         .mt-auto below) off the bottom of the screen */
   overflow-y: auto; /* safety net: sidebar scrolls instead of hiding
                         content if it's ever taller than the viewport */
-  background: linear-gradient(180deg, #1b4332 0%, #245f43 100%);
-  box-shadow: 4px 0 18px rgba(27, 67, 50, 0.14);
+  background: linear-gradient(180deg, #123D27 0%, #1E7245 100%);
+  box-shadow: 4px 0 18px rgba(18, 61, 39, 0.14);
   position: fixed;
   top: 0;
   left: 0;
@@ -59,7 +59,7 @@
   background: linear-gradient(100deg, #2d8a5b 0%, #52b788 100%);
   color: #ffffff !important;
   font-weight: 600;
-  box-shadow: 0 4px 10px rgba(8, 28, 21, 0.18);
+  box-shadow: 0 4px 10px rgba(18, 61, 39, 0.18);
 }
 
 /* Logout keeps same sizing */
@@ -141,14 +141,14 @@
     width: 42px;
     height: 42px;
 
-    background: linear-gradient(180deg, #1b4332 0%, #245f43 100%);
+    background: linear-gradient(180deg, #123D27 0%, #1E7245 100%);
     color: #ffffff;
     border: none;
     border-radius: 6px;
 
     font-size: 1.2rem;
 
-    box-shadow: 0 4px 12px rgba(27, 67, 50, 0.28);
+    box-shadow: 0 4px 12px rgba(18, 61, 39, 0.28);
 
     cursor: pointer;
 

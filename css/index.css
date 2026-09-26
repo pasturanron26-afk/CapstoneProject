@@ -3,23 +3,23 @@
    ========================================= */
 
 :root {
-    --pine: #1c2e22;
-    --deep-green: #2f4c39;
-    --moss: #4f7a5b;
-    --light-green: #8fae84;
+    --pine: #16281d;
+    --deep-green: #123d27;
+    --moss: #1e7245;
+    --light-green: #52b788;
 
-    --paper: #f4f1e6;
-    --panel: #fbf9f2;
-    --border: #ded6c0;
+    --paper: #f3faf6;
+    --panel: #ffffff;
+    --border: #e1e7e2;
 
-    --text: #1c2e22;
-    --muted: #6b6250;
+    --text: #16281d;
+    --muted: #5b6b60;
 
     --white: #ffffff;
 
-    --font-serif: "Newsreader", Georgia, serif;
-    --font-mono: "Space Mono", "Courier New", monospace;
-    --font-sans: "IBM Plex Sans", "Segoe UI", sans-serif;
+    --font-serif: "Poppins", sans-serif;
+    --font-mono: "Poppins", sans-serif;
+    --font-sans: "Poppins", sans-serif;
 }
 
 * {
@@ -188,7 +188,7 @@ h1 span {
     color: var(--paper);
     background: var(--deep-green);
     border: 1px solid var(--deep-green);
-    box-shadow: 0 7px 20px rgba(28, 46, 34, 0.12);
+    box-shadow: 0 7px 20px rgba(22, 40, 29, 0.12);
 }
 
 .btn-primary:hover {
@@ -353,8 +353,8 @@ h1 span {
     position: relative;
     flex: 1;
     min-height: 0;
-    background: #07192d;
-    border: 1px solid rgba(143, 174, 132, 0.5);
+    background: #0A2A1C;
+    border: 1px solid rgba(82, 183, 136, 0.5);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
     overflow: hidden;
     display: flex;
@@ -383,7 +383,7 @@ h1 span {
     letter-spacing: 0.08em;
     color: var(--paper);
     background: var(--deep-green);
-    border: 1px solid rgba(143, 174, 132, 0.4);
+    border: 1px solid rgba(82, 183, 136, 0.4);
     text-transform: uppercase;
 }
 

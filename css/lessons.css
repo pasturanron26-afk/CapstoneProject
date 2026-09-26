@@ -70,9 +70,9 @@
 
   grid-template-columns: 40% 60%;
 
-  background: #f5f0e8;
+  background: #FFFFFF;
 
-  border: 1px solid #e0d8c8;
+  border: 1px solid #E1E7E2;
 
   border-radius: 0px;
 
@@ -84,7 +84,7 @@
 }
 
 .lesson-card:hover {
-  border-color: #2f4c39;
+  border-color: #123d27;
 
   transform: translateY(-2px);
 }
@@ -92,10 +92,10 @@
 .lesson-card:focus-within {
   outline: none;
 
-  border-color: #8a7a3a;
+  border-color: #1E7245;
 
   box-shadow:
-    0 0 0 3px rgba(138, 122, 58, 0.15);
+    0 0 0 3px rgba(30, 114, 69, 0.15);
 }
 
 
@@ -167,7 +167,7 @@
 
   text-transform: uppercase;
 
-  color: #8a7a3a;
+  color: #C9971F;
 
   font-weight: 500;
 }
@@ -184,7 +184,7 @@
 
   font-weight: 600;
 
-  color: #1a1a2e;
+  color: #16281D;
 
   font-size: clamp(
     1.55rem,
@@ -203,7 +203,7 @@
 .card-desc {
   margin: 0 0 20px 0;
 
-  color: #555555;
+  color: #5B6B60;
 
   font-family: var(--font-sans);
 
@@ -216,7 +216,7 @@
 /* Highlighted terms */
 
 .card-desc .highlight {
-  color: #c47a2a;
+  color: #C9971F;
 
   font-weight: 400;
 }
@@ -239,11 +239,11 @@
 
   padding: 13px 16px;
 
-  background: #2f4c39;
+  background: #123d27;
 
   color: #ffffff;
 
-  border: 1px solid #2f4c39;
+  border: 1px solid #123d27;
 
   border-radius: 0px;
 
@@ -261,7 +261,7 @@
 }
 
 .card-btn:hover {
-  background: #3b603b;
+  background: #1E7245;
 
   color: #ffffff;
 

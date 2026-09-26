@@ -6,7 +6,7 @@
     <title>Sign Up · EcoLearn</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/auth.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -22,23 +22,25 @@
             <p class="auth-subtitle">Register as a new Biology student and start accessing your learning resources.</p>
         </div>
 
+        <hr class="auth-hr">
+
         <form id="signupForm" class="auth-form" novalidate>
             <div class="form-group">
-                <label for="fullName">Full Name</label>
+                <label for="fullName"><i class="bi bi-person"></i> Full Name</label>
                 <div class="input-wrapper">
                     <input type="text" id="fullName" placeholder="Juan Dela Cruz" autocomplete="name" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="emailField">Student Email</label>
+                <label for="emailField"><i class="bi bi-envelope"></i> Student Email</label>
                 <div class="input-wrapper">
                     <input type="email" id="emailField" placeholder="you.pbox@parsu.edu.ph" autocomplete="email" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="sectionField">Section</label>
+                <label for="sectionField"><i class="bi bi-mortarboard"></i> Section</label>
                 <div class="input-wrapper select-wrapper">
                     <select id="sectionField" required>
                         <option value="" disabled selected>Select your section</option>
@@ -51,7 +53,7 @@
             </div>
 
             <div class="form-group">
-                <label for="passField">Password</label>
+                <label for="passField"><i class="bi bi-lock"></i> Password</label>
                 <div class="input-wrapper">
                     <input type="password" id="passField" placeholder="Create a password" autocomplete="new-password" required>
                     <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password">
@@ -61,7 +63,7 @@
             </div>
 
             <div class="form-group">
-                <label for="confirmPassField">Confirm Password</label>
+                <label for="confirmPassField"><i class="bi bi-shield-lock"></i> Confirm Password</label>
                 <div class="input-wrapper">
                     <input type="password" id="confirmPassField" placeholder="Re-enter your password" autocomplete="new-password" required>
                 </div>
@@ -72,7 +74,7 @@
             </div>
 
             <button type="submit" class="btn-primary" id="submitBtn">
-                Create Account <i class="bi bi-arrow-right"></i>
+                <i class="bi bi-person-plus"></i> Create Account
             </button>
         </form>
     </div>
@@ -115,7 +117,7 @@
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = 'Creating account... <i class="bi bi-hourglass-split"></i>';
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating account...';
 
             try {
                 const { data, error } = await ecoAuth.client.auth.signUp({
@@ -153,7 +155,7 @@
             } catch (error) {
                 alert(error.message || 'Unable to create account. Please try again.');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Create Account <i class="bi bi-arrow-right"></i>';
+                submitBtn.innerHTML = '<i class="bi bi-person-plus"></i> Create Account';
             }
         });
     </script>

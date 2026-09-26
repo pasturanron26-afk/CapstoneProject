@@ -9,22 +9,22 @@
 ===================================================== */
 
 :root {
-    --ink: #1C2E22;
-    --pine: #2F4C39;
-    --moss: #4F7A5B;
-    --lichen: #8FAE84;
-    --paper: #F4F1E6;
-    --paper-line: #DED6C0;
-    --panel-bg: #FBF9F2;
-    --stamp: #8B3A2F;
-    --stamp-gold: #93701F;
-    --ink-muted: #6B6250;
-    --ink-faint: #877B63;
-    --moss-tint: rgba(79, 122, 91, 0.12);
+    --ink: #16281D;
+    --pine: #123D27;
+    --moss: #1E7245;
+    --lichen: #52B788;
+    --paper: #F3FAF6;
+    --paper-line: #E1E7E2;
+    --panel-bg: #FFFFFF;
+    --stamp: #D64545;
+    --stamp-gold: #C9971F;
+    --ink-muted: #5B6B60;
+    --ink-faint: #93A199;
+    --moss-tint: rgba(30, 114, 69, 0.12);
 
-    --font-serif: 'Newsreader', Georgia, serif;
-    --font-mono: 'Space Mono', 'Courier New', monospace;
-    --font-sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+    --font-serif: 'Poppins', sans-serif;
+    --font-mono: 'Poppins', sans-serif;
+    --font-sans: 'Poppins', sans-serif;
 }
 
 
@@ -248,7 +248,7 @@ body {
     border-color: var(--moss);
 
     box-shadow:
-        0 8px 20px rgba(28, 46, 34, 0.10);
+        0 8px 20px rgba(22, 40, 29, 0.10);
 }
 
 
@@ -708,7 +708,7 @@ body {
     transform: translateY(-1px);
 
     box-shadow:
-        0 5px 14px rgba(28, 46, 34, 0.06);
+        0 5px 14px rgba(22, 40, 29, 0.06);
 
     outline: none;
 }
@@ -1034,7 +1034,7 @@ body {
 
     inset: 0;
 
-    background-color: rgba(28, 46, 34, 0.32);
+    background-color: rgba(22, 40, 29, 0.32);
 
     backdrop-filter: blur(2px);
 }
@@ -1058,7 +1058,7 @@ body {
     border-radius: 3px;
 
     box-shadow:
-        0 20px 50px rgba(28, 46, 34, 0.16);
+        0 20px 50px rgba(22, 40, 29, 0.16);
 }
 
 
