@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photosynthesis - EcoLearn</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/ledger-theme.css">
+    <link rel="stylesheet" href="css/lessonModuleOne.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/auth.js"></script>
+
+<style>
+
+    /* =========================================
+       ACTIVE SIDEBAR TAB
+    ========================================= */
+
+    nav .nav-link.Lesson {
+
+        background: rgba(143, 174, 132, 0.12);
+
+        border-left: 3px solid var(--lichen);
+
+        color: var(--paper) !important;
+
+        font-weight: 600;
+
+    }
+
+</style>
+<style>
+/* =========================================
+   PHOTOSYNTHESIS LESSON - EXTRA COMPONENTS
+   (built on the tokens in ledger-theme.css)
+========================================= */
+.cell-tag i { font-size: 0.95em; }
+.tag-passive { color: var(--moss); }
+.tag-active  { color: var(--stamp-gold); }
+.tag-bulk    { color: var(--pine); }
+
+.lesson-lead { font-size: 1rem; line-height: 1.75; color: var(--ink); margin: 0 0 6px; }
+.organelle-text p { line-height: 1.75; }
+.organelle-text ul, .organelle-text ol { padding-left: 1.2rem; margin: 10px 0 0; line-height: 1.7; }
+.organelle-text li { margin-bottom: 4px; }
+
+/* Animal vs Plant callout */
+.lesson-note {
+  margin-top: 18px; padding: 14px 16px;
+  border: 1px solid var(--paper-line); border-left: 3px solid var(--moss);
+  border-radius: 2px; background: var(--paper);
+  font-size: 0.93rem; line-height: 1.65;
+}
+.lesson-note h4 {
+  margin: 0 0 6px; font-size: 0.78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--pine);
+  display: flex; align-items: center; gap: 8px;
+}
+.lesson-note h4 i { color: var(--moss); }
+.lesson-note p { margin: 0; }
+
+/* Small card grids */
+.mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 18px; }
+.mini-card { border: 1px solid var(--paper-line); background: var(--paper); border-radius: 2px; padding: 14px 16px; }
+.mini-card h5 { margin: 0 0 6px; font-size: 0.9rem; font-weight: 700; color: var(--pine); }
+.mini-card p { margin: 0; font-size: 0.88rem; line-height: 1.6; color: var(--ink-muted); }
+
+/* Diagrams */
+.diagram-figure { margin: 22px 0 0; border: 1px solid var(--paper-line); border-radius: 3px; background: var(--panel-bg); overflow: hidden; }
+.dg-scroll { overflow-x: auto; }
+.dg { display: block; width: 100%; min-width: 520px; height: auto; }
+.diagram-figure figcaption { padding: 10px 14px; font-size: 0.8rem; line-height: 1.5; color: var(--ink-muted); background: var(--paper); border-top: 1px solid var(--paper-line); }
+.dg .lbl { font: 600 12px var(--font-sans); fill: var(--ink); }
+.dg .lbl-sm { font: 500 11px var(--font-sans); fill: var(--ink-muted); }
+.dg .lbl-w { font: 700 9px var(--font-sans); fill: var(--ink); text-anchor: middle; }
+.dg .cap { font: 600 12px var(--font-sans); fill: var(--pine); text-anchor: middle; }
+.dg .zone-out { fill: rgba(82, 183, 136, 0.10); }
+.dg .zone-in  { fill: rgba(201, 151, 31, 0.08); }
+.dg .head { fill: var(--pine); }
+.dg .tail { stroke: var(--moss); stroke-width: 2; fill: none; stroke-linecap: round; }
+.dg .prot { fill: var(--moss); }
+.dg .prot-2 { fill: var(--lichen); }
+.dg .pore { fill: var(--panel-bg); }
+.dg .pa { fill: var(--stamp-gold); stroke: #8f6a12; stroke-width: 1; }
+.dg .pk { fill: var(--lichen); stroke: var(--pine); stroke-width: 1; }
+.dg .arrow { stroke: var(--ink); stroke-width: 2.5; fill: none; }
+.dg .arrow-d { stroke: var(--ink-muted); stroke-width: 2; fill: none; stroke-dasharray: 5 4; }
+.dg .ah { fill: var(--ink); }
+.dg .leader { stroke: var(--ink-faint); stroke-width: 1; fill: none; }
+.dg .mline { stroke: var(--pine); stroke-width: 7; fill: none; stroke-linecap: round; }
+.dg .vesicle { fill: var(--panel-bg); stroke: var(--pine); stroke-width: 5; }
+.dg .chip { fill: var(--panel-bg); stroke: var(--paper-line); }
+.dg .chip-t { font: 700 11px var(--font-sans); fill: var(--pine); text-anchor: middle; }
+.dg .ctr { text-anchor: middle; }
+
+/* Steps list */
+.step-list { list-style: none; counter-reset: st; padding: 0 !important; margin: 14px 0 0 !important; }
+.step-list li { counter-increment: st; position: relative; padding: 8px 0 8px 40px; margin: 0 !important; border-bottom: 1px solid var(--paper-line); }
+.step-list li:last-child { border-bottom: none; }
+.step-list li::before {
+  content: counter(st); position: absolute; left: 0; top: 8px;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--pine); color: #fff;
+  font: 700 0.78rem var(--font-sans); display: flex; align-items: center; justify-content: center;
+}
+
+/* Tonicity table tweaks */
+.comparison-table td { vertical-align: top; }
+.comparison-table td small { display: block; color: var(--ink-muted); margin-top: 2px; }
+
+/* Quick checks */
+.quickcheck-section { margin-top: 60px; }
+.qc-intro { color: var(--ink-muted); margin: -6px 0 22px; }
+.qc { background: var(--panel-bg); border: 1px solid var(--paper-line); border-radius: 3px; padding: 22px 24px; margin-bottom: 18px; }
+.qc-q { font-weight: 600; margin: 0 0 14px; display: flex; gap: 12px; align-items: flex-start; line-height: 1.55; }
+.qc-num { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--pine); color: #fff; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.qc-options { display: grid; gap: 8px; }
+.qc-opt {
+  text-align: left; width: 100%; padding: 11px 14px; border: 1.5px solid var(--paper-line);
+  background: var(--panel-bg); border-radius: 6px; font: 500 0.92rem var(--font-sans); color: var(--ink);
+  cursor: pointer; transition: border-color .15s ease, background .15s ease;
+}
+.qc-opt:hover:not(:disabled) { border-color: var(--moss); background: var(--moss-tint); }
+.qc-opt:focus-visible { outline: 3px solid rgba(30, 114, 69, 0.3); outline-offset: 1px; }
+.qc-opt:disabled { cursor: default; }
+.qc-opt.correct { border-color: #2d8a5b; background: rgba(45, 138, 91, 0.12); }
+.qc-opt.wrong { border-color: var(--stamp); background: rgba(214, 69, 69, 0.08); }
+.qc-explain { margin: 14px 0 0; padding: 12px 14px; border-radius: 4px; background: var(--paper); border: 1px solid var(--paper-line); font-size: 0.9rem; line-height: 1.65; }
+.qc-explain strong.ok { color: #1b5e3a; }
+.qc-explain strong.no { color: var(--stamp); }
+.qc-score { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  padding: 16px 20px; border-radius: 3px; background: var(--pine); color: var(--paper); }
+.qc-score p { margin: 0; font-weight: 600; }
+.qc-score[hidden], .qc-explain[hidden] { display: none !important; }
+.qc-reset { border: 1.5px solid rgba(255,255,255,.55); background: transparent; color: #fff; padding: 8px 16px; border-radius: 6px; font: 600 0.85rem var(--font-sans); cursor: pointer; }
+.qc-reset:hover { background: rgba(255,255,255,.12); }
+
+/* Takeaways */
+.takeaways { margin-top: 50px; padding: 26px 28px; background: var(--panel-bg); border: 1px solid var(--paper-line); border-radius: 3px; }
+.takeaways ul { margin: 12px 0 0; padding-left: 1.2rem; line-height: 1.75; }
+
+@media (max-width: 768px) {
+  .qc { padding: 18px 16px; }
+  .takeaways { padding: 20px 18px; }
+}
+
+.tag-plant-only { color: var(--pine); }
+
+.flow-figure .fnode { fill: var(--panel-bg); stroke: var(--paper-line); }
+.flow-figure .floc { font: 600 10px var(--font-sans); fill: var(--ink-muted); text-anchor: middle; text-transform: uppercase; letter-spacing: .03em; }
+.flow-figure .ftitle { font: 700 13px var(--font-sans); fill: var(--pine); text-anchor: middle; }
+.flow-figure .fmol { font: 600 11px var(--font-sans); fill: var(--ink); text-anchor: middle; }
+.flow-figure .farrow { stroke: var(--ink); stroke-width: 2.5; fill: none; }
+
+.cyc-ring { fill: none; stroke: var(--paper-line); stroke-width: 26; }
+.cyc-arc { fill: none; stroke: var(--moss); stroke-width: 26; stroke-linecap: round; }
+.cyc-center { font: 700 15px var(--font-sans); fill: var(--pine); text-anchor: middle; }
+.cyc-sub { font: 500 11px var(--font-sans); fill: var(--ink-muted); text-anchor: middle; }
+.cyc-out { font: 600 11.5px var(--font-sans); fill: var(--stamp-gold); }
+
+.graph-axis { stroke: var(--ink-faint); stroke-width: 1.5; }
+.graph-line { stroke: var(--moss); stroke-width: 2.5; fill: none; }
+.graph-lbl { font: 700 12px var(--font-sans); fill: var(--pine); text-anchor: middle; }
+.graph-axlbl { font: 500 10px var(--font-sans); fill: var(--ink-muted); text-anchor: middle; }
+.leaf-vein { stroke: var(--moss); stroke-width: 1.5; fill: none; opacity: 0.6; }
+</style>
+</style>
+</head>
+
+<body>
+    <!-- =========================================
+         SIDEBAR (Fixed, Non-Collapsible)
+    ========================================= -->
+    <!-- =========================================
+         SIDEBAR
+    ========================================= -->
+
+    <nav
+        class="d-flex flex-column align-items-center p-3 sidebar-bg"
+    >
+        
+        <img
+            src="imgs/Logo.jpg"
+            alt="Logo"
+            class="rounded-circle logo-img mb-2"
+        >
+
+
+        <h3 class="h5 brand-title mb-4">
+            EcoLearn
+        </h3>
+
+
+        <ul class="nav nav-pills flex-column w-100">
+
+
+            <!-- DASHBOARD -->
+
+            <li class="nav-item mb-1">
+
+                <a
+                    class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
+                    href="dashboard.html"
+                >
+
+                    <i class="bi bi-grid-1x2"></i>
+
+                    Dashboard
+
+                </a>
+
+            </li>
+
+
+            <!-- CELL MODELS -->
+
+            <li class="nav-item mb-1">
+
+                <a
+                    class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
+                    href="choose.html"
+                >
+
+                    <i class="bi bi-boxes"></i>
+
+                    Cell Models
+
+                </a>
+
+            </li>
+
+
+            <!-- Lesson -->
+
+            <li class="nav-item mb-1">
+
+                <a
+                    class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
+                    href="lesson.html"
+                >
+
+                    <i class="bi bi-book"></i>
+
+                    Lessons
+
+                </a>
+
+            </li>
+
+            <!-- QUIZ -->
+
+            <li class="nav-item mb-1">
+
+                <a
+                    class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
+                    href="quiz.html"
+                >
+
+                    <i class="bi bi-question-circle"></i>
+
+                    Quizzes
+
+                </a>
+
+            </li>
+
+            <li class="nav-item mb-1">
+                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
+                    <i class="bi bi-person"></i>
+                    Profile
+                </a>
+            </li>
+
+            <!-- LOGOUT -->
+
+            <li class="nav-item mt-auto">
+
+                <button
+                    id="logoutButton"
+                    class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
+                    style="background: none; cursor: pointer;"
+                >
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                    Logout
+
+                </button>
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+    <main class="lesson-page">
+
+        <section class="lesson-hero">
+            <div class="hero-content">
+                <h1 class="hero-title">Photosynthesis</h1>
+                <p class="hero-intro">
+                    Photosynthesis is how plant cells capture light energy and store it as chemical energy in glucose. This
+                    lesson covers where photosynthesis happens, how the light-dependent reactions and the Calvin cycle work
+                    together, and what limits how fast a plant can photosynthesize.
+                </p>
+                <div class="mini-card" style="margin-top:18px;background:var(--panel-bg)">
+                    <h5>Overall equation</h5>
+                    <p style="font-family:var(--font-mono)">6CO&#8322; + 6H&#8322;O + light energy &#8594; C&#8326;H&#8321;&#8322;O&#8326; + 6O&#8322;</p>
+                </div>
+            </div>
+        </section>
+                    <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Plant Cells Only</h4><p>Photosynthesis happens only in cells with chloroplasts, mainly plant cells and algae. Animal cells have no chloroplasts and cannot photosynthesize; every organelle in this lesson exists only on the plant side of the Animal Cell vs Plant Cell comparison in Module 01.</p></div>
+        <section class="comparison-section">
+            <h2 class="section-title">Light-Dependent Reactions vs the Calvin Cycle</h2>
+            <div class="table-responsive">
+                <table class="comparison-table">
+                    <thead><tr><th>Feature</th><th>Light-Dependent Reactions</th><th>Calvin Cycle (Light-Independent)</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Location</strong></td><td>Thylakoid membrane</td><td>Stroma</td></tr>
+                        <tr><td><strong>Needs light directly</strong></td><td>Yes</td><td>No, but needs ATP and NADPH from the light reactions</td></tr>
+                        <tr><td><strong>Inputs</strong></td><td>Light, water, ADP, NADP+</td><td>CO<sub>2</sub>, ATP, NADPH</td></tr>
+                        <tr><td><strong>Outputs</strong></td><td>O<sub>2</sub>, ATP, NADPH</td><td>G3P (used to build glucose), ADP, NADP+</td></tr>
+                        <tr><td><strong>Key participants</strong></td><td>Photosystem II, electron transport chain, Photosystem I, ATP synthase</td><td>RuBisCO, RuBP, 3-PGA</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="section-divider"><span>Where Photosynthesis Happens</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Leaf and Chloroplast Structure</h3>
+                <span class="cell-tag tag-plant-only"><i class="bi bi-flower1"></i> Plant Only</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>In most plants, photosynthesis happens mainly in the mesophyll cells of the leaf, which are packed with
+                    chloroplasts. Each chloroplast is bound by a double membrane and contains a fluid-filled interior called the
+                    stroma, where the Calvin cycle takes place.</p>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>Suspended in the stroma are stacks of flattened, membrane-bound sacs called thylakoids; a stack is called a granum. The thylakoid membrane holds the pigments and protein complexes that capture light energy, so the light-dependent reactions happen there, physically separate from the Calvin cycle in the stroma around them.</p>
+                    </div>
+                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 260" role="img" aria-label="A leaf cross-section showing the mesophyll cells packed with chloroplasts, and a chloroplast showing its stroma and stacks of thylakoids called grana">
+<path class="leaf-vein" d="M20 40H620M20 220H620" stroke-width="3"/>
+<text class="lbl-sm" x="14" y="24">Upper epidermis</text><text class="lbl-sm" x="14" y="244">Lower epidermis</text>
+<circle class="prot-2" cx="70" cy="90" r="16"/><circle class="prot-2" cx="112" cy="100" r="16"/><circle class="prot-2" cx="70" cy="130" r="16"/><circle class="prot-2" cx="112" cy="140" r="16"/>
+<circle class="prot-2" cx="160" cy="90" r="16"/><circle class="prot-2" cx="202" cy="100" r="16"/><circle class="prot-2" cx="160" cy="130" r="16"/><circle class="prot-2" cx="202" cy="140" r="16"/>
+<text class="lbl-sm ctr" x="135" y="180">Mesophyll cells</text>
+<path class="leader" d="M280 130H330"/>
+<ellipse cx="470" cy="130" rx="150" ry="80" fill="var(--paper)" stroke="var(--pine)" stroke-width="2"/>
+<text class="lbl-sm" x="320" y="42">Chloroplast (double membrane)</text>
+<text class="lbl-sm" x="340" y="210">Stroma (fluid interior)</text>
+<rect class="prot" x="410" y="110" width="26" height="60" rx="5"/><rect class="prot" x="450" y="110" width="26" height="60" rx="5"/><rect class="prot" x="490" y="110" width="26" height="60" rx="5"/><rect class="prot" x="530" y="110" width="26" height="60" rx="5"/>
+<path class="leader" d="M540 106V86"/><text class="lbl-sm ctr" x="540" y="78">Granum (stack of thylakoids)</text>
+</svg></div><figcaption>Figure 1. Mesophyll cells packed with chloroplasts; a chloroplast contains stroma and stacked thylakoids (grana).</figcaption></figure>
+
+
+                </div>
+            </div>
+        </section>
+        <section class="comparison-section">
+            <h2 class="section-title">The Big Picture</h2>
+            <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg flow-figure" viewBox="0 0 820 260" role="img" aria-label="Overview: the light-dependent reactions capture solar energy as ATP and NADPH, which the Calvin cycle uses to build glucose from carbon dioxide, recycling ADP and NADP+ back to the light reactions">
+<defs><marker id="ahf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="zone-out" x="0" y="0" width="380" height="260"/><rect class="zone-in" x="380" y="0" width="440" height="260"/>
+<text class="floc" x="190" y="18">THYLAKOID MEMBRANE</text><text class="floc" x="600" y="18">STROMA</text>
+<rect class="fnode" x="30" y="50" width="180" height="100" rx="10"/><text class="ftitle" x="120" y="84">LIGHT-DEPENDENT</text><text class="ftitle" x="120" y="100">REACTIONS</text><text class="fmol" x="120" y="122">Light + H&#8322;O &#8594; O&#8322;</text><text class="fmol" x="120" y="138">+ ATP + NADPH</text>
+<path class="farrow" d="M250 86H388" marker-end="url(#ahf)"/><text class="lbl-sm" x="270" y="76">ATP</text>
+<path class="farrow" d="M250 128H388" marker-end="url(#ahf)"/><text class="lbl-sm" x="255" y="150">NADPH</text>
+<rect class="fnode" x="430" y="50" width="200" height="100" rx="10"/><text class="ftitle" x="530" y="80">CALVIN CYCLE</text><text class="ftitle" x="530" y="96">(light-independent)</text><text class="fmol" x="530" y="118">CO&#8322; + ATP + NADPH</text><text class="fmol" x="530" y="136">&#8594; G3P &#8594; Glucose</text>
+<path class="farrow" d="M430 170H120V160" marker-end="url(#ahf)"/>
+<text class="lbl-sm ctr" x="275" y="188">ADP and NADP+ are recycled back to the light-dependent reactions</text>
+</svg></div><figcaption>Figure 2. The light-dependent reactions supply ATP and NADPH that the Calvin cycle uses to fix carbon into sugar.</figcaption></figure>
+        </section>
+
+        <div class="section-divider"><span>The Light-Dependent Reactions</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Light-Dependent Reactions</h3>
+                <span class="cell-tag tag-plant-only"><i class="bi bi-sun"></i> Plant Only</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>Chlorophyll and other pigments in Photosystem II absorb light and use the energy to split water molecules,
+                    a process called photolysis. This releases oxygen as a byproduct, the same oxygen we breathe, and produces
+                    high-energy electrons that enter an electron transport chain.</p>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>As electrons pass along the chain toward Photosystem I, their energy pumps hydrogen ions into the thylakoid lumen, building a gradient. Those ions flow back out through ATP synthase, generating ATP by chemiosmosis, just as in cellular respiration. Photosystem I re-energizes the electrons with a second photon of light and passes them to NADP+, forming NADPH.</p>
+                    </div>
+                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 700 320" role="img" aria-label="In the light-dependent reactions, photosystem II splits water and releases oxygen, electrons pass down a transport chain that pumps hydrogen ions, ATP synthase uses that gradient to make ATP, and photosystem I produces NADPH">
+<defs><marker id="ahl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="zone-out" x="0" y="0" width="700" height="110"/><rect class="zone-in" x="0" y="174" width="700" height="146"/>
+<text class="lbl" x="14" y="20">THYLAKOID LUMEN (inside)</text>
+<text class="lbl" x="14" y="304">STROMA (outside)</text>
+<rect x="0" y="110" width="700" height="64" fill="var(--paper-line)" opacity="0.5"/>
+<rect class="prot" x="50" y="118" width="70" height="48" rx="10"/><text class="lbl-w" x="85" y="140">PS II</text>
+<rect class="prot-2" x="260" y="118" width="70" height="48" rx="10"/><text class="lbl-w" x="295" y="140" style="fill:#123D27">Cytb6f</text>
+<rect class="prot" x="440" y="118" width="70" height="48" rx="10"/><text class="lbl-w" x="475" y="140">PS I</text>
+<rect class="prot-2" x="590" y="106" width="70" height="70" rx="18"/><text class="lbl-w" x="625" y="130" style="fill:#123D27">ATP</text><text class="lbl-w" x="625" y="146" style="fill:#123D27">synthase</text>
+<circle class="pa" cx="30" cy="66" r="10"/><text class="lbl-w" x="30" y="70">H&#8322;O</text>
+<path class="arrow" d="M45 74L70 116" marker-end="url(#ahl)"/>
+<circle class="pa" cx="140" cy="56" r="9"/><text class="lbl-w" x="140" y="59">O&#8322;</text>
+<path class="arrow-d" d="M120 132H255" marker-end="url(#ahl)"/><text class="lbl-sm" x="185" y="112">e-</text>
+<path class="arrow" d="M85 118V78" marker-end="url(#ahl)"/><text class="lbl-sm" x="60" y="94">H+</text>
+<path class="arrow" d="M295 118V78" marker-end="url(#ahl)"/><text class="lbl-sm" x="270" y="94">H+</text>
+<path class="arrow-d" d="M330 132H435" marker-end="url(#ahl)"/><text class="lbl-sm" x="380" y="112">e-</text>
+<path class="arrow-d" d="M480 132L590 200" marker-end="url(#ahl)"/><text class="lbl-sm" x="470" y="180">e-</text>
+<rect class="chip" x="500" y="204" width="150" height="34" rx="17"/><text class="chip-t" x="575" y="226">NADP+ &#8594; NADPH</text>
+<path class="arrow" d="M625 174V228" marker-end="url(#ahl)"/><text class="lbl-sm" x="600" y="196">H+</text>
+<rect class="chip" x="590" y="256" width="100" height="30" rx="15"/><text class="chip-t" x="640" y="276">ADP &#8594; ATP</text>
+</svg></div><figcaption>Figure 3. Photosystem II splits water and releases O2; the electron transport chain builds a gradient for ATP synthase; Photosystem I produces NADPH.</figcaption></figure>
+
+
+                </div>
+            </div>
+        </section>
+        <div class="section-divider"><span>The Calvin Cycle</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Calvin Cycle (Light-Independent Reactions)</h3>
+                <span class="cell-tag tag-plant-only"><i class="bi bi-arrow-repeat"></i> Plant Only</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>The Calvin cycle does not use light directly, but it depends entirely on the ATP and NADPH the light
+                    reactions just produced. It runs in the stroma and builds carbohydrate one carbon at a time, in three
+                    stages.</p>
+                    <ul>
+                        <li><strong>Fixation:</strong> the enzyme RuBisCO attaches a CO<sub>2</sub> molecule to RuBP (a 5-carbon sugar), forming two molecules of 3-PGA.</li>
+                        <li><strong>Reduction:</strong> ATP and NADPH convert 3-PGA into G3P, a 3-carbon sugar.</li>
+                        <li><strong>Regeneration:</strong> most of the G3P is recycled, using more ATP, to regenerate RuBP so the cycle can continue.</li>
+                    </ul>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>The cycle must turn three times, fixing three CO2 molecules, to produce one net G3P that leaves the cycle. It takes six turns, and six CO2 molecules, to build enough G3P for one glucose molecule.</p>
+                    </div>
+                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 340" role="img" aria-label="The Calvin cycle: carbon fixation by RuBisCO, reduction of 3-PGA to G3P using ATP and NADPH, and regeneration of RuBP, with one G3P exiting every three turns">
+<path class="cyc-ring" d="M420.0 170.0 A100 100 0 1 1 420.0 169.8"/>
+<path class="cyc-arc" d="M320.0 70.0 A100 100 0 1 1 233.4 220.0"/>
+<text class="cyc-center" x="320" y="164">CALVIN CYCLE</text>
+<text class="cyc-sub" x="320" y="184">3 turns per G3P</text>
+<defs><marker id="ahc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="chip" x="230" y="14" width="180" height="34" rx="17"/><text class="chip-t" x="320" y="36">1. Fixation: CO&#8322; + RuBP &#8594; 3-PGA</text>
+<path class="arrow" d="M320 50V68" marker-end="url(#ahc)"/>
+<rect class="chip" x="374" y="140" width="200" height="34" rx="17"/><text class="chip-t" x="474" y="162">2. Reduction: 3-PGA &#8594; G3P</text>
+<text class="cyc-sub" x="474" y="188">(uses ATP + NADPH)</text>
+<rect class="chip" x="230" y="286" width="180" height="34" rx="17"/><text class="chip-t" x="320" y="308">3. Regeneration: G3P &#8594; RuBP</text>
+<path class="leader" d="M230 210L180 250"/>
+<rect class="chip" x="60" y="240" width="150" height="34" rx="17"/><text class="chip-t" x="135" y="262">1 in 6 G3P &#8594; Glucose</text>
+</svg></div><figcaption>Figure 4. The Calvin cycle: fixation, reduction, and regeneration, with G3P exiting to build glucose.</figcaption></figure>
+
+
+                </div>
+            </div>
+        </section>
+        <div class="section-divider"><span>What Limits the Rate of Photosynthesis</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Limiting Factors</h3>
+                <span class="cell-tag tag-plant-only"><i class="bi bi-speedometer2"></i> Plant Only</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>The rate of photosynthesis rises as light intensity or carbon dioxide concentration increases, but only up
+                    to a point. Once another factor becomes scarce, the rate levels off no matter how much more light or CO<sub>2</sub> is
+                    supplied. Whichever factor is in shortest supply at a given moment is called the limiting factor.</p>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>Temperature also affects the rate, because the reactions of the Calvin cycle depend on enzymes such as RuBisCO. Very high temperatures can denature these enzymes and reduce the rate even if light and CO2 are plentiful.</p>
+                    </div>
+                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 700 260" role="img" aria-label="Two graphs showing how the rate of photosynthesis increases with light intensity and with carbon dioxide concentration, then levels off">
+<line class="graph-axis" x1="60" y1="30" x2="60" y2="210"/><line class="graph-axis" x1="60" y1="210" x2="300" y2="210"/>
+<path class="graph-line" d="M60 200 C 110 120 150 60 300 55"/>
+<text class="graph-lbl" x="180" y="20">Light Intensity</text>
+<text class="graph-axlbl" x="180" y="238">Light intensity &#8594;</text>
+<text class="graph-axlbl" x="30" y="120" transform="rotate(-90 30 120)">Rate &#8594;</text>
+<line class="graph-axis" x1="400" y1="30" x2="400" y2="210"/><line class="graph-axis" x1="400" y1="210" x2="640" y2="210"/>
+<path class="graph-line" d="M400 200 C 460 130 500 70 640 60"/>
+<text class="graph-lbl" x="520" y="20">CO&#8322; Concentration</text>
+<text class="graph-axlbl" x="520" y="238">CO&#8322; concentration &#8594;</text>
+<text class="graph-axlbl" x="370" y="120" transform="rotate(-90 370 120)">Rate &#8594;</text>
+</svg></div><figcaption>Figure 5. Rate of photosynthesis rises with light intensity and CO2 concentration, then plateaus.</figcaption></figure>
+
+                    <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Practical Note</h4><p>This is why greenhouses often add extra CO2 and control temperature: once light is no longer the limiting factor, boosting CO2 lets photosynthesis run faster than it would outdoors.</p></div>
+                </div>
+            </div>
+        </section>
+        <div class="section-divider"><span>Connecting to Respiration</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Photosynthesis and Respiration Together</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-arrow-left-right"></i> Both Processes</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>Photosynthesis and cellular respiration are, in a sense, opposite processes that a plant cell runs at the
+                    same time. Photosynthesis builds glucose and releases oxygen using light, carbon dioxide, and water.
+                    Respiration then breaks that same glucose back down, using the oxygen released by photosynthesis, to
+                    release ATP, carbon dioxide, and water.</p>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>A plant cell contains both chloroplasts and mitochondria and needs both processes. It photosynthesizes only while light is available, but it respires around the clock to keep its cells powered, even at night.</p>
+                    </div>
+                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 260" role="img" aria-label="Photosynthesis and cellular respiration form a cycle in plant cells: photosynthesis uses carbon dioxide and water to make glucose and oxygen, and respiration uses glucose and oxygen to release carbon dioxide, water, and ATP">
+<defs><marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<ellipse cx="320" cy="130" rx="290" ry="105" fill="none" stroke="var(--paper-line)" stroke-width="1.5"/>
+<rect class="chip" x="60" y="30" width="220" height="48" rx="10"/><text class="chip-t" x="170" y="50">PHOTOSYNTHESIS</text><text class="lbl-sm ctr" x="170" y="66">(chloroplast, daylight)</text>
+<rect class="chip" x="360" y="30" width="220" height="48" rx="10"/><text class="chip-t" x="470" y="50">CELL RESPIRATION</text><text class="lbl-sm ctr" x="470" y="66">(mitochondrion, all the time)</text>
+<path class="arrow" d="M282 60H358" marker-end="url(#ahr)"/><text class="lbl-sm" x="320" y="52">O&#8322;, Glucose</text>
+<path class="arrow" d="M358 96H282" marker-end="url(#ahr)"/><text class="lbl-sm" x="320" y="112">CO&#8322;, H&#8322;O</text>
+<text class="lbl-sm ctr" x="320" y="220">Both processes run in every green plant cell</text>
+</svg></div><figcaption>Figure 6. Photosynthesis and cellular respiration exchange glucose, oxygen, carbon dioxide, and water inside a plant cell.</figcaption></figure>
+
+
+                </div>
+            </div>
+        </section>
+
+        <section class="takeaways">
+            <h2 class="section-title">Key Takeaways</h2>
+            <ul>
+                <li>Photosynthesis happens only in chloroplasts, found in plant cells and algae, never in animal cells.</li>
+                <li>The light-dependent reactions occur in the thylakoid membrane, split water, release O2, and produce ATP and NADPH.</li>
+                <li>The Calvin cycle occurs in the stroma, uses that ATP and NADPH, and fixes CO2 into G3P to eventually build glucose.</li>
+                <li>Light intensity, CO2 concentration, and temperature can each act as the limiting factor on the rate of photosynthesis.</li>
+                <li>Plant cells both photosynthesize (only in light) and respire (constantly), using chloroplasts and mitochondria together.</li>
+            </ul>
+        </section>
+
+        <section class="references-section">
+            <h2 class="section-title">References</h2>
+            <div class="references-group">
+                <h3>Photosynthesis Sources</h3>
+                <ul class="references-list">
+                    <li>OpenStax. (n.d.). 8.3 Using light energy to make organic molecules. In Biology 2e. https://openstax.org/books/biology-2e/pages/8-3-using-light-energy-to-make-organic-molecules</li>
+                    <li>OpenStax. (n.d.). Chapter summary. In Biology 2e. https://openstax.org/books/biology-2e/pages/8-chapter-summary</li>
+                    <li>Lumen Learning. (n.d.). Using light energy to make organic molecules. SUNY OS Biology 2e. https://courses.lumenlearning.com/suny-osbiology2e/chapter/using-light-energy-to-make-organic-molecules/</li>
+                    <li>Rebus Press. (n.d.). 8.3 Using light energy to make organic molecules. OpenStax Biology (adaptation). https://press.rebus.community/openstaxbiology/?p=146</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    await window.ecoAuth.signOut();
+                });
+            }
+
+        });
+    </script>
+</body>
+</html>

@@ -667,45 +667,6 @@
                 </div>
             </div>
         </section>
-        <section class="quickcheck-section" id="quick-checks">
-            <h2 class="section-title">Quick Checks</h2>
-            <p class="qc-intro">Select an answer to see whether you got it right and why.</p>
-            
-            <div class="qc" data-correct="3">
-                <p class="qc-q"><span class="qc-num">1</span><span>Which of these processes requires the cell to spend ATP?</span></p>
-                <div class="qc-options"><button type="button" class="qc-opt" data-i="0">Simple diffusion</button><button type="button" class="qc-opt" data-i="1">Osmosis</button><button type="button" class="qc-opt" data-i="2">Facilitated diffusion</button><button type="button" class="qc-opt" data-i="3">The sodium-potassium pump</button></div>
-                <p class="qc-explain" hidden data-explain="The sodium-potassium pump moves ions against their gradients, so it needs energy from ATP. Diffusion, osmosis, and facilitated diffusion all move substances down a gradient without spending ATP."></p>
-            </div>
-            <div class="qc" data-correct="1">
-                <p class="qc-q"><span class="qc-num">2</span><span>A red blood cell is placed in pure water. What is most likely to happen?</span></p>
-                <div class="qc-options"><button type="button" class="qc-opt" data-i="0">It shrinks (crenation)</button><button type="button" class="qc-opt" data-i="1">It swells and may burst (lysis)</button><button type="button" class="qc-opt" data-i="2">Nothing, because pure water is isotonic</button><button type="button" class="qc-opt" data-i="3">Its membrane pulls away from a cell wall</button></div>
-                <p class="qc-explain" hidden data-explain="Pure water is hypotonic to the cell, so water moves in by osmosis. Animal cells have no cell wall to resist, so the cell can burst."></p>
-            </div>
-            <div class="qc" data-correct="1">
-                <p class="qc-q"><span class="qc-num">3</span><span>Why can glucose not simply diffuse through the phospholipid bilayer?</span></p>
-                <div class="qc-options"><button type="button" class="qc-opt" data-i="0">It is too small to be detected</button><button type="button" class="qc-opt" data-i="1">It is a large polar molecule and the hydrophobic core repels it</button><button type="button" class="qc-opt" data-i="2">The membrane contains no proteins</button><button type="button" class="qc-opt" data-i="3">Glucose is a gas</button></div>
-                <p class="qc-explain" hidden data-explain="Glucose is polar, so it cannot dissolve in the oily interior of the bilayer. It needs a carrier protein (facilitated diffusion) or coupled transport."></p>
-            </div>
-            <div class="qc" data-correct="1">
-                <p class="qc-q"><span class="qc-num">4</span><span>A plant cell is placed in a hypotonic solution. Why does it not burst?</span></p>
-                <div class="qc-options"><button type="button" class="qc-opt" data-i="0">Active transport pumps all the water back out</button><button type="button" class="qc-opt" data-i="1">The cell wall resists expansion and builds turgor pressure</button><button type="button" class="qc-opt" data-i="2">Plant membranes are impermeable to water</button><button type="button" class="qc-opt" data-i="3">Chloroplasts absorb the extra water</button></div>
-                <p class="qc-explain" hidden data-explain="Water still enters by osmosis, but the rigid cell wall pushes back. The cell becomes turgid, which is the healthy, firm state for a plant cell."></p>
-            </div>
-            <div class="qc" data-correct="1">
-                <p class="qc-q"><span class="qc-num">5</span><span>Each cycle of the sodium-potassium pump moves:</span></p>
-                <div class="qc-options"><button type="button" class="qc-opt" data-i="0">2 Na<sup>+</sup> out and 3 K<sup>+</sup> in</button><button type="button" class="qc-opt" data-i="1">3 Na<sup>+</sup> out and 2 K<sup>+</sup> in</button><button type="button" class="qc-opt" data-i="2">3 Na<sup>+</sup> in and 2 K<sup>+</sup> out</button><button type="button" class="qc-opt" data-i="3">1 Na<sup>+</sup> out and 1 K<sup>+</sup> in</button></div>
-                <p class="qc-explain" hidden data-explain="The pump moves 3 sodium ions out and 2 potassium ions in for each ATP used."></p>
-            </div>
-            <div class="qc" data-correct="2">
-                <p class="qc-q"><span class="qc-num">6</span><span>Which process releases the contents of a Golgi-derived vesicle outside the cell?</span></p>
-                <div class="qc-options"><button type="button" class="qc-opt" data-i="0">Phagocytosis</button><button type="button" class="qc-opt" data-i="1">Pinocytosis</button><button type="button" class="qc-opt" data-i="2">Exocytosis</button><button type="button" class="qc-opt" data-i="3">Facilitated diffusion</button></div>
-                <p class="qc-explain" hidden data-explain="In exocytosis a vesicle fuses with the plasma membrane and releases its contents to the outside. Phagocytosis and pinocytosis are types of endocytosis, which bring material in."></p>
-            </div>
-            <div class="qc-score" id="qcScore" hidden>
-                <p id="qcScoreText"></p>
-                <button type="button" class="qc-reset" id="qcReset">Try again</button>
-            </div>
-        </section>
 
         <section class="takeaways">
             <h2 class="section-title">Key Takeaways</h2>
@@ -746,56 +707,6 @@
                 });
             }
 
-            /* ---------- Quick checks ---------- */
-            const cards = Array.from(document.querySelectorAll('.qc'));
-            const scoreBox = document.getElementById('qcScore');
-            const scoreText = document.getElementById('qcScoreText');
-            let answered = 0, correctCount = 0;
-
-            function updateScore() {
-                if (answered === cards.length) {
-                    scoreText.textContent = 'You got ' + correctCount + ' of ' + cards.length + ' correct.';
-                    scoreBox.hidden = false;
-                }
-            }
-
-            cards.forEach(card => {
-                const correct = Number(card.dataset.correct);
-                const opts = Array.from(card.querySelectorAll('.qc-opt'));
-                const explain = card.querySelector('.qc-explain');
-                opts.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        if (card.dataset.done) return;
-                        card.dataset.done = '1';
-                        const chosen = Number(btn.dataset.i);
-                        const ok = chosen === correct;
-                        answered++;
-                        if (ok) correctCount++;
-                        opts.forEach(o => { o.disabled = true; });
-                        opts[correct].classList.add('correct');
-                        if (!ok) btn.classList.add('wrong');
-                        explain.innerHTML = '<strong class="' + (ok ? 'ok' : 'no') + '">' +
-                            (ok ? 'Correct.' : 'Not quite.') + '</strong> ';
-                        explain.append(document.createTextNode(explain.dataset.explain));
-                        explain.hidden = false;
-                        updateScore();
-                    });
-                });
-            });
-
-            document.getElementById('qcReset').addEventListener('click', () => {
-                answered = 0; correctCount = 0;
-                cards.forEach(card => {
-                    delete card.dataset.done;
-                    card.querySelectorAll('.qc-opt').forEach(o => {
-                        o.disabled = false; o.classList.remove('correct', 'wrong');
-                    });
-                    const ex = card.querySelector('.qc-explain');
-                    ex.hidden = true; ex.textContent = '';
-                });
-                scoreBox.hidden = true;
-                document.getElementById('quick-checks').scrollIntoView({ behavior: 'smooth' });
-            });
         });
     </script>
 </body>
