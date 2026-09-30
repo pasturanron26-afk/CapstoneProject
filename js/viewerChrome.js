@@ -74,9 +74,22 @@ function groupRail() {
 // ------------------------------------------------------
 // 2. aria-pressed follows .active
 // ------------------------------------------------------
+// Phone layout: the chip row scrolls sideways, so bring the selected chip to the middle
+function centerActiveChip() {
+    if (!list || list.scrollWidth <= list.clientWidth + 1) return;   // desktop rail is vertical
+    const active = buttons.find(b => b.classList.contains("active"));
+    if (!active) return;
+    const a = active.getBoundingClientRect();
+    const l = list.getBoundingClientRect();
+    list.scrollBy({ left: a.left - l.left - (l.width - a.width) / 2, behavior: "smooth" });
+}
+
 function syncPressed() {
-    const sync = () => buttons.forEach(b =>
-        b.setAttribute("aria-pressed", String(b.classList.contains("active"))));
+    const sync = () => {
+        buttons.forEach(b =>
+            b.setAttribute("aria-pressed", String(b.classList.contains("active"))));
+        centerActiveChip();
+    };
     const mo = new MutationObserver(sync);
     buttons.forEach(b => mo.observe(b, { attributes: true, attributeFilter: ["class"] }));
 }
