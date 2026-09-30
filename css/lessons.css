@@ -305,3 +305,17 @@
   }
 
 }
+
+/* =====================================================
+   COMING SOON (lesson page not built yet)
+   ===================================================== */
+.card-btn.is-disabled,
+.card-btn.is-disabled:hover,
+.card-btn.is-disabled:active {
+  background: #E1E7E2;
+  color: #4F5F55;               /* 6.8:1 on the grey */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  pointer-events: none;
+}

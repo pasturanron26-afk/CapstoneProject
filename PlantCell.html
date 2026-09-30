@@ -61,6 +61,11 @@
         href="css/3DcellsPage.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="css/viewer-refresh.css"
+    >
+
 </head>
 
 
@@ -85,7 +90,7 @@
 </style>
 
 
-<body>
+<body class="viewer-page">
 
 
     <!-- =========================================
@@ -229,14 +234,9 @@
                 MODE CONTROLS
             ================================== -->
             <div class="modeControls">
-                <div class="dropdown">
-                    <button class="modeButton dropdown-toggle" type="button" id="modeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-layers"></i> <span id="modeButtonLabel">Mode: Separate</span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="modeDropdown">
-                        <li><a class="dropdown-item active" href="#" data-mode="separate">Separate</a></li>
-                        <li><a class="dropdown-item" href="#" data-mode="whole">Whole</a></li>
-                    </ul>
+                <div class="viewMode" role="group" aria-label="View mode">
+                    <button type="button" data-mode="separate" aria-pressed="true">Separate</button>
+                    <button type="button" data-mode="whole" aria-pressed="false">Whole</button>
                 </div>
             </div>
 
@@ -315,7 +315,6 @@
                 <button
                     id="resetView"
                     aria-label="Reset 3D model"
-                    title="Reset View"
                 >
                     <i class="bi bi-arrow-clockwise"></i>
                 </button>
@@ -323,7 +322,6 @@
                 <button
                     id="rotateModel"
                     aria-label="Rotate 3D model"
-                    title="Rotate"
                 >
                     <i class="bi bi-arrow-repeat"></i>
                 </button>
@@ -331,7 +329,6 @@
                 <button
                     id="zoomIn"
                     aria-label="Zoom in"
-                    title="Zoom In"
                 >
                     <i class="bi bi-zoom-in"></i>
                 </button>
@@ -339,7 +336,6 @@
                 <button
                     id="zoomOut"
                     aria-label="Zoom out"
-                    title="Zoom Out"
                 >
                     <i class="bi bi-zoom-out"></i>
                 </button>
@@ -641,6 +637,8 @@
          THREE.JS JAVASCRIPT
     ========================================= -->
     <script type="module" src="js/plantTredii.js"></script> 
+    <!-- Viewer UI polish: grouped organelle list, captions, hint -->
+    <script type="module" src="js/viewerChrome.js"></script>
     <!-- OR js/tredii.js for AnimalCell.html -->
 
     <!-- =========================================
