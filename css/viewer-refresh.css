@@ -552,9 +552,10 @@
     .organelleButton { flex: none; width: auto; min-height: 40px; padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, .08); white-space: nowrap; }
 }
 
-/* Tall phones: keep the model AND the organelle chips pinned under the top bar while the student reads.
-   Short screens (small windows, landscape) let it scroll away so the text gets the space. */
-@media (max-width: 900px) and (min-height: 700px) {
+/* Pinning the model + chips is now for TABLETS / very tall screens only (>= 900px tall).
+   On phones it left ~40% of the screen for reading and text got cut under the dark chip rail,
+   so phones scroll as one normal page. To pin on phones again, change 900px back to 700px. */
+@media (max-width: 900px) and (min-height: 900px) {
     .div1 { position: sticky; top: 56px; z-index: 5; }
     .div5, .parent.sidebar-collapsed .div5 {
         position: sticky;
