@@ -360,7 +360,7 @@
 }
 
 .sidebar-toggle-btn:hover {
-    background: rgba(143, 174, 132, 0.2);
+    background: rgba(82, 183, 136, 0.2);
 }
 
 .parent.sidebar-collapsed .sidebar-toggle-btn {
@@ -447,14 +447,14 @@
 }
 
 .organelleButton:hover {
-    background: rgba(143, 174, 132, 0.14);
+    background: rgba(82, 183, 136, 0.14);
 
     color: var(--paper);
 }
 
 
 .organelleButton.active {
-    background: rgba(143, 174, 132, 0.12);
+    background: rgba(82, 183, 136, 0.12);
     border-left-color: var(--lichen);
 
     color: var(--paper);
@@ -651,18 +651,18 @@
     width: 58px;
     height: 58px;
 
-    border: 2px solid rgba(79, 122, 91, 0.55);
+    border: 2px solid rgba(30, 114, 69, 0.55);
 
     background:
         linear-gradient(
             135deg,
-            rgba(79, 122, 91, 0.12),
-            rgba(28, 46, 34, 0.05)
+            rgba(30, 114, 69, 0.12),
+            rgba(22, 40, 29, 0.05)
         );
 
     box-shadow:
         inset 0 0 15px
-        rgba(79, 122, 91, 0.10);
+        rgba(30, 114, 69, 0.10);
 }
 
 
@@ -1258,12 +1258,12 @@
 }
 
 .main-nav-section .nav-link:hover {
-    background-color: rgba(143, 174, 132, 0.14);
+    background-color: rgba(82, 183, 136, 0.14);
     color: var(--paper) !important;
 }
 
 .main-nav-section .nav-link.CellModel {
-    background: rgba(143, 174, 132, 0.12) !important;
+    background: rgba(82, 183, 136, 0.12) !important;
     border-left: 3px solid var(--lichen);
     color: var(--paper) !important;
     font-weight: 600;
@@ -1395,7 +1395,7 @@
 
     .organelleButton.active {
         border-color: var(--lichen);
-        background: rgba(143, 174, 132, 0.22);
+        background: rgba(82, 183, 136, 0.22);
     }
 
     .div2 {

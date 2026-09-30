@@ -26,7 +26,7 @@ const modelLoading = document.getElementById("modelLoading");
 const loadingPercentage = document.getElementById("loadingPercentage");
 const infoLoading = document.getElementById("infoLoading");
 const organelleInfo = document.getElementById("organelleInfo");
-const zoomControls = document.getElementById("zoomControls");
+const zoomControls = document.querySelector(".zoomControls");
 const loadingProgress = document.getElementById("loadingProgress");
 
 // ======================================================
@@ -518,52 +518,23 @@ if (resetViewButton) {
 // ======================================================
 // MODE SWITCHING
 // ======================================================
-const modeDropdownItems =
-    document.querySelectorAll(
-        ".dropdown-item[data-mode]"
-    );
+const modeButtons = document.querySelectorAll(".viewMode [data-mode]");
 
-const modeButtonLabel =
-    document.getElementById(
-        "modeButtonLabel"
-    );
+modeButtons.forEach(btn => {
+    btn.addEventListener("click", function () {
+        const newMode = this.dataset.mode;
+        modeButtons.forEach(b => b.setAttribute("aria-pressed", String(b === this)));
 
-modeDropdownItems.forEach(item => {
+        if (newMode === currentMode) return;
+        currentMode = newMode;
 
-    item.addEventListener(
-        "click",
-        function(e) {
-
-            e.preventDefault();
-
-            const newMode =
-                this.dataset.mode;
-
-            modeDropdownItems.forEach(i => {
-                i.classList.remove("active");
-            });
-
-            this.classList.add("active");
-
-            if (modeButtonLabel) {
-
-                modeButtonLabel.textContent =
-                    `Mode: ${
-                        newMode
-                            .charAt(0)
-                            .toUpperCase() +
-                        newMode.slice(1)
-                    }`;
-            }
-
-            if (newMode !== currentMode) {
-
-                currentMode = newMode;
-
-                resetView();
-            }
+        // Keep what the student was looking at: reset the view, then re-select it in the new mode
+        const activeKey = document.querySelector(".organelleButton.active")?.dataset.organelle;
+        resetView();
+        if (activeKey) {
+            document.querySelector(`.organelleButton[data-organelle="${activeKey}"]`)?.click();
         }
-    );
+    });
 });
 
 // ======================================================

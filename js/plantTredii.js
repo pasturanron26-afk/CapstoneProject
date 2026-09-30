@@ -243,21 +243,21 @@ resetViewButton.addEventListener("click", function () {
 // ======================================================
 // MODE SWITCHING
 // ======================================================
-const modeDropdownItems = document.querySelectorAll(".dropdown-item[data-mode]");
-const modeButtonLabel = document.getElementById("modeButtonLabel");
+const modeButtons = document.querySelectorAll(".viewMode [data-mode]");
 
-modeDropdownItems.forEach(item => {
-    item.addEventListener("click", function(e) {
-        e.preventDefault();
+modeButtons.forEach(btn => {
+    btn.addEventListener("click", function () {
         const newMode = this.dataset.mode;
-        
-        modeDropdownItems.forEach(i => i.classList.remove("active"));
-        this.classList.add("active");
-        modeButtonLabel.textContent = `Mode: ${newMode.charAt(0).toUpperCase() + newMode.slice(1)}`;
+        modeButtons.forEach(b => b.setAttribute("aria-pressed", String(b === this)));
 
-        if (newMode !== currentMode) {
-            currentMode = newMode;
-            resetView();
+        if (newMode === currentMode) return;
+        currentMode = newMode;
+
+        // Keep what the student was looking at: reset the view, then re-select it in the new mode
+        const activeKey = document.querySelector(".organelleButton.active")?.dataset.organelle;
+        resetView();
+        if (activeKey) {
+            document.querySelector(`.organelleButton[data-organelle="${activeKey}"]`)?.click();
         }
     });
 });

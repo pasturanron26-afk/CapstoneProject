@@ -1,0 +1,587 @@
+/* =====================================================
+   ECOLEARN — 3D VIEWER REFRESH
+   Drop-in override for AnimalCell.html and PlantCell.html.
+
+   Load order (in <head>):
+     sidebar.css → global.css → ledger-theme.css →
+     3DcellsPage.css → viewer-refresh.css   ← this file, LAST
+
+   Uses your existing class names (.parent, .div1, .div2,
+   .div5, .organelleButton …), so it works before any HTML
+   is renamed. Add class="viewer-page" to <body> to get the
+   slim-navigation behaviour in section 9.
+===================================================== */
+
+
+/* 1. TOKENS ------------------------------------------------ */
+.parent {
+    --stage: #EEF5F0;
+    --surface: #FFFFFF;
+    --line: #DCE6DF;
+    --ink-soft: #4F5F55;          /* 6.8:1 on white (old --ink-faint was 2.7:1) */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --shadow-float: 0 1px 2px rgba(18, 61, 39, .08), 0 8px 24px rgba(18, 61, 39, .10);
+
+    /* Organelle groups. Text-safe on white and on --stage (all >= 4.9:1). */
+    --cat-structure: #1D5FA8;
+    --cat-genetic:   #6D3FB0;
+    --cat-protein:   #B0326E;
+    --cat-energy:    #8A5A00;
+    --cat-storage:   #0F766E;
+
+    /* Lighter versions for dots on the dark green rail. */
+    --cat-structure-on-dark: #7DB3EE;
+    --cat-genetic-on-dark:   #B79CF0;
+    --cat-protein-on-dark:   #F08AB5;
+    --cat-energy-on-dark:    #F0B84A;
+    --cat-storage-on-dark:   #4FD1C5;
+}
+
+[data-cat="structure"] { --cat: var(--cat-structure); --cat-dk: var(--cat-structure-on-dark); }
+[data-cat="genetic"]   { --cat: var(--cat-genetic);   --cat-dk: var(--cat-genetic-on-dark); }
+[data-cat="protein"]   { --cat: var(--cat-protein);   --cat-dk: var(--cat-protein-on-dark); }
+[data-cat="energy"]    { --cat: var(--cat-energy);    --cat-dk: var(--cat-energy-on-dark); }
+[data-cat="storage"]   { --cat: var(--cat-storage);   --cat-dk: var(--cat-storage-on-dark); }
+
+
+/* 2. LAYOUT -------------------------------------------------
+   Old grid: 200px 1fr 1fr 1fr, five rows, and .div2 spanned two
+   columns starting at column 4, which creates a hidden fifth
+   column. New grid has exactly three named tracks. */
+.parent {
+    height: 100vh;
+    height: 100dvh;                                   /* mobile browser bars */
+    grid-template-columns: 224px minmax(0, 1fr) minmax(340px, 420px);
+    grid-template-rows: minmax(0, 1fr);
+}
+.parent.sidebar-collapsed {
+    grid-template-columns: 56px minmax(0, 1fr) minmax(340px, 420px);
+}
+
+.div5 { grid-column: 1; grid-row: 1; width: auto; }
+.div1 { grid-column: 2; grid-row: 1; min-height: 0; }
+.div2 { grid-column: 3; grid-row: 1; min-height: 0; }
+
+.parent.sidebar-collapsed .div5 { width: auto; }
+
+
+/* 3. STAGE (the 3D canvas area) ---------------------------- */
+.div1 {
+    background: var(--stage);
+}
+#animalViewer canvas { outline: none; touch-action: none; }   /* let OrbitControls own gestures */
+
+
+/* 4. VIEW CONTROLS ------------------------------------------
+   Mode switch: replaces the "Mode: Separate" dropdown.
+   Markup is in the audit doc (section 6, patch A). */
+.modeControls { top: 16px; left: 16px; }
+
+.viewMode {
+    display: inline-flex;
+    padding: 3px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    box-shadow: var(--shadow-float);
+}
+.viewMode button {
+    min-height: 40px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-soft);
+    font: 600 14px/1 var(--font-sans);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+.viewMode button:hover { color: var(--ink); }
+.viewMode button[aria-pressed="true"] {
+    background: var(--pine);
+    color: #fff;
+}
+
+/* Tool cluster: vertical, bottom-right, one card instead of four floating squares. */
+.zoomControls {
+    left: auto;
+    right: 16px;
+    bottom: 16px;
+    transform: none;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-float);
+}
+.zoomControls button {
+    position: relative;
+    width: 44px;                       /* touch target */
+    height: 44px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--pine);
+    font-size: 18px;
+    transform: none;                   /* remove the old scale-on-hover */
+}
+.zoomControls button + button { border-top: 1px solid var(--line); }
+.zoomControls button:first-child { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+.zoomControls button:last-child  { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+.zoomControls button:hover       { background: var(--stage); color: var(--pine); transform: none; }
+.zoomControls button:active      { background: var(--line); transform: none; }
+.zoomControls button.active,
+.zoomControls button[aria-pressed="true"] { background: var(--pine); color: #fff; }
+
+/* Instant tooltips from aria-label (remove the title="" attributes so you don't get two). */
+.zoomControls button::after {
+    content: attr(aria-label);
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    translate: 0 -50%;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: var(--pine);
+    color: #fff;
+    font: 500 13px/1.2 var(--font-sans);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .12s ease;
+}
+.zoomControls button:hover::after,
+.zoomControls button:focus-visible::after { opacity: 1; }
+
+
+/* 5. FLOATING STAGE UI ------------------------------------- */
+
+/* Caption for the selected organelle */
+.stageCaption {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: calc(100% - 96px);      /* keep clear of the tool cluster */
+    padding: 10px 8px 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--cat, var(--moss));
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-float);
+}
+.stageCaption[hidden] { display: none; }
+.stageCaptionText { display: flex; flex-direction: column; min-width: 0; }
+.stageCaptionName { font-size: 15px; font-weight: 600; color: var(--ink); }
+.stageCaptionCat  { font-size: 13px; color: var(--cat, var(--ink-soft)); }
+.stageCaptionClose {
+    width: 36px; height: 36px;
+    border: 0; border-radius: 50%;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+}
+.stageCaptionClose:hover { background: var(--stage); color: var(--ink); }
+
+/* Hover label that follows the pointer (created by viewerPicking.js) */
+.viewerTooltip {
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    background: var(--pine);
+    color: #fff;
+    border-radius: 8px;
+    font: 600 13px/1.2 var(--font-sans);
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: var(--shadow-float);
+}
+.viewerTooltip[hidden] { display: none; }
+.viewerTooltipDot { width: 8px; height: 8px; border-radius: 50%; background: var(--cat-dk, #B7E4C7); }
+.viewerTooltip small { font-weight: 400; opacity: .8; }
+
+/* First-visit hint */
+.viewerHint {
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    translate: -50% 0;
+    z-index: 12;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, .92);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink-soft);
+    font: 500 13px/1.3 var(--font-sans);
+    text-align: center;
+    pointer-events: none;
+    transition: opacity .35s ease;
+}
+.viewerHint.is-gone { opacity: 0; }
+
+
+/* 6. ORGANELLE RAIL ---------------------------------------- */
+.div5 {
+    background: var(--pine);           /* flat; the gradient lives on the global sidebar */
+    padding: 20px 10px 16px;
+}
+.organelleNav h3 {
+    font-size: 17px;
+    margin: 0 0 14px 8px;
+}
+.organelleList { gap: 14px; }
+
+.railGroup { display: flex; flex-direction: column; gap: 2px; }
+.railGroupTitle {
+    margin: 0 0 4px 8px;
+    color: rgba(255, 255, 255, .72);
+    font: 500 12.5px/1.3 var(--font-sans);   /* sentence case, no tracking */
+}
+
+.organelleButton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 8px 10px;
+    border-left: 0;
+    border-radius: var(--radius-sm);
+    color: #E6EFE9;                    /* 10.4:1 on pine */
+    font-size: 14px;
+    white-space: normal;
+}
+.organelleButton::before {
+    content: "";
+    flex: none;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--cat-dk, rgba(255, 255, 255, .4));
+}
+.organelleButton:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.organelleButton.active,
+.organelleButton[aria-pressed="true"] {
+    background: #fff;
+    color: var(--pine);
+    font-weight: 600;
+}
+.parent.sidebar-collapsed .organelleButton { padding-inline: 5px; }
+
+
+/* 7. INFO PANEL --------------------------------------------- */
+.div2 {
+    padding: 28px 28px 40px;
+    background: var(--surface);
+    border-left: 1px solid var(--line);
+}
+.organelleInfo { max-width: none; height: auto; }
+.infoTitleRow { margin-bottom: 12px; }
+#infoTitle, .infoTitleRow h1 {
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+.infoMeta { margin-bottom: 14px; }
+.catChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 4px 10px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    color: var(--cat);
+    font: 600 13px/1.4 var(--font-sans);
+}
+.catChip::before {
+    content: "";
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.infoLead {
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    background: var(--stage);
+    border-radius: var(--radius-md);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.infoContent { font-size: 15px; line-height: 1.7; max-width: 62ch; }
+
+/* Accordion headings: sentence case, readable size, larger hit area */
+.infoSectionToggle { min-height: 44px; }
+.infoSectionHeading {
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+}
+.infoSectionBody { font-size: 15px; line-height: 1.7; color: var(--ink); }
+
+/* Sources */
+.sourceNumber { color: var(--ink-soft); font-size: 12.5px; }
+.sourceText   { color: var(--ink-soft); font-size: 12.5px; }
+
+
+/* 8. FOCUS + MOTION ------------------------------------------ */
+.parent :is(button, a, [tabindex]):focus-visible {
+    outline: 3px solid #2D8A5B;
+    outline-offset: 2px;
+}
+.div5 :is(button):focus-visible { outline-color: #B7E4C7; }
+
+@media (prefers-reduced-motion: reduce) {
+    .parent *, .parent *::before, .parent *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+    }
+    .loadingBox { animation: none; }
+}
+
+
+/* 9. SLIM GLOBAL NAV ON LAPTOPS (opt-in: <body class="viewer-page">)
+   Old layout spends 250px (global sidebar) + 200px (organelle rail)
+   before the model starts. At <= 1180px the global sidebar becomes
+   the same slide-in drawer you already use on phones. */
+@media (max-width: 1180px) {
+    body.viewer-page { margin-left: 0; }
+
+    body.viewer-page .sidebar-bg {
+        transform: translateX(-100%);
+        transition: transform .25s ease;
+        z-index: 1200;
+    }
+    body.viewer-page .sidebar-bg.is-open { transform: none; }
+
+    body.viewer-page .sidebar-toggle-global {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 14px; left: 14px;
+        width: 44px; height: 44px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--pine, #123D27);
+        color: #fff;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 12px rgba(18, 61, 39, .28);
+        z-index: 1300;
+    }
+    body.viewer-page .sidebar-backdrop.is-visible {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 26, 20, .45);
+        z-index: 1100;
+    }
+
+    /* keep the mode switch clear of the hamburger */
+    body.viewer-page .modeControls { left: 70px; }
+}
+
+
+/* 10. TABLET / PHONE  (<= 900px)
+   RULE: nothing floats over the model.
+   The stage is the canvas PLUS a 56px control strip underneath it.
+   Mode switch (left) and tool buttons (right) live in that strip;
+   the WebGL canvas is sized to the area above it (tredii.js already
+   resizes with a ResizeObserver). The name caption is hidden here
+   because the panel title sits directly below the chips. */
+@media (max-width: 900px) {
+
+    /* Solid bar behind the hamburger so scrolling text never slides under it */
+    body.viewer-page { padding-top: 56px; }
+    body.viewer-page::before {
+        content: "";
+        position: fixed;
+        inset: 0 0 auto 0;
+        height: 56px;
+        background: var(--paper, #F3FAF6);
+        border-bottom: 1px solid #DCE6DF;
+        z-index: 1000;                 /* under the drawer (1200), backdrop (1100) and hamburger (1300) */
+
+        content: attr(data-page-title);
+        display: flex;
+        align-items: center;
+        padding-left: 68px;            /* clear of the 42px hamburger at left:14px */
+        color: var(--ink, #16281D);
+        font: 600 16px/1 var(--font-sans, 'Poppins', sans-serif);
+    }
+
+    .parent, .parent.sidebar-collapsed {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        min-height: 0;
+    }
+
+    /* STAGE = canvas + control strip */
+    .parent { --stage-h: clamp(260px, 38vh, 420px); }
+    @supports (height: 1dvh) {
+        .parent { --stage-h: clamp(260px, 38dvh, 420px); }
+    }
+    .div1 {
+        --band: 60px;
+        order: 1;
+        width: 100%;
+        height: var(--stage-h);
+        min-height: 0;
+        max-height: none;
+    }
+    #animalViewer { inset: 0 0 var(--band) 0; height: auto; }
+    .div1::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0 0;
+        height: var(--band);
+        background: var(--surface);
+        border-top: 1px solid var(--line);
+        z-index: 10;
+    }
+
+    /* Mode switch: left of the strip */
+    .modeControls,
+    body.viewer-page .modeControls {
+        top: auto;
+        right: auto;
+        left: 12px;
+        bottom: 0;
+        height: var(--band);
+        display: flex;
+        align-items: center;
+        z-index: 20;
+    }
+    .viewMode { box-shadow: none; }
+    .viewMode button { min-height: 38px; padding: 0 10px; font-size: 13px; }
+
+    /* Tools: one horizontal row, right of the strip */
+    .zoomControls {
+        top: auto;
+        left: auto;
+        right: 12px;
+        bottom: 0;
+        height: var(--band);
+        align-items: center;
+        z-index: 20;
+        flex-direction: row;
+        gap: 4px;
+        background: none;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .parent .zoomControls button,
+    .parent .zoomControls button:first-child,
+    .parent .zoomControls button:last-child {
+        width: 38px;
+        height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        font-size: 17px;
+    }
+    .parent .zoomControls button:active { background: var(--stage); }
+    .parent .zoomControls button.active,
+    .parent .zoomControls button[aria-pressed="true"] {
+        background: var(--pine);
+        border-color: var(--pine);
+        color: #fff;
+    }
+    .zoomControls button::after { display: none; }      /* no hover tooltips on touch */
+
+    /* Caption is redundant here and was covering the model */
+    .stageCaption { display: none !important; }
+    .viewerHint { top: 10px; bottom: auto; }            /* pointer-events:none, fades on first touch */
+
+    /* Chips, then the info panel */
+    .div5, .parent.sidebar-collapsed .div5 { order: 2; width: 100%; max-height: none; padding: 10px 12px; overflow: visible; }
+    .organelleNav h3 {                                   /* screen-reader only on phones */
+        position: absolute;
+        width: 1px; height: 1px;
+        margin: -1px; padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+    .div2 { order: 3; width: 100%; padding: 16px 16px 32px; border-left: 0; border-top: 1px solid var(--line); }
+
+    /* Title + pronunciation on the left, speaker button on the right (was a full extra row) */
+    .infoTitleRow {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+    .infoTitleRow > div { min-width: 0; }
+    .infoTitleRow .speakButton { flex: none; width: 44px; height: 44px; margin-top: 0; }
+    .infoMeta { margin-bottom: 10px; }
+    .infoLead { margin-bottom: 14px; padding: 12px 14px; }
+
+    /* Groups become one horizontal scroller of chips */
+    .organelleList {
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 18px;
+        margin: 0 -12px;                 /* bleed to the screen edges … */
+        padding: 2px 12px;               /* … but keep the first/last chip off the edge */
+        scroll-padding-inline: 12px;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+    .organelleList::-webkit-scrollbar { display: none; }
+    .railGroup { flex-direction: row; align-items: center; gap: 6px; flex: none; scroll-snap-align: start; }
+    .railGroupTitle { display: none; }                  /* dot colour + chip in the panel carry the meaning */
+    .organelleButton { flex: none; width: auto; min-height: 40px; padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, .08); white-space: nowrap; }
+}
+
+/* Pinning the model + chips is now for TABLETS / very tall screens only (>= 900px tall).
+   On phones it left ~40% of the screen for reading and text got cut under the dark chip rail,
+   so phones scroll as one normal page. To pin on phones again, change 900px back to 700px. */
+@media (max-width: 900px) and (min-height: 900px) {
+    .div1 { position: sticky; top: 56px; z-index: 5; }
+    .div5, .parent.sidebar-collapsed .div5 {
+        position: sticky;
+        top: calc(56px + var(--stage-h));
+        z-index: 4;
+        border-bottom: 1px solid rgba(255, 255, 255, .12);
+        box-shadow: 0 12px 16px -8px rgba(15, 26, 20, .55);   /* text scrolls visibly *behind* the header */
+    }
+}
+
+@media (max-width: 480px) {
+    #infoTitle, .infoTitleRow h1 { font-size: 22px; }
+    .infoLead { font-size: 16px; }
+}
+
+/* Very narrow phones (<= 360px): keep both control groups on one row */
+@media (max-width: 360px) {
+    .modeControls, body.viewer-page .modeControls { left: 8px; }
+    .zoomControls { right: 8px; gap: 3px; }
+    .viewMode button { padding: 0 8px; font-size: 12.5px; }
+    .parent .zoomControls button,
+    .parent .zoomControls button:first-child,
+    .parent .zoomControls button:last-child { width: 36px; height: 36px; font-size: 16px; }
+}
+
+/* Smallest phones (<= 340px, e.g. 320px-wide devices) */
+@media (max-width: 340px) {
+    .viewMode button { padding: 0 6px; }
+}

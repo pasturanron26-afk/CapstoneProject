@@ -152,7 +152,7 @@ body{
 }
 
 .comparison-table tbody tr:nth-child(even){
-  background: rgba(79, 122, 91, 0.05);
+  background: rgba(30, 114, 69, 0.05);
 }
 
 .present {
