@@ -556,7 +556,12 @@
    Short screens (small windows, landscape) let it scroll away so the text gets the space. */
 @media (max-width: 900px) and (min-height: 700px) {
     .div1 { position: sticky; top: 56px; z-index: 5; }
-    .div5, .parent.sidebar-collapsed .div5 { position: sticky; top: calc(56px + var(--stage-h)); z-index: 4; }
+    .div5, .parent.sidebar-collapsed .div5 {
+        position: sticky;
+        top: calc(56px + var(--stage-h));
+        z-index: 4;
+        box-shadow: 0 10px 14px -8px rgba(15, 26, 20, .40);   /* text scrolls visibly *behind* the header */
+    }
 }
 
 @media (max-width: 480px) {
