@@ -61,13 +61,27 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // ======================================================
-// RENDERER
+// MOBILE DETECTION
+// Phones have high device pixel ratios (3x–4x) which
+// multiplies GPU work massively. We detect mobile once
+// and use it to tune the renderer settings below.
 // ======================================================
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+// ======================================================
+// RENDERER
+// FIX: antialias off on mobile (high DPR already smooths
+// edges), lower pixel ratio cap, cheaper tone mapping,
+// and powerPreference hint for the GPU.
+// ======================================================
+const renderer = new THREE.WebGLRenderer({
+    antialias: !isMobile,
+    powerPreference: "high-performance"
+});
+renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1) : Math.min(window.devicePixelRatio, 2));
 renderer.setSize(viewer.clientWidth, viewer.clientHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMapping = isMobile ? THREE.LinearToneMapping : THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 viewer.appendChild(renderer.domElement);
 
@@ -205,20 +219,25 @@ function resetView() {
     if (window.resetOrganelleInformation) {
         window.resetOrganelleInformation();
     }
+
+    requestRender();
 }
 
 zoomInButton.addEventListener("click", function () {
     camera.position.multiplyScalar(0.8);
     controls.update();
+    requestRender();
 });
 
 zoomOutButton.addEventListener("click", function () {
     camera.position.multiplyScalar(1.25);
     controls.update();
+    requestRender();
 });
 
 resetViewButton.addEventListener("click", function () {
     resetView();
+    requestRender();
 });
 
 // ======================================================
@@ -254,7 +273,7 @@ dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5
 loader.setDRACOLoader(dracoLoader);
 
 loader.load(
-    "./threeDyModels/PLANTCELLtryVertwo.glb",
+    "./threeDyModels/PLANTCELL.glb",
     function (gltf) {
         plantCell = gltf.scene;
         scene.add(plantCell);
@@ -310,6 +329,8 @@ loader.load(
 
         if (infoLoading) infoLoading.style.display = "none";
         if (organelleInfo) organelleInfo.classList.add("loaded");
+
+        requestRender();
     },
     function (xhr) {
         // Vercel doesn't send Content-Length, so xhr.total is 0.
@@ -417,6 +438,7 @@ function showOnlyOrganelles(organelleNames) {
     controls.maxDistance = maxDimension * 4.5;
 
     controls.update();
+    requestRender();
 }
 
 // ======================================================
@@ -441,6 +463,8 @@ function highlightOrganelleWholeMode(organelleNames) {
             }
         }
     });
+
+    requestRender();
 }
 
 // ======================================================
@@ -467,14 +491,14 @@ organelleButtons.forEach(button => {
         } 
         // Special handling for Endoplasmic Reticulum - NO ribosomes
         else if (organelle === "endoplasmicReticulum") {
-    if (currentMode === "separate") {
-        // Separate Mode: Keep ribosomes visible along with the ER
-        targetOrganelles = ["ER", "ribosomesER"];
-    } else {
-        // Whole Mode: Only glow the ER membranes, leave ribosomes un-glowed
-        targetOrganelles = ["ER", "ribosomesER"];
-    }
-}
+            if (currentMode === "separate") {
+                // Separate Mode: Keep ribosomes visible along with the ER
+                targetOrganelles = ["ER", "ribosomesER"];
+            } else {
+                // Whole Mode: Only glow the ER membranes, leave ribosomes un-glowed
+                targetOrganelles = ["ER", "ribosomesER"];
+            }
+        }
         else {
             // Normal handling for other organelles
             const mappedName = meshNameMap[organelle];
@@ -494,21 +518,45 @@ organelleButtons.forEach(button => {
 });
 
 // ======================================================
-// ANIMATION LOOP
+// ANIMATION LOOP (Demand-based rendering)
+// FIX: Instead of rendering every frame even when nothing
+// moves, we only render when something has actually changed.
+// requestRender() sets the flag; the loop checks it each
+// tick. Auto-rotate and OrbitControls damping keep flagging
+// frames for as long as they need to.
 // ======================================================
+let renderRequested = false;
+
+function requestRender() {
+    renderRequested = true;
+}
+
 function animate() {
     requestAnimationFrame(animate);
-    
-    // Auto-rotate if rotation is enabled
+
+    // Auto-rotate keeps requesting renders on its own
     if (window.modelRotationState && window.modelRotationState.isAutoRotating()) {
         if (plantCell) {
             plantCell.rotation.y += window.modelRotationState.getSpeed();
         }
+        requestRender();
     }
-    
-    controls.update();
-    renderer.render(scene, camera);
+
+    // OrbitControls damping needs a few extra frames after
+    // interaction — update() returns true while it's still settling
+    if (controls.update()) {
+        requestRender();
+    }
+
+    if (renderRequested) {
+        renderRequested = false;
+        renderer.render(scene, camera);
+    }
 }
+
+// Flag a render on any user interaction with the controls
+controls.addEventListener("change", requestRender);
+
 animate();
 
 // ======================================================
@@ -528,6 +576,7 @@ function updateViewerSize() {
     camera.updateProjectionMatrix();
 
     renderer.setSize(width, height, false);
+    requestRender();
 }
 
 

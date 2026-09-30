@@ -9,6 +9,17 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 const viewer = document.getElementById("animalViewer");
 
 // ======================================================
+// MOBILE  PERFORMANCE SETTINGS
+// ======================================================
+const isMobile =
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+const BASE_PIXEL_RATIO = isMobile
+    ? Math.min(window.devicePixelRatio || 1, 2)
+    : Math.min(window.devicePixelRatio || 1, 2);
+
+let currentPixelRatio = BASE_PIXEL_RATIO;
+
+// ======================================================
 // LOADING ELEMENTS
 // ======================================================
 const modelLoading = document.getElementById("modelLoading");
@@ -22,6 +33,7 @@ const loadingProgress = document.getElementById("loadingProgress");
 // INITIAL LOADING STATE
 // ======================================================
 viewer.classList.add("loading");
+
 if (zoomControls) {
     zoomControls.style.display = "none";
 }
@@ -36,22 +48,19 @@ let originalMaxDimension = 1;
 // ======================================================
 // MODE STATE
 // ======================================================
-let currentMode = "separate"; // "separate" or "whole"
+let currentMode = "separate";
 
 // ======================================================
 // DESIRED MODEL ROTATION
 // ======================================================
-const MODEL_ROTATION = { x: 0.5, y: -1.0, z: 0.0 };
+const MODEL_ROTATION = {
+    x: 0.5,
+    y: -1.0,
+    z: 0.0
+};
 
 // ======================================================
 // PER-ORGANELLE ROTATION OVERRIDES
-// The whole-cell rotation above doesn't flatter every
-// isolated organelle equally -- some were modeled/exported
-// at different original angles. Add an entry here (keyed by
-// the button's data-organelle value) to give that specific
-// organelle its own viewing angle when it's isolated. Leave
-// an organelle out of this table and it just uses
-// MODEL_ROTATION like before.
 // ======================================================
 const ORGANELLE_ROTATION_OVERRIDES = {
     // centriole: { x: 0.5, y: -1.0, z: 0.0 },
@@ -80,139 +89,329 @@ const camera = new THREE.PerspectiveCamera(
 
 // ======================================================
 // RENDERER
+// MOBILE OPTIMIZATION
 // ======================================================
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(viewer.clientWidth, viewer.clientHeight);
+const renderer = new THREE.WebGLRenderer({
+    antialias: !isMobile,
+    powerPreference: "high-performance",
+    alpha: false,
+    stencil: false,
+    depth: true
+});
+
+renderer.setPixelRatio(currentPixelRatio);
+
+renderer.setSize(
+    viewer.clientWidth,
+    viewer.clientHeight,
+    false
+);
+
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+
+// ACES is slightly more expensive.
+// Keep it on desktop, disable it on mobile.
+if (!isMobile) {
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+} else {
+    renderer.toneMapping = THREE.NoToneMapping;
+}
+
 viewer.appendChild(renderer.domElement);
+
+// ======================================================
+// DYNAMIC RESOLUTION SCALING
+// While the finger is actively dragging we drop to DPR 1.0
+// so the GPU pushes fewer pixels and interaction stays smooth.
+// The moment the finger lifts we restore the base DPR (1.5)
+// and render one final crisp frame. This is the same trick
+// used by game engines — low res while moving, sharp at rest.
+// ======================================================
+let dprRestoreTimer = null;
+
+function onTouchStart() {
+    clearTimeout(dprRestoreTimer);
+    if (renderer.getPixelRatio() !== 1.0) {
+        renderer.setPixelRatio(1.0);
+        currentPixelRatio = 1.0;
+    }
+}
+
+function onTouchEnd() {
+    clearTimeout(dprRestoreTimer);
+    dprRestoreTimer = setTimeout(() => {
+        renderer.setPixelRatio(BASE_PIXEL_RATIO);
+        currentPixelRatio = BASE_PIXEL_RATIO;
+    }, 150);
+}
+
+if (isMobile) {
+    renderer.domElement.addEventListener("touchstart",  onTouchStart, { passive: true });
+    renderer.domElement.addEventListener("touchmove",   onTouchStart, { passive: true });
+    renderer.domElement.addEventListener("touchend",    onTouchEnd,   { passive: true });
+    renderer.domElement.addEventListener("touchcancel", onTouchEnd,   { passive: true });
+}
 
 // ======================================================
 // LIGHTING
 // ======================================================
-const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+const ambientLight = new THREE.AmbientLight(
+    0xffffff,
+    1.5
+);
+
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
-directionalLight.position.set(5, 10, 7);
+const directionalLight = new THREE.DirectionalLight(
+    0xffffff,
+    3
+);
+
+directionalLight.position.set(
+    5,
+    10,
+    7
+);
+
 scene.add(directionalLight);
 
-const fillLight = new THREE.DirectionalLight(0xffffff, 1);
-fillLight.position.set(-5, 3, 5);
+const fillLight = new THREE.DirectionalLight(
+    0xffffff,
+    1
+);
+
+fillLight.position.set(
+    -5,
+    3,
+    5
+);
+
 scene.add(fillLight);
 
 // ======================================================
-// CONTROLS (Smoothed Interaction)
+// CONTROLS
 // ======================================================
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(
+    camera,
+    renderer.domElement
+);
+
 controls.enableDamping = true;
-controls.dampingFactor = 0.08; // Smoother damping
-controls.rotateSpeed = 0.6;    // Smoother rotation
-controls.panSpeed = 0.8;       // Smooth right-click drag (panning)
-controls.zoomSpeed = 3.0;      // Smoother zoom
-controls.enableRotate = true;  // Left-click drag to rotate
-controls.enablePan = true;     // Right-click drag to pan
-controls.enableZoom = true;    // Mouse wheel to zoom
+
+controls.dampingFactor = isMobile
+    ? 0.06
+    : 0.08;
+
+controls.rotateSpeed = isMobile
+    ? 0.45
+    : 0.6;
+
+controls.panSpeed = isMobile
+    ? 0.6
+    : 0.8;
+
+controls.zoomSpeed = isMobile
+    ? 2.0
+    : 3.0;
+
+controls.enableRotate = true;
+controls.enablePan = true;
+controls.enableZoom = true;
 
 // ======================================================
 // SNAP CONTROLS UPDATE
-// When switching organelles we jump the camera/target to a
-// brand new position. If the student had been dragging the
-// view around beforehand, OrbitControls' damping keeps a bit
-// of leftover spin momentum queued up internally. Normally
-// that's fine -- it decays smoothly over the next dozen or so
-// frames -- but here it plays out ON TOP of the freshly
-// re-centered organelle, which looks like the model spins
-// away and then settles back into place. Briefly turning
-// damping off for a single update() flushes that leftover
-// momentum immediately instead of letting it animate out.
 // ======================================================
 function snapControlsUpdate() {
-    const wasDamping = controls.enableDamping;
+
+    const wasDamping =
+        controls.enableDamping;
+
     controls.enableDamping = false;
+
     controls.update();
-    controls.enableDamping = wasDamping;
+
+    controls.enableDamping =
+        wasDamping;
 }
 
 // ======================================================
 // ZOOM BUTTONS
 // ======================================================
-const zoomInButton = document.getElementById("zoomIn");
-const zoomOutButton = document.getElementById("zoomOut");
-const resetViewButton = document.getElementById("resetView");
-const organelleButtons = document.querySelectorAll(".organelleButton");
+const zoomInButton =
+    document.getElementById("zoomIn");
+
+const zoomOutButton =
+    document.getElementById("zoomOut");
+
+const resetViewButton =
+    document.getElementById("resetView");
+
+const organelleButtons =
+    document.querySelectorAll(
+        ".organelleButton"
+    );
 
 // ======================================================
 // MESH NAME MAPPING
 // ======================================================
 const meshNameMap = {
+
     cellMem: "cellMem",
+
     cytoplasm: "cytoplasm",
+
     cytoskeleton: "cytoskeleton",
+
     centriole: "centriole",
+
     golgiApparatus: "golgiApparatus",
+
     lysosome: "lysosome",
-    mitochondria: ["mitochondria", "mito002"], // Array in case of multiple meshes
+
+    mitochondria: [
+        "mitochondria",
+        "mito002"
+    ],
+
     nucleus: "nucleus",
+
     Nucleolus: "Nucleolus",
+
     peroxisome: "peroxisome",
+
     ribosomes: "ribosomes",
+
     endoplasmicReticulum: "ER",
+
     vacuole: "vacuole"
 };
 
 // ======================================================
-// MATERIAL STATE MANAGEMENT (Highlight & Restore)
+// MATERIAL STATE
 // ======================================================
 function saveMaterialState(mesh) {
+
     if (!mesh.userData.originalMaterialState) {
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        mesh.userData.originalMaterialState = materials.map(mat => ({
-            emissive: mat.emissive ? mat.emissive.clone() : new THREE.Color(0x000000),
-            emissiveIntensity: mat.emissiveIntensity !== undefined ? mat.emissiveIntensity : 0
-        }));
+
+        const materials =
+            Array.isArray(mesh.material)
+                ? mesh.material
+                : [mesh.material];
+
+        mesh.userData.originalMaterialState =
+            materials.map(mat => ({
+
+                emissive:
+                    mat.emissive
+                        ? mat.emissive.clone()
+                        : new THREE.Color(0x000000),
+
+                emissiveIntensity:
+                    mat.emissiveIntensity !== undefined
+                        ? mat.emissiveIntensity
+                        : 0
+            }));
     }
 }
 
+// ======================================================
+// HIGHLIGHT
+// ======================================================
 function applyHighlight(mesh) {
+
     saveMaterialState(mesh);
-    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+
+    const materials =
+        Array.isArray(mesh.material)
+            ? mesh.material
+            : [mesh.material];
+
     materials.forEach(mat => {
-        mat.emissive = new THREE.Color(0xEF4444); // Red glow
-        mat.emissiveIntensity = 1.8;
+
+        if (mat.emissive) {
+
+            mat.emissive.set(
+                0xEF4444
+            );
+
+            mat.emissiveIntensity =
+                isMobile
+                    ? 1.2
+                    : 1.8;
+        }
     });
 }
 
+// ======================================================
+// RESTORE MATERIAL
+// ======================================================
 function restoreMaterial(mesh) {
-    if (mesh.userData.originalMaterialState) {
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        materials.forEach((mat, i) => {
-            const state = mesh.userData.originalMaterialState[i];
-            if (state) {
-                if (mat.emissive) mat.emissive.copy(state.emissive);
-                if (mat.emissiveIntensity !== undefined) mat.emissiveIntensity = state.emissiveIntensity;
-            }
-        });
-        delete mesh.userData.originalMaterialState;
+
+    if (!mesh.userData.originalMaterialState) {
+        return;
     }
+
+    const materials =
+        Array.isArray(mesh.material)
+            ? mesh.material
+            : [mesh.material];
+
+    materials.forEach((mat, i) => {
+
+        const state =
+            mesh.userData.originalMaterialState[i];
+
+        if (!state) return;
+
+        if (mat.emissive) {
+            mat.emissive.copy(
+                state.emissive
+            );
+        }
+
+        if (
+            mat.emissiveIntensity !==
+            undefined
+        ) {
+
+            mat.emissiveIntensity =
+                state.emissiveIntensity;
+        }
+    });
+
+    delete mesh.userData.originalMaterialState;
 }
 
+// ======================================================
+// CLEAR EFFECTS
+// ======================================================
 function clearAllEffects() {
+
     if (!animalCell) return;
+
     animalCell.traverse(child => {
-        if (child.isMesh) {
-            child.visible = true;
-            // FIX: Force emissive to black to remove any "baked-in" glows from the 3D model
-            const materials = Array.isArray(child.material) ? child.material : [child.material];
-            materials.forEach(mat => {
-                if (mat.emissive) {
-                    mat.emissive.setHex(0x000000);
-                    mat.emissiveIntensity = 0;
-                }
-            });
-        }
+
+        if (!child.isMesh) return;
+
+        child.visible = true;
+
+        const materials =
+            Array.isArray(child.material)
+                ? child.material
+                : [child.material];
+
+        materials.forEach(mat => {
+
+            if (mat.emissive) {
+
+                mat.emissive.setHex(
+                    0x000000
+                );
+
+                mat.emissiveIntensity = 0;
+            }
+        });
     });
 }
 
@@ -220,65 +419,151 @@ function clearAllEffects() {
 // RESET VIEW
 // ======================================================
 function resetView() {
+
     if (!animalCell) return;
 
-    animalCell.position.copy(originalAnimalPosition);
-    animalCell.rotation.x = MODEL_ROTATION.x;
-    animalCell.rotation.y = MODEL_ROTATION.y;
-    animalCell.rotation.z = MODEL_ROTATION.z;
+    animalCell.position.copy(
+        originalAnimalPosition
+    );
+
+    animalCell.rotation.x =
+        MODEL_ROTATION.x;
+
+    animalCell.rotation.y =
+        MODEL_ROTATION.y;
+
+    animalCell.rotation.z =
+        MODEL_ROTATION.z;
+
     animalCell.updateMatrixWorld(true);
 
     clearAllEffects();
 
-    camera.position.set(0, 0, originalMaxDimension * 2.2);
-    controls.target.set(0, 0, 0);
-    controls.minDistance = originalMaxDimension * 0.5;
-    controls.maxDistance = originalMaxDimension * 4.5;
+    camera.position.set(
+        0,
+        0,
+        originalMaxDimension * 2.2
+    );
+
+    controls.target.set(
+        0,
+        0,
+        0
+    );
+
+    controls.minDistance =
+        originalMaxDimension * 0.5;
+
+    controls.maxDistance =
+        originalMaxDimension * 4.5;
+
     snapControlsUpdate();
 
     organelleButtons.forEach(button => {
         button.classList.remove("active");
     });
 
-    if (window.resetOrganelleInformation) {
+    if (
+        window.resetOrganelleInformation
+    ) {
+
         window.resetOrganelleInformation();
     }
 }
 
-zoomInButton.addEventListener("click", function () {
-    camera.position.multiplyScalar(0.8);
-    controls.update();
-});
+// ======================================================
+// ZOOM BUTTONS
+// ======================================================
+if (zoomInButton) {
 
-zoomOutButton.addEventListener("click", function () {
-    camera.position.multiplyScalar(1.25);
-    controls.update();
-});
+    zoomInButton.addEventListener(
+        "click",
+        function () {
 
-resetViewButton.addEventListener("click", function () {
-    resetView();
-});
+            camera.position.multiplyScalar(
+                0.8
+            );
+
+            controls.update();
+        }
+    );
+}
+
+if (zoomOutButton) {
+
+    zoomOutButton.addEventListener(
+        "click",
+        function () {
+
+            camera.position.multiplyScalar(
+                1.25
+            );
+
+            controls.update();
+        }
+    );
+}
+
+if (resetViewButton) {
+
+    resetViewButton.addEventListener(
+        "click",
+        function () {
+
+            resetView();
+        }
+    );
+}
 
 // ======================================================
 // MODE SWITCHING
 // ======================================================
-const modeDropdownItems = document.querySelectorAll(".dropdown-item[data-mode]");
-const modeButtonLabel = document.getElementById("modeButtonLabel");
+const modeDropdownItems =
+    document.querySelectorAll(
+        ".dropdown-item[data-mode]"
+    );
+
+const modeButtonLabel =
+    document.getElementById(
+        "modeButtonLabel"
+    );
 
 modeDropdownItems.forEach(item => {
-    item.addEventListener("click", function(e) {
-        e.preventDefault();
-        const newMode = this.dataset.mode;
-        
-        modeDropdownItems.forEach(i => i.classList.remove("active"));
-        this.classList.add("active");
-        modeButtonLabel.textContent = `Mode: ${newMode.charAt(0).toUpperCase() + newMode.slice(1)}`;
 
-        if (newMode !== currentMode) {
-            currentMode = newMode;
-            resetView();
+    item.addEventListener(
+        "click",
+        function(e) {
+
+            e.preventDefault();
+
+            const newMode =
+                this.dataset.mode;
+
+            modeDropdownItems.forEach(i => {
+                i.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            if (modeButtonLabel) {
+
+                modeButtonLabel.textContent =
+                    `Mode: ${
+                        newMode
+                            .charAt(0)
+                            .toUpperCase() +
+                        newMode.slice(1)
+                    }`;
+            }
+
+            if (newMode !== currentMode) {
+
+                currentMode = newMode;
+
+                resetView();
+            }
         }
-    });
+    );
 });
 
 // ======================================================
@@ -286,306 +571,729 @@ modeDropdownItems.forEach(item => {
 // ======================================================
 const loader = new GLTFLoader();
 
-// Add these two lines
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
-loader.setDRACOLoader(dracoLoader);
+const dracoLoader =
+    new DRACOLoader();
+
+dracoLoader.setDecoderPath(
+    "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
+);
+
+loader.setDRACOLoader(
+    dracoLoader
+);
 
 loader.load(
-    "./threeDyModels/ANIMALCELLtry03.glb",
-    function (gltf) {
+
+    "./threeDyModels/ANIMALCELL.glb",
+
+    function(gltf) {
+
         animalCell = gltf.scene;
+
         scene.add(animalCell);
 
-        const box = new THREE.Box3().setFromObject(animalCell);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
-        const maxDimension = Math.max(size.x, size.y, size.z);
-        originalMaxDimension = maxDimension;
+        const box =
+            new THREE.Box3()
+                .setFromObject(animalCell);
 
-        animalCell.position.sub(center);
-        originalAnimalPosition = animalCell.position.clone();
+        const center =
+            box.getCenter(
+                new THREE.Vector3()
+            );
 
-        animalCell.rotation.x = MODEL_ROTATION.x;
-        animalCell.rotation.y = MODEL_ROTATION.y;
-        animalCell.rotation.z = MODEL_ROTATION.z;
-        animalCell.updateMatrixWorld(true);
+        const size =
+            box.getSize(
+                new THREE.Vector3()
+            );
 
-        camera.position.set(0, 0, maxDimension * 2.2);
-        camera.near = maxDimension / 1000;
-        camera.far = maxDimension * 100;
+        const maxDimension =
+            Math.max(
+                size.x,
+                size.y,
+                size.z
+            );
+
+        originalMaxDimension =
+            maxDimension;
+
+        animalCell.position.sub(
+            center
+        );
+
+        originalAnimalPosition =
+            animalCell.position.clone();
+
+        animalCell.rotation.x =
+            MODEL_ROTATION.x;
+
+        animalCell.rotation.y =
+            MODEL_ROTATION.y;
+
+        animalCell.rotation.z =
+            MODEL_ROTATION.z;
+
+        animalCell.updateMatrixWorld(
+            true
+        );
+
+        camera.position.set(
+            0,
+            0,
+            maxDimension * 2.2
+        );
+
+        camera.near =
+            maxDimension / 1000;
+
+        camera.far =
+            maxDimension * 100;
+
         camera.updateProjectionMatrix();
 
-        controls.target.set(0, 0, 0);
-        
-        controls.minDistance = maxDimension * 0.5;
-        controls.maxDistance = maxDimension * 4.5;
+        controls.target.set(
+            0,
+            0,
+            0
+        );
+
+        controls.minDistance =
+            maxDimension * 0.5;
+
+        controls.maxDistance =
+            maxDimension * 4.5;
 
         controls.update();
 
+        // ==================================================
+        // PREPARE MATERIALS
+        // ==================================================
         animalCell.traverse(child => {
-            if (child.isMesh) {
-                console.log("Animal Cell Object:", child.name);
-                // FIX: Strip any baked-in glows from the 3D model on load
-                const materials = Array.isArray(child.material) ? child.material : [child.material];
-                materials.forEach(mat => {
-                    if (mat.emissive) {
-                        mat.emissive.setHex(0x000000);
-                        mat.emissiveIntensity = 0;
-                    }
-                });
-            }
-        });
-        console.log("Animal Cell Loaded");
 
-        document.querySelector(".parent").classList.add("loaded");
-        viewer.classList.remove("loading");
-        modelLoading.classList.add("hidden");
+            if (!child.isMesh) return;
+
+            console.log(
+                "Animal Cell Object:",
+                child.name
+            );
+
+            child.frustumCulled = true;
+
+            const materials =
+                Array.isArray(child.material)
+                    ? child.material
+                    : [child.material];
+
+            materials.forEach(mat => {
+
+                if (mat.emissive) {
+
+                    mat.emissive.setHex(
+                        0x000000
+                    );
+
+                    mat.emissiveIntensity =
+                        0;
+                }
+            });
+        });
+
+        console.log(
+            "Animal Cell Loaded"
+        );
+
+        document
+            .querySelector(".parent")
+            ?.classList.add("loaded");
+
+        viewer.classList.remove(
+            "loading"
+        );
+
+        modelLoading?.classList.add(
+            "hidden"
+        );
 
         if (zoomControls) {
-            zoomControls.style.display = "flex";
+            zoomControls.style.display =
+                "flex";
         }
 
-        if (infoLoading) infoLoading.style.display = "none";
-        if (organelleInfo) organelleInfo.classList.add("loaded");
-    },
-    function (xhr) {
-        // Vercel doesn't send Content-Length, so xhr.total is 0.
-        // Use real progress when available, otherwise simulate it.
-        let percentage = 0;
-        if (xhr.total && xhr.total > 0) {
-            percentage = (xhr.loaded / xhr.total) * 100;
-        } else if (xhr.loaded > 0) {
-            const estimatedTotal = 35 * 1024 * 1024;
-            percentage = Math.min((xhr.loaded / estimatedTotal) * 100, 90);
+        if (infoLoading) {
+            infoLoading.style.display =
+                "none";
         }
-        const formattedPercentage = percentage.toFixed(0);
-        console.log("Loading:", formattedPercentage + "%");
-        if (loadingPercentage) loadingPercentage.textContent = formattedPercentage + "%";
-        if (loadingProgress) loadingProgress.style.width = formattedPercentage + "%";
+
+        if (organelleInfo) {
+            organelleInfo.classList.add(
+                "loaded"
+            );
+        }
     },
-    function (error) {
-        console.error("Error loading Animal Cell:", error);
+
+    function(xhr) {
+
+        let percentage = 0;
+
+        if (
+            xhr.total &&
+            xhr.total > 0
+        ) {
+
+            percentage =
+                (xhr.loaded / xhr.total) *
+                100;
+
+        } else if (xhr.loaded > 0) {
+
+            const estimatedTotal =
+                35 * 1024 * 1024;
+
+            percentage =
+                Math.min(
+                    (xhr.loaded /
+                        estimatedTotal) *
+                        100,
+                    90
+                );
+        }
+
+        const formattedPercentage =
+            percentage.toFixed(0);
+
+        console.log(
+            "Loading:",
+            formattedPercentage + "%"
+        );
+
+        if (loadingPercentage) {
+
+            loadingPercentage.textContent =
+                formattedPercentage + "%";
+        }
+
+        if (loadingProgress) {
+
+            loadingProgress.style.width =
+                formattedPercentage + "%";
+        }
+    },
+
+    function(error) {
+
+        console.error(
+            "Error loading Animal Cell:",
+            error
+        );
+
         if (modelLoading) {
+
             modelLoading.innerHTML = `
-                <div class="loadingSpinner" style="animation-play-state: paused;"></div>
+                <div class="loadingSpinner"
+                     style="animation-play-state: paused;">
+                </div>
+
                 <p>Failed to load Animal Cell.</p>
-                <span>Please refresh the page.</span>
+
+                <span>
+                    Please refresh the page.
+                </span>
             `;
         }
+
         if (infoLoading) {
-            infoLoading.innerHTML = `<p>Unable to load information.</p>`;
+
+            infoLoading.innerHTML =
+                `<p>Unable to load information.</p>`;
         }
     }
 );
 
 // ======================================================
-// CHECK IF MESH BELONGS TO ORGANELLE
+// CHECK MESH OWNERSHIP
 // ======================================================
-function meshBelongsToOrganelles(mesh, organelleNames) {
+function meshBelongsToOrganelles(
+    mesh,
+    organelleNames
+) {
+
     let currentObject = mesh;
+
     while (currentObject) {
-        if (organelleNames.includes(currentObject.name)) return true;
-        currentObject = currentObject.parent;
+
+        if (
+            organelleNames.includes(
+                currentObject.name
+            )
+        ) {
+
+            return true;
+        }
+
+        currentObject =
+            currentObject.parent;
     }
+
     return false;
 }
 
 // ======================================================
-// SEPARATE MODE: SHOW ONLY SELECTED ORGANELLES
+// SEPARATE MODE
 // ======================================================
-function showOnlyOrganelles(organelleNames, organelleKey) {
+function showOnlyOrganelles(
+    organelleNames,
+    organelleKey
+) {
+
     if (!animalCell) return;
 
-    const rotation = getRotationFor(organelleKey);
+    const rotation =
+        getRotationFor(
+            organelleKey
+        );
 
-    animalCell.position.copy(originalAnimalPosition);
-    animalCell.rotation.x = rotation.x;
-    animalCell.rotation.y = rotation.y;
-    animalCell.rotation.z = rotation.z;
-    animalCell.updateMatrixWorld(true);
+    animalCell.position.copy(
+        originalAnimalPosition
+    );
 
-    clearAllEffects(); // Resets visibility and removes glows
+    animalCell.rotation.x =
+        rotation.x;
+
+    animalCell.rotation.y =
+        rotation.y;
+
+    animalCell.rotation.z =
+        rotation.z;
+
+    animalCell.updateMatrixWorld(
+        true
+    );
+
+    clearAllEffects();
 
     animalCell.traverse(child => {
+
         if (!child.isMesh) return;
-        child.visible = meshBelongsToOrganelles(child, organelleNames);
+
+        child.visible =
+            meshBelongsToOrganelles(
+                child,
+                organelleNames
+            );
     });
 
-    animalCell.updateMatrixWorld(true);
+    animalCell.updateMatrixWorld(
+        true
+    );
 
-    const selectedBox = new THREE.Box3();
+    const selectedBox =
+        new THREE.Box3();
+
     animalCell.traverse(child => {
-        if (child.isMesh && child.visible) {
-            selectedBox.expandByObject(child);
+
+        if (
+            child.isMesh &&
+            child.visible
+        ) {
+
+            selectedBox.expandByObject(
+                child
+            );
         }
     });
 
     if (selectedBox.isEmpty()) {
-        console.warn("Selected organelle was not found:", organelleNames);
+
+        console.warn(
+            "Selected organelle was not found:",
+            organelleNames
+        );
+
         return;
     }
 
-    const selectedCenter = selectedBox.getCenter(new THREE.Vector3());
-    animalCell.position.x -= selectedCenter.x;
-    animalCell.position.y -= selectedCenter.y;
-    animalCell.position.z -= selectedCenter.z;
-    animalCell.updateMatrixWorld(true);
+    const selectedCenter =
+        selectedBox.getCenter(
+            new THREE.Vector3()
+        );
 
-    const centeredBox = new THREE.Box3();
+    animalCell.position.x -=
+        selectedCenter.x;
+
+    animalCell.position.y -=
+        selectedCenter.y;
+
+    animalCell.position.z -=
+        selectedCenter.z;
+
+    animalCell.updateMatrixWorld(
+        true
+    );
+
+    const centeredBox =
+        new THREE.Box3();
+
     animalCell.traverse(child => {
-        if (child.isMesh && child.visible) {
-            centeredBox.expandByObject(child);
+
+        if (
+            child.isMesh &&
+            child.visible
+        ) {
+
+            centeredBox.expandByObject(
+                child
+            );
         }
     });
 
-    const selectedSize = centeredBox.getSize(new THREE.Vector3());
-    const maxDimension = Math.max(selectedSize.x, selectedSize.y, selectedSize.z);
+    const selectedSize =
+        centeredBox.getSize(
+            new THREE.Vector3()
+        );
 
-    let cameraDistance = maxDimension * 2.6;
-    if (cameraDistance < 0.5) cameraDistance = 0.5;
+    const maxDimension =
+        Math.max(
+            selectedSize.x,
+            selectedSize.y,
+            selectedSize.z
+        );
 
-    camera.position.set(0, 0, cameraDistance);
-    camera.near = Math.max(maxDimension / 1000, 0.001);
-    camera.far = Math.max(maxDimension * 100, 100);
+    let cameraDistance =
+        maxDimension * 2.6;
+
+    if (cameraDistance < 0.5) {
+        cameraDistance = 0.5;
+    }
+
+    camera.position.set(
+        0,
+        0,
+        cameraDistance
+    );
+
+    camera.near =
+        Math.max(
+            maxDimension / 1000,
+            0.001
+        );
+
+    camera.far =
+        Math.max(
+            maxDimension * 100,
+            100
+        );
+
     camera.updateProjectionMatrix();
 
-    controls.target.set(0, 0, 0);
-    
-    controls.minDistance = maxDimension * 0.5;
-    controls.maxDistance = maxDimension * 4.5;
+    controls.target.set(
+        0,
+        0,
+        0
+    );
+
+    controls.minDistance =
+        maxDimension * 0.5;
+
+    controls.maxDistance =
+        maxDimension * 4.5;
 
     snapControlsUpdate();
 }
 
 // ======================================================
-// WHOLE MODE: HIGHLIGHT SELECTED ORGANELLE (NO ZOOM)
+// WHOLE MODE
 // ======================================================
-function highlightOrganelleWholeMode(organelleNames, organelleKey) {
+function highlightOrganelleWholeMode(
+    organelleNames,
+    organelleKey
+) {
+
     if (!animalCell) return;
 
-    const rotation = getRotationFor(organelleKey);
+    const rotation =
+        getRotationFor(
+            organelleKey
+        );
 
-    animalCell.position.copy(originalAnimalPosition);
-    animalCell.rotation.x = rotation.x;
-    animalCell.rotation.y = rotation.y;
-    animalCell.rotation.z = rotation.z;
-    animalCell.updateMatrixWorld(true);
+    animalCell.position.copy(
+        originalAnimalPosition
+    );
+
+    animalCell.rotation.x =
+        rotation.x;
+
+    animalCell.rotation.y =
+        rotation.y;
+
+    animalCell.rotation.z =
+        rotation.z;
+
+    animalCell.updateMatrixWorld(
+        true
+    );
 
     clearAllEffects();
 
     animalCell.traverse(child => {
-        if (child.isMesh) {
-            child.visible = true;
-            if (meshBelongsToOrganelles(child, organelleNames)) {
-                applyHighlight(child);
-            }
+
+        if (!child.isMesh) return;
+
+        child.visible = true;
+
+        if (
+            meshBelongsToOrganelles(
+                child,
+                organelleNames
+            )
+        ) {
+
+            applyHighlight(child);
         }
     });
 }
 
 // ======================================================
-// ORGANELLE NAVIGATION BUTTONS
+// ORGANELLE NAVIGATION
 // ======================================================
 organelleButtons.forEach(button => {
-    button.addEventListener("click", function () {
-        const organelle = this.dataset.organelle;
 
-        organelleButtons.forEach(btn => btn.classList.remove("active"));
-        this.classList.add("active");
+    button.addEventListener(
+        "click",
+        function() {
 
-        let targetOrganelles;
-        
-        // Special handling for mitochondria
-        if (organelle === "mitochondria") {
-            if (currentMode === "separate") {
-                // Separate Mode: Only show the main "mitochondria" mesh
-                targetOrganelles = ["mitochondria"];
+            const organelle =
+                this.dataset.organelle;
+
+            organelleButtons.forEach(btn => {
+                btn.classList.remove(
+                    "active"
+                );
+            });
+
+            this.classList.add(
+                "active"
+            );
+
+            let targetOrganelles;
+
+            if (
+                organelle ===
+                "mitochondria"
+            ) {
+
+                if (
+                    currentMode ===
+                    "separate"
+                ) {
+
+                    targetOrganelles = [
+                        "mitochondria"
+                    ];
+
+                } else {
+
+                    targetOrganelles = [
+                        "mitochondria",
+                        "mito002"
+                    ];
+                }
+
+            } else if (
+                organelle ===
+                "endoplasmicReticulum"
+            ) {
+
+                targetOrganelles = [
+                    "ER",
+                    "ribosomesER"
+                ];
+
             } else {
-                // Whole Mode: Glow both mitochondria meshes
-                targetOrganelles = ["mitochondria", "mito002"];
+
+                const mappedName =
+                    meshNameMap[
+                        organelle
+                    ];
+
+                targetOrganelles =
+                    Array.isArray(
+                        mappedName
+                    )
+                        ? mappedName
+                        : [
+                            mappedName ||
+                            organelle
+                        ];
             }
-        } 
-        // Special handling for Endoplasmic Reticulum
-        else if (organelle === "endoplasmicReticulum") {
-            if (currentMode === "separate") {
-                // Separate Mode: Keep ribosomes visible along with the ER
-                targetOrganelles = ["ER", "ribosomesER"];
+
+            if (
+                currentMode ===
+                "separate"
+            ) {
+
+                showOnlyOrganelles(
+                    targetOrganelles,
+                    organelle
+                );
+
             } else {
-                // Whole Mode: Only glow the ER membranes, leave ribosomes un-glowed
-                targetOrganelles = ["ER", "ribosomesER"];
+
+                highlightOrganelleWholeMode(
+                    targetOrganelles,
+                    organelle
+                );
+            }
+
+            if (
+                window.updateOrganelleInformation
+            ) {
+
+                window.updateOrganelleInformation(
+                    organelle
+                );
             }
         }
-        else {
-            // Normal handling for other organelles
-            const mappedName = meshNameMap[organelle];
-            targetOrganelles = Array.isArray(mappedName) ? mappedName : [mappedName || organelle];
-        }
-
-        if (currentMode === "separate") {
-            showOnlyOrganelles(targetOrganelles, organelle);
-        } else {
-            highlightOrganelleWholeMode(targetOrganelles, organelle);
-        }
-
-        if (window.updateOrganelleInformation) {
-            window.updateOrganelleInformation(organelle);
-        }
-    });
+    );
 });
+
+// ======================================================
+// ADAPTIVE MOBILE QUALITY
+// Watches live FPS and nudges DPR up/down within the
+// safe range (1.0 – 1.5) so the model stays as sharp
+// as the device can handle without dropping frames.
+// Only active on mobile and only when NOT dragging
+// (drag already uses fixed DPR 1.0 via touch events).
+// ======================================================
+let frameCounter = 0;
+let lastPerformanceCheck = performance.now();
+
+function checkPerformance() {
+
+    if (!isMobile) return;
+
+    const now = performance.now();
+    const elapsed = now - lastPerformanceCheck;
+
+    if (elapsed < 2000) return;
+
+    const fps = (frameCounter * 1000) / elapsed;
+    frameCounter = 0;
+    lastPerformanceCheck = now;
+
+    // Don't adjust while the finger is down — touch events
+    // already handle DPR during drag.
+    if (renderer.getPixelRatio() === 1.0) return;
+
+    let newPixelRatio = currentPixelRatio;
+
+    if (fps < 28) {
+        // Struggling — step down but never below 1.0
+        newPixelRatio = Math.max(1.0, currentPixelRatio - 0.25);
+    } else if (fps > 50 && currentPixelRatio < BASE_PIXEL_RATIO) {
+        // Comfortable — step back up toward base
+        newPixelRatio = Math.min(BASE_PIXEL_RATIO, currentPixelRatio + 0.25);
+    }
+
+    if (newPixelRatio !== currentPixelRatio) {
+        currentPixelRatio = newPixelRatio;
+        renderer.setPixelRatio(currentPixelRatio);
+        renderer.setSize(viewer.clientWidth, viewer.clientHeight, false);
+        console.log("Mobile quality adjusted:", currentPixelRatio, "FPS:", fps.toFixed(1));
+    }
+}
 
 // ======================================================
 // ANIMATION LOOP
 // ======================================================
 function animate() {
-    requestAnimationFrame(animate);
-    
-    // Auto-rotate if rotation is enabled
-    if (window.modelRotationState && window.modelRotationState.isAutoRotating()) {
+
+    requestAnimationFrame(
+        animate
+    );
+
+    frameCounter++;
+
+    checkPerformance();
+
+    if (
+        window.modelRotationState &&
+        window.modelRotationState
+            .isAutoRotating()
+    ) {
+
         if (animalCell) {
-            animalCell.rotation.y += window.modelRotationState.getSpeed();
+
+            animalCell.rotation.y +=
+                window.modelRotationState
+                    .getSpeed();
         }
     }
-    
+
     controls.update();
-    renderer.render(scene, camera);
+
+    renderer.render(
+        scene,
+        camera
+    );
 }
+
 animate();
 
 // ======================================================
 // RESIZE
 // ======================================================
-
 let resizeTimer = null;
 
 function updateViewerSize() {
 
-    const width = viewer.clientWidth;
-    const height = viewer.clientHeight;
+    const width =
+        viewer.clientWidth;
 
-    if (width <= 0 || height <= 0) return;
+    const height =
+        viewer.clientHeight;
 
-    camera.aspect = width / height;
+    if (
+        width <= 0 ||
+        height <= 0
+    ) {
+
+        return;
+    }
+
+    camera.aspect =
+        width / height;
+
     camera.updateProjectionMatrix();
 
-    renderer.setSize(width, height, false);
+    renderer.setSize(
+        width,
+        height,
+        false
+    );
 }
 
+if (typeof ResizeObserver !== "undefined") {
 
-// Detect viewer size changes
-const resizeObserver = new ResizeObserver(() => {
+    const resizeObserver =
+        new ResizeObserver(() => {
 
-    clearTimeout(resizeTimer);
+            clearTimeout(
+                resizeTimer
+            );
 
-    resizeTimer = setTimeout(() => {
-        updateViewerSize();
-    }, 350);
-});
+            resizeTimer =
+                setTimeout(() => {
 
-resizeObserver.observe(viewer);
+                    updateViewerSize();
 
+                }, 250);
+        });
 
-// Browser resize
-window.addEventListener("resize", () => {
-    updateViewerSize();
-});
+    resizeObserver.observe(
+        viewer
+    );
+}
+
+window.addEventListener(
+    "resize",
+    updateViewerSize
+);

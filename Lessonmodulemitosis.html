@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitosis Lesson - EcoLearn</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/ledger-theme.css">
+    <link rel="stylesheet" href="css/lessonModuleMitosis.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/auth.js"></script>
+
+    <style>
+        nav .nav-link.Lesson {
+            background: rgba(143, 174, 132, 0.12);
+            border-left: 3px solid var(--lichen);
+            color: var(--paper) !important;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
+        <img src="imgs/Logo.jpg" alt="Logo" class="rounded-circle logo-img mb-2">
+        <h3 class="h5 brand-title mb-4">EcoLearn</h3>
+        <ul class="nav nav-pills flex-column w-100">
+            <li class="nav-item mb-1">
+                <a class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2" href="dashboard.html">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link CellModel text-white-50 d-flex align-items-center gap-2" href="choose.html">
+                    <i class="bi bi-boxes"></i> Cell Models
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link Lesson text-white-50 d-flex align-items-center gap-2" href="lesson.html">
+                    <i class="bi bi-book"></i> Lessons
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link Quiz text-white-50 d-flex align-items-center gap-2" href="quiz.html">
+                    <i class="bi bi-question-circle"></i> Quizzes
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
+                    <i class="bi bi-person"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background: none; cursor: pointer;">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="lesson-page">
+
+        <!-- HERO -->
+        <section class="lesson-hero">
+            <div class="hero-content">
+                <h1 class="hero-title">Mitosis: Cell Division in Animal &amp; Plant Cells</h1>
+                <p class="hero-intro">
+                    Every living organism grows and repairs itself through cell division. This lesson examines
+                    mitosis — the process by which one cell produces two genetically identical daughter cells —
+                    and compares how this process differs between animal and plant cells through 3D visualization.
+                </p>
+            </div>
+        </section>
+
+        <!-- COMPARISON TABLE -->
+        <section class="comparison-section">
+            <h2 class="section-title">Animal Cell vs Plant Cell Mitosis</h2>
+            <div class="table-responsive">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Animal Cell</th>
+                            <th>Plant Cell</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Centrioles</strong></td>
+                            <td><span class="present">Present — organize spindle</span></td>
+                            <td><span class="absent">Absent</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spindle Formation</strong></td>
+                            <td>Via centrosomes (centriole-based)</td>
+                            <td>Via MTOCs (microtubule-organizing centers)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Preprophase Band</strong></td>
+                            <td><span class="absent">Absent</span></td>
+                            <td><span class="present">Present — predicts division site</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aster Fibers</strong></td>
+                            <td><span class="present">Present</span></td>
+                            <td><span class="absent">Absent</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cytokinesis Method</strong></td>
+                            <td>Cleavage furrow (membrane pinches inward)</td>
+                            <td>Cell plate (builds outward from center)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cell Wall</strong></td>
+                            <td><span class="absent">Absent</span></td>
+                            <td><span class="present">New wall built via cell plate</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shape During Division</strong></td>
+                            <td>Rounds up, loses attachments</td>
+                            <td>Remains fixed — constrained by cell wall</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Result</strong></td>
+                            <td>2 identical daughter cells</td>
+                            <td>2 identical daughter cells</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===================== THE CELL CYCLE ===================== -->
+        <div class="section-divider"><span>The Cell Cycle</span></div>
+
+        <!-- INTERPHASE -->
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Interphase</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <p class="phase-description">
+                Interphase is the longest phase of the cell cycle — the period in which the cell actively grows,
+                carries out its normal metabolic functions, and prepares for division by duplicating its DNA and
+                organelles. It is divided into three sub-phases: G1 (cell growth and protein synthesis), S
+                (DNA replication, producing identical sister chromatids), and G2 (continued growth and final
+                preparation for division). By the end of interphase, the cell has duplicated its entire genome
+                but has not yet begun to divide its nucleus.
+            </p>
+            <div class="model-row">
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Animal Cell Interphase ✅ -->
+                            <iframe title="Mitosis - Fase 1" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/d3d49b588af247d681e85e1e57963e0f/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/mitosis-fase-1-d3d49b588af247d681e85e1e57963e0f" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Mitosis - Fase 1</a> by
+                                <a href="https://sketchfab.com/Dr.Rody.Artigas" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Rody Artigas Silva</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Plant Cell Interphase ✅ -->
+                            <iframe title="Plant cell Interphase" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/2151a5a3c6314cc881193ab5a185ad1c/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/plant-cell-interphase-2151a5a3c6314cc881193ab5a185ad1c" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Plant cell Interphase</a> by
+                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== MITOSIS STAGES ===================== -->
+        <div class="section-divider"><span>Mitosis Stages</span></div>
+
+        <!-- PROPHASE -->
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Prophase</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <p class="phase-description">
+                Prophase is the first and longest stage of mitosis. Loose chromatin condenses into visible,
+                distinct chromosomes — each consisting of two identical sister chromatids joined at their
+                centromere. The nucleolus disappears and the mitotic spindle begins to form. In animal cells,
+                centrosomes (containing centrioles) migrate to opposite poles and radiate aster fibers. In
+                plant cells, spindle formation is directed by microtubule-organizing centers (MTOCs) without
+                centrioles, and a unique preprophase band first marks the future division site.
+            </p>
+            <div class="model-row">
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Animal Cell Prophase ✅ -->
+                            <iframe title="Mitosis - Fase 2" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/5893c91271574463a9020d0deeaf95f0/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/mitosis-fase-2-5893c91271574463a9020d0deeaf95f0" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Mitosis - Fase 2</a> by
+                                <a href="https://sketchfab.com/Dr.Rody.Artigas" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Rody Artigas Silva</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Plant Cell Prophase ✅ -->
+                            <iframe title="Plant cell Prophase" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/45df46d9755141a3be1b3742cb7b9309/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/plant-cell-prophase-45df46d9755141a3be1b3742cb7b9309" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Plant cell Prophase</a> by
+                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- METAPHASE -->
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Metaphase</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <p class="phase-description">
+                Metaphase is the stage in which all chromosomes are fully condensed and precisely aligned
+                along the cell's equator — the metaphase plate. The nuclear envelope has fully broken down,
+                and spindle fibers from opposite poles attach to kinetochore proteins on each chromosome's
+                centromere. A spindle assembly checkpoint verifies that every kinetochore is properly
+                attached before the cell proceeds, ensuring each daughter cell will receive exactly one
+                copy of every chromosome.
+            </p>
+            <div class="model-row">
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Animal Cell Metaphase ✅ -->
+                            <iframe title="Mitosis - Fase 3" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/5f5c6aae2cfb4b378689060381c84e33/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/mitosis-fase-3-5f5c6aae2cfb4b378689060381c84e33" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Mitosis - Fase 3</a> by
+                                <a href="https://sketchfab.com/Dr.Rody.Artigas" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Rody Artigas Silva</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Plant Cell Metaphase ✅ -->
+                            <iframe title="Plant cell Metaphase" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/ac614004f2cb4b05a22dbce5858d340d/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/plant-cell-metaphase-ac614004f2cb4b05a22dbce5858d340d" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Plant cell Metaphase</a> by
+                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ANAPHASE -->
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Anaphase</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <p class="phase-description">
+                Anaphase is the stage of separation. The protein links (cohesins) holding sister chromatids
+                together are cleaved by the enzyme separase, making each chromatid an individual chromosome.
+                Kinetochore microtubules shorten to pull chromosomes toward opposite poles while non-kinetochore
+                microtubules elongate, pushing the poles further apart and visibly stretching the cell. By the
+                end of anaphase, each pole holds a complete, identical set of chromosomes — any segregation
+                error here results in daughter cells with the wrong chromosome number (aneuploidy).
+            </p>
+            <div class="model-row">
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Animal Cell Anaphase ✅ -->
+                            <iframe title="Mitosis - Fase 4" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/9730500159024bf9b571657f1ae687fb/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/mitosis-fase-4-9730500159024bf9b571657f1ae687fb" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Mitosis - Fase 4</a> by
+                                <a href="https://sketchfab.com/Dr.Rody.Artigas" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Rody Artigas Silva</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Plant Cell Anaphase ✅ -->
+                            <iframe title="Plant Cell Anaphase" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/5c326470fa6245e8847e1a602a6cad08/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/plant-cell-anaphase-5c326470fa6245e8847e1a602a6cad08" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Plant Cell Anaphase</a> by
+                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TELOPHASE -->
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Telophase</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <p class="phase-description">
+                Telophase is the reversal of prophase. Chromosomes arrive at opposite poles and begin to
+                decondense back into loose chromatin. A new nuclear envelope reassembles around each
+                chromosome set, the nucleolus reappears in each forming nucleus, and the spindle apparatus
+                disassembles. By the end of telophase, nuclear division (karyokinesis) is complete — the
+                cell contains two genetically identical nuclei but remains a single cell until cytokinesis
+                physically separates the cytoplasm.
+            </p>
+            <div class="model-row">
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Animal Cell Telophase ✅ -->
+                            <iframe title="Mitosis - Fase 5" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/6735ade3498047708b1c1e80e3ca03af/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/mitosis-fase-5-6735ade3498047708b1c1e80e3ca03af" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Mitosis - Fase 5</a> by
+                                <a href="https://sketchfab.com/Dr.Rody.Artigas" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Rody Artigas Silva</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Plant Cell Telophase ✅ -->
+                            <iframe title="Plant Telophase" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/e387b156bf914297822d4ef2f5555c79/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/plant-telophase-e387b156bf914297822d4ef2f5555c79" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Plant Telophase</a> by
+                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== CYTOKINESIS ===================== -->
+        <div class="section-divider"><span>Cytokinesis</span></div>
+
+        <!-- CYTOKINESIS -->
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Cytokinesis</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <p class="phase-description">
+                Cytokinesis is the physical division of the cytoplasm that produces two separate daughter
+                cells, typically overlapping with telophase. While both cell types produce two genetically
+                identical daughters, the mechanism differs fundamentally. In animal cells, a contractile
+                ring of actin and myosin filaments pinches the membrane inward — forming a cleavage furrow
+                — until the cell is split in two. In plant cells, the rigid cell wall prevents this, so
+                Golgi-derived vesicles are guided to the cell's center by the phragmoplast, fusing to
+                form a cell plate that grows outward until it meets the existing cell wall.
+            </p>
+            <div class="model-row">
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Animal Cell Cytokinesis ✅ -->
+                            <iframe title="Mitosis - Fase 6" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/ebb24bc7cf8c44c480d3f462a96b9b99/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/mitosis-fase-6-ebb24bc7cf8c44c480d3f462a96b9b99" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Mitosis - Fase 6</a> by
+                                <a href="https://sketchfab.com/Dr.Rody.Artigas" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Rody Artigas Silva</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-slot">
+                    <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                    <div class="organelle-embed">
+                        <div class="sketchfab-embed-wrapper">
+                            <!-- Plant Cell Cytokinesis ✅ -->
+                            <iframe title="Plant cytokenisis" frameborder="0" allowfullscreen
+                                mozallowfullscreen="true" webkitallowfullscreen="true"
+                                allow="autoplay; fullscreen; xr-spatial-tracking"
+                                xr-spatial-tracking execution-while-out-of-viewport
+                                execution-while-not-rendered web-share width="100%" height="360"
+                                src="https://sketchfab.com/models/422982c6b47845228bbe835cd0fdec10/embed?ui_theme=dark"></iframe>
+                            <p>
+                                <a href="https://sketchfab.com/3d-models/plant-cytokenisis-422982c6b47845228bbe835cd0fdec10" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Plant cytokenisis</a> by
+                                <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">SourLobster5747</a> on
+                                <a href="https://sketchfab.com" target="_blank" rel="nofollow" style="font-weight: bold; color: #40916C; text-decoration: none;">Sketchfab</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REFERENCES -->
+        <section class="references-section">
+            <h2 class="section-title">References</h2>
+            <div class="references-group">
+                <h3>Mitosis Sources</h3>
+                <ul class="references-list">
+                    <li>Alberts, B., Johnson, A., Lewis, J., Raff, M., Roberts, K., &amp; Walter, P. (2002). <em>Molecular biology of the cell</em> (4th ed.). Garland Science.</li>
+                    <li>Bailey, R. (2024, October 3). Mitosis stages. ThoughtCo. https://www.thoughtco.com/stages-of-mitosis-373534</li>
+                    <li>GeeksforGeeks. (2026, April 12). Mitosis — stages, diagram, significance. https://www.geeksforgeeks.org/biology/mitosis/</li>
+                    <li>Khan Academy. (n.d.). Mitosis. https://www.khanacademy.org/science/ap-biology/cell-communication-and-cell-cycle/cell-cycle/a/phases-of-mitosis</li>
+                    <li>Lumen Learning. (n.d.). The cell cycle. Biology for Majors I. https://courses.lumenlearning.com/wm-biology1/chapter/the-cell-cycle/</li>
+                    <li>Maton, A., Hopkins, J., McLaughlin, C. W., Johnson, S., Warner, M. Q., LaHart, D., &amp; Wright, J. D. (1997). <em>Cells: Building blocks of life</em>. Prentice Hall.</li>
+                    <li>OpenStax. (2022). Biology 2e — Chapter 10: Cell reproduction. OpenStax CNX. https://openstax.org/books/biology-2e/pages/10-2-the-cell-cycle</li>
+                    <li>Pawlina, W., &amp; Ross, M. H. (2018). <em>Histology: A text and atlas</em> (8th ed.). Wolters Kluwer.</li>
+                    <li>Reece, J. B., Urry, L. A., Cain, M. L., Wasserman, S. A., Minorsky, P. V., &amp; Jackson, R. B. (2014). <em>Campbell biology</em> (10th ed.). Pearson Education.</li>
+                    <li>Snustad, D. P., &amp; Simmons, M. J. (2012). <em>Principles of genetics</em> (6th ed.). Wiley.</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', async () => {
+                    await window.ecoAuth.signOut();
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
