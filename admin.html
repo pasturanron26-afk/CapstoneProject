@@ -3,174 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoLearn — Admin</title>
+    <title>Overview · EcoLearn Admin</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <!-- Poppins: titles and big numbers (matches the rest of EcoLearn).
+         Source Sans 3: table and body text (narrow, figures line up). -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/admin.css">
+    <!-- admin.css is self-contained now: dashboard.css is no longer loaded on this page -->
+    <link rel="stylesheet" href="css/admin.css?v=1">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
 </head>
 <body>
-    <a class="ad-skip" href="#main">Skip to content</a>
+    <a class="skip-link" href="#adminMain">Skip to content</a>
 
+    <!-- =========================================
+         SIDEBAR
+    ========================================= -->
     <nav class="d-flex flex-column align-items-center p-3 sidebar-bg" aria-label="Admin">
         <img src="imgs/Logo.jpg" alt="EcoLearn logo" class="rounded-circle logo-img mb-2">
         <h3 class="h5 brand-title mb-0">EcoLearn</h3>
-        <p class="ad-role">Administrator</p>
+        <p class="ledger-role">Administrator</p>
 
         <ul class="nav nav-pills flex-column w-100 mt-3">
             <li class="nav-item mb-1">
-                <a class="nav-link active d-flex align-items-center gap-2" href="#" data-view="overview">
+                <a class="nav-link active d-flex align-items-center gap-2" href="#overview" data-view="overview" aria-current="page">
                     <i class="bi bi-grid-1x2" aria-hidden="true"></i> Overview
                 </a>
             </li>
             <li class="nav-item mb-1">
-                <a class="nav-link d-flex align-items-center gap-2" href="#" data-view="students">
+                <a class="nav-link d-flex align-items-center gap-2" href="#students" data-view="students">
                     <i class="bi bi-people" aria-hidden="true"></i> Students
-                    <span class="ad-nav-count" id="navStudentCount">0</span>
+                    <span class="nav-count" id="navCountStudents" hidden></span>
                 </a>
             </li>
             <li class="nav-item mb-1">
-                <a class="nav-link d-flex align-items-center gap-2" href="#" data-view="archived">
+                <a class="nav-link d-flex align-items-center gap-2" href="#archived" data-view="archived">
                     <i class="bi bi-archive" aria-hidden="true"></i> Archived
-                    <span class="ad-nav-count" id="navArchivedCount">0</span>
+                    <span class="nav-count" id="navCountArchived" hidden></span>
                 </a>
             </li>
             <li class="nav-item mt-auto">
-                <button id="logoutButton" type="button" class="nav-link d-flex align-items-center gap-2 w-100 border-0" style="background:none;cursor:pointer;">
-                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Log out
+                <button id="logoutButton" type="button" class="nav-link d-flex align-items-center gap-2 w-100 border-0">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout
                 </button>
             </li>
         </ul>
     </nav>
 
-    <main class="ad-main" id="main">
+    <main class="admin-main" id="adminMain" tabindex="-1">
 
-        <div class="ad-topbar">
-            <label class="ad-search">
+        <!-- ================= TOP BAR ================= -->
+        <div class="topbar">
+            <label class="topbar-search">
                 <i class="bi bi-search" aria-hidden="true"></i>
-                <span class="ad-sr">Search students</span>
-                <input id="topbarSearch" type="search" placeholder="Search students   ( / )" autocomplete="off">
+                <span class="visually-hidden">Search students by name or email</span>
+                <input id="topbarSearch" type="search" placeholder="Search students by name or email" autocomplete="off">
+                <kbd class="search-hint" aria-hidden="true">/</kbd>
             </label>
-            <div class="ad-topbar-actions">
-                <button class="ad-icon-btn" id="topbarNotifBtn" type="button" aria-label="Notifications"><i class="bi bi-bell" aria-hidden="true"></i></button>
-                <div class="ad-avatar-me" id="topbarAvatar" title="Admin">A</div>
+
+            <div class="topbar-actions">
+                <button class="refresh-btn" id="refreshBtn" type="button" aria-label="Refresh student data">
+                    <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+                    <span id="updatedAt">Loading…</span>
+                </button>
+                <span class="avatar" id="topbarAvatar" title="Admin">A</span>
             </div>
         </div>
 
-        <header class="ad-header">
-            <div>
-                <h1><span id="greeting">Welcome</span>, <span id="adminName">Admin</span></h1>
-                <p id="sectionSubtitle">Records for every student enrolled in the biology course.</p>
+        <!-- ================= PAGE HEADER ================= -->
+        <header class="page-head">
+            <div class="page-head-text">
+                <h1 id="viewTitle" tabindex="-1">Overview</h1>
+                <p id="viewSubtitle">Loading class records…</p>
             </div>
-            <label class="ad-picker">
-                <span>Section</span>
-                <select id="sectionSelect">
-                    <option value="all">All sections</option>
-                    <option value="1-A">Section 1-A</option>
-                    <option value="1-B">Section 1-B</option>
-                    <option value="1-C">Section 1-C</option>
-                </select>
-            </label>
+            <div class="section-filter" id="sectionFilter" role="group" aria-label="Show section"></div>
         </header>
 
-        <!-- OVERVIEW -->
-        <section class="ad-view" data-view="overview" aria-label="Overview">
+        <!-- Shown when Supabase can't be reached or a policy blocks the query -->
+        <div class="notice notice-error" id="loadError" role="alert" hidden>
+            <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+            <p id="loadErrorText">Couldn't load students.</p>
+            <button class="btn btn-quiet" id="loadErrorRetry" type="button">Try again</button>
+        </div>
 
-            <div class="ad-stats">
-                <div class="ad-stat">
-                    <span class="ad-stat-label">Students on record</span>
-                    <span class="ad-stat-value" id="statTotalStudents">0</span>
-                    <span class="ad-stat-meta">Registered accounts</span>
+        <!-- =========================================
+             OVERVIEW
+        ========================================= -->
+        <section class="admin-view is-active" data-view="overview" aria-labelledby="viewTitle">
+
+            <div class="kpi-strip">
+                <button type="button" class="kpi kpi-link" data-go="students">
+                    <span class="kpi-label">Students enrolled</span>
+                    <span class="kpi-value" id="statTotalStudents">–</span>
+                    <span class="kpi-meta" id="statTotalMeta">&nbsp;</span>
+                </button>
+                <div class="kpi">
+                    <span class="kpi-label">Active this week</span>
+                    <span class="kpi-value" id="statActiveWeek">–</span>
+                    <span class="kpi-meta" id="statActiveMeta">&nbsp;</span>
                 </div>
-                <div class="ad-stat">
-                    <span class="ad-stat-label">Active</span>
-                    <span class="ad-stat-value" id="statActiveStudents">0</span>
-                    <span class="ad-stat-meta" id="statInactiveMeta">&nbsp;</span>
+                <div class="kpi">
+                    <span class="kpi-label">Average quiz score</span>
+                    <span class="kpi-value" id="statAvgScore">–</span>
+                    <span class="kpi-meta" id="statAvgMeta">&nbsp;</span>
                 </div>
-                <div class="ad-stat">
-                    <span class="ad-stat-label">Average quiz score</span>
-                    <span class="ad-stat-value" id="statAvgScore">0%</span>
-                    <span class="ad-stat-meta">Across all attempts</span>
-                </div>
-                <div class="ad-stat">
-                    <span class="ad-stat-label">Archived</span>
-                    <span class="ad-stat-value" id="statArchived">0</span>
-                    <span class="ad-stat-meta">Set aside for inactivity</span>
-                </div>
+                <button type="button" class="kpi kpi-link" data-go="archived">
+                    <span class="kpi-label">Archived</span>
+                    <span class="kpi-value" id="statArchived">–</span>
+                    <span class="kpi-meta">Can be restored any time</span>
+                </button>
             </div>
 
-            <div class="ad-panel ad-pulse">
-                <div class="ad-panel-head">
-                    <h2>When students were last active</h2>
-                    <span class="ad-pulse-note" id="pulseNote"></span>
-                </div>
-                <div class="ad-pulse-bar" id="pulseBar" role="img" aria-label="Activity breakdown"></div>
-                <ul class="ad-pulse-legend" id="pulseLegend"></ul>
-            </div>
-
-            <div class="ad-grid">
-                <div class="ad-panel">
-                    <div class="ad-panel-head"><h2>Top performers</h2></div>
-                    <ol class="ad-rank" id="topPerformersList"></ol>
-                </div>
-                <div class="ad-panel">
-                    <div class="ad-panel-head">
-                        <h2>Recent activity</h2>
-                        <a href="#" id="goToStudentsBtn" class="ad-link">View all students</a>
+            <div class="overview-grid">
+                <section class="panel" aria-labelledby="activityTitle">
+                    <div class="panel-head">
+                        <h2 id="activityTitle">Recent activity</h2>
+                        <button type="button" class="link-btn" data-go="students">View all students</button>
                     </div>
-                    <ul class="ad-feed" id="activityFeed"></ul>
+                    <ul class="people-list" id="activityFeed"></ul>
+                </section>
+
+                <div class="overview-side">
+                    <section class="panel" aria-labelledby="attentionTitle">
+                        <div class="panel-head">
+                            <h2 id="attentionTitle">Needs attention</h2>
+                        </div>
+                        <ul class="people-list" id="attentionList"></ul>
+                        <button type="button" class="link-btn panel-foot" id="attentionMore" hidden></button>
+                    </section>
+
+                    <section class="panel" aria-labelledby="topTitle">
+                        <div class="panel-head">
+                            <h2 id="topTitle">Top performers</h2>
+                        </div>
+                        <ol class="rank-list" id="topPerformersList"></ol>
+                    </section>
                 </div>
             </div>
         </section>
 
-        <!-- STUDENTS -->
-        <section class="ad-view" data-view="students" aria-label="Students">
-            <div class="ad-panel">
-                <div class="ad-panel-head">
-                    <div>
-                        <h2>Students</h2>
-                        <p class="ad-sub">Every enrolled student, their progress, and their quiz history.</p>
-                    </div>
-                    <span class="ad-count" id="studentCountBadge" aria-live="polite">0 students</span>
-                </div>
-
-                <div class="ad-toolbar">
-                    <label class="ad-field">
-                        <i class="bi bi-search" aria-hidden="true"></i>
-                        <span class="ad-sr">Search by name or email</span>
-                        <input id="studentSearch" type="search" placeholder="Search by name or email" autocomplete="off">
-                    </label>
-                    <label class="ad-select">
-                        <span class="ad-sr">Filter by status</span>
-                        <select id="statusFilter">
-                            <option value="all">All statuses</option>
-                            <option value="active">Active only</option>
-                            <option value="inactive">Inactive only</option>
+        <!-- =========================================
+             STUDENTS
+        ========================================= -->
+        <section class="admin-view" data-view="students" aria-labelledby="viewTitle">
+            <div class="panel panel-flush">
+                <div class="toolbar">
+                    <div class="filter-chips" id="statusFilter" role="group" aria-label="Filter students"></div>
+                    <p class="result-count" id="studentCount" aria-live="polite"></p>
+                    <label class="sort-select">
+                        <span>Sort by</span>
+                        <select id="sortSelect">
+                            <option value="name">Name</option>
+                            <option value="section">Section</option>
+                            <option value="quizzes">Quizzes taken</option>
+                            <option value="avg">Average score</option>
+                            <option value="last">Last active</option>
                         </select>
                     </label>
                 </div>
 
-                <div class="ad-table-wrap">
-                    <table class="ad-table">
+                <div class="search-note" id="searchNote" hidden>
+                    <span id="searchNoteText"></span>
+                    <button type="button" class="link-btn" id="clearSearch">Clear search</button>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="data-table" id="studentTable">
+                        <caption class="visually-hidden">Enrolled students. Use the column buttons to sort.</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Student</th>
-                                <th scope="col">Section</th>
-                                <th scope="col">Joined</th>
-                                <th scope="col">Modules</th>
-                                <th scope="col">Avg. score</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Last active</th>
-                                <th scope="col"><span class="ad-sr">Actions</span></th>
+                                <th scope="col" class="col-no">No.</th>
+                                <th scope="col" class="col-student" aria-sort="ascending"><button type="button" class="th-sort" data-sort="name">Student</button></th>
+                                <th scope="col" class="col-section"><button type="button" class="th-sort" data-sort="section">Section</button></th>
+                                <th scope="col" class="col-quizzes"><button type="button" class="th-sort" data-sort="quizzes">Quizzes taken</button></th>
+                                <th scope="col" class="col-score"><button type="button" class="th-sort" data-sort="avg">Avg. score</button></th>
+                                <th scope="col" class="col-last"><button type="button" class="th-sort" data-sort="last">Last active</button></th>
+                                <th scope="col" class="col-open"><span class="visually-hidden">Open</span></th>
                             </tr>
                         </thead>
                         <tbody id="studentTableBody"></tbody>
@@ -179,26 +195,26 @@
             </div>
         </section>
 
-        <!-- ARCHIVED -->
-        <section class="ad-view" data-view="archived" aria-label="Archived students">
-            <div class="ad-panel">
-                <div class="ad-panel-head">
-                    <div>
-                        <h2>Archived students</h2>
-                        <p class="ad-sub">Set aside after prolonged inactivity. Restore an account to reactivate it.</p>
-                    </div>
-                    <span class="ad-count" id="archivedCountBadge" aria-live="polite">0 archived</span>
+        <!-- =========================================
+             ARCHIVED
+        ========================================= -->
+        <section class="admin-view" data-view="archived" aria-labelledby="viewTitle">
+            <div class="panel panel-flush">
+                <div class="toolbar">
+                    <p class="result-count" id="archivedCount" aria-live="polite"></p>
                 </div>
-                <div class="ad-table-wrap">
-                    <table class="ad-table">
+                <div class="table-wrap">
+                    <table class="data-table" id="archivedTable">
+                        <caption class="visually-hidden">Archived students</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Student</th>
-                                <th scope="col">Section</th>
-                                <th scope="col">Last active</th>
-                                <th scope="col">Modules</th>
-                                <th scope="col">Avg. score</th>
-                                <th scope="col"><span class="ad-sr">Actions</span></th>
+                                <th scope="col" class="col-no">No.</th>
+                                <th scope="col" class="col-student">Student</th>
+                                <th scope="col" class="col-section">Section</th>
+                                <th scope="col" class="col-quizzes">Quizzes taken</th>
+                                <th scope="col" class="col-score">Avg. score</th>
+                                <th scope="col" class="col-last">Last active</th>
+                                <th scope="col" class="col-restore"><span class="visually-hidden">Restore</span></th>
                             </tr>
                         </thead>
                         <tbody id="archivedTableBody"></tbody>
@@ -208,89 +224,82 @@
         </section>
     </main>
 
-    <!-- MODAL: progress -->
-    <div id="progressModal" class="ad-modal" aria-hidden="true">
-        <div class="ad-backdrop" data-close-modal="progressModal"></div>
-        <div class="ad-dialog" role="dialog" aria-modal="true" aria-labelledby="progressModalName">
-            <div class="ad-dialog-head">
-                <div><span class="ad-kicker">Individual progress</span><h3 id="progressModalName">Student</h3></div>
-                <button class="ad-btn ad-btn-quiet" type="button" data-close-modal="progressModal">Close</button>
-            </div>
-            <div class="ad-dialog-body">
-                <p class="ad-sub" id="progressModalMeta"></p>
-                <div id="progressModuleList"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: quiz -->
-    <div id="quizModal" class="ad-modal" aria-hidden="true">
-        <div class="ad-backdrop" data-close-modal="quizModal"></div>
-        <div class="ad-dialog" role="dialog" aria-modal="true" aria-labelledby="quizModalName">
-            <div class="ad-dialog-head">
-                <div><span class="ad-kicker">Quiz performance</span><h3 id="quizModalName">Student</h3></div>
-                <button class="ad-btn ad-btn-quiet" type="button" data-close-modal="quizModal">Close</button>
-            </div>
-            <div class="ad-dialog-body">
-                <p class="ad-sub" id="quizModalMeta"></p>
-                <div class="ad-table-wrap">
-                    <table class="ad-table">
-                        <thead><tr><th scope="col">Quiz</th><th scope="col">Score</th><th scope="col">Retakes</th><th scope="col">Date</th></tr></thead>
-                        <tbody id="quizModalTableBody"></tbody>
-                    </table>
+    <!-- =========================================
+         STUDENT DRAWER  (quiz results + account)
+         Replaces the separate Progress / Quiz / Manage modals.
+    ========================================= -->
+    <div id="studentDrawer" class="drawer" aria-hidden="true">
+        <div class="drawer-backdrop" data-close-drawer></div>
+        <aside class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawerName" tabindex="-1">
+            <header class="drawer-head">
+                <span class="avatar avatar-lg" id="drawerAvatar" aria-hidden="true"></span>
+                <div class="drawer-id">
+                    <h2 id="drawerName">Student</h2>
+                    <p id="drawerEmail"></p>
+                    <div class="drawer-tags" id="drawerTags"></div>
                 </div>
-            </div>
-        </div>
-    </div>
+                <button type="button" class="icon-btn" data-close-drawer aria-label="Close student details">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </header>
 
-    <!-- MODAL: manage -->
-    <div id="manageModal" class="ad-modal" aria-hidden="true">
-        <div class="ad-backdrop" data-close-modal="manageModal"></div>
-        <div class="ad-dialog ad-dialog-sm" role="dialog" aria-modal="true" aria-labelledby="manageTitle">
-            <div class="ad-dialog-head">
-                <div><span class="ad-kicker">Manage account</span><h3 id="manageTitle">Edit student</h3></div>
-                <button class="ad-btn ad-btn-quiet" type="button" data-close-modal="manageModal">Close</button>
+            <dl class="drawer-stats">
+                <div><dt>Average score</dt><dd id="drawerAvg">–</dd></div>
+                <div><dt>Quizzes taken</dt><dd id="drawerQuizCount">–</dd></div>
+                <div><dt>Last active</dt><dd id="drawerLast">–</dd></div>
+            </dl>
+
+            <div class="tabs" role="tablist" aria-label="Student details">
+                <button type="button" class="tab" role="tab" id="tabQuiz" aria-controls="panelQuiz" aria-selected="true" data-tab="quiz">Quiz results</button>
+                <button type="button" class="tab" role="tab" id="tabAccount" aria-controls="panelAccount" aria-selected="false" tabindex="-1" data-tab="account">Account</button>
             </div>
-            <div class="ad-dialog-body">
-                <form id="manageForm">
-                    <input type="hidden" id="manageModalId">
-                    <div class="ad-form-group">
-                        <label for="manageModalName">Full name</label>
-                        <input type="text" id="manageModalName" required>
-                    </div>
-                    <div class="ad-form-group">
-                        <label for="manageModalEmail">Email</label>
-                        <input type="email" id="manageModalEmail" required>
-                    </div>
-                    <div class="ad-form-row">
-                        <div class="ad-form-group">
-                            <label for="manageModalSection">Section</label>
-                            <select id="manageModalSection">
-                                <option value="">Unassigned</option>
-                                <option value="1-A">1-A</option>
-                                <option value="1-B">1-B</option>
-                                <option value="1-C">1-C</option>
-                            </select>
+
+            <div class="drawer-body">
+                <div id="panelQuiz" role="tabpanel" aria-labelledby="tabQuiz">
+                    <p class="muted" id="quizSummary"></p>
+                    <ul class="quiz-list" id="quizList"></ul>
+                    <p class="muted note">Lesson completion isn't recorded yet. It will appear here once lesson tracking is added.</p>
+                </div>
+
+                <div id="panelAccount" role="tabpanel" aria-labelledby="tabAccount" hidden>
+                    <form id="accountForm" novalidate>
+                        <input type="hidden" id="accountId">
+                        <div class="field">
+                            <label for="accountName">Full name</label>
+                            <input type="text" id="accountName" autocomplete="off" required>
+                            <p class="field-error" id="accountNameError" hidden>Enter the student's name.</p>
                         </div>
-                        <div class="ad-form-group">
-                            <label for="manageModalStatus">Status</label>
-                            <select id="manageModalStatus">
+                        <div class="field">
+                            <label for="accountEmail">Email</label>
+                            <input type="email" id="accountEmail" autocomplete="off" required>
+                            <p class="field-error" id="accountEmailError" hidden>Enter a valid email address.</p>
+                        </div>
+                        <div class="field">
+                            <label for="accountStatus">Account status</label>
+                            <select id="accountStatus">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>
+                            <p class="field-help">Inactive students stay enrolled but are flagged for follow-up.</p>
                         </div>
-                    </div>
-                    <div class="ad-form-actions">
-                        <button type="button" class="ad-btn ad-btn-danger" id="manageDeactivateBtn">Archive account</button>
-                        <button type="submit" class="ad-btn ad-btn-primary">Save changes</button>
-                    </div>
-                </form>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="accountSave">Save changes</button>
+                        </div>
+                    </form>
+
+                    <section class="archive-box" id="archiveBox" aria-labelledby="archiveTitle">
+                        <h3 id="archiveTitle">Archive this student</h3>
+                        <p id="archiveText">Archiving removes them from the roster. Their records are kept and you can restore them any time.</p>
+                        <button type="button" class="btn btn-danger-quiet" id="archiveBtn">Archive student</button>
+                    </section>
+                </div>
             </div>
-        </div>
+        </aside>
     </div>
 
-    <div class="ad-toasts" id="toastRegion" aria-live="polite"></div>
+    <!-- Toasts: save confirmations, Undo for archive, errors -->
+    <div class="toasts" id="toasts" role="region" aria-label="Notifications" aria-live="polite"></div>
 
-    <script src="js/admin.js"></script>
+    <script src="js/admin.js?v=1"></script>
 </body>
 </html>
