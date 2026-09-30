@@ -430,9 +430,9 @@
     }
 
     /* STAGE = canvas + control strip */
-    .parent { --stage-h: clamp(280px, 42vh, 440px); }
+    .parent { --stage-h: clamp(260px, 38vh, 420px); }
     @supports (height: 1dvh) {
-        .parent { --stage-h: clamp(280px, 42dvh, 440px); }
+        .parent { --stage-h: clamp(260px, 38dvh, 420px); }
     }
     .div1 {
         --band: 60px;
@@ -560,7 +560,8 @@
         position: sticky;
         top: calc(56px + var(--stage-h));
         z-index: 4;
-        box-shadow: 0 10px 14px -8px rgba(15, 26, 20, .40);   /* text scrolls visibly *behind* the header */
+        border-bottom: 1px solid rgba(255, 255, 255, .12);
+        box-shadow: 0 12px 16px -8px rgba(15, 26, 20, .55);   /* text scrolls visibly *behind* the header */
     }
 }
 
