@@ -350,7 +350,7 @@
     color: var(--paper);
     width: 32px;
     height: 32px;
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -421,7 +421,7 @@
 
     border: none;
     border-left: 3px solid transparent;
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
 
     background: transparent;
     color: rgba(244, 241, 230, 0.72);
@@ -537,7 +537,7 @@
     height: 45px;
 
     border: 1px solid var(--paper-line);
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
 
     background: var(--panel-bg);
 
@@ -865,7 +865,7 @@
     animation:
         skeletonLoading 1.6s ease-in-out infinite;
 
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
 }
 
 
@@ -880,7 +880,7 @@
 
     margin-bottom: 35px;
 
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
 }
 
 
@@ -895,7 +895,7 @@
 
     margin-bottom: 12px;
 
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
 }
 
 
@@ -943,7 +943,7 @@
 
     margin-bottom: 25px;
 
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
 }
 
 
@@ -958,7 +958,7 @@
 
     margin-bottom: 8px;
 
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
 }
 
 
@@ -1034,13 +1034,13 @@
     color: var(--pine);
 
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: 0.85rem;
 
-    font-weight: 700;
+    font-weight: 600;
 
-    text-transform: uppercase;
+    text-transform: none;
 
-    letter-spacing: 0.8px;
+    letter-spacing: 0;
 }
 
 
@@ -1171,7 +1171,7 @@
     padding: 8px 16px;
     background: var(--panel-bg);
     border: 1px solid var(--paper-line);
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
     font-family: var(--font-sans);
     font-size: 14px;
     font-weight: 600;
@@ -1197,14 +1197,14 @@
 .dropdown-menu {
     border: 1px solid var(--paper-line);
     box-shadow: none;
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
     padding: 4px;
     min-width: 140px;
     background: var(--panel-bg);
 }
 
 .dropdown-item {
-    border-radius: 2px;
+    border-radius: var(--radius-inner);
     padding: 8px 12px;
     font-family: var(--font-sans);
     font-size: 14px;

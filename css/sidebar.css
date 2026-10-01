@@ -1,16 +1,24 @@
+/* =====================================================
+   ECOLEARN — SHARED SIDEBAR
+   One sidebar for every page (student, viewer and admin).
+   Pages mark the current link with  class="active"  and
+   aria-current="page"  — no per-page <style> overrides.
+===================================================== */
+
 /* Fixed Sidebar Container */
 .sidebar-bg {
   width: 250px;
   height: 100vh;    /* fallback for older browsers */
   height: 100dvh;   /* real visible height on mobile — 100vh can be taller
-                        than what's on-screen while the browser's address
-                        bar is showing, which is exactly what was pushing
-                        the Logout button (pinned to the bottom via
-                        .mt-auto below) off the bottom of the screen */
+                       than what's on-screen while the browser's address
+                       bar is showing, which is exactly what was pushing
+                       the Log out button (pinned to the bottom via
+                       .mt-auto below) off the bottom of the screen */
   overflow-y: auto; /* safety net: sidebar scrolls instead of hiding
-                        content if it's ever taller than the viewport */
-  background: linear-gradient(180deg, #123D27 0%, #1E7245 100%);
-  box-shadow: 4px 0 18px rgba(18, 61, 39, 0.14);
+                       content if it's ever taller than the viewport */
+  background: #123D27;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  font-family: 'Poppins', system-ui, sans-serif;
   position: fixed;
   top: 0;
   left: 0;
@@ -29,42 +37,43 @@
 /* Brand Header - !important prevents Bootstrap from overriding it to black */
 .brand-title {
   color: #D8F3DC !important;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-family: 'Poppins', system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.2px !important;
 }
 
-/* Base Link Styles - !important prevents Bootstrap overrides */
-/* Base Link Styles (scoped to sidebar only) */
+/* Base Link Styles (scoped to sidebar only).
+   !important prevents Bootstrap / .text-white-50 overrides. */
 .sidebar-bg .nav-link {
-  color: #E8F5E9 !important;
-  font-size: 0.95rem !important;   /* prevent Bootstrap override */
-  padding: 10px 16px;
+  color: rgba(232, 245, 233, 0.86) !important;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 0.9rem !important;
+  font-weight: 500;
+  padding: 10px 14px;
   border-radius: 8px;
-  transition: all 0.2s ease-in-out;
+  background: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 /* Icon sizing (scoped) */
 .sidebar-bg .nav-link i {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 /* Hover (scoped) */
 .sidebar-bg .nav-link:hover {
-  background-color: rgba(82, 183, 136, 0.28);
+  background: rgba(82, 183, 136, 0.14);
   color: #ffffff !important;
 }
 
+/* Current page: tinted fill + a lichen bar on the left edge.
+   The bar is an inset shadow so it never shifts the label. */
 .sidebar-bg .nav-link.active,
 .sidebar-bg .nav-link[aria-current="page"] {
-  background: linear-gradient(100deg, #2d8a5b 0%, #52b788 100%);
+  background: rgba(82, 183, 136, 0.18);
+  box-shadow: inset 3px 0 0 #52B788;
   color: #ffffff !important;
   font-weight: 600;
-  box-shadow: 0 4px 10px rgba(18, 61, 39, 0.18);
-}
-
-/* Logout keeps same sizing */
-.sidebar-bg #logoutButton{
-  font-size: 0.95rem !important;
 }
 
 /* Navigation Pills Container */
@@ -75,25 +84,20 @@
   flex-grow: 1;
 }
 
-/* Logout Button - Push to Bottom */
+/* Log out - pinned to the bottom */
 .sidebar-bg .nav .nav-item.mt-auto {
   margin-top: auto;
   padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Logout Button Styling */
 .sidebar-bg #logoutButton {
-  color: #E8F5E9 !important;
-  font-size: 0.95rem;
-  padding: 10px 16px;
-  border-radius: 8px;
-  transition: all 0.2s ease-in-out;
   text-align: left;
+  cursor: pointer;
 }
 
 .sidebar-bg #logoutButton:hover {
-  background-color: #D32F2F;
+  background: rgba(214, 69, 69, 0.35);
   color: #ffffff !important;
 }
 
@@ -138,13 +142,13 @@
     top: 14px;
     left: 14px;
 
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
 
-    background: linear-gradient(180deg, #123D27 0%, #1E7245 100%);
+    background: #123D27;
     color: #ffffff;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
 
     font-size: 1.2rem;
 

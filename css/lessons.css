@@ -1,15 +1,14 @@
 /* =====================================================
    ECOLEARN — LESSONS LIST
-   ===================================================== */
+   Uses the shared tokens from css/ledger-theme.css and the
+   same card / button / kicker treatment as the dashboard.
+===================================================== */
 
 * {
   box-sizing: border-box;
 }
 
-
-/* =====================================================
-   PAGE WRAPPER
-   ===================================================== */
+/* ---------- Page wrapper ---------- */
 
 .lessons-main {
   padding: clamp(16px, 2.5vw, 32px);
@@ -17,10 +16,7 @@
   display: block;
 }
 
-
-/* =====================================================
-   HEADER
-   ===================================================== */
+/* ---------- Header ---------- */
 
 .lessons-header {
   max-width: 1100px;
@@ -31,107 +27,71 @@
 }
 
 .lessons-title {
-  font-weight: bold;
-  font-size: 32px;
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .lessons-subtitle {
-  margin: 0;
+  margin: 4px 0 0;
   color: var(--ink-muted);
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(
-    0.95rem,
-    0.9rem + .4vw,
-    1.05rem
-  );
+  font-size: .95rem;
+  font-style: normal;
 }
 
-
-/* =====================================================
-   CARD LIST
-   ===================================================== */
+/* ---------- Card list ---------- */
 
 .lessons-list {
   max-width: 1100px;
   margin-inline: auto;
-
   display: grid;
   gap: 16px;
 }
 
-
-/* =====================================================
-   LESSON CARD
-   ===================================================== */
+/* ---------- Lesson card ---------- */
 
 .lesson-card {
   display: grid;
-
   grid-template-columns: 40% 60%;
-
-  background: #FFFFFF;
-
-  border: 1px solid #E1E7E2;
-
-  border-radius: 0px;
-
+  background: var(--panel-bg);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
-
-  transition:
-    border-color 0.2s ease,
-    transform 0.2s ease;
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
 
 .lesson-card:hover {
-  border-color: #123d27;
-
-  transform: translateY(-2px);
+  border-color: var(--lichen);
 }
 
 .lesson-card:focus-within {
   outline: none;
-
-  border-color: #1E7245;
-
-  box-shadow:
-    0 0 0 3px rgba(30, 114, 69, 0.15);
+  border-color: var(--moss);
+  box-shadow: 0 0 0 3px var(--moss-tint);
 }
 
-
-/* =====================================================
-   THUMBNAIL
-   ===================================================== */
+/* ---------- Thumbnail ---------- */
 
 .card-thumbnail {
   min-height: 260px;
-
-  background: #ffffff;
-
+  background: var(--panel-bg);
   position: relative;
-
   padding: 18px;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 }
 
 .card-thumbnail img {
   width: 100%;
   height: 100%;
-
   max-height: 280px;
-
   object-fit: contain;
-
   display: block;
-
-  border-radius: 4px;
+  border-radius: var(--radius-inner);
 }
-
 
 /* =====================================================
    CARD CONTENT
@@ -140,63 +100,33 @@
 
 .card-content {
   padding: 24px;
-
   display: grid;
-
   grid-template-rows:
     auto
     auto
     auto
     1fr
     auto;
-
   gap: 0;
 }
 
-
-/* =====================================================
-   MODULE LABEL
-   ===================================================== */
-
+/* Module label — same kicker as the dashboard ("Up next") */
 .card-eyebrow {
-  margin: 0 0 8px 0;
-
-  font-family: var(--font-sans);
-
-  font-size: 0.72rem;
-
-  letter-spacing: 0.12em;
-
-  text-transform: uppercase;
-
-  color: #C9971F;
-
-  font-weight: 500;
+  margin: 0 0 6px;
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--moss);
 }
-
-
-/* =====================================================
-   TITLE
-   ===================================================== */
 
 .card-title {
-  margin: 0 0 12px 0;
-
-  font-family: var(--font-serif);
-
+  margin: 0 0 10px;
   font-weight: 600;
-
-  color: #16281D;
-
-  font-size: clamp(
-    1.55rem,
-    1.25rem + 1vw,
-    2rem
-  );
-
-  line-height: 1.2;
+  color: var(--ink);
+  font-size: clamp(1.15rem, 1rem + 1vw, 1.5rem);
+  line-height: 1.25;
 }
-
 
 /* =====================================================
    COMPARISON CHIPS  (Animal vs Plant)
@@ -256,98 +186,68 @@
    ===================================================== */
 
 .card-desc {
-  margin: 0 0 20px 0;
-
-  color: #5B6B60;
-
-  font-family: var(--font-sans);
-
-  font-size: 0.98rem;
-
+  margin: 0 0 20px;
+  color: var(--ink-muted);
+  font-size: .95rem;
   line-height: 1.6;
 }
 
-
-/* Highlighted terms */
-
 .card-desc .highlight {
-  color: #C9971F;
-
-  font-weight: 400;
+  color: var(--stamp-gold);
+  font-weight: 600;
 }
 
-
-/* =====================================================
-   BUTTON
-   ===================================================== */
+/* ---------- Button (same as .sd-btn-primary) ---------- */
 
 .card-btn {
-  display: flex;
-
+  display: inline-flex;
   align-items: center;
-
   justify-content: center;
-
   gap: 8px;
-
-  width: 100%;
-
-  padding: 13px 16px;
-
-  background: #123d27;
-
+  min-height: 40px;
+  padding: 0 18px;
+  background: var(--pine);
   color: #ffffff;
-
-  border: 1px solid #123d27;
-
-  border-radius: 0px;
-
+  border: 1px solid var(--pine);
+  border-radius: var(--radius-control);
   text-decoration: none;
-
-  font-family: var(--font-sans);
-
+  font-size: .86rem;
   font-weight: 600;
-
-  letter-spacing: 0.2px;
-
-  transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
+  transition: background-color .15s ease, border-color .15s ease;
 }
 
 .card-btn:hover {
-  background: #1E7245;
-
+  background: var(--moss);
+  border-color: var(--moss);
   color: #ffffff;
-
-  transform: translateY(-1px);
-}
-
-.card-btn:active {
-  transform: translateY(1px);
 }
 
 .card-btn:focus-visible {
-  outline: none;
-
-  box-shadow:
-    0 0 0 3px rgba(45, 74, 45, 0.2);
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
 }
 
+/* ---------- Coming soon (lesson page not built yet) ---------- */
 
-/* =====================================================
-   RESPONSIVE
-   ===================================================== */
+.card-btn.is-disabled,
+.card-btn.is-disabled:hover,
+.card-btn.is-disabled:active {
+  background: var(--paper-line);
+  border-color: var(--paper-line);
+  color: #4F5F55;               /* 6.8:1 on the grey */
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---------- Responsive ---------- */
 
 @media (max-width: 780px) {
-
   .lesson-card {
     grid-template-columns: 1fr;
   }
 
   .card-thumbnail {
     min-height: 220px;
-
     padding: 16px;
   }
 
@@ -358,19 +258,4 @@
   .card-content {
     padding: 20px;
   }
-
-}
-
-/* =====================================================
-   COMING SOON (lesson page not built yet)
-   ===================================================== */
-.card-btn.is-disabled,
-.card-btn.is-disabled:hover,
-.card-btn.is-disabled:active {
-  background: #E1E7E2;
-  color: #4F5F55;               /* 6.8:1 on the grey */
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-  pointer-events: none;
 }

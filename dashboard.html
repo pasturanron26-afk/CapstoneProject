@@ -3,537 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoLearn Dashboard</title>
+    <title>Dashboard · EcoLearn</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/ledger-theme.css">
     <link rel="stylesheet" href="css/dashboard.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
-    <style>
-        nav .nav-link.Dashboard {
-            background-color: #40916C;
-            color: #ffffff !important;
-            font-weight: 600;
-        }
-    </style>
 </head>
 <body>
+    <a class="sd-skip" href="#main">Skip to content</a>
 
-    <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
-        <img src="imgs/Logo.jpg" alt="Logo" class="rounded-circle logo-img mb-2">
+    <nav class="d-flex flex-column align-items-center p-3 sidebar-bg" aria-label="Main">
+        <img src="imgs/Logo.jpg" alt="EcoLearn logo" class="rounded-circle logo-img mb-2">
         <h3 class="h5 brand-title mb-4">EcoLearn</h3>
         <ul class="nav nav-pills flex-column w-100">
-            <li class="nav-item mb-1">
-                <a class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2" href="dashboard.html">
-                    <i class="bi bi-grid-1x2"></i> Dashboard
-                </a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link CellModel text-white-50 d-flex align-items-center gap-2" href="choose.html">
-                    <i class="bi bi-boxes"></i> Cell Models
-                </a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link Lesson text-white-50 d-flex align-items-center gap-2" href="lesson.html">
-                    <i class="bi bi-book"></i> Lessons
-                </a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link Quiz text-white-50 d-flex align-items-center gap-2" href="quiz.html">
-                    <i class="bi bi-question-circle"></i> Quizzes
-                </a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
-                    <i class="bi bi-person"></i> Profile
-                </a>
-            </li>
+            <li class="nav-item mb-1"><a class="nav-link active d-flex align-items-center gap-2" href="dashboard.html" aria-current="page"><i class="bi bi-grid-1x2" aria-hidden="true"></i> Dashboard</a></li>
+            <li class="nav-item mb-1"><a class="nav-link d-flex align-items-center gap-2" href="choose.html"><i class="bi bi-boxes" aria-hidden="true"></i> Cell Models</a></li>
+            <li class="nav-item mb-1"><a class="nav-link d-flex align-items-center gap-2" href="lesson.html"><i class="bi bi-book" aria-hidden="true"></i> Lessons</a></li>
+            <li class="nav-item mb-1"><a class="nav-link d-flex align-items-center gap-2" href="quiz.html"><i class="bi bi-question-circle" aria-hidden="true"></i> Quizzes</a></li>
+            <li class="nav-item mb-1"><a class="nav-link d-flex align-items-center gap-2" href="profile.html"><i class="bi bi-person" aria-hidden="true"></i> Profile</a></li>
             <li class="nav-item mt-auto">
-                <button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background: none; cursor: pointer;">
-                    <i class="bi bi-box-arrow-right"></i> Logout
+                <button id="logoutButton" type="button" class="nav-link d-flex align-items-center gap-2 w-100 border-0" style="background:none;cursor:pointer;">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Log out
                 </button>
             </li>
         </ul>
     </nav>
 
-    <main class="dashboard-content">
-        <div class="page-header">
+    <main class="sd-main" id="main">
+
+        <header class="sd-header">
             <div>
-                <span class="eyebrow">Student dashboard</span>
-                <h1>
-                    <span id="studentName">Student</span>
-                    <span id="studentSection" class="student-section"></span>
-                </h1>
-                <p id="studentSubtitle" class="student-email"><i class="bi bi-envelope"></i> <span id="studentEmail">student@email.com</span></p>
+                <h1><span id="greeting">Welcome</span>, <span id="studentName">student</span></h1>
+                <p id="studentMeta">Pick up where you left off in Biology.</p>
             </div>
-            <div class="header-tools">
-                <label class="dashboard-search">
-                    <i class="bi bi-search" aria-hidden="true"></i>
-                    <input id="dashboardSearch" type="search" placeholder="Search lessons, topics..." aria-label="Search lessons and topics">
-                </label>
-            </div>
+            <label class="sd-search">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <span class="sd-sr">Search lessons</span>
+                <input id="dashboardSearch" type="search" placeholder="Search lessons" autocomplete="off">
+            </label>
+        </header>
+
+        <div class="sd-hero">
+            <!-- Continue learning + course path -->
+            <section class="sd-card sd-continue" aria-labelledby="continueTitle">
+                <div class="sd-continue-body">
+                    <img id="continueImg" class="sd-cover" src="imgs/animalVSplant.jpg" alt="">
+                    <div class="sd-continue-copy">
+                        <span class="sd-kicker" id="continueKicker">Up next</span>
+                        <h2 id="continueTitle">Loading your lessons…</h2>
+                        <p id="continueDesc"></p>
+                        <a class="sd-btn sd-btn-primary" id="continueBtn" href="lesson.html">Open lessons</a>
+                    </div>
+                </div>
+                <div class="sd-path" aria-label="Course path">
+                    <div class="sd-path-head"><span>Your course path</span><span id="pathSummary"></span></div>
+                    <ol class="sd-path-track" id="pathTrack"></ol>
+                </div>
+            </section>
+
+            <!-- Progress -->
+            <section class="sd-card sd-progress" aria-labelledby="progressTitle">
+                <h2 id="progressTitle">Course progress</h2>
+                <div class="sd-ring-row">
+                    <div class="sd-ring" id="progressRing" style="--p:0"><span id="progressRingValue">—</span></div>
+                    <div>
+                        <p class="sd-ring-title" id="overallProgressMeta">Loading…</p>
+                        <p class="sd-ring-sub" id="quizSummary"></p>
+                    </div>
+                </div>
+                <ul class="sd-goals" id="goalList"></ul>
+            </section>
         </div>
 
-        <section class="stats-grid">
-            <div class="stat-card folder-card" data-folder="lessons" data-title="Lessons" data-list="Module 01 • Animal Cell vs Plant Cell|Module 02 • Mitosis of Plant and Animal Cells|Module 03 • Cell Membrane and Transport|Module 04 • Cell Respiration|Module 05 • Photosynthesis|Module 06 • Cell Cycle and Cancer|Module 07 • Cell Differentiation and Specialization|Module 08 • Cell Signaling and Communication">
-                <button class="stat-card-toggle" type="button" aria-expanded="false">
-                    <div class="label">
-                        <span>Lessons</span>
-                        <span class="icon"><i class="bi bi-book"></i></span>
-                    </div>
-                    <div class="value">8</div>
-                    <div class="meta">8 modules available</div>
-                </button>
+        <section class="sd-modules" aria-labelledby="modulesTitle">
+            <div class="sd-section-head">
+                <h2 id="modulesTitle">All modules</h2>
+                <a class="sd-link" href="lesson.html">Open lessons page</a>
             </div>
-
-            <div class="stat-card folder-card" data-folder="quizzes" data-title="Quizzes" data-list="Quiz 01 • Animal Cell vs Plant Cell|Quiz 02 • Mitosis (coming soon)|Quiz 03 • Cell Membrane (coming soon)|Quiz 04 • Cell Respiration (coming soon)|Quiz 05 • Photosynthesis (coming soon)|Quiz 06 • Cell Cycle (coming soon)|Quiz 07 • Cell Differentiation (coming soon)|Quiz 08 • Cell Signaling (coming soon)">
-                <button class="stat-card-toggle" type="button" aria-expanded="false">
-                    <div class="label">
-                        <span>Quizzes</span>
-                        <span class="icon"><i class="bi bi-patch-check"></i></span>
-                    </div>
-                    <div class="value">8</div>
-                    <div class="meta" id="quizBestScoreMeta">Best score: —</div>
-                </button>
-            </div>
-
-            <div class="stat-card" id="progressStatCard">
-                <div class="label">
-                    <span>Progress</span>
-                    <span class="icon"><i class="bi bi-graph-up-arrow"></i></span>
-                </div>
-                <div class="value" id="overallProgressValue">—</div>
-                <div class="meta" id="overallProgressMeta">Loading...</div>
-            </div>
+            <div class="sd-grid" id="moduleGrid"></div>
         </section>
 
-        <section class="content-grid">
-            <div class="panel">
-                <div class="panel-title">
-                    <h2>Current Learning Path</h2>
-                    <a href="lesson.html">View all</a>
+        <section class="sd-tools" aria-label="Explore">
+            <a class="sd-tool sd-tool-explore" href="choose.html">
+                <img src="imgs/animal-cell.png" alt="">
+                <div>
+                    <h3>Explore cells in 3D</h3>
+                    <p>Rotate and zoom animal and plant cells, and tap organelles to learn what they do.</p>
+                    <span class="sd-btn">Open 3D models</span>
                 </div>
-                <div class="lesson-list">
-                    <!-- Populated by syncLessonsFromLessonPage() -->
+            </a>
+            <a class="sd-tool" href="quiz.html">
+                <i class="bi bi-patch-check" aria-hidden="true"></i>
+                <div>
+                    <h3>Test yourself</h3>
+                    <p id="quizBestScoreMeta">Take a quiz to see your best score here.</p>
+                    <span class="sd-btn">Go to quizzes</span>
                 </div>
-            </div>
-
-            <div>
-                <div class="panel">
-                    <div class="panel-title">
-                        <h2>Overall completion</h2>
-                    </div>
-                    <div class="mini-card">
-                        <h3>Course progress</h3>
-                        <div class="progress-ring" id="progressRing"><span id="progressRingValue">—</span></div>
-                    </div>
-                    <div class="goal-list">
-                        <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Cell Structure</div>
-                            <span class="score" id="goal-0">0%</span>
-                        </div>
-                        <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Cell Division &amp; Cycle</div>
-                            <span class="score" id="goal-1">0%</span>
-                        </div>
-                        <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Cell Energy</div>
-                            <span class="score" id="goal-2">0%</span>
-                        </div>
-                        <div class="goal-item">
-                            <div class="label-row"><span class="dot"></span> Cell Processes &amp; Communication</div>
-                            <span class="score" id="goal-3">0%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="dashboard-lower-grid">
-            <div class="panel quick-access-panel">
-                <div class="panel-title"><h2>Quick Access</h2></div>
-                <div class="quick-access-grid">
-                    <a href="choose.html" class="quick-access-item"><i class="bi bi-boxes"></i><span>3D Explorer</span></a>
-                    <a href="quiz.html" class="quick-access-item"><i class="bi bi-patch-check"></i><span>Take a Quiz</span></a>
-                    <a href="#" class="quick-access-item"><i class="bi bi-journal-text"></i><span>Study Notes</span></a>
-                    <a href="#" class="quick-access-item"><i class="bi bi-trophy"></i><span>My Achievements</span></a>
-                </div>
-            </div>
-            <article class="featured-learning">
-                <div class="featured-copy">
-                    <span class="eyebrow">FEATURED LEARNING</span>
-                    <h2>Discover the Microscopic World</h2>
-                    <p>Explore interactive 3D models and make science come alive!</p>
-                    <a class="featured-button" href="choose.html">Continue Learning <i class="bi bi-arrow-right"></i></a>
-                </div>
-                <img src="imgs/animal-cell.png" alt="Colorful animal cell model">
-            </article>
+            </a>
         </section>
     </main>
 
-    <!-- FOLDER POPUP -->
-    <div id="folderPopup" class="folder-popup" aria-hidden="true">
-        <div class="folder-popup-backdrop" data-close="true"></div>
-        <div class="folder-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="folderPopupTitle">
-            <div class="folder-popup-header">
-                <div class="folder-popup-heading">
-                    <span class="folder-popup-icon" id="folderPopupIcon" aria-hidden="true"><i class="bi bi-book"></i></span>
-                    <div>
-                        <h3 id="folderPopupTitle">Folder</h3>
-                        <p id="folderPopupSubtitle" class="folder-popup-subtitle">Tap an item to open it.</p>
-                    </div>
-                </div>
-                <button class="folder-popup-close" type="button" aria-label="Close folder">&times;</button>
-            </div>
-            <div class="folder-popup-body">
-                <ul id="folderPopupList"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========================================
-         SYNC LESSONS FROM lesson.html
-    ========================================= -->
-    <script>
-    async function syncLessonsFromLessonPage() {
-        try {
-            const res = await fetch('lesson.html', { cache: 'no-store' });
-            if (!res.ok) throw new Error('Failed to load lesson.html');
-            const html = await res.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-
-            const cards = Array.from(doc.querySelectorAll('.lessons-list .lesson-card'));
-            if (!cards.length) return;
-
-            const modules = cards.map((card, idx) => {
-                const eyebrow = card.querySelector('.card-eyebrow')?.textContent.trim() || `Module ${idx + 1}`;
-                const number = (() => {
-                    const m = eyebrow.match(/module\s*(\d+)/i);
-                    return m ? parseInt(m[1], 10) : (idx + 1);
-                })();
-                const moduleLabel = `Module ${String(number).padStart(2, '0')}`;
-                const title = card.querySelector('.card-title')?.textContent.trim() || `Lesson ${idx + 1}`;
-                const desc  = card.querySelector('.card-desc')?.textContent.trim() || '';
-                const href  = card.querySelector('.card-btn')?.getAttribute('href') || 'lesson.html';
-                const img   = card.querySelector('.card-thumbnail img')?.getAttribute('src') || '';
-                return { moduleLabel, title, desc, href, img };
-            });
-
-            const lessonsCard = document.querySelector('.stat-card.folder-card[data-folder="lessons"]');
-            if (lessonsCard) {
-                lessonsCard.dataset.list = modules.map(m => `${m.moduleLabel} • ${m.title}`).join('|');
-                const valueEl = lessonsCard.querySelector('.value');
-                if (valueEl) valueEl.textContent = modules.length;
-            }
-
-            const listEl = document.querySelector('.lesson-list');
-            if (listEl) {
-                listEl.innerHTML = '';
-                modules.forEach((m) => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'lesson-item';
-                    btn.dataset.title   = m.title;
-                    btn.dataset.module  = m.moduleLabel;
-                    btn.dataset.time    = '—';
-                    btn.dataset.summary = m.desc;
-                    btn.dataset.objectives = '';
-                    btn.dataset.link    = m.href;
-
-                    const left = document.createElement('div');
-                    left.className = 'lesson-left';
-
-                    const img = document.createElement('img');
-                    img.className = 'lesson-thumb';
-                    img.src = m.img;
-                    img.alt = m.title;
-
-                    const icon = document.createElement('div');
-                    icon.className = 'lesson-icon';
-                    icon.innerHTML = '<i class="bi bi-journal-text"></i>';
-
-                    const info = document.createElement('div');
-                    const name = document.createElement('div');
-                    name.className = 'lesson-name';
-                    name.textContent = m.title;
-
-                    const meta = document.createElement('div');
-                    meta.className = 'lesson-meta';
-                    meta.textContent = `${m.moduleLabel} • —`;
-
-                    const progress = document.createElement('div');
-                    progress.className = 'lesson-progress';
-                    progress.innerHTML = '<span style="width:0%"></span>';
-
-                    const status = document.createElement('div');
-                    status.className = 'lesson-status';
-                    status.innerHTML = '0% <strong>Up Next</strong>';
-
-                    info.append(name, meta, progress, status);
-                    left.append(img, icon, info);
-                    btn.append(left);
-                    listEl.appendChild(btn);
-                });
-
-                listEl.querySelectorAll('.lesson-item').forEach((item) => {
-                    if (!item.dataset.bound) {
-                        item.addEventListener('click', () => openLessonModal(item));
-                        item.dataset.bound = '1';
-                    }
-                });
-            }
-        } catch (err) {
-            console.error('Sync lessons failed:', err);
-        }
-    }
-    document.addEventListener('DOMContentLoaded', syncLessonsFromLessonPage);
-    </script>
-
-    <!-- =========================================
-         STUDENT INFO + UI INTERACTIONS
-    ========================================= -->
     <script>
     ecoAuth.requireStudent();
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        const { data, error } = await ecoAuth.client.auth.getSession();
+    /* ---------- helpers ---------- */
+    const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const tier = (pct) => pct === null ? 'none' : (pct >= 85 ? 'good' : (pct >= 70 ? 'ok' : 'low'));
 
-        if (data?.session?.user) {
-            const user = data.session.user;
-            let fullName = user.user_metadata?.full_name || 'Student';
-            let section  = user.user_metadata?.section || '';
-            const email  = user.email || '';
+    /* ---------- course data ---------- */
+    // Fallback list, used if lesson.html can't be read. Quiz ids match quiz_attempts.lesson_id.
+    const MODULES = [
+        { title: 'Animal Cell vs Plant Cell',                img: 'imgs/animalVSplant.jpg',        id: 'e43f6bee-bcff-4692-b5e2-396b4176eacd' },
+        { title: 'Mitosis of Plant and Animal Cells',        img: 'imgs/cellDivision.jpg',         id: 'fc3f6b43-fb9d-420d-9060-9529ba395621' },
+        { title: 'Cell Membrane and Transport',              img: 'imgs/cellMembrane.jpg',         id: '46254ff2-c787-4792-94db-5d33181f6b55' },
+        { title: 'Cell Respiration',                         img: 'imgs/cellRespiration.jpg',      id: '1b15a414-7e6c-4992-b17c-1c924745366d' },
+        { title: 'Photosynthesis',                           img: 'imgs/photosynthesis.jpg',       id: '81ece535-7d0b-47e9-a95a-ed8e0f25cc76' },
+        { title: 'Cell Cycle and Cancer',                    img: 'imgs/cellCycle.jpg',            id: '26dc1e4f-4a8b-45fc-8e12-ab7fd326eea1' },
+        { title: 'Cell Differentiation and Specialization',  img: 'imgs/cellDifferentiation.jpg',  id: '5149863c-8971-49ef-afa2-085cec2f3d1e' },
+        { title: 'Cell Signaling and Communication',         img: 'imgs/cellSignaling.jpg',        id: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9' },
+    ].map((m, i) => ({ ...m, n: i + 1, desc: '', href: 'lesson.html', best: null }));
 
-            try {
-                const { data: profile } = await ecoAuth.client
-                    .from('profiles')
-                    .select('full_name, section')
-                    .eq('id', user.id)
-                    .maybeSingle();
-                if (profile) {
-                    fullName = profile.full_name || fullName;
-                    section  = profile.section  || section;
-                }
-            } catch (_) {}
+    const GOAL_GROUPS = [
+        { label: 'Cell structure',                 modules: [1] },
+        { label: 'Cell division and cycle',        modules: [2, 6] },
+        { label: 'Cell energy',                    modules: [4, 5] },
+        { label: 'Cell processes and signaling',   modules: [3, 7, 8] },
+    ];
 
-            document.getElementById('studentName').textContent = fullName;
-            const sectionEl = document.getElementById('studentSection');
-            if (sectionEl) sectionEl.textContent = section ? `Section ${section}` : '';
-            document.getElementById('studentEmail').textContent = email;
-        }
+    let query = '';
 
-            const logoutButton = document.getElementById('logoutButton');
-            
-            if (logoutButton) {
-                logoutButton.addEventListener('click', async () => {
-                    await window.ecoAuth.signOut();
-                });
-            }
-        });
-
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                ecoAuth.signOut();
-            });
-        }
-
-        const folderPopup = document.getElementById('folderPopup');
-        const folderPopupTitle = document.getElementById('folderPopupTitle');
-        const folderPopupSubtitle = document.getElementById('folderPopupSubtitle');
-        const folderPopupIcon = document.getElementById('folderPopupIcon');
-        const folderPopupList = document.getElementById('folderPopupList');
-        const folderPopupClose = document.querySelector('.folder-popup-close');
-
-    function openFolderPopup(card) {
-        const isQuiz = card.dataset.folder === 'quizzes';
-        document.getElementById('folderPopupTitle').textContent = card.dataset.title || 'Folder';
-        document.getElementById('folderPopupIcon').innerHTML = isQuiz
-            ? '<i class="bi bi-patch-check"></i>' : '<i class="bi bi-book"></i>';
-        document.getElementById('folderPopupSubtitle').textContent = isQuiz
-            ? 'Tap a quiz to head to the Quizzes page and start it.'
-            : 'Tap a module to head to the Lessons page and start it.';
-        const list = (card.dataset.list || '').split('|').filter(Boolean);
-        const ul = document.getElementById('folderPopupList');
-        ul.innerHTML = '';
-        list.forEach(item => {
-            const li  = document.createElement('li');
-            const btn = document.createElement('button');
-            btn.type = 'button'; btn.className = 'folder-item';
-            btn.innerHTML = `<span class="folder-item-icon"><i class="bi bi-${isQuiz ? 'question-circle' : 'journal-text'}"></i></span><span class="folder-item-label">${item}</span><i class="bi bi-box-arrow-up-right folder-item-trailing"></i>`;
-            btn.addEventListener('click', () => { closeFolderPopup(); window.location.href = isQuiz ? 'quiz.html' : 'lesson.html'; });
-            li.appendChild(btn); ul.appendChild(li);
-        });
-        folderPopup.classList.add('is-open');
-        folderPopup.setAttribute('aria-hidden', 'false');
+    /* ---------- render ---------- */
+    function nextModule() {
+        return MODULES.find(m => m.best === null)
+            || [...MODULES].sort((a, b) => a.best - b.best)[0];
     }
 
-    function closeFolderPopup() {
-        folderPopup.classList.remove('is-open');
-        folderPopup.setAttribute('aria-hidden', 'true');
+    function renderContinue() {
+        const m = nextModule();
+        const untaken = m.best === null;
+        document.getElementById('continueKicker').textContent = `${untaken ? 'Up next' : 'Worth a review'} · Module ${String(m.n).padStart(2, '0')}`;
+        document.getElementById('continueTitle').textContent = m.title;
+        document.getElementById('continueDesc').textContent = m.desc || 'Read the lesson, then take the quiz to record your score.';
+        document.getElementById('continueImg').src = m.img;
+        const btn = document.getElementById('continueBtn');
+        btn.href = m.href;
+        btn.textContent = untaken ? 'Start lesson' : 'Review lesson';
     }
 
-        document.querySelectorAll('.lesson-item').forEach((item) => {
-            item.addEventListener('click', () => {
-                window.location.href = 'lesson.html';
-            });
-        });
+    function renderPath() {
+        const taken = MODULES.filter(m => m.best !== null).length;
+        document.getElementById('pathSummary').textContent = `${taken} of ${MODULES.length} quizzes taken`;
+        document.getElementById('pathTrack').innerHTML = MODULES.map(m => {
+            const label = m.best === null ? 'quiz not taken' : `best score ${m.best}%`;
+            return `<li><a class="sd-seg is-${tier(m.best)}" href="${esc(m.href)}" title="Module ${m.n}: ${esc(m.title)} — ${label}" aria-label="Module ${m.n}, ${esc(m.title)}, ${label}"><b>${m.n}</b></a></li>`;
+        }).join('');
+    }
 
-        document.querySelectorAll('.folder-card .stat-card-toggle').forEach((toggle) => {
-            toggle.addEventListener('click', () => {
-                const card = toggle.closest('.folder-card');
-                openFolderPopup(card);
-            });
-        });
+    function renderProgress() {
+        const overall = Math.round(MODULES.reduce((s, m) => s + (m.best ?? 0), 0) / MODULES.length);
+        const taken = MODULES.filter(m => m.best !== null);
+        document.getElementById('progressRingValue').textContent = `${overall}%`;
+        document.getElementById('progressRing').style.setProperty('--p', overall);
+        document.getElementById('overallProgressMeta').textContent =
+            !taken.length ? 'No quizzes taken yet' : overall >= 80 ? 'Excellent progress' : overall >= 50 ? 'On target' : 'Keep going';
+        document.getElementById('quizSummary').textContent = taken.length
+            ? `Based on your best quiz score in each of ${MODULES.length} modules.` : 'Take a module quiz and your progress starts here.';
 
-        document.getElementById('dashboardSearch').addEventListener('input', (event) => {
-            const query = event.target.value.trim().toLowerCase();
-            document.querySelectorAll('.lesson-item').forEach((item) => {
-                item.hidden = query && !item.textContent.toLowerCase().includes(query);
-            });
-        });
+        document.getElementById('goalList').innerHTML = GOAL_GROUPS.map(g => {
+            const avg = Math.round(g.modules.reduce((s, n) => s + (MODULES[n - 1]?.best ?? 0), 0) / g.modules.length);
+            return `<li><div class="sd-goal-row"><span>${esc(g.label)}</span><b>${avg}%</b></div><div class="sd-bar" aria-hidden="true"><span style="width:${avg}%"></span></div></li>`;
+        }).join('');
 
-        folderPopupClose.addEventListener('click', closeFolderPopup);
-        folderPopup.addEventListener('click', (event) => {
-            if (event.target.matches('[data-close="true"]')) {
-                closeFolderPopup();
-            }
-        });
+        const best = taken.length ? Math.max(...taken.map(m => m.best)) : null;
+        document.getElementById('quizBestScoreMeta').textContent = best === null
+            ? 'Take a quiz to see your best score here.' : `Your best score so far is ${best}%.`;
+    }
 
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                closeFolderPopup();
-            }
-        });
-
-        function addPublishedContent() {
-            let uploads = [];
-            try { uploads = JSON.parse(localStorage.getItem('ecolearn-published-content') || '[]'); } catch (error) { return; }
-            const cards = {
-                lesson: document.querySelector('[data-folder="lessons"]'),
-                quizizz: document.querySelector('[data-folder="quizzes"]')
-            };
-            const counts = { lesson: 12, quizizz: 8 };
-            uploads.forEach((upload) => {
-                const card = cards[upload.type];
-                if (!card) return;
-                counts[upload.type] += 1;
-                card.dataset.list = `${card.dataset.list}|${upload.module} - ${upload.title}`;
-            });
-            Object.entries(cards).forEach(([type, card]) => {
-                const value = card.querySelector('.value');
-                if (value) value.textContent = counts[type];
-            });
+    function renderModules() {
+        const q = query;
+        const list = MODULES.filter(m => !q || `${m.title} ${m.desc}`.toLowerCase().includes(q));
+        const grid = document.getElementById('moduleGrid');
+        if (!list.length) {
+            grid.innerHTML = `<div class="sd-empty"><p>No lessons match “${esc(query)}”.</p><button class="sd-btn" type="button" id="clearSearch">Clear search</button></div>`;
+            return;
         }
+        grid.innerHTML = list.map(m => `
+            <a class="sd-module" href="${esc(m.href)}">
+                <img src="${esc(m.img)}" alt="" loading="lazy">
+                <div class="sd-module-body">
+                    <span class="sd-module-no">Module ${String(m.n).padStart(2, '0')}</span>
+                    <h3>${esc(m.title)}</h3>
+                    <span class="sd-chip is-${tier(m.best)}">${m.best === null ? 'Quiz not taken' : `Best score ${m.best}%`}</span>
+                </div>
+            </a>`).join('');
+    }
 
-        addPublishedContent();
-    </script>
+    const renderAll = () => { renderContinue(); renderPath(); renderProgress(); renderModules(); };
 
-    <!-- =========================================
-         REAL PROGRESS — from Supabase quiz_attempts
-    ========================================= -->
-    <script>
-    document.addEventListener('DOMContentLoaded', async () => {
+    /* ---------- data: lessons page + quiz attempts ---------- */
+    async function loadLessonDetails() {
+        try {
+            const res = await fetch('lesson.html', { cache: 'no-store' });
+            if (!res.ok) return;
+            const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+            doc.querySelectorAll('.lessons-list .lesson-card').forEach((card, i) => {
+                const m = MODULES[i];
+                if (!m) return;
+                m.title = card.querySelector('.card-title')?.textContent.trim() || m.title;
+                m.desc  = card.querySelector('.card-desc')?.textContent.trim() || '';
+                m.href  = card.querySelector('.card-btn')?.getAttribute('href') || m.href;
+                m.img   = card.querySelector('.card-thumbnail img')?.getAttribute('src') || m.img;
+            });
+        } catch (err) { console.error('Could not read lesson.html:', err); }
+    }
 
-        // ── LESSON UUID MAP ──────────────────────────────────
-        const LESSON_IDS = {
-            1: 'e43f6bee-bcff-4692-b5e2-396b4176eacd', // Animal Cell vs Plant Cell
-            2: 'fc3f6b43-fb9d-420d-9060-9529ba395621', // Mitosis of Plant and Animal Cells
-            3: '46254ff2-c787-4792-94db-5d33181f6b55', // Cell Membrane and Transport
-            4: '1b15a414-7e6c-4992-b17c-1c924745366d', // Cell Respiration
-            5: '81ece535-7d0b-47e9-a95a-ed8e0f25cc76', // Photosynthesis
-            6: '26dc1e4f-4a8b-45fc-8e12-ab7fd326eea1', // Cell Cycle and Cancer
-            7: '5149863c-8971-49ef-afa2-085cec2f3d1e', // Cell Differentiation
-            8: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9', // Cell Signaling
-        };
-
-        // ── GOAL GROUPS ──────────────────────────────────────
-        const GOAL_GROUPS = [
-            { id: 'goal-0', label: 'Cell Structure',                 modules: [1] },
-            { id: 'goal-1', label: 'Cell Division & Cycle',          modules: [2, 6] },
-            { id: 'goal-2', label: 'Cell Energy',                    modules: [4, 5] },
-            { id: 'goal-3', label: 'Cell Processes & Communication', modules: [3, 7, 8] },
-        ];
-
-        const client = window.ecoAuth?.client;
-        if (!client) return;
-
-        const { data: { user } } = await client.auth.getUser();
-        if (!user) return;
-
-        // ── FETCH ATTEMPTS ───────────────────────────────────
-        const { data: attempts, error } = await client
-            .from('quiz_attempts')
-            .select('lesson_id, score')
-            .eq('user_id', user.id);
-
+    async function loadScores(user) {
+        const { data, error } = await ecoAuth.client.from('quiz_attempts').select('lesson_id, score').eq('user_id', user.id);
         if (error) { console.error('Progress load failed:', error); return; }
-
-        // ── BEST SCORE PER LESSON ────────────────────────────
-        const bestScores = {};
-        (attempts || []).forEach(a => {
+        const best = {};
+        (data || []).forEach(a => {
             const pct = Math.round((a.score / 10) * 100);
-            if (!bestScores[a.lesson_id] || pct > bestScores[a.lesson_id]) {
-                bestScores[a.lesson_id] = pct;
-            }
+            if (best[a.lesson_id] === undefined || pct > best[a.lesson_id]) best[a.lesson_id] = pct;
+        });
+        MODULES.forEach(m => { m.best = best[m.id] ?? null; });
+    }
+
+    /* ---------- init ---------- */
+    document.addEventListener('DOMContentLoaded', async () => {
+        const h = new Date().getHours();
+        document.getElementById('greeting').textContent = h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening');
+        renderAll();
+
+        document.getElementById('logoutButton')?.addEventListener('click', () => window.ecoAuth.signOut());
+        document.getElementById('dashboardSearch').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); renderModules(); });
+        document.getElementById('moduleGrid').addEventListener('click', e => {
+            if (e.target.id === 'clearSearch') { query = ''; document.getElementById('dashboardSearch').value = ''; renderModules(); }
         });
 
-        function getBest(moduleNum) {
-            return bestScores[LESSON_IDS[moduleNum]] ?? 0;
+        const { data } = await ecoAuth.client.auth.getSession();
+        const user = data?.session?.user;
+        if (user) {
+            let fullName = user.user_metadata?.full_name || '';
+            let section = user.user_metadata?.section || '';
+            try {
+                const { data: p } = await ecoAuth.client.from('profiles').select('full_name, section').eq('id', user.id).maybeSingle();
+                if (p) { fullName = p.full_name || fullName; section = p.section || section; }
+            } catch (_) {}
+            const first = (fullName || user.email || 'student').split(/[\s@]/)[0];
+            document.getElementById('studentName').textContent = first;
+            document.getElementById('studentMeta').textContent =
+                (section ? `Section ${section} · ` : '') + 'Pick up where you left off in Biology.';
         }
 
-        // ── OVERALL PROGRESS ─────────────────────────────────
-        const allScores  = [1,2,3,4,5,6,7,8].map(getBest);
-        const overallPct = Math.round(allScores.reduce((a,b) => a+b, 0) / 8);
-
-        // Update stat card
-        const valEl  = document.getElementById('overallProgressValue');
-        const metaEl = document.getElementById('overallProgressMeta');
-        if (valEl)  valEl.textContent  = `${overallPct}%`;
-        if (metaEl) metaEl.textContent =
-            overallPct === 0 ? 'No quizzes taken yet' :
-            overallPct >= 80 ? 'Excellent progress!'  :
-            overallPct >= 50 ? 'On target'            : 'Keep going!';
-
-        // Update ring
-        const ringSpan = document.getElementById('progressRingValue');
-        const ringEl   = document.getElementById('progressRing');
-        if (ringSpan) ringSpan.textContent = `${overallPct}%`;
-        if (ringEl) {
-            ringEl.style.setProperty('--progress', `${overallPct}%`);
-            ringEl.style.background =
-                `conic-gradient(var(--canopy, #40916C) ${overallPct}%, var(--parchment, #e8e0d0) ${overallPct}%)`;
-        }
-
-        // ── GOAL LIST ────────────────────────────────────────
-        GOAL_GROUPS.forEach(group => {
-            const scores = group.modules.map(getBest);
-            const avg    = Math.round(scores.reduce((a,b) => a+b, 0) / scores.length);
-            const el     = document.getElementById(group.id);
-            if (el) el.textContent = `${avg}%`;
-        });
-
-        // ── QUIZZES BEST SCORE META ──────────────────────────
-        const metaBest = document.getElementById('quizBestScoreMeta');
-        if (metaBest) {
-            const allBest = Object.values(bestScores);
-            metaBest.textContent = allBest.length === 0
-                ? 'No quizzes taken yet'
-                : `Best score: ${Math.max(...allBest)}%`;
-        }
+        await Promise.all([loadLessonDetails(), user ? loadScores(user) : Promise.resolve()]);
+        renderAll();
     });
     </script>
-
 </body>
 </html>
