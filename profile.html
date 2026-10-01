@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoLearn • Profile</title>
+    <title>Profile · EcoLearn</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,16 +19,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
 
-    <style>
-        /* =========================================
-           ACTIVE TAB
-        ========================================= */
-        nav .nav-link.Profile {
-            background-color: #40916C;
-            color: #ffffff !important;
-            font-weight: 600;
-        }
-    </style>
 </head>
 
 <body>
@@ -58,13 +48,13 @@
                 </a>
             </li>
             <li class="nav-item mb-1">
-                <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
+                <a class="nav-link Profile active text-white-50 d-flex align-items-center gap-2" href="profile.html" aria-current="page">
                     <i class="bi bi-person"></i> Profile
                 </a>
             </li>
             <li class="nav-item mt-auto">
                 <button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background: none; cursor: pointer;">
-                    <i class="bi bi-box-arrow-right"></i> Logout
+                    <i class="bi bi-box-arrow-right"></i> Log out
                 </button>
             </li>
         </ul>

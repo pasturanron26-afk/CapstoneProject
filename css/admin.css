@@ -39,8 +39,8 @@
     --danger: #A32020;
     --danger-bg: #FDEDED;
 
-    --r-sm: 6px;
-    --r-md: 10px;
+    --r-sm: 10px;
+    --r-md: 14px;
     --font-head: 'Poppins', 'Segoe UI', system-ui, sans-serif;
     --font-ui: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
     --shadow-float: 0 1px 2px rgba(18, 61, 39, .10), 0 12px 32px rgba(18, 61, 39, .18);
@@ -79,58 +79,15 @@ button { font-family: inherit; }
 }
 .skip-link:focus { top: 12px; color: #fff; }
 
-/* ===================== SIDEBAR (shared markup, admin skin) ===================== */
-.sidebar-bg {
-    background: var(--pine);
-    box-shadow: none;
-    border-right: 1px solid rgba(0, 0, 0, .15);
-    font-family: var(--font-head);
-}
-.brand-title {
-    font-family: var(--font-head) !important;
-    font-weight: 600 !important;
-    letter-spacing: 0 !important;
-    color: #fff !important;
-}
+/* ===================== SIDEBAR =====================
+   The sidebar itself now comes entirely from sidebar.css so it
+   matches every other page. Only the admin-specific role label
+   lives here. */
 .ledger-role {
     margin: 2px 0 0;
     color: var(--lichen);
     font-family: var(--font-head);
     font-size: .85rem;
-}
-.sidebar-bg .nav-link {
-    border-radius: var(--r-sm);
-    border-left: 3px solid transparent;
-    padding: 10px 12px 10px 13px;
-    color: rgba(255, 255, 255, .80) !important;
-    font-family: var(--font-head);
-    font-size: .88rem !important;
-    font-weight: 500;
-    background: none;
-}
-.sidebar-bg .nav-link i { font-size: 1rem; opacity: .9; }
-.sidebar-bg .nav-link:hover {
-    background: rgba(82, 183, 136, .16);
-    border-left-color: rgba(82, 183, 136, .55);
-    color: #fff !important;
-}
-.sidebar-bg .nav-link.active,
-.sidebar-bg .nav-link[aria-current="page"] {
-    background: rgba(82, 183, 136, .18);
-    border-left-color: var(--lichen);
-    color: #fff !important;
-    font-weight: 600;
-    box-shadow: none;
-}
-.sidebar-bg .nav-link:focus-visible { outline-color: #B7E4C7; }
-.sidebar-bg #logoutButton {
-    background: none;
-    cursor: pointer;
-    text-align: left;
-}
-.sidebar-bg #logoutButton:hover {
-    background: rgba(214, 69, 69, .35);
-    border-left-color: #E27A7A;
 }
 .nav-count {
     margin-left: auto;

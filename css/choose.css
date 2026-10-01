@@ -1,9 +1,7 @@
 /* =====================================================
-   ECOLEARN — 3D CELL EXPLORER (LEDGER THEME)
-   Recolored from the dark-green gradient look to match
-   the admin ledger: aged paper, ink text, serif headings,
-   pine/moss accents. Uses the tokens defined in
-   css/ledger-theme.css (loaded before this file).
+   ECOLEARN — 3D CELL EXPLORER (model picker)
+   Uses the shared tokens from css/ledger-theme.css and the
+   same card / button / kicker treatment as the dashboard.
 ===================================================== */
 
 /* =========================================
@@ -33,15 +31,15 @@
     color: var(--ink);
     font-family: var(--font-serif);
     font-weight: 600;
-    font-size: 32px;
+    font-size: 1.75rem;
+    line-height: 1.25;
 }
 
 .HeaderAndSubTDiv p {
-    margin: 5px 0 0 0;
-    font-family: var(--font-serif);
-    font-style: italic;
-    color: var(--moss);
-    font-size: 16px;
+    margin: 4px 0 0 0;
+    font-style: normal;
+    color: var(--ink-muted);
+    font-size: .95rem;
 }
 
 /* =========================================
@@ -71,16 +69,15 @@
     overflow: hidden;
     position: relative;
     border: 1px solid var(--paper-line);
-    border-radius: 3px;
+    border-radius: var(--radius-card);
     background: var(--panel-bg);
-    box-shadow: none;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-shadow: var(--shadow-card);
+    transition: border-color .15s ease;
 }
 
 .AnimalCellBox:hover,
 .PlantCellBox:hover {
-    transform: translateY(-3px);
-    border-color: var(--moss);
+    border-color: var(--lichen);
 }
 
 /* =========================================
@@ -104,9 +101,9 @@
 .cellBottomBox {
     display: flex;
     flex-direction: column;
+    flex: 1;
     padding: 20px 25px;
     background: var(--panel-bg);
-    border-radius: 0;
 }
 
 /* =========================================
@@ -117,8 +114,9 @@
     margin: 0;
     color: var(--ink);
     font-family: var(--font-serif);
-    font-size: 20px;
+    font-size: 1.15rem;
     font-weight: 600;
+    line-height: 1.3;
 }
 
 /* =========================================
@@ -128,8 +126,8 @@
 .cellBottomBox p {
     margin: 4px 0 0 0;
     color: var(--ink-muted);
-    font-size: 14px;
-    font-style: italic;
+    font-size: .9rem;
+    font-style: normal;
 }
 
 /* =========================================
@@ -138,8 +136,8 @@
 
 .exploreButton {
     display: block;
-    width: 100%;
-    margin-top: 15px;
+    width: fit-content;
+    margin-top: auto;
     text-decoration: none;
 }
 
@@ -151,18 +149,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    width: 100%;
-    padding: 10px 15px;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 18px;
     border: 1px solid var(--pine);
-    border-radius: 2px;
+    border-radius: var(--radius-control);
     background: var(--pine);
-    color: var(--paper);
+    color: #ffffff;
     font-family: var(--font-sans);
-    font-size: 15px;
+    font-size: .86rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: background-color .15s ease, border-color .15s ease;
 }
 
 /* =========================================
@@ -172,7 +170,11 @@
 .exploreButton button:hover {
     background: var(--moss);
     border-color: var(--moss);
-    transform: translateY(-1px);
+}
+
+.exploreButton button:focus-visible {
+    outline: 2px solid var(--moss);
+    outline-offset: 2px;
 }
 
 /* =========================================
@@ -180,25 +182,21 @@
 ========================================= */
 
 .exploreButton button i {
-    font-size: 17px;
-    transition: transform 0.2s ease;
-}
-
-.exploreButton button:hover i {
-    transform: translateX(4px);
+    font-size: 1rem;
 }
 
 .model-search {
     display: flex;
     align-items: center;
     gap: 9px;
-    width: min(340px, 100%);
+    width: min(320px, 100%);
+    height: 40px;
     margin-top: 20px;
-    padding: 10px 13px;
-    color: var(--ink-muted);
+    padding: 0 14px;
+    color: var(--ink-faint);
     background: var(--panel-bg);
-    border: 1px solid var(--paper-line);
-    border-radius: 2px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-control);
 }
 
 .model-search input {
@@ -209,12 +207,16 @@
     background: transparent;
     font: inherit;
     font-family: var(--font-sans);
-    font-size: 0.78rem;
+    font-size: .9rem;
+}
+
+.model-search input::placeholder {
+    color: #74847A;
 }
 
 .model-search:focus-within {
     border-color: var(--moss);
-    box-shadow: 0 0 0 3px var(--moss-tint);
+    box-shadow: 0 0 0 3px rgba(30, 114, 69, .15);
 }
 
 .AnimalCellBox,
@@ -230,10 +232,10 @@
     color: var(--pine);
     background: var(--paper);
     border: 1px solid var(--paper-line);
-    border-radius: 2px;
+    border-radius: 999px;
     font-family: var(--font-sans);
-    font-size: 11px;
-    font-weight: 700;
+    font-size: .74rem;
+    font-weight: 600;
 }
 
 .model-tags {
@@ -241,16 +243,17 @@
     flex-wrap: wrap;
     gap: 6px;
     margin-top: 12px;
+    margin-bottom: 16px;
 }
 
 .model-tags span {
-    padding: 4px 8px;
+    padding: 2px 10px;
     color: var(--moss);
-    background: transparent;
+    background: var(--paper);
     border: 1px solid var(--paper-line);
-    border-radius: 2px;
-    font-family: var(--font-mono);
-    font-size: 11px;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: .74rem;
     font-weight: 600;
 }
 
@@ -264,16 +267,16 @@
     width: min(885px, 100%);
     background: var(--panel-bg);
     border: 1px solid var(--paper-line);
-    border-radius: 3px;
-    box-shadow: none;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
 }
 
 .support-kicker {
     color: var(--moss);
     font-family: var(--font-sans);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
+    font-size: .82rem;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 .explorer-support h2 {
@@ -281,7 +284,7 @@
     color: var(--ink);
     font-family: var(--font-serif);
     font-weight: 600;
-    font-size: 20px;
+    font-size: 1.15rem;
 }
 
 .support-points {
@@ -289,7 +292,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 9px 24px;
     color: var(--ink-muted);
-    font-size: 12px;
+    font-size: .85rem;
 }
 
 .support-points i {
@@ -302,10 +305,10 @@
     max-width: 220px;
     margin: 0;
     color: var(--moss);
-    font-family: var(--font-serif);
-    font-size: 15px;
-    font-style: italic;
-    line-height: 1.5;
+    font-family: var(--font-sans);
+    font-size: .9rem;
+    font-style: normal;
+    line-height: 1.6;
 }
 
 /* =========================================
@@ -330,7 +333,7 @@
     }
 
     .HeaderAndSubTDiv h1 {
-        font-size: 26px;
+        font-size: 1.5rem;
     }
 
     .PlantAndAnimalCellContainerDiv {

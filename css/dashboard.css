@@ -10,7 +10,7 @@
     --pine: #123D27;
     --moss: #1E7245;
     --lichen: #52B788;
-    --paper: #F4F8F5;
+    --paper: #F3FAF6;
     --surface: #FFFFFF;
     --line: #E1E7E2;
     --line-strong: #C4D2C9;
@@ -32,12 +32,6 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font); fo
 .sd-skip:focus { top: 12px; }
 .sd-main :focus-visible { outline: 2px solid var(--moss); outline-offset: 2px; }
 .sd-main h1, .sd-main h2, .sd-main h3, .sd-main p { margin: 0; }
-
-/* ---------- Sidebar (layered on sidebar.css) ---------- */
-.sidebar-bg { background: var(--pine); box-shadow: none; }
-.sidebar-bg .nav-link { border-radius: 8px; padding: 10px 14px; font-size: .9rem !important; font-weight: 500; }
-.sidebar-bg .nav-link.active { background: rgba(82, 183, 136, .18); box-shadow: inset 3px 0 0 var(--lichen); }
-.sidebar-bg .nav-link:hover { background: rgba(82, 183, 136, .14); }
 
 /* ---------- Header ---------- */
 .sd-header { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }

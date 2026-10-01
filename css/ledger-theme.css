@@ -1,14 +1,19 @@
 /* =====================================================
    ECOLEARN — SHARED THEME
-   Core color tokens and typography used across the
-   student-facing pages (dashboard, lessons, quiz, 3D
-   cell explorer, profile). The sidebar itself now uses
-   the same modern green treatment defined in
-   sidebar.css directly, so no sidebar override lives
-   here anymore. Load this AFTER sidebar.css / global.css
-   and BEFORE the page's own stylesheet, so the page
-   stylesheet can layer its own layout on top of these
-   tokens.
+   Core color, shape and typography tokens used across the
+   student-facing pages (lessons, quiz, 3D cell explorer,
+   profile). Load this AFTER sidebar.css / global.css and
+   BEFORE the page's own stylesheet, so the page stylesheet
+   can layer its own layout on top of these tokens.
+
+   The dashboard and admin pages carry their own copies of
+   the same values; keep them in step with this file.
+
+   SHAPE SCALE (use these, not one-off px values)
+     --radius-card     14px  cards, panels, tables, hero blocks
+     --radius-control  10px  buttons, inputs, search fields
+     --radius-inner     8px  nested surfaces inside a card
+     999px                   pills, chips, badges
 ===================================================== */
 
 :root {
@@ -18,12 +23,18 @@
     --lichen: #52B788;
     --paper: #F3FAF6;
     --paper-line: #E1E7E2;
+    --line-strong: #C4D2C9;
     --panel-bg: #FFFFFF;
     --stamp: #D64545;
-    --stamp-gold: #C9971F;
+    --stamp-gold: #86570A;      /* was #C9971F: 2.4:1 on white, now 6:1 */
     --ink-muted: #5B6B60;
-    --ink-faint: #93A199;
+    --ink-faint: #66766B;       /* was #93A199: 2.6:1 on white, now 4.6:1 */
     --moss-tint: rgba(30, 114, 69, 0.12);
+
+    --radius-card: 14px;
+    --radius-control: 10px;
+    --radius-inner: 8px;
+    --shadow-card: 0 1px 2px rgba(18, 61, 39, .06), 0 10px 24px -14px rgba(18, 61, 39, .16);
 
     --font-serif: 'Poppins', sans-serif;
     --font-mono: 'Poppins', sans-serif;
@@ -36,4 +47,25 @@ body {
     background: var(--paper);
     color: var(--ink);
     font-family: var(--font-sans);
+}
+
+/* ===================== SHARED PAGE HEADER =====================
+   One title + subtitle treatment for every student page header
+   (lessons, quizzes, 3D explorer, profile), matching the dashboard. */
+
+.page-title {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.page-subtitle {
+    margin: 4px 0 0;
+    color: var(--ink-muted);
+    font-family: var(--font-sans);
+    font-size: .95rem;
+    font-style: normal;
 }
