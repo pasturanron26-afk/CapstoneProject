@@ -181,31 +181,40 @@ h1 span {
     font-family: var(--font-sans);
     font-size: 13px;
     font-weight: 600;
-    transition: 0.2s ease;
+    border-radius: 10px;
+    transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-primary {
     color: var(--paper);
-    background: var(--deep-green);
+    background: linear-gradient(135deg, var(--deep-green), var(--moss));
     border: 1px solid var(--deep-green);
     box-shadow: 0 7px 20px rgba(22, 40, 29, 0.12);
 }
 
 .btn-primary:hover {
-    background: var(--pine);
     transform: translateY(-2px);
+    filter: brightness(1.08);
+    box-shadow: 0 12px 24px rgba(22, 40, 29, 0.2);
 }
 
 .btn-secondary {
-    color: var(--deep-green);
-    background: transparent;
-    border: 1px solid var(--deep-green);
+    color: var(--paper);
+    background: linear-gradient(135deg, var(--moss), var(--light-green));
+    border: 1px solid var(--moss);
+    box-shadow: 0 7px 20px rgba(30, 114, 69, 0.14);
 }
 
 .btn-secondary:hover {
-    color: var(--paper);
-    background: var(--deep-green);
     transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 12px 24px rgba(30, 114, 69, 0.22);
+}
+
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible {
+    outline: 3px solid rgba(82, 183, 136, 0.45);
+    outline-offset: 3px;
 }
 
 /* Learning Tags */

@@ -44,10 +44,12 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font); fo
 
 /* ---------- Cards, buttons ---------- */
 .sd-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
-.sd-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); color: var(--pine); font: inherit; font-weight: 600; font-size: .86rem; text-decoration: none; cursor: pointer; transition: background-color .15s, border-color .15s; }
+.sd-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: 10px; background: linear-gradient(135deg, var(--surface), var(--tint)); color: var(--pine); font: inherit; font-weight: 600; font-size: .86rem; text-decoration: none; cursor: pointer; transition: transform .15s ease, filter .15s ease, box-shadow .15s ease; }
 .sd-btn:hover { background: var(--tint); border-color: var(--moss); color: var(--pine); }
-.sd-btn-primary { background: var(--pine); border-color: var(--pine); color: #fff; }
-.sd-btn-primary:hover { background: var(--moss); border-color: var(--moss); color: #fff; }
+.sd-btn-primary { background: linear-gradient(135deg, var(--pine), var(--moss)); border-color: var(--pine); color: #fff; box-shadow: 0 7px 18px rgba(18, 61, 39, .16); }
+.sd-btn-primary:hover { background: linear-gradient(135deg, var(--pine), var(--lichen)); border-color: var(--moss); color: #fff; transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 10px 22px rgba(18, 61, 39, .22); }
+.sd-btn:focus-visible { outline: 3px solid rgba(82, 183, 136, .4); outline-offset: 2px; }
+.sd-btn:active { transform: translateY(0); }
 .sd-link { color: var(--moss); font-size: .84rem; font-weight: 600; text-decoration: none; }
 .sd-link:hover { text-decoration: underline; }
 .sd-kicker { color: var(--moss); font-size: .82rem; font-weight: 600; }

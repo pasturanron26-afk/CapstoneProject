@@ -208,7 +208,7 @@
   gap: 8px;
   min-height: 40px;
   padding: 0 18px;
-  background: var(--pine);
+  background: linear-gradient(135deg, var(--pine), var(--moss));
   color: #ffffff;
   border: 1px solid var(--pine);
   border-radius: var(--radius-control);
@@ -217,12 +217,14 @@
   font-size: .86rem;
   font-weight: 600;
   white-space: nowrap;
-  transition: background-color .15s ease, border-color .15s ease;
+  transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
 }
 .start-btn:hover {
-  background: var(--moss);
   border-color: var(--moss);
   color: #ffffff;
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 8px 18px rgba(18, 61, 39, .18);
 }
 .start-btn:focus-visible,
 .quiz-next-btn:focus-visible,

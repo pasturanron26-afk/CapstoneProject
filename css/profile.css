@@ -218,19 +218,21 @@ body {
     justify-content: center;
     min-height: 40px;
     padding: 0 18px;
-    background-color: var(--pine);
+    background: linear-gradient(135deg, var(--pine), var(--moss));
     color: #ffffff;
     border: 1px solid var(--pine);
     border-radius: var(--radius-control);
     font-weight: 600;
     font-size: .86rem;
     cursor: pointer;
-    transition: background-color .15s ease, border-color .15s ease;
+    transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
 }
 
 .profile-save-btn:hover:not(:disabled) {
-    background-color: var(--moss);
     border-color: var(--moss);
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 8px 18px rgba(18, 61, 39, .18);
 }
 
 .profile-save-btn:disabled {

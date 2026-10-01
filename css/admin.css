@@ -472,9 +472,9 @@ button { font-family: inherit; }
 }
 .btn:disabled { opacity: .65; cursor: progress; }
 .btn-sm { min-height: 34px; padding: 0 14px; font-size: 14px; }
-.btn-primary { background: var(--moss); color: #fff; }
-.btn-primary:hover:not(:disabled) { background: #185C37; }
-.btn-quiet { background: var(--surface); border-color: var(--rule-strong); color: var(--ink); }
+.btn-primary { background: linear-gradient(135deg, var(--pine), var(--moss)); color: #fff; box-shadow: 0 7px 18px rgba(18, 61, 39, .16); }
+.btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, var(--pine), var(--lichen)); transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 10px 22px rgba(18, 61, 39, .22); }
+.btn-quiet { background: linear-gradient(135deg, var(--surface), var(--wash-2)); border-color: var(--rule-strong); color: var(--ink); }
 .btn-quiet:hover:not(:disabled) { border-color: var(--moss); background: var(--wash-2); }
 .btn-danger-quiet { background: var(--surface); border-color: #E3B5B5; color: var(--danger); }
 .btn-danger-quiet:hover:not(:disabled) { background: var(--danger-bg); border-color: var(--danger); }

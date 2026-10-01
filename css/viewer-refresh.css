@@ -99,7 +99,7 @@
 }
 .viewMode button:hover { color: var(--ink); }
 .viewMode button[aria-pressed="true"] {
-    background: var(--pine);
+    background: linear-gradient(135deg, var(--pine), var(--moss));
     color: #fff;
 }
 
@@ -133,7 +133,7 @@
 .zoomControls button:hover       { background: var(--stage); color: var(--pine); transform: none; }
 .zoomControls button:active      { background: var(--line); transform: none; }
 .zoomControls button.active,
-.zoomControls button[aria-pressed="true"] { background: var(--pine); color: #fff; }
+.zoomControls button[aria-pressed="true"] { background: linear-gradient(135deg, var(--pine), var(--moss)); color: #fff; }
 
 /* Instant tooltips from aria-label (remove the title="" attributes so you don't get two). */
 .zoomControls button::after {

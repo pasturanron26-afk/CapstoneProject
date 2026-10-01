@@ -300,7 +300,7 @@ body {
     padding: 12px;
     border: 1.5px solid var(--auth-border);
     border-radius: 10px;
-    background: var(--auth-white);
+    background: linear-gradient(135deg, var(--auth-white), var(--auth-green-pale-2));
     color: var(--auth-ink);
     font-size: 0.8rem;
     font-weight: 600;
@@ -314,8 +314,14 @@ body {
 }
 
 .btn-google:hover {
-    background-color: var(--auth-green-pale-2);
     border-color: var(--auth-green-light);
+    filter: brightness(1.02);
+    box-shadow: 0 6px 14px rgba(18, 61, 39, 0.1);
+}
+
+.btn-google:focus-visible {
+    outline: 3px solid rgba(82, 183, 136, 0.4);
+    outline-offset: 2px;
 }
 
 .btn-google img {
