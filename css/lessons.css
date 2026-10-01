@@ -135,6 +135,7 @@
 
 /* =====================================================
    CARD CONTENT
+   Rows: eyebrow / title / compare chips / description / button
    ===================================================== */
 
 .card-content {
@@ -143,6 +144,7 @@
   display: grid;
 
   grid-template-rows:
+    auto
     auto
     auto
     1fr
@@ -193,6 +195,59 @@
   );
 
   line-height: 1.2;
+}
+
+
+/* =====================================================
+   COMPARISON CHIPS  (Animal vs Plant)
+   ===================================================== */
+
+.card-compare {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin: 0 0 14px 0;
+}
+
+.compare-chip {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 3px 10px;
+
+  border: 1px solid #C9D6CC;
+
+  background: #F3F7F4;
+
+  color: #123d27;
+
+  font-family: var(--font-sans);
+
+  font-size: 0.75rem;
+
+  font-weight: 600;
+
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+}
+
+.compare-vs {
+  color: #5B6B60;
+
+  font-family: var(--font-serif);
+
+  font-style: italic;
+
+  font-size: 0.9rem;
 }
 
 

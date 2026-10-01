@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cell Membrane and Transport - EcoLearn</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -21,23 +21,15 @@
     <script src="js/auth.js"></script>
 
 <style>
-
     /* =========================================
        ACTIVE SIDEBAR TAB
     ========================================= */
-
     nav .nav-link.Lesson {
-
         background: rgba(82, 183, 136, 0.12);
-
         border-left: 3px solid var(--lichen);
-
         color: var(--paper) !important;
-
         font-weight: 600;
-
     }
-
 </style>
 
 <style>
@@ -55,7 +47,14 @@
 .organelle-text ul, .organelle-text ol { padding-left: 1.2rem; margin: 10px 0 0; line-height: 1.7; }
 .organelle-text li { margin-bottom: 4px; }
 
-/* Animal vs Plant callout */
+/* Hero question */
+.hero-question {
+  margin: 18px 0 0; padding: 12px 16px;
+  border-left: 3px solid var(--stamp-gold);
+  font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; line-height: 1.55;
+}
+
+/* Callouts */
 .lesson-note {
   margin-top: 18px; padding: 14px 16px;
   border: 1px solid var(--paper-line); border-left: 3px solid var(--moss);
@@ -69,6 +68,8 @@
 }
 .lesson-note h4 i { color: var(--moss); }
 .lesson-note p { margin: 0; }
+.lesson-note.why { border-left-color: var(--stamp-gold); }
+.lesson-note.why h4 i { color: var(--stamp-gold); }
 
 /* Small card grids */
 .mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 18px; }
@@ -114,188 +115,218 @@
   font: 700 0.78rem var(--font-sans); display: flex; align-items: center; justify-content: center;
 }
 
-/* Tonicity table tweaks */
+/* Tables */
 .comparison-table td { vertical-align: top; }
 .comparison-table td small { display: block; color: var(--ink-muted); margin-top: 2px; }
 
-/* Quick checks */
-.quickcheck-section { margin-top: 60px; }
-.qc-intro { color: var(--ink-muted); margin: -6px 0 22px; }
-.qc { background: var(--panel-bg); border: 1px solid var(--paper-line); border-radius: 3px; padding: 22px 24px; margin-bottom: 18px; }
-.qc-q { font-weight: 600; margin: 0 0 14px; display: flex; gap: 12px; align-items: flex-start; line-height: 1.55; }
-.qc-num { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--pine); color: #fff; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.qc-options { display: grid; gap: 8px; }
-.qc-opt {
-  text-align: left; width: 100%; padding: 11px 14px; border: 1.5px solid var(--paper-line);
-  background: var(--panel-bg); border-radius: 6px; font: 500 0.92rem var(--font-sans); color: var(--ink);
-  cursor: pointer; transition: border-color .15s ease, background .15s ease;
+/* =========================================
+   SIDE-BY-SIDE MODEL ROWS (animal | plant)
+========================================= */
+.model-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0 8px; }
+.model-slot { border: 1px solid var(--paper-line); background: var(--panel-bg); border-radius: 3px; overflow: hidden; }
+.model-label {
+  padding: 8px 12px; border-bottom: 1px solid var(--paper-line);
+  display: flex; align-items: center; gap: 8px;
+  font: 700 0.78rem var(--font-sans); text-transform: uppercase; letter-spacing: 0.05em; color: var(--pine);
 }
-.qc-opt:hover:not(:disabled) { border-color: var(--moss); background: var(--moss-tint); }
-.qc-opt:focus-visible { outline: 3px solid rgba(30, 114, 69, 0.3); outline-offset: 1px; }
-.qc-opt:disabled { cursor: default; }
-.qc-opt.correct { border-color: #2d8a5b; background: rgba(45, 138, 91, 0.12); }
-.qc-opt.wrong { border-color: var(--stamp); background: rgba(214, 69, 69, 0.08); }
-.qc-explain { margin: 14px 0 0; padding: 12px 14px; border-radius: 4px; background: var(--paper); border: 1px solid var(--paper-line); font-size: 0.9rem; line-height: 1.65; }
-.qc-explain strong.ok { color: #1b5e3a; }
-.qc-explain strong.no { color: var(--stamp); }
-.qc-score { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
-  padding: 16px 20px; border-radius: 3px; background: var(--pine); color: var(--paper); }
-.qc-score p { margin: 0; font-weight: 600; }
-.qc-score[hidden], .qc-explain[hidden] { display: none !important; }
-.qc-reset { border: 1.5px solid rgba(255,255,255,.55); background: transparent; color: #fff; padding: 8px 16px; border-radius: 6px; font: 600 0.85rem var(--font-sans); cursor: pointer; }
-.qc-reset:hover { background: rgba(255,255,255,.12); }
+.model-slot .cell-svg { display: block; width: 100%; height: auto; background: var(--paper); }
+.model-cap { margin: 0; padding: 10px 12px; border-top: 1px solid var(--paper-line); font-size: 0.86rem; line-height: 1.55; color: var(--ink-muted); }
+.model-cap strong { color: var(--ink); }
+
+.tonicity-block { margin-top: 26px; }
+.tonicity-title { margin: 0; font-size: 1.02rem; font-weight: 700; color: var(--pine); display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.tonicity-tag {
+  display: inline-block; padding: 2px 10px; border: 1.5px solid currentColor; border-radius: 999px;
+  font: 700 0.72rem var(--font-sans); text-transform: uppercase; letter-spacing: 0.06em;
+}
+.tonicity-tag.hypo { color: var(--moss); }
+.tonicity-tag.iso  { color: var(--ink-muted); }
+.tonicity-tag.hyper { color: #8f6a12; }
+.tonicity-sub { font-weight: 500; font-size: 0.9rem; color: var(--ink-muted); }
+
+.cell-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 14px 0 0; font-size: 0.82rem; color: var(--ink-muted); }
+.cell-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.cell-legend i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid rgba(0,0,0,.35); }
+
+/* =========================================
+   OSMOSIS SIMULATOR
+========================================= */
+.osmo-widget { padding: 20px 22px; border: 1px solid var(--paper-line); border-radius: 3px; background: var(--panel-bg); }
+.osmo-widget > p { margin: 0 0 14px; line-height: 1.65; }
+.osmo-control label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; color: var(--pine); }
+.osmo-scale { display: flex; align-items: center; gap: 12px; }
+.osmo-scale span { flex: none; font-size: 0.8rem; color: var(--ink-muted); }
+.osmo-scale input[type="range"] { flex: 1; accent-color: var(--moss); height: 28px; cursor: pointer; }
+.osmo-readout { margin-top: 10px; padding: 10px 14px; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 3px; font-size: 0.92rem; line-height: 1.55; }
+.osmo-readout strong { color: var(--pine); }
+
+/* =========================================
+   INTERACTIVE WIDGETS (steppers, explorer, lab)
+========================================= */
+.ix-widget { margin-top: 22px; border: 1px solid var(--paper-line); border-radius: 3px; background: var(--panel-bg); overflow: hidden; }
+.ix-head {
+  padding: 10px 14px; border-bottom: 1px solid var(--paper-line);
+  display: flex; align-items: center; gap: 8px;
+  font: 700 0.78rem var(--font-sans); text-transform: uppercase; letter-spacing: 0.05em; color: var(--pine);
+}
+.ix-body { padding: 14px; }
+.ix-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.ix-chip {
+  border: 1.5px solid var(--paper-line); background: var(--panel-bg); color: var(--ink);
+  padding: 5px 12px; border-radius: 999px; font: 600 0.78rem var(--font-sans); cursor: pointer;
+}
+.ix-chip:hover { border-color: var(--moss); }
+.ix-chip[aria-pressed="true"] { border-color: var(--moss); background: var(--moss-tint); color: var(--pine); }
+.ix-chip:focus-visible, .ix-btn:focus-visible, .ix-step:focus-visible { outline: 3px solid rgba(30, 114, 69, 0.3); outline-offset: 1px; }
+.ix-btn {
+  border: 1.5px solid var(--pine); background: var(--pine); color: #fff;
+  padding: 6px 14px; border-radius: 6px; font: 600 0.82rem var(--font-sans); cursor: pointer;
+}
+.ix-btn.ghost { background: transparent; color: var(--pine); }
+.ix-btn:disabled { opacity: 0.4; cursor: default; }
+.ix-info { margin: 12px 0 0; padding: 10px 14px; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 3px; font-size: 0.92rem; line-height: 1.6; }
+.ix-info strong { color: var(--pine); }
+.ix-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.ix-steps { display: flex; gap: 6px; flex-wrap: wrap; }
+.ix-step {
+  width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--paper-line);
+  background: var(--panel-bg); font: 700 0.78rem var(--font-sans); color: var(--ink); cursor: pointer;
+}
+.ix-step[aria-current="step"] { background: var(--pine); border-color: var(--pine); color: #fff; }
+.ix-stage svg { display: block; width: 100%; height: auto; background: var(--paper); }
+
+/* membrane explorer */
+.mx-svg [data-part] { cursor: pointer; transition: opacity .15s ease; }
+.mx-svg.has-sel [data-part]:not(.sel) { opacity: .2; }
+.mx-svg [data-part].sel rect, .mx-svg [data-part].sel ellipse, .mx-svg [data-part].sel circle { stroke: #E0A82E; stroke-width: 3; }
 
 /* Takeaways */
 .takeaways { margin-top: 50px; padding: 26px 28px; background: var(--panel-bg); border: 1px solid var(--paper-line); border-radius: 3px; }
 .takeaways ul { margin: 12px 0 0; padding-left: 1.2rem; line-height: 1.75; }
 
 @media (max-width: 768px) {
-  .qc { padding: 18px 16px; }
   .takeaways { padding: 20px 18px; }
+  .osmo-widget { padding: 16px 14px; }
+}
+@media (max-width: 640px) {
+  .model-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 
 <body>
     <!-- =========================================
-         SIDEBAR (Fixed, Non-Collapsible)
-    ========================================= -->
-    <!-- =========================================
          SIDEBAR
     ========================================= -->
+    <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
 
-    <nav
-        class="d-flex flex-column align-items-center p-3 sidebar-bg"
-    >
-        
-        <img
-            src="imgs/Logo.jpg"
-            alt="Logo"
-            class="rounded-circle logo-img mb-2"
-        >
+        <img src="imgs/Logo.jpg" alt="Logo" class="rounded-circle logo-img mb-2">
 
-
-        <h3 class="h5 brand-title mb-4">
-            EcoLearn
-        </h3>
-
+        <h3 class="h5 brand-title mb-4">EcoLearn</h3>
 
         <ul class="nav nav-pills flex-column w-100">
 
-
-            <!-- DASHBOARD -->
-
             <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
-                    href="dashboard.html"
-                >
-
-                    <i class="bi bi-grid-1x2"></i>
-
-                    Dashboard
-
+                <a class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2" href="dashboard.html">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
                 </a>
-
             </li>
 
-
-            <!-- CELL MODELS -->
-
             <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
-                    href="choose.html"
-                >
-
-                    <i class="bi bi-boxes"></i>
-
-                    Cell Models
-
+                <a class="nav-link CellModel text-white-50 d-flex align-items-center gap-2" href="choose.html">
+                    <i class="bi bi-boxes"></i> Cell Models
                 </a>
-
             </li>
 
-
-            <!-- Lesson -->
-
             <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
-                    href="lesson.html"
-                >
-
-                    <i class="bi bi-book"></i>
-
-                    Lessons
-
+                <a class="nav-link Lesson text-white-50 d-flex align-items-center gap-2" href="lesson.html">
+                    <i class="bi bi-book"></i> Lessons
                 </a>
-
             </li>
 
-            <!-- QUIZ -->
-
             <li class="nav-item mb-1">
-
-                <a
-                    class="nav-link Quiz text-white-50 d-flex align-items-center gap-2"
-                    href="quiz.html"
-                >
-
-                    <i class="bi bi-question-circle"></i>
-
-                    Quizzes
-
+                <a class="nav-link Quiz text-white-50 d-flex align-items-center gap-2" href="quiz.html">
+                    <i class="bi bi-question-circle"></i> Quizzes
                 </a>
-
             </li>
 
             <li class="nav-item mb-1">
                 <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
-                    <i class="bi bi-person"></i>
-                    Profile
+                    <i class="bi bi-person"></i> Profile
                 </a>
             </li>
 
-            <!-- LOGOUT -->
-
             <li class="nav-item mt-auto">
-
-                <button
-                    id="logoutButton"
-                    class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
-                    style="background: none; cursor: pointer;"
-                >
-
-                    <i class="bi bi-box-arrow-right"></i>
-
-                    Logout
-
+                <button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background: none; cursor: pointer;">
+                    <i class="bi bi-box-arrow-right"></i> Logout
                 </button>
-
             </li>
 
         </ul>
-
     </nav>
 
     <main class="lesson-page">
 
+        <!-- =========================================
+             1. HERO
+        ========================================= -->
         <section class="lesson-hero">
             <div class="hero-content">
-                <h1 class="hero-title">Cell Membrane and Transport</h1>
+                <h1 class="hero-title">Cell Membrane and Transport: Animal vs Plant</h1>
                 <p class="hero-intro">
                     Every cell is wrapped in a thin, selective barrier. This lesson shows how the plasma membrane is built and how
-                    substances cross it through passive, active, and bulk transport, with a close look at how animal and plant
-                    cells respond differently to water.
+                    substances cross it through passive, active, and bulk transport, then compares how animal and plant cells
+                    respond to the same watery surroundings.
+                </p>
+                <p class="hero-question">
+                    Why does a wilted lettuce leaf recover when you soak it in water, while a red blood cell placed in pure water bursts?
                 </p>
             </div>
         </section>
 
+        <!-- =========================================
+             2. AT-A-GLANCE TABLE
+        ========================================= -->
         <section class="comparison-section">
+            <h2 class="section-title">Animal Cell vs Plant Cell: Membrane Transport</h2>
+            <div class="table-responsive">
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Feature</th><th>Animal Cell</th><th>Plant Cell</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Outer boundary</strong></td>
+                            <td>Plasma membrane only</td>
+                            <td>Plasma membrane plus a cellulose cell wall</td></tr>
+                        <tr><td><strong>In pure water (hypotonic)</strong></td>
+                            <td><span class="absent">Swells, may burst (lysis)</span></td>
+                            <td><span class="present">Turgid (firm); wall stops it bursting</span></td></tr>
+                        <tr><td><strong>In an equal solution (isotonic)</strong></td>
+                            <td><span class="present">Normal shape</span></td>
+                            <td><span class="absent">Flaccid (limp)</span></td></tr>
+                        <tr><td><strong>In a salty solution (hypertonic)</strong></td>
+                            <td><span class="absent">Shrivels (crenation)</span></td>
+                            <td><span class="absent">Plasmolysis (membrane pulls from wall)</span></td></tr>
+                        <tr><td><strong>Main plasma membrane pump</strong></td>
+                            <td>Sodium-potassium pump (Na<sup>+</sup>/K<sup>+</sup>-ATPase)</td>
+                            <td>Proton pump (H<sup>+</sup>-ATPase)</td></tr>
+                        <tr><td><strong>Water storage</strong></td>
+                            <td>Small vacuoles and vesicles</td>
+                            <td>Large central vacuole (tonoplast membrane)</td></tr>
+                        <tr><td><strong>Bulk transport</strong></td>
+                            <td>Endocytosis and exocytosis, including engulfing large particles</td>
+                            <td>Exocytosis builds the wall; the wall limits engulfing large particles</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- =========================================
+             3. SHARED FOUNDATION
+        ========================================= -->
+        <div class="section-divider"><span>Shared Foundation (Both Cells)</span></div>
+
+        <section class="comparison-section" style="margin-top:0">
             <h2 class="section-title">Passive vs Active vs Bulk Transport</h2>
             <div class="table-responsive">
                 <table class="comparison-table">
@@ -326,8 +357,6 @@
             </div>
         </section>
 
-        <div class="section-divider"><span>Membrane Structure</span></div>
-
         <section class="organelle-section">
             <div class="organelle-header">
                 <h3 class="organelle-name">Plasma Membrane (Fluid Mosaic Model)</h3>
@@ -349,32 +378,41 @@
                         <div class="mini-card"><h5>Proteins</h5><p>Integral proteins span the bilayer as channels, carriers, and pumps. Peripheral proteins attach to the surface.</p></div>
                         <div class="mini-card"><h5>Carbohydrate chains</h5><p>Attached to lipids and proteins on the outer surface, they act as recognition markers between cells.</p></div>
                     </div>
-                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 270" role="img" aria-label="Labeled diagram of the plasma membrane showing the phospholipid bilayer, cholesterol, integral and peripheral proteins, and a glycoprotein">
+                    <div class="ix-widget" id="membraneExplorer">
+                        <div class="ix-head"><i class="bi bi-hand-index"></i> Interactive: explore the membrane</div>
+                        <div class="ix-body">
+                            <div class="ix-chips" role="group" aria-label="Choose a membrane part">
+                                <button type="button" class="ix-chip" data-part="phospholipid" aria-pressed="false">Phospholipids</button>
+                                <button type="button" class="ix-chip" data-part="cholesterol" aria-pressed="false">Cholesterol</button>
+                                <button type="button" class="ix-chip" data-part="integral" aria-pressed="false">Integral protein</button>
+                                <button type="button" class="ix-chip" data-part="peripheral" aria-pressed="false">Peripheral protein</button>
+                                <button type="button" class="ix-chip" data-part="glyco" aria-pressed="false">Glycoprotein</button>
+                                <button type="button" class="ix-chip" data-part="all" aria-pressed="false">Show all</button>
+                            </div>
+                            <div class="dg-scroll"><svg class="dg mx-svg" id="mxSvg" viewBox="0 0 640 270" role="img" aria-label="Labeled diagram of the plasma membrane showing the phospholipid bilayer, cholesterol, integral and peripheral proteins, and a glycoprotein">
 <defs><pattern id="pl0" width="16" height="64" patternUnits="userSpaceOnUse" patternTransform="translate(0 100)">
         <circle class="head" cx="8" cy="9" r="6"/><path class="tail" d="M5.5 15V31M10.5 15V31"/>
         <path class="tail" d="M5.5 33V49M10.5 33V49"/><circle class="head" cx="8" cy="55" r="6"/></pattern></defs>
 <rect class="zone-out" x="0" y="0" width="640" height="100"/><rect class="zone-in" x="0" y="164" width="640" height="106"/>
-<rect x="0" y="100" width="640" height="64" fill="url(#pl0)"/>
 <text class="lbl" x="14" y="22">EXTRACELLULAR SIDE</text><text class="lbl" x="14" y="258">CYTOPLASMIC SIDE</text>
-<!-- integral protein -->
-<rect class="prot" x="292" y="90" width="52" height="84" rx="16"/>
-<!-- peripheral protein -->
-<ellipse class="prot-2" cx="176" cy="180" rx="30" ry="14" stroke="#123D27" stroke-width="1"/>
-<!-- cholesterol -->
-<ellipse cx="112" cy="132" rx="5" ry="15" fill="#C9971F" stroke="#8f6a12"/><ellipse cx="420" cy="132" rx="5" ry="15" fill="#C9971F" stroke="#8f6a12"/><ellipse cx="572" cy="132" rx="5" ry="15" fill="#C9971F" stroke="#8f6a12"/>
-<!-- glycoprotein -->
-<rect class="prot" x="478" y="96" width="30" height="72" rx="10"/>
+<g data-part="phospholipid"><rect x="0" y="100" width="640" height="64" fill="url(#pl0)"/>
+<path class="leader" d="M40 110L40 90"/><text class="lbl-sm" x="14" y="84">Hydrophilic heads</text>
+<path class="leader" d="M400 192V134"/><text class="lbl-sm" x="408" y="204">Hydrophobic tails</text></g>
+<g data-part="integral"><rect class="prot" x="292" y="90" width="52" height="84" rx="16"/>
+<path class="leader" d="M318 90L318 58"/><text class="lbl-sm ctr" x="318" y="50">Integral (transmembrane) protein</text></g>
+<g data-part="peripheral"><ellipse class="prot-2" cx="176" cy="180" rx="30" ry="14" stroke="#123D27" stroke-width="1"/>
+<path class="leader" d="M176 194L176 222"/><text class="lbl-sm ctr" x="176" y="236">Peripheral protein</text></g>
+<g data-part="cholesterol"><ellipse cx="112" cy="132" rx="5" ry="15" fill="#C9971F" stroke="#8f6a12"/><ellipse cx="420" cy="132" rx="5" ry="15" fill="#C9971F" stroke="#8f6a12"/><ellipse cx="572" cy="132" rx="5" ry="15" fill="#C9971F" stroke="#8f6a12"/>
+<path class="leader" d="M118 118L150 70"/><text class="lbl-sm" x="152" y="66">Cholesterol (in animal cells)</text></g>
+<g data-part="glyco"><rect class="prot" x="478" y="96" width="30" height="72" rx="10"/>
 <path d="M493 96V70M493 70L478 54M493 70L508 54" stroke="#C9971F" stroke-width="2" fill="none"/>
 <circle class="pa" cx="493" cy="68" r="5"/><circle class="pa" cx="478" cy="52" r="5"/><circle class="pa" cx="508" cy="52" r="5"/>
-<!-- labels -->
-<path class="leader" d="M118 118L150 70"/><text class="lbl-sm" x="152" y="66">Cholesterol (in animal cells)</text>
-<path class="leader" d="M318 90L318 58"/><text class="lbl-sm ctr" x="318" y="50">Integral (transmembrane) protein</text>
-<path class="leader" d="M176 194L176 222"/><text class="lbl-sm ctr" x="176" y="236">Peripheral protein</text>
-<path class="leader" d="M514 52L530 46"/><text class="lbl-sm" x="534" y="50">Glycoprotein</text>
-<path class="leader" d="M40 110L40 90"/><text class="lbl-sm" x="14" y="84">Hydrophilic heads</text>
-<path class="leader" d="M400 192V134"/><text class="lbl-sm" x="408" y="204">Hydrophobic tails</text>
+<path class="leader" d="M514 52L530 46"/><text class="lbl-sm" x="534" y="50">Glycoprotein</text></g>
 <path class="leader" d="M610 100V164M604 100H616M604 164H616"/><text class="lbl-sm" x="606" y="184" style="text-anchor:end">5 to 10 nm thick</text>
-</svg></div><figcaption>Figure 1. The fluid mosaic model of the plasma membrane (schematic, not to scale).</figcaption></figure>
+</svg></div>
+                            <p class="ix-info" id="mxInfo" aria-live="polite"><strong>Select a part.</strong> Choose a button above, or click a part of the diagram, to highlight it and see what it does.</p>
+                        </div>
+                    </div>
 
                     <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Animal vs Plant</h4><p>Plant cells have a rigid cell wall just outside the plasma membrane. The wall is porous and gives strength, but it is the membrane underneath that decides which substances cross. Plant membranes also contain plant sterols (phytosterols) that play a role similar to cholesterol in animal cells.</p></div>
                 </div>
@@ -390,6 +428,7 @@
                 </div>
             </div>
         </section>
+
         <section class="organelle-section">
             <div class="organelle-header">
                 <h3 class="organelle-name">Selective Permeability</h3>
@@ -413,7 +452,6 @@
                 </div>
             </div>
         </section>
-        <div class="section-divider"><span>Passive Transport (No Energy Required)</span></div>
 
         <section class="organelle-section">
             <div class="organelle-header">
@@ -430,23 +468,12 @@
                         <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
                         <p>Moves oxygen into cells and carbon dioxide out of them. The rate is faster when the concentration gradient is steeper, the temperature is higher, the molecules are smaller, and the exchange surface is thinner or larger.</p>
                     </div>
-                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 300" role="img" aria-label="Simple diffusion: small molecules move through the phospholipid bilayer from high to low concentration">
-<defs><pattern id="pl1" width="16" height="64" patternUnits="userSpaceOnUse" patternTransform="translate(0 100)">
-        <circle class="head" cx="8" cy="9" r="6"/><path class="tail" d="M5.5 15V31M10.5 15V31"/>
-        <path class="tail" d="M5.5 33V49M10.5 33V49"/><circle class="head" cx="8" cy="55" r="6"/></pattern><marker id="ah1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
-<rect class="zone-out" x="0" y="0" width="640" height="100"/><rect class="zone-in" x="0" y="164" width="640" height="136"/>
-<rect x="0" y="100" width="640" height="64" fill="url(#pl1)"/>
-<text class="lbl" x="14" y="20">EXTRACELLULAR FLUID</text><text class="lbl-sm" x="14" y="35">High concentration</text>
-<text class="lbl" x="14" y="266">CYTOPLASM</text><text class="lbl-sm" x="14" y="282">Low concentration</text>
-<circle class="pa" cx="40" cy="60" r="5"/><circle class="pa" cx="92" cy="80" r="5"/><circle class="pa" cx="134" cy="52" r="5"/><circle class="pa" cx="176" cy="72" r="5"/><circle class="pa" cx="250" cy="58" r="5"/><circle class="pa" cx="292" cy="84" r="5"/><circle class="pa" cx="372" cy="56" r="5"/><circle class="pa" cx="414" cy="78" r="5"/><circle class="pa" cx="492" cy="62" r="5"/><circle class="pa" cx="534" cy="84" r="5"/><circle class="pa" cx="572" cy="54" r="5"/><circle class="pa" cx="602" cy="76" r="5"/><circle class="pa" cx="112" cy="214" r="5"/><circle class="pa" cx="300" cy="240" r="5"/><circle class="pa" cx="524" cy="222" r="5"/><circle class="pa" cx="420" cy="200" r="5"/>
-<path class="arrow" d="M210 92V182" marker-end="url(#ah1)"/><path class="arrow" d="M330 92V182" marker-end="url(#ah1)"/><path class="arrow" d="M450 92V182" marker-end="url(#ah1)"/>
-<rect class="chip" x="392" y="256" width="236" height="28" rx="14"/><text class="chip-t" x="510" y="274">Down the gradient · No ATP needed</text>
-</svg></div><figcaption>Figure 2. Simple diffusion: molecules move down their concentration gradient through the bilayer.</figcaption></figure>
-
+                    
 
                 </div>
             </div>
         </section>
+
         <section class="organelle-section">
             <div class="organelle-header">
                 <h3 class="organelle-name">Facilitated Diffusion</h3>
@@ -465,145 +492,81 @@
                         <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
                         <p>Lets essential polar substances enter or leave quickly without energy cost. Because each carrier can only work so fast, the rate levels off once all carriers are busy (saturation).</p>
                     </div>
-                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 300" role="img" aria-label="Facilitated diffusion through a channel protein and a carrier protein, moving down the concentration gradient without ATP">
-<defs><pattern id="pl2" width="16" height="64" patternUnits="userSpaceOnUse" patternTransform="translate(0 100)">
-        <circle class="head" cx="8" cy="9" r="6"/><path class="tail" d="M5.5 15V31M10.5 15V31"/>
-        <path class="tail" d="M5.5 33V49M10.5 33V49"/><circle class="head" cx="8" cy="55" r="6"/></pattern><marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
-<rect class="zone-out" x="0" y="0" width="640" height="100"/><rect class="zone-in" x="0" y="164" width="640" height="136"/>
-<rect x="0" y="100" width="640" height="64" fill="url(#pl2)"/>
-<text class="lbl" x="14" y="20">EXTRACELLULAR FLUID</text><text class="lbl-sm" x="14" y="35">High concentration</text>
-<text class="lbl" x="14" y="266">CYTOPLASM</text><text class="lbl-sm" x="14" y="282">Low concentration</text>
-<!-- channel protein -->
-<rect class="prot" x="150" y="92" width="34" height="80" rx="12"/><rect class="prot" x="226" y="92" width="34" height="80" rx="12"/>
-<rect class="pore" x="184" y="100" width="42" height="64"/>
-<circle class="pa" cx="196" cy="60" r="5"/><circle class="pa" cx="216" cy="72" r="5"/><circle class="pa" cx="170" cy="50" r="5"/><circle class="pa" cx="240" cy="54" r="5"/><circle class="pa" cx="60" cy="70" r="5"/><circle class="pa" cx="110" cy="56" r="5"/><circle class="pa" cx="205" cy="120" r="5"/>
-<path class="arrow" d="M205 134V196" marker-end="url(#ah2)"/><circle class="pa" cx="205" cy="212" r="5"/>
-<text class="lbl-sm ctr" x="205" y="248">Channel protein</text>
-<!-- carrier protein -->
-<rect class="prot-2" x="390" y="92" width="80" height="80" rx="22" stroke="#123D27" stroke-width="1"/>
-<path class="pore" d="M410 92a20 18 0 0 0 40 0z"/>
-<circle class="pa" cx="430" cy="98" r="6"/>
-<circle class="pa" cx="350" cy="60" r="5"/><circle class="pa" cx="392" cy="52" r="5"/><circle class="pa" cx="470" cy="60" r="5"/><circle class="pa" cx="520" cy="74" r="5"/><circle class="pa" cx="560" cy="54" r="5"/><circle class="pa" cx="590" cy="80" r="5"/><circle class="pa" cx="330" cy="84" r="5"/>
-<path class="arrow-d" d="M430 172V204" marker-end="url(#ah2)"/><circle class="pa" cx="430" cy="222" r="5"/>
-<text class="lbl-sm ctr" x="430" y="248">Carrier protein (changes shape)</text>
-<rect class="chip" x="392" y="262" width="236" height="28" rx="14"/><text class="chip-t" x="510" y="280">Down the gradient · No ATP needed</text>
-</svg></div><figcaption>Figure 3. Facilitated diffusion through a channel protein (left) and a carrier protein (right).</figcaption></figure>
-
+                    
 
                 </div>
             </div>
         </section>
-        <section class="organelle-section">
+
+        <section class="organelle-section" id="diffusionLab">
             <div class="organelle-header">
-                <h3 class="organelle-name">Osmosis and Tonicity</h3>
-                <span class="cell-tag tag-passive"><i class="bi bi-droplet-half"></i> Passive</span>
+                <h3 class="organelle-name">Diffusion Lab: Simple vs Facilitated</h3>
+                <span class="cell-tag tag-passive"><i class="bi bi-arrow-down-right"></i> Passive</span>
             </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-
-                    <p>Osmosis is the diffusion of water through a selectively permeable membrane. Water moves from the side with
-                    less dissolved solute (more free water) to the side with more solute. Tonicity describes how the solute
-                    concentration of the surrounding fluid, compared with the inside of the cell, changes the cell's volume.</p>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Balances water between the cell and its surroundings. Whether a cell swells, stays the same, or shrinks depends on whether the outside fluid is hypotonic (less solute than the cell), isotonic (equal), or hypertonic (more solute than the cell).</p>
+            <div class="osmo-widget">
+                <p>Change how much of a substance is outside the cell. On the left, small nonpolar molecules slip straight through the bilayer. On the right, a polar molecule needs carrier proteins. Watch what happens to each as the concentration rises, and try adding more carriers.</p>
+                <div class="osmo-control">
+                    <label for="labRange">Concentration outside the cell</label>
+                    <div class="osmo-scale">
+                        <span>Low</span>
+                        <input type="range" id="labRange" min="0" max="100" value="30" step="1">
+                        <span>High</span>
                     </div>
-                    <div class="table-responsive" style="margin-top:18px">
-                        <table class="comparison-table">
-                            <thead><tr><th>Outside solution</th><th>Water movement</th><th>Animal cell</th><th>Plant cell</th></tr></thead>
-                            <tbody>
-                                <tr><td><strong>Hypotonic</strong><small>Less solute than the cell</small></td><td>Into the cell</td><td>Swells and may burst (lysis)</td><td>Becomes turgid (firm); the wall stops it bursting</td></tr>
-                                <tr><td><strong>Isotonic</strong><small>Equal solute</small></td><td>No net movement</td><td>Keeps its normal shape</td><td>Flaccid (limp); plants begin to wilt</td></tr>
-                                <tr><td><strong>Hypertonic</strong><small>More solute than the cell</small></td><td>Out of the cell</td><td>Shrivels (crenation)</td><td>Membrane pulls away from the wall (plasmolysis)</td></tr>
-                            </tbody>
-                        </table>
+                    <div class="ix-chips" style="margin-top:10px" role="group" aria-label="Number of carrier proteins">
+                        <button type="button" class="ix-chip" data-carriers="2" aria-pressed="true">Few carriers</button>
+                        <button type="button" class="ix-chip" data-carriers="4" aria-pressed="false">Many carriers</button>
                     </div>
-
-                    <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Animal vs Plant</h4><p>This is where the cell wall from Module 01 matters most. A plant cell in fresh water takes in water until the wall pushes back. That pressure (turgor) keeps stems and leaves upright. An animal cell has no wall to resist, so it can burst in pure water.</p></div>
+                    <div class="osmo-readout" id="labReadout" aria-live="polite"></div>
+                </div>
+                <div class="model-row">
+                    <div class="model-slot">
+                        <div class="model-label"><i class="bi bi-arrow-down-right"></i> Simple diffusion</div>
+                        <svg class="cell-svg" id="labSimple" viewBox="0 0 260 190" role="img" aria-label="Small molecules crossing the phospholipid bilayer"></svg>
+                        <p class="model-cap" id="labSimpleCap"></p>
+                    </div>
+                    <div class="model-slot">
+                        <div class="model-label"><i class="bi bi-arrow-down-right"></i> Facilitated diffusion</div>
+                        <svg class="cell-svg" id="labFacil" viewBox="0 0 260 190" role="img" aria-label="Molecules crossing through carrier proteins"></svg>
+                        <p class="model-cap" id="labFacilCap"></p>
+                    </div>
+                </div>
+                <div class="model-slot" style="margin-top:20px">
+                    <div class="model-label"><i class="bi bi-graph-up"></i> Rate of movement vs concentration</div>
+                    <svg class="cell-svg" id="labGraph" viewBox="0 0 520 235" role="img" aria-label="Graph: simple diffusion rises in a straight line while facilitated diffusion levels off when carriers are saturated"></svg>
+                    <p class="model-cap">Rates are in relative units. Simple diffusion keeps rising with the gradient. Facilitated diffusion levels off once every carrier is busy (saturation), and more carriers raise that ceiling.</p>
                 </div>
             </div>
         </section>
-        <div class="section-divider"><span>Active Transport (Energy Required)</span></div>
+
 
         <section class="organelle-section">
             <div class="organelle-header">
-                <h3 class="organelle-name">Primary Active Transport: Sodium-Potassium Pump</h3>
+                <h3 class="organelle-name">Active Transport: Moving Uphill</h3>
                 <span class="cell-tag tag-active"><i class="bi bi-lightning-charge-fill"></i> Active</span>
             </div>
             <div class="organelle-content">
                 <div class="organelle-text">
 
                     <p>Some substances must be moved uphill, from low concentration to high concentration. This needs energy, which
-                    comes from ATP, and a carrier protein acting as a pump. The sodium-potassium pump (Na<sup>+</sup>/K<sup>+</sup>-ATPase)
-                    is found in the plasma membrane of almost every animal cell.</p>
+                    comes from ATP, and a carrier protein acting as a pump. Both animal and plant cells use pumps in the plasma
+                    membrane, but they use different ones. You will see each in its own section below.</p>
                     <div class="function-box">
                         <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Each cycle moves 3 sodium ions out of the cell and 2 potassium ions into the cell, using one ATP. This keeps sodium low and potassium high inside the cell and creates an electrical difference across the membrane that is important for nerve impulses.</p>
+                        <p>Builds and maintains concentration differences that cells depend on, such as high potassium inside animal cells or a proton gradient across a plant cell's membrane.</p>
                     </div>
-                    <ol class="step-list">
-                        <li>Three Na<sup>+</sup> ions from the cytoplasm bind to the pump.</li>
-                        <li>ATP transfers a phosphate group to the pump, which changes shape.</li>
-                        <li>The pump releases the 3 Na<sup>+</sup> outside the cell.</li>
-                        <li>Two K<sup>+</sup> ions from outside bind, and the phosphate group detaches.</li>
-                        <li>The pump returns to its original shape and releases the 2 K<sup>+</sup> inside the cell.</li>
-                    </ol>
-                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 330" role="img" aria-label="The sodium-potassium pump moves three sodium ions out and two potassium ions in using ATP">
-<defs><pattern id="pl3" width="16" height="64" patternUnits="userSpaceOnUse" patternTransform="translate(0 118)">
-        <circle class="head" cx="8" cy="9" r="6"/><path class="tail" d="M5.5 15V31M10.5 15V31"/>
-        <path class="tail" d="M5.5 33V49M10.5 33V49"/><circle class="head" cx="8" cy="55" r="6"/></pattern><marker id="ah3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
-<rect class="zone-out" x="0" y="0" width="640" height="118"/><rect class="zone-in" x="0" y="182" width="640" height="148"/>
-<rect x="0" y="118" width="640" height="64" fill="url(#pl3)"/>
-<text class="lbl" x="14" y="20">EXTRACELLULAR FLUID</text><text class="lbl-sm" x="14" y="35">High Na+, low K+</text>
-<text class="lbl" x="14" y="298">CYTOPLASM</text><text class="lbl-sm" x="14" y="314">Low Na+, high K+</text>
-<!-- pump -->
-<rect class="prot" x="250" y="106" width="50" height="88" rx="16"/><rect class="prot" x="340" y="106" width="50" height="88" rx="16"/>
-<rect class="pore" x="300" y="118" width="40" height="64"/>
-<!-- Na out -->
-<path class="arrow" d="M312 236V60" marker-end="url(#ah3)"/>
-<circle class="pa" cx="262" cy="246" r="10"/><circle class="pa" cx="292" cy="262" r="10"/><circle class="pa" cx="230" cy="264" r="10"/>
-<text class="lbl-w" x="262" y="249">Na+</text><text class="lbl-w" x="292" y="265">Na+</text><text class="lbl-w" x="230" y="267">Na+</text>
-<circle class="pa" cx="222" cy="52" r="10"/><circle class="pa" cx="252" cy="64" r="10"/><circle class="pa" cx="284" cy="48" r="10"/>
-<text class="lbl-w" x="222" y="55">Na+</text><text class="lbl-w" x="252" y="67">Na+</text><text class="lbl-w" x="284" y="51">Na+</text>
-<text class="lbl ctr" x="252" y="92">3 Na+ OUT</text>
-<!-- K in -->
-<path class="arrow" d="M330 72V240" marker-end="url(#ah3)"/>
-<circle class="pk" cx="372" cy="58" r="10"/><circle class="pk" cx="404" cy="70" r="10"/>
-<text class="lbl-w" x="372" y="61">K+</text><text class="lbl-w" x="404" y="73">K+</text>
-<circle class="pk" cx="368" cy="250" r="10"/><circle class="pk" cx="400" cy="262" r="10"/>
-<text class="lbl-w" x="368" y="253">K+</text><text class="lbl-w" x="400" y="265">K+</text>
-<text class="lbl ctr" x="392" y="96">2 K+ IN</text>
-<!-- ATP -->
-<rect class="chip" x="440" y="214" width="180" height="48" rx="10"/><text class="chip-t" x="530" y="235">ATP → ADP + Pi</text><text class="lbl-sm ctr" x="530" y="251">energy powers the pump</text>
-<text class="lbl-sm" x="440" y="22">Pushes ions AGAINST</text><text class="lbl-sm" x="440" y="36">their concentration gradients</text>
-</svg></div><figcaption>Figure 4. The sodium-potassium pump: 3 Na+ out, 2 K+ in, powered by ATP.</figcaption></figure>
 
-                    <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Animal vs Plant</h4><p>Animal cells rely heavily on the sodium-potassium pump. Plant cells depend more on proton (H<sup>+</sup>) pumps in their plasma membrane, which push hydrogen ions out and help drive the uptake of nutrients.</p></div>
-                </div>
-            </div>
-        </section>
-        <section class="organelle-section">
-            <div class="organelle-header">
-                <h3 class="organelle-name">Secondary Active Transport (Cotransport)</h3>
-                <span class="cell-tag tag-active"><i class="bi bi-lightning-charge-fill"></i> Active</span>
-            </div>
-            <div class="organelle-content">
-                <div class="organelle-text">
-
+                    <h4 style="margin-top:22px;font-size:1rem;font-weight:700;color:var(--pine)">Secondary Active Transport (Cotransport)</h4>
                     <p>Secondary active transport does not use ATP directly. Instead, it uses the energy stored in an ion gradient
                     that a primary pump already built. As the ion flows back down its gradient, it drags another substance along.</p>
                     <div class="mini-grid">
                         <div class="mini-card"><h5>Symport</h5><p>Both substances move in the same direction. Example: sodium and glucose entering intestinal cells together.</p></div>
                         <div class="mini-card"><h5>Antiport</h5><p>The substances move in opposite directions. Example: a sodium-calcium exchanger that moves Na<sup>+</sup> in while moving Ca<sup>2+</sup> out.</p></div>
                     </div>
-                    <div class="function-box">
-                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
-                        <p>Lets cells pull in valuable molecules such as glucose and amino acids even when they are already more concentrated inside. It is still active transport because the gradient it depends on was created using ATP.</p>
-                    </div>
+                    <p style="margin-top:14px">It is still active transport because the gradient it depends on was created using ATP. It lets cells pull in valuable molecules such as glucose and amino acids even when they are already more concentrated inside.</p>
 
                 </div>
             </div>
         </section>
-        <div class="section-divider"><span>Bulk Transport (Vesicles)</span></div>
 
         <section class="organelle-section">
             <div class="organelle-header">
@@ -625,18 +588,23 @@
                         <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
                         <p>Brings large materials into the cell for digestion or use. The vesicle usually fuses with a lysosome in animal cells, where its contents are broken down.</p>
                     </div>
-                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 214" role="img" aria-label="Endocytosis in three stages: the membrane folds around a particle and pinches off as a vesicle inside the cell">
-<rect class="zone-out" x="0" y="0" width="640" height="100"/><rect class="zone-in" x="0" y="100" width="640" height="114"/>
-<text class="lbl-sm" x="12" y="16">OUTSIDE</text><text class="lbl-sm" x="12" y="118">INSIDE</text>
-<path class="mline" d="M14 100H186"/><circle class="pa" cx="100" cy="64" r="12"/><text class="cap" x="100" y="186">1  Particle contacts</text><text class="cap" x="100" y="203">the membrane</text>
-<path class="mline" d="M234 100H290C290 100 288 150 320 150C352 150 350 100 350 100H406"/><circle class="pa" cx="320" cy="122" r="12"/><text class="cap" x="320" y="186">2  Membrane folds</text><text class="cap" x="320" y="203">in around it</text>
-<path class="mline" d="M454 100H626"/><circle class="vesicle" cx="540" cy="140" r="28"/><circle class="pa" cx="540" cy="140" r="12"/><text class="cap" x="540" y="186">3  Vesicle pinches</text><text class="cap" x="540" y="203">off inside the cell</text>
-</svg></div><figcaption>Figure 5. Endocytosis: the membrane wraps around a particle and forms a vesicle (schematic).</figcaption></figure>
+                    <div class="ix-widget" id="stepEndo" data-stepper="stepEndo"></div>
 
                     <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Animal vs Plant</h4><p>Plant cells can also take material in by endocytosis, but the rigid cell wall generally prevents them from engulfing large particles the way an animal white blood cell does.</p></div>
                 </div>
+                <div class="organelle-embed">
+                    <div class="sketchfab-embed-wrapper">
+                        <iframe title="Active Transport - Endocytosis Pinocytosis" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/1adefdf656f0429791dfc735fcb26c18/embed?ui_theme=dark"></iframe>
+                        <p>
+                            <a href="https://sketchfab.com/3d-models/active-transport-endocytosis-pinocytosis-1adefdf656f0429791dfc735fcb26c18" target="_blank" rel="nofollow">Active Transport - Endocytosis Pinocytosis</a> by
+                            <a href="https://sketchfab.com/juliopanz" target="_blank" rel="nofollow">Júlio Panzera</a> on
+                            <a href="https://sketchfab.com" target="_blank" rel="nofollow">Sketchfab</a>
+                        </p>
+                    </div>
+                </div>
             </div>
         </section>
+
         <section class="organelle-section">
             <div class="organelle-header">
                 <h3 class="organelle-name">Exocytosis</h3>
@@ -652,30 +620,287 @@
                         <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
                         <p>Exports materials the cell has made, such as digestive enzymes, hormones, and neurotransmitters released between nerve cells, and also removes waste.</p>
                     </div>
-                    <figure class="diagram-figure"><div class="dg-scroll"><svg class="dg" viewBox="0 0 640 214" role="img" aria-label="Exocytosis in three stages: a vesicle fuses with the membrane and releases its contents outside the cell">
-<defs><marker id="ah5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
-<rect class="zone-out" x="0" y="0" width="640" height="100"/><rect class="zone-in" x="0" y="100" width="640" height="114"/>
-<text class="lbl-sm" x="12" y="16">OUTSIDE</text><text class="lbl-sm" x="12" y="118">INSIDE</text>
-<path class="mline" d="M14 100H186"/><circle class="vesicle" cx="100" cy="141" r="28"/><circle class="pa" cx="100" cy="141" r="12"/><text class="cap" x="100" y="186">1  Vesicle moves</text><text class="cap" x="100" y="203">to the membrane</text>
-<path class="mline" d="M234 100H290C290 100 288 150 320 150C352 150 350 100 350 100H406"/><circle class="pa" cx="320" cy="124" r="10"/><circle class="pa" cx="312" cy="82" r="6"/><circle class="pa" cx="332" cy="70" r="6"/>
-<path class="arrow-d" d="M320 108V56" marker-end="url(#ah5)"/><text class="cap" x="320" y="186">2  Vesicle fuses and</text><text class="cap" x="320" y="203">opens outward</text>
-<path class="mline" d="M454 100H626"/><circle class="pa" cx="510" cy="64" r="8"/><circle class="pa" cx="545" cy="46" r="8"/><circle class="pa" cx="580" cy="66" r="8"/>
-<path class="arrow-d" d="M545 96V70" marker-end="url(#ah5)"/><text class="cap" x="540" y="186">3  Contents are</text><text class="cap" x="540" y="203">released outside</text>
-</svg></div><figcaption>Figure 6. Exocytosis: a vesicle fuses with the membrane and releases its contents (schematic).</figcaption></figure>
+                    <div class="ix-widget" id="stepExo" data-stepper="stepExo"></div>
 
                     <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Animal vs Plant</h4><p>In plant cells, Golgi vesicles carry building materials to the plasma membrane by exocytosis so they can be added to the growing cell wall. This links transport back to the Golgi apparatus you studied in Module 01.</p></div>
+                </div>
+                <div class="organelle-embed">
+                    <div class="sketchfab-embed-wrapper">
+                        <iframe title="Active Transport - Exocytosis" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/e15a3e3c0509495bba4e5e706a6022f7/embed?ui_theme=dark"></iframe>
+                        <p>
+                            <a href="https://sketchfab.com/3d-models/active-transport-exocytosis-e15a3e3c0509495bba4e5e706a6022f7" target="_blank" rel="nofollow">Active Transport - Exocytosis</a> by
+                            <a href="https://sketchfab.com/juliopanz" target="_blank" rel="nofollow">Júlio Panzera</a> on
+                            <a href="https://sketchfab.com" target="_blank" rel="nofollow">Sketchfab</a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
+        <!-- =========================================
+             4. THE COMPARISON CORE: OSMOSIS
+        ========================================= -->
+        <div class="section-divider"><span>The Big Comparison: Osmosis</span></div>
+
+        <section class="organelle-section" id="osmosis">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Osmosis and Tonicity</h3>
+                <span class="cell-tag tag-passive"><i class="bi bi-droplet-half"></i> Passive</span>
+            </div>
+            <div class="organelle-text">
+
+                <p>Osmosis is the diffusion of water through a selectively permeable membrane. Water moves from the side with
+                less dissolved solute (more free water) to the side with more solute. Tonicity describes how the solute
+                concentration of the surrounding fluid, compared with the inside of the cell, changes the cell's volume.</p>
+                <div class="function-box">
+                    <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                    <p>Balances water between the cell and its surroundings. Whether a cell swells, stays the same, or shrinks depends on whether the outside fluid is hypotonic (less solute than the cell), isotonic (equal), or hypertonic (more solute than the cell).</p>
+                </div>
+
+                <!-- HYPOTONIC -->
+                <div class="tonicity-block">
+                    <h4 class="tonicity-title"><span class="tonicity-tag hypo">Hypotonic</span><span class="tonicity-sub">Less solute outside than inside. Water flows in.</span></h4>
+                    <div class="model-row">
+                        <div class="model-slot">
+                            <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                            <!-- 3D MODEL SLOT: replace this <svg> with a Sketchfab iframe (animal cell, swollen/lysing) -->
+                            <svg class="cell-svg" data-cell="animal" data-conc="15" viewBox="0 0 200 170" role="img" aria-label="Animal cell swollen by water entering"></svg>
+                            <p class="model-cap"><strong>Swells and may burst (lysis).</strong> With no wall to resist, water keeps entering until the membrane can stretch no further.</p>
+                        </div>
+                        <div class="model-slot">
+                            <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                            <!-- 3D MODEL SLOT: replace this <svg> with a Sketchfab iframe (plant cell, turgid) -->
+                            <svg class="cell-svg" data-cell="plant" data-conc="15" viewBox="0 0 200 170" role="img" aria-label="Turgid plant cell pressed against its cell wall"></svg>
+                            <p class="model-cap"><strong>Becomes turgid (firm).</strong> The protoplast presses against the wall, which pushes back and stops the cell from bursting.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ISOTONIC -->
+                <div class="tonicity-block">
+                    <h4 class="tonicity-title"><span class="tonicity-tag iso">Isotonic</span><span class="tonicity-sub">Equal solute inside and out. No net water movement.</span></h4>
+                    <div class="model-row">
+                        <div class="model-slot">
+                            <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                            <!-- 3D MODEL SLOT: animal cell, normal shape -->
+                            <svg class="cell-svg" data-cell="animal" data-conc="50" viewBox="0 0 200 170" role="img" aria-label="Animal cell with normal shape and water moving equally in both directions"></svg>
+                            <p class="model-cap"><strong>Keeps its normal shape.</strong> Water enters and leaves at the same rate, so volume stays steady.</p>
+                        </div>
+                        <div class="model-slot">
+                            <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                            <!-- 3D MODEL SLOT: plant cell, flaccid -->
+                            <svg class="cell-svg" data-cell="plant" data-conc="50" viewBox="0 0 200 170" role="img" aria-label="Flaccid plant cell with no pressure on its cell wall"></svg>
+                            <p class="model-cap"><strong>Becomes flaccid (limp).</strong> Without net water entering, there is little turgor pressure, so plant tissue starts to wilt.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HYPERTONIC -->
+                <div class="tonicity-block">
+                    <h4 class="tonicity-title"><span class="tonicity-tag hyper">Hypertonic</span><span class="tonicity-sub">More solute outside than inside. Water flows out.</span></h4>
+                    <div class="model-row">
+                        <div class="model-slot">
+                            <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                            <!-- 3D MODEL SLOT: animal cell, crenated -->
+                            <svg class="cell-svg" data-cell="animal" data-conc="90" viewBox="0 0 200 170" role="img" aria-label="Shrivelled animal cell with a puckered membrane after losing water"></svg>
+                            <p class="model-cap"><strong>Shrivels (crenation).</strong> Water leaves, the cell shrinks, and its membrane becomes puckered.</p>
+                        </div>
+                        <div class="model-slot">
+                            <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                            <!-- 3D MODEL SLOT: plant cell, plasmolyzed -->
+                            <svg class="cell-svg" data-cell="plant" data-conc="90" viewBox="0 0 200 170" role="img" aria-label="Plasmolyzed plant cell with its membrane pulled away from the cell wall"></svg>
+                            <p class="model-cap"><strong>Plasmolysis.</strong> The protoplast shrinks and its membrane pulls away from the cell wall, leaving a gap.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cell-legend" aria-label="Diagram key">
+                    <span><i style="background:#8A6D3B"></i> Cell wall</span>
+                    <span><i style="background:#CFE8D5"></i> Plant cytoplasm</span>
+                    <span><i style="background:#A9D6E5"></i> Central vacuole</span>
+                    <span><i style="background:#F6E3B4"></i> Animal cytoplasm</span>
+                    <span><i style="background:#2B6CB0"></i> Water movement</span>
+                </div>
+
+                <div class="lesson-note why"><h4><i class="bi bi-question-circle"></i> Why the difference?</h4><p>The cell wall. In pure water, an animal cell has nothing to resist the incoming water, so it can burst. A plant cell's wall pushes back, and that pressure (turgor) keeps stems and leaves upright. The same wall explains why a plant cell in salt water behaves differently: the membrane shrinks, but the wall stays, so the two separate.</p></div>
+
+                <div class="table-responsive" style="margin-top:22px">
+                    <table class="comparison-table">
+                        <thead><tr><th>Outside solution</th><th>Water movement</th><th>Animal cell</th><th>Plant cell</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Hypotonic</strong><small>Less solute than the cell</small></td><td>Into the cell</td><td>Swells and may burst (lysis)</td><td>Turgid (firm); the wall stops it bursting</td></tr>
+                            <tr><td><strong>Isotonic</strong><small>Equal solute</small></td><td>No net movement</td><td>Keeps its normal shape</td><td>Flaccid (limp); plants begin to wilt</td></tr>
+                            <tr><td><strong>Hypertonic</strong><small>More solute than the cell</small></td><td>Out of the cell</td><td>Shrivels (crenation)</td><td>Membrane pulls away from the wall (plasmolysis)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================
+             5. ANIMAL CELL EMPHASIS
+        ========================================= -->
+        <div class="section-divider"><span>Animal Cell Emphasis</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Sodium-Potassium Pump</h3>
+                <span class="cell-tag tag-animal"><i class="bi bi-heart-pulse"></i> Animal Emphasis</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>The sodium-potassium pump (Na<sup>+</sup>/K<sup>+</sup>-ATPase) is a primary active transporter found in the
+                    plasma membrane of almost every animal cell. It uses ATP directly to move ions against their gradients.</p>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>Each cycle moves 3 sodium ions out of the cell and 2 potassium ions into the cell, using one ATP. This keeps sodium low and potassium high inside the cell and creates an electrical difference across the membrane that is important for nerve impulses.</p>
+                    </div>
+                    <div class="ix-widget" id="stepPump" data-stepper="stepPump"></div>
+
+                    <div class="lesson-note why"><h4><i class="bi bi-question-circle"></i> Why it matters for water balance</h4><p>An animal cell has no wall to hold its volume in check, so it must control its own solute content. By constantly pumping sodium out, the pump helps keep the inside of the cell from accumulating solutes that would draw water in and make it swell.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================
+             6. PLANT CELL EMPHASIS
+        ========================================= -->
+        <div class="section-divider"><span>Plant Cell Emphasis</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Cell Wall and Turgor Pressure</h3>
+                <span class="cell-tag tag-plant"><i class="bi bi-flower3"></i> Plant Emphasis</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>The cell wall is a rigid layer of cellulose fibers outside the plasma membrane. It is porous, so water and
+                    small solutes pass through it freely. That means the membrane underneath is still the real selective barrier,
+                    while the wall sets a limit on how far the cell can expand.</p>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>When water enters a plant cell, the contents push against the wall. This turgor pressure rises until it balances the water's tendency to enter, so the cell stops swelling instead of bursting. Turgor holds leaves and non-woody stems upright, and losing it is what we see as wilting.</p>
+                    </div>
+                    <div class="mini-grid">
+                        <div class="mini-card"><h5>Turgid</h5><p>Firm and healthy. Water has entered and the cell contents press against the wall.</p></div>
+                        <div class="mini-card"><h5>Flaccid</h5><p>Limp. There is little pressure on the wall, so tissues begin to wilt.</p></div>
+                        <div class="mini-card"><h5>Plasmolyzed</h5><p>The membrane has pulled away from the wall. It can recover early on, but prolonged plasmolysis can kill the cell.</p></div>
+                    </div>
+                </div>
+                <div class="organelle-embed">
+                    <div class="sketchfab-embed-wrapper">
+                        <iframe title="cell-wall" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/074a756715f44fa39391c467d04547a2/embed?ui_theme=dark"></iframe>
+                        <p>
+                            <a href="https://sketchfab.com/3d-models/cell-wall-074a756715f44fa39391c467d04547a2" target="_blank" rel="nofollow">cell-wall</a> by
+                            <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow">SourLobster5747</a> on
+                            <a href="https://sketchfab.com" target="_blank" rel="nofollow">Sketchfab</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Central Vacuole and Tonoplast</h3>
+                <span class="cell-tag tag-plant"><i class="bi bi-flower3"></i> Plant Emphasis</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>A mature plant cell usually has one large central vacuole that can take up to 90% of the cell's volume.
+                    Its surrounding membrane, the tonoplast, contains water channels (aquaporins) and pumps that move water and
+                    ions between the vacuole and the cytoplasm.</p>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>Acts as the cell's water reservoir. Most of the water that enters a plant cell goes into the vacuole, which builds turgor pressure, and it is also the first compartment to shrink when the cell loses water. The vacuole also stores ions, sugars, and wastes.</p>
+                    </div>
+                    <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Animal vs Plant</h4><p>Animal cells have only small vacuoles and vesicles, so they have no large water store to buffer them. Their volume depends much more directly on solute balance across the plasma membrane.</p></div>
+                </div>
+                <div class="organelle-embed">
+                    <div class="sketchfab-embed-wrapper">
+                        <iframe title="vacuole" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share width="100%" height="400" src="https://sketchfab.com/models/1f15870c90794a0f8e8a7e33e9c60d45/embed?ui_theme=dark"></iframe>
+                        <p>
+                            <a href="https://sketchfab.com/3d-models/vacuole-1f15870c90794a0f8e8a7e33e9c60d45" target="_blank" rel="nofollow">vacuole</a> by
+                            <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow">SourLobster5747</a> on
+                            <a href="https://sketchfab.com" target="_blank" rel="nofollow">Sketchfab</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Proton Pump (H<sup>+</sup>-ATPase)</h3>
+                <span class="cell-tag tag-plant"><i class="bi bi-flower3"></i> Plant Emphasis</span>
+            </div>
+            <div class="organelle-content">
+                <div class="organelle-text">
+
+                    <p>Where animal cells lean on the sodium-potassium pump, plant cells depend heavily on a proton pump in the
+                    plasma membrane. It uses ATP to push hydrogen ions (H<sup>+</sup>) out of the cell.</p>
+                    <div class="function-box">
+                        <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                        <p>Builds a proton gradient and an electrical difference across the membrane. Secondary transporters then use that stored energy to bring nutrients such as sugars and nitrate into the cell, the same cotransport idea you saw earlier.</p>
+                    </div>
+                    <div class="lesson-note why"><h4><i class="bi bi-question-circle"></i> Why the difference?</h4><p>Both pumps do the same job: they use ATP to build a gradient that powers other transport. Animal cells build it with sodium and potassium, while plant cells build it with protons.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================
+             7. INTERACTIVE: OSMOSIS SIMULATOR
+        ========================================= -->
+        <div class="section-divider"><span>Try It Yourself</span></div>
+
+        <section class="organelle-section" id="osmosisLab">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Osmosis Simulator</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <div class="osmo-widget">
+                <p>Drag the slider to change how much solute is dissolved in the fluid around both cells. Watch how the animal cell and the plant cell respond to the same change.</p>
+                <div class="osmo-control">
+                    <label for="osmoRange">Solute concentration outside the cells</label>
+                    <div class="osmo-scale">
+                        <span>Pure water</span>
+                        <input type="range" id="osmoRange" min="0" max="100" value="50" step="1">
+                        <span>Very salty</span>
+                    </div>
+                    <div class="osmo-readout" aria-live="polite">
+                        <strong id="osmoSolution">Isotonic.</strong> <span id="osmoNote">No net water movement.</span>
+                    </div>
+                </div>
+                <div class="model-row">
+                    <div class="model-slot">
+                        <div class="model-label"><i class="bi bi-heart-pulse"></i> Animal Cell</div>
+                        <svg class="cell-svg" id="liveAnimal" data-cell="animal" data-conc="50" viewBox="0 0 200 170" role="img" aria-label="Animal cell reacting to the solution"></svg>
+                        <p class="model-cap" id="animalState" aria-live="polite"></p>
+                    </div>
+                    <div class="model-slot">
+                        <div class="model-label"><i class="bi bi-flower3"></i> Plant Cell</div>
+                        <svg class="cell-svg" id="livePlant" data-cell="plant" data-conc="50" viewBox="0 0 200 170" role="img" aria-label="Plant cell reacting to the solution"></svg>
+                        <p class="model-cap" id="plantState" aria-live="polite"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================
+             8. TAKEAWAYS + REFERENCES
+        ========================================= -->
         <section class="takeaways">
             <h2 class="section-title">Key Takeaways</h2>
             <ul>
                 <li>The plasma membrane is a fluid mosaic of phospholipids, cholesterol, proteins, and carbohydrates that is selectively permeable.</li>
                 <li>Passive transport (diffusion, facilitated diffusion, osmosis) moves substances down their gradient with no ATP.</li>
-                <li>Active transport uses ATP and pumps such as the sodium-potassium pump to move substances against their gradient.</li>
+                <li>Active transport uses ATP and pumps to move substances against their gradient. Animal cells rely on the sodium-potassium pump; plant cells rely on the proton pump.</li>
                 <li>Bulk transport (endocytosis and exocytosis) moves large materials in vesicles and needs energy.</li>
-                <li>Animal cells burst or shrink as water moves by osmosis; plant cells rely on the cell wall to stay turgid instead of bursting.</li>
+                <li>In pure water an animal cell can burst, but a plant cell becomes turgid because its cell wall pushes back.</li>
+                <li>In a salty solution an animal cell shrivels (crenation), while a plant cell's membrane pulls away from its wall (plasmolysis).</li>
             </ul>
         </section>
 
@@ -684,6 +909,7 @@
             <div class="references-group">
                 <h3>Cell Membrane and Transport Sources</h3>
                 <ul class="references-list">
+                    <li>OpenStax. (n.d.). 4.3 Eukaryotic cells. In Biology 2e. https://openstax.org/books/biology-2e/pages/4-3-eukaryotic-cells</li>
                     <li>OpenStax. (n.d.). 5.1 Components and structure. In Biology 2e. https://openstax.org/books/biology-2e/pages/5-1-components-and-structure</li>
                     <li>OpenStax. (n.d.). 5.2 Passive transport. In Biology 2e. https://openstax.org/books/biology-2e/pages/5-2-passive-transport</li>
                     <li>OpenStax. (n.d.). 5.4 Bulk transport. In Biology 2e. https://openstax.org/books/biology-2e/pages/5-4-bulk-transport</li>
@@ -706,8 +932,432 @@
                     await window.ecoAuth.signOut();
                 });
             }
-
         });
+    </script>
+
+    <!-- =========================================
+         OSMOSIS CELL DRAWINGS + SIMULATOR
+         c = outside solute concentration, 0 (pure water) to 100 (very salty).
+         ~50 is isotonic for both cells.
+         The same drawing functions render the static
+         hypotonic / isotonic / hypertonic panels above.
+    ========================================= -->
+    <script>
+    (function () {
+        const COL = {
+            water: '#2B6CB0',
+            aFill: '#F6E3B4', aStroke: '#8F6A12', nuc: '#C9971F', bad: '#B33A3A',
+            wall: '#8A6D3B', gap: '#EAF4EC', pFill: '#CFE8D5', pStroke: '#1B4332',
+            vac: '#A9D6E5', vacStroke: '#4F8FA6'
+        };
+
+        function arrow(x1, y1, x2, y2) {
+            const a = Math.atan2(y2 - y1, x2 - x1), h = 7;
+            const p1 = [x2 - h * Math.cos(a - 0.45), y2 - h * Math.sin(a - 0.45)];
+            const p2 = [x2 - h * Math.cos(a + 0.45), y2 - h * Math.sin(a + 0.45)];
+            return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 +
+                '" stroke="' + COL.water + '" stroke-width="2.2" stroke-linecap="round"/>' +
+                '<polygon points="' + x2 + ',' + y2 + ' ' + p1.join(',') + ' ' + p2.join(',') +
+                '" fill="' + COL.water + '"/>';
+        }
+
+        // pts: boundary points with outward unit vectors. dir: -1 water in, 1 water out, 0 both.
+        function waterArrows(pts, dir) {
+            let s = '';
+            pts.forEach(function (p) {
+                const ax = p.x, ay = p.y, bx = p.x + p.ux * 16, by = p.y + p.uy * 16;
+                if (dir < 0) s += arrow(bx, by, ax, ay);
+                else if (dir > 0) s += arrow(ax, ay, bx, by);
+                else {
+                    const nx = -p.uy * 4, ny = p.ux * 4;
+                    s += arrow(bx + nx, by + ny, ax + nx, ay + ny) + arrow(ax - nx, ay - ny, bx - nx, by - ny);
+                }
+            });
+            return s;
+        }
+
+        function dirFor(c) { return c < 45 ? -1 : (c > 55 ? 1 : 0); }
+
+        function animalSvg(c) {
+            const cx = 100, cy = 85;
+            const r = c < 50 ? 44 + (50 - c) * 0.24 : 44 - (c - 50) * 0.3;
+            const pts = [-135, -45, 45, 135].map(function (d) {
+                const t = d * Math.PI / 180, ux = Math.cos(t), uy = Math.sin(t);
+                return { x: cx + ux * (r + 8), y: cy + uy * (r + 8), ux: ux, uy: uy };
+            });
+            let body;
+            if (c < 6) {
+                let frag = '';
+                for (let i = 0; i < 12; i++) {
+                    const t = i * Math.PI / 6;
+                    frag += '<line x1="' + (cx + Math.cos(t) * (r + 2)) + '" y1="' + (cy + Math.sin(t) * (r + 2)) +
+                        '" x2="' + (cx + Math.cos(t) * (r + 12)) + '" y2="' + (cy + Math.sin(t) * (r + 12)) +
+                        '" stroke="' + COL.bad + '" stroke-width="2" stroke-linecap="round"/>';
+                }
+                body = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + COL.aFill + '" fill-opacity=".6" stroke="' +
+                    COL.bad + '" stroke-width="2.5" stroke-dasharray="7 8"/>' + frag;
+            } else if (c > 80) {
+                const n = 16, pp = [];
+                for (let i = 0; i < n * 2; i++) {
+                    const ang = i * Math.PI / n, rad = i % 2 === 0 ? r + 4 : r - 3;
+                    pp.push((cx + Math.cos(ang) * rad).toFixed(1) + ',' + (cy + Math.sin(ang) * rad).toFixed(1));
+                }
+                body = '<polygon points="' + pp.join(' ') + '" fill="' + COL.aFill + '" stroke="' + COL.aStroke +
+                    '" stroke-width="2.5" stroke-linejoin="round"/>';
+            } else {
+                body = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + COL.aFill + '" stroke="' +
+                    COL.aStroke + '" stroke-width="3"/>';
+            }
+            const nuc = '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * 0.3) + '" fill="' + COL.nuc + '" stroke="' + COL.aStroke + '" stroke-width="1.5"/>';
+            return waterArrows(pts, dirFor(c)) + body + nuc;
+        }
+
+        function plantSvg(c) {
+            const cx = 100, cy = 85, L = 40, T = 25, W = 120, H = 120;
+            let p;
+            if (c <= 45) p = 113;
+            else if (c <= 58) p = 113 - (c - 45) * 0.3;
+            else p = (113 - 13 * 0.3) - (c - 58) * 1.15;
+            const rx = c <= 45 ? 5 : (c <= 58 ? 9 : 9 + (109 - p) * 0.18);
+            const v = p * 0.62;
+            const pts = [
+                { x: cx, y: T - 6, ux: 0, uy: -1 }, { x: cx, y: T + H + 6, ux: 0, uy: 1 },
+                { x: L - 6, y: cy, ux: -1, uy: 0 }, { x: L + W + 6, y: cy, ux: 1, uy: 0 }
+            ];
+            return waterArrows(pts, dirFor(c)) +
+                '<rect x="' + L + '" y="' + T + '" width="' + W + '" height="' + H + '" fill="' + COL.gap + '" stroke="' + COL.wall + '" stroke-width="7"/>' +
+                '<rect x="' + (cx - p / 2) + '" y="' + (cy - p / 2) + '" width="' + p + '" height="' + p + '" rx="' + rx +
+                '" fill="' + COL.pFill + '" stroke="' + COL.pStroke + '" stroke-width="2.5"/>' +
+                '<rect x="' + (cx - v / 2) + '" y="' + (cy - v / 2) + '" width="' + v + '" height="' + v + '" rx="' + (rx * 1.2) +
+                '" fill="' + COL.vac + '" stroke="' + COL.vacStroke + '" stroke-width="2"/>';
+        }
+
+        function render(svg, c) {
+            svg.innerHTML = svg.dataset.cell === 'animal' ? animalSvg(c) : plantSvg(c);
+        }
+
+        function animalState(c) {
+            if (c < 6) return ['Lysis (bursts).', 'The cell has swollen so much that the membrane ruptures.'];
+            if (c < 45) return ['Swollen.', 'Water enters faster than it leaves, and with no wall the cell keeps expanding.'];
+            if (c <= 55) return ['Normal shape.', 'Water moves in and out equally, so the volume stays steady.'];
+            if (c <= 80) return ['Shrinking.', 'Water is leaving the cell and its volume is dropping.'];
+            return ['Crenated.', 'The cell has shrivelled and its membrane is puckered.'];
+        }
+        function plantState(c) {
+            if (c <= 45) return ['Turgid.', 'Water pushes the contents against the wall. The cell is firm and healthy.'];
+            if (c <= 58) return ['Flaccid.', 'There is little pressure on the wall, so plant tissue would begin to wilt.'];
+            return ['Plasmolyzed.', 'The membrane has pulled away from the cell wall.'];
+        }
+        function solution(c) {
+            if (c < 45) return ['Hypotonic.', 'Less solute outside than inside, so water moves into both cells.'];
+            if (c <= 55) return ['Isotonic.', 'Solute is about equal inside and out, so there is no net water movement.'];
+            return ['Hypertonic.', 'More solute outside than inside, so water moves out of both cells.'];
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('svg[data-cell]').forEach(function (svg) {
+                render(svg, Number(svg.dataset.conc));
+            });
+
+            const range = document.getElementById('osmoRange');
+            if (range) {
+                const la = document.getElementById('liveAnimal'), lp = document.getElementById('livePlant');
+                const sol = document.getElementById('osmoSolution'), note = document.getElementById('osmoNote');
+                const as = document.getElementById('animalState'), ps = document.getElementById('plantState');
+                function update() {
+                    const c = Number(range.value);
+                    render(la, c); render(lp, c);
+                    const s = solution(c), a = animalState(c), p = plantState(c);
+                    sol.textContent = s[0]; note.textContent = s[1];
+                    as.innerHTML = '<strong>' + a[0] + '</strong> ' + a[1];
+                    ps.innerHTML = '<strong>' + p[0] + '</strong> ' + p[1];
+                }
+                range.addEventListener('input', update);
+                update();
+            }
+        });
+    })();
+    </script>
+
+    <!-- =========================================
+         TRANSPORT INTERACTIVES
+         1. Membrane explorer   2. Diffusion lab
+         3. Steppers: endocytosis, exocytosis, Na+/K+ pump
+    ========================================= -->
+    <script>
+    (function () {
+        var GOLD = '#C9971F', GS = '#8F6A12', PINE = '#123D27', MOSS = '#1E7245', LICH = '#52B788',
+            INK = '#1B2A20', MUTED = '#5B6B60', PHOS = '#D9534F';
+
+        function arrow(x1, y1, x2, y2, col, w) {
+            var a = Math.atan2(y2 - y1, x2 - x1), h = 7;
+            var p1 = [x2 - h * Math.cos(a - 0.45), y2 - h * Math.sin(a - 0.45)];
+            var p2 = [x2 - h * Math.cos(a + 0.45), y2 - h * Math.sin(a + 0.45)];
+            return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col +
+                '" stroke-width="' + (w || 2.2) + '" stroke-linecap="round"/>' +
+                '<polygon points="' + x2 + ',' + y2 + ' ' + p1.join(',') + ' ' + p2.join(',') + '" fill="' + col + '"/>';
+        }
+        function zones(W, H, y1, y2) {
+            return '<rect x="0" y="0" width="' + W + '" height="' + y1 + '" fill="rgba(82,183,136,.10)"/>' +
+                '<rect x="0" y="' + y2 + '" width="' + W + '" height="' + (H - y2) + '" fill="rgba(201,151,31,.08)"/>';
+        }
+        function label(x, y, t, anchor, size) {
+            return '<text x="' + x + '" y="' + y + '" font-size="' + (size || 9) + '" font-weight="700" fill="' + MUTED +
+                '" letter-spacing=".6" text-anchor="' + (anchor || 'start') + '">' + t + '</text>';
+        }
+        function particle(x, y, r) {
+            return '<circle cx="' + x + '" cy="' + y + '" r="' + (r || 4) + '" fill="' + GOLD + '" stroke="' + GS + '" stroke-width="1"/>';
+        }
+        function ion(x, y, type) {
+            var na = type === 'Na';
+            return '<circle cx="' + x + '" cy="' + y + '" r="7.5" fill="' + (na ? GOLD : LICH) + '" stroke="' + (na ? GS : PINE) + '" stroke-width="1"/>' +
+                '<text x="' + x + '" y="' + (y + 2.3) + '" font-size="6.4" font-weight="700" text-anchor="middle" fill="' + INK + '">' + type + '+</text>';
+        }
+        function chip(x, y, w, t) {
+            return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="22" rx="11" fill="#fff" stroke="#C9D6CC"/>' +
+                '<text x="' + (x + w / 2) + '" y="' + (y + 14.5) + '" font-size="8.5" font-weight="700" text-anchor="middle" fill="' + PINE + '">' + t + '</text>';
+        }
+        function band(W, y0) {
+            var s = '<rect x="0" y="' + y0 + '" width="' + W + '" height="28" fill="#CDE6D3"/>';
+            for (var x = 7; x < W; x += 14) {
+                s += '<circle cx="' + x + '" cy="' + (y0 + 4) + '" r="5" fill="' + PINE + '"/>' +
+                     '<circle cx="' + x + '" cy="' + (y0 + 24) + '" r="5" fill="' + PINE + '"/>' +
+                     '<path d="M' + (x - 2.5) + ' ' + (y0 + 9) + 'V' + (y0 + 19) + 'M' + (x + 2.5) + ' ' + (y0 + 9) + 'V' + (y0 + 19) +
+                     '" stroke="' + MOSS + '" stroke-width="1.6" stroke-linecap="round" fill="none"/>';
+            }
+            return s;
+        }
+
+        /* ---------------- 1. MEMBRANE EXPLORER ---------------- */
+        var MX = {
+            phospholipid: ['Phospholipid bilayer', 'Two layers of phospholipids form the basic barrier. The hydrophilic heads face the watery fluid on both sides, while the hydrophobic tails face each other inside. This oily core blocks ions and large polar molecules.'],
+            cholesterol: ['Cholesterol', 'Tucked between phospholipids in animal cell membranes, it helps keep the membrane flexible but stable. Plant membranes use plant sterols (phytosterols) in a similar role.'],
+            integral: ['Integral (transmembrane) protein', 'Spans the whole bilayer. Integral proteins form the channels, carriers, and pumps that move ions and polar molecules across the membrane.'],
+            peripheral: ['Peripheral protein', 'Attaches to the membrane surface without crossing it. Peripheral proteins help anchor the cytoskeleton and pass signals along.'],
+            glyco: ['Glycoprotein', 'A membrane protein with sugar chains attached on the outer surface. These chains act as identification markers so cells can recognize each other.']
+        };
+        function initExplorer() {
+            var root = document.getElementById('membraneExplorer');
+            if (!root) return;
+            var svg = document.getElementById('mxSvg'), info = document.getElementById('mxInfo');
+            var chips = root.querySelectorAll('.ix-chip'), parts = svg.querySelectorAll('[data-part]');
+            var current = null;
+            function select(p) {
+                current = (p === 'all' || p === current) ? null : p;
+                svg.classList.toggle('has-sel', !!current);
+                parts.forEach(function (g) { g.classList.toggle('sel', g.getAttribute('data-part') === current); });
+                chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-part') === current)); });
+                info.innerHTML = current
+                    ? '<strong>' + MX[current][0] + '.</strong> ' + MX[current][1]
+                    : '<strong>Select a part.</strong> Choose a button above, or click a part of the diagram, to highlight it and see what it does.';
+            }
+            chips.forEach(function (c) { c.addEventListener('click', function () { select(c.getAttribute('data-part')); }); });
+            parts.forEach(function (g) { g.addEventListener('click', function () { select(g.getAttribute('data-part')); }); });
+        }
+
+        /* ---------------- 2. DIFFUSION LAB ---------------- */
+        var POS = [[30,30],[75,52],[120,26],[165,58],[210,34],[240,60],[52,70],[100,66],[145,38],[190,70],[18,52],[230,24],[85,28],[130,68],[175,24],[40,44],[205,52],[110,50]];
+        var INS = [[68,172],[122,174],[178,172],[232,170],[18,168],[240,138],[14,140]];
+        var KM = 20;
+
+        function labBase() {
+            return zones(260, 190, 86, 114) + band(260, 86) + label(7, 13, 'OUTSIDE') + label(7, 184, 'INSIDE');
+        }
+        function outsideParticles(c) {
+            var n = 2 + Math.round(c / 100 * 16), s = '';
+            for (var i = 0; i < n && i < POS.length; i++) s += particle(POS[i][0], POS[i][1]);
+            return s;
+        }
+        function insideParticles(n) {
+            var s = '';
+            for (var i = 0; i < n && i < INS.length; i++) s += particle(INS[i][0], INS[i][1]);
+            return s;
+        }
+        function simpleScene(c) {
+            var rate = 0.5 * c, k = Math.round(rate / 50 * 4), s = labBase() + outsideParticles(c);
+            for (var i = 0; i < k; i++) {
+                var x = (i + 0.5) * (240 / k) + 10;
+                s += arrow(x, 78, x, 124, INK, 2.2);
+            }
+            return { svg: s + insideParticles(1 + k), crossing: k, rate: rate };
+        }
+        function facilScene(c, n) {
+            var f = c / (KM + c), busy = Math.round(n * Math.min(1, f * 1.25));
+            if (c === 0) busy = 0;
+            var xs = n === 2 ? [85, 175] : [40, 95, 150, 205];
+            var vmax = n === 2 ? 40 : 80, rate = vmax * c / (KM + c);
+            var s = labBase() + outsideParticles(c);
+            xs.forEach(function (x, i) {
+                s += '<rect x="' + (x - 14) + '" y="80" width="28" height="40" rx="9" fill="' + MOSS + '" stroke="' + PINE + '" stroke-width="1"/>' +
+                     '<rect x="' + (x - 7) + '" y="86" width="14" height="28" rx="5" fill="#fff"/>';
+                if (i < busy) {
+                    s += particle(x, 100, 4.5) + arrow(x, 122, x, 142, INK, 2.2) + particle(x, 154, 4);
+                }
+            });
+            return { svg: s + insideParticles(1 + busy), busy: busy, n: n, rate: rate, vmax: vmax };
+        }
+        function graph(c, n) {
+            var X0 = 50, Y0 = 190, SX = 4.5, SY = 1.7, vmax = n === 2 ? 40 : 80;
+            function px(v) { return X0 + v * SX; }
+            function py(v) { return Y0 - v * SY; }
+            var s = '', i, pts1 = [], pts2 = [];
+            s += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + (X0 + 100 * SX) + '" y2="' + Y0 + '" stroke="' + INK + '" stroke-width="1.5"/>' +
+                 '<line x1="' + X0 + '" y1="' + py(100) + '" x2="' + X0 + '" y2="' + Y0 + '" stroke="' + INK + '" stroke-width="1.5"/>';
+            [0, 50, 100].forEach(function (v) {
+                s += '<text x="' + px(v) + '" y="' + (Y0 + 14) + '" font-size="10" text-anchor="middle" fill="' + MUTED + '">' + v + '</text>' +
+                     '<text x="' + (X0 - 8) + '" y="' + (py(v) + 3) + '" font-size="10" text-anchor="end" fill="' + MUTED + '">' + v + '</text>' +
+                     '<line x1="' + X0 + '" y1="' + py(v) + '" x2="' + (X0 + 100 * SX) + '" y2="' + py(v) + '" stroke="#E1E7E2" stroke-width="1"/>';
+            });
+            s += '<text x="' + (X0 + 50 * SX) + '" y="228" font-size="11" font-weight="600" text-anchor="middle" fill="' + INK + '">Concentration outside the cell</text>' +
+                 '<text transform="translate(14 ' + (Y0 - 50 * SY) + ') rotate(-90)" font-size="11" font-weight="600" text-anchor="middle" fill="' + INK + '">Rate of movement</text>';
+            s += '<line x1="' + X0 + '" y1="' + py(vmax) + '" x2="' + px(100) + '" y2="' + py(vmax) + '" stroke="' + MOSS + '" stroke-width="1.2" stroke-dasharray="5 4"/>' +
+                 '<text x="' + px(100) + '" y="' + (py(vmax) - 5) + '" font-size="10" text-anchor="end" fill="' + MOSS + '">Maximum rate (all carriers busy)</text>';
+            for (i = 0; i <= 100; i += 4) {
+                pts1.push(px(i).toFixed(1) + ',' + py(0.5 * i).toFixed(1));
+                pts2.push(px(i).toFixed(1) + ',' + py(vmax * i / (KM + i)).toFixed(1));
+            }
+            s += '<polyline points="' + pts1.join(' ') + '" fill="none" stroke="' + GOLD + '" stroke-width="2.6"/>' +
+                 '<polyline points="' + pts2.join(' ') + '" fill="none" stroke="' + MOSS + '" stroke-width="2.6"/>';
+            var rs = 0.5 * c, rf = vmax * c / (KM + c);
+            s += '<line x1="' + px(c) + '" y1="' + py(100) + '" x2="' + px(c) + '" y2="' + Y0 + '" stroke="' + MUTED + '" stroke-width="1.2" stroke-dasharray="3 3"/>' +
+                 '<circle cx="' + px(c) + '" cy="' + py(rs) + '" r="5" fill="' + GOLD + '" stroke="#fff" stroke-width="1.5"/>' +
+                 '<circle cx="' + px(c) + '" cy="' + py(rf) + '" r="5" fill="' + MOSS + '" stroke="#fff" stroke-width="1.5"/>';
+            s += '<rect x="' + (X0 + 10) + '" y="26" width="168" height="40" rx="4" fill="#fff" stroke="#C9D6CC"/>' +
+                 '<line x1="' + (X0 + 18) + '" y1="38" x2="' + (X0 + 40) + '" y2="38" stroke="' + GOLD + '" stroke-width="3"/>' +
+                 '<text x="' + (X0 + 46) + '" y="42" font-size="10" fill="' + INK + '">Simple diffusion</text>' +
+                 '<line x1="' + (X0 + 18) + '" y1="54" x2="' + (X0 + 40) + '" y2="54" stroke="' + MOSS + '" stroke-width="3"/>' +
+                 '<text x="' + (X0 + 46) + '" y="58" font-size="10" fill="' + INK + '">Facilitated diffusion</text>';
+            return s;
+        }
+        function initLab() {
+            var range = document.getElementById('labRange');
+            if (!range) return;
+            var sS = document.getElementById('labSimple'), sF = document.getElementById('labFacil'), sG = document.getElementById('labGraph');
+            var cS = document.getElementById('labSimpleCap'), cF = document.getElementById('labFacilCap'), ro = document.getElementById('labReadout');
+            var chips = document.querySelectorAll('[data-carriers]'), n = 2;
+            function update() {
+                var c = Number(range.value), a = simpleScene(c), b = facilScene(c, n);
+                sS.innerHTML = a.svg; sF.innerHTML = b.svg; sG.innerHTML = graph(c, n);
+                cS.innerHTML = '<strong>' + (a.crossing === 0 ? 'Almost nothing crosses.' : 'Molecules slip between the phospholipids.') + '</strong> More molecules outside means more crossings.';
+                cF.innerHTML = '<strong>' + b.busy + ' of ' + b.n + ' carriers are busy.</strong> Each carrier can only move one molecule at a time.';
+                var msg;
+                if (c === 0) msg = '<strong>No gradient.</strong> With nothing outside, there is no net movement.';
+                else if (b.busy === b.n) msg = '<strong>All carriers are busy.</strong> Facilitated diffusion has reached its maximum rate (saturation), while simple diffusion keeps rising.';
+                else msg = '<strong>Some carriers are idle.</strong> Facilitated diffusion can still speed up because free carriers are waiting.';
+                ro.innerHTML = msg + ' <span style="color:' + MUTED + '">(Relative rates: simple ' + Math.round(a.rate) + ', facilitated ' + Math.round(b.rate) + ')</span>';
+            }
+            range.addEventListener('input', update);
+            chips.forEach(function (ch) {
+                ch.addEventListener('click', function () {
+                    n = Number(ch.getAttribute('data-carriers'));
+                    chips.forEach(function (x) { x.setAttribute('aria-pressed', String(x === ch)); });
+                    update();
+                });
+            });
+            update();
+        }
+
+        /* ---------------- 3. STEPPER COMPONENT ---------------- */
+        function stepper(el, cfg) {
+            var i = 0, timer = null, n = cfg.steps.length;
+            var dots = '';
+            for (var k = 0; k < n; k++) dots += '<button type="button" class="ix-step" data-i="' + k + '" aria-label="Go to step ' + (k + 1) + '">' + (k + 1) + '</button>';
+            el.innerHTML = '<div class="ix-head"><i class="bi bi-play-circle"></i> ' + cfg.label + '</div>' +
+                '<div class="ix-body"><div class="ix-stage"><svg viewBox="' + cfg.vb + '" role="img" aria-label="' + cfg.alt + '"></svg></div>' +
+                '<p class="ix-info" aria-live="polite"></p>' +
+                '<div class="ix-controls"><button type="button" class="ix-btn ghost" data-a="prev">Back</button>' +
+                '<div class="ix-steps">' + dots + '</div>' +
+                '<button type="button" class="ix-btn ghost" data-a="next">Next</button>' +
+                '<button type="button" class="ix-btn" data-a="play">Play</button></div></div>';
+            var svg = el.querySelector('svg'), info = el.querySelector('.ix-info'),
+                prev = el.querySelector('[data-a="prev"]'), next = el.querySelector('[data-a="next"]'),
+                play = el.querySelector('[data-a="play"]'), btns = el.querySelectorAll('.ix-step');
+            function show(j) {
+                i = j;
+                svg.innerHTML = cfg.steps[j].draw();
+                info.innerHTML = '<strong>Step ' + (j + 1) + ' of ' + n + ': ' + cfg.steps[j].title + '.</strong> ' + cfg.steps[j].text;
+                btns.forEach(function (b, k) { if (k === j) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+                prev.disabled = j === 0; next.disabled = j === n - 1;
+            }
+            function stop() { if (timer) { clearInterval(timer); timer = null; } play.textContent = 'Play'; }
+            function start() {
+                play.textContent = 'Pause';
+                timer = setInterval(function () { show((i + 1) % n); }, 2300);
+            }
+            prev.addEventListener('click', function () { stop(); show(i - 1); });
+            next.addEventListener('click', function () { stop(); show(i + 1); });
+            play.addEventListener('click', function () { if (timer) stop(); else start(); });
+            btns.forEach(function (b) { b.addEventListener('click', function () { stop(); show(Number(b.getAttribute('data-i'))); }); });
+            show(0);
+        }
+
+        /* --- vesicle transport drawings --- */
+        var FLAT = 'M10 95 H310';
+        var CUP = 'M10 95 H120 C120 95 118 140 160 140 C202 140 200 95 200 95 H310';
+        function vBase(path) {
+            return zones(320, 190, 95, 95) + label(8, 14, 'OUTSIDE') + label(8, 184, 'INSIDE') +
+                '<path d="' + path + '" fill="none" stroke="' + PINE + '" stroke-width="7" stroke-linecap="round"/>';
+        }
+        function vesicle(x, y) {
+            return '<circle cx="' + x + '" cy="' + y + '" r="28" fill="#fff" stroke="' + PINE + '" stroke-width="5"/>' + particle(x, y, 11);
+        }
+        var ENDO = [
+            { title: 'Particle contacts the membrane', text: 'The cell encounters material outside it, such as a food particle, a bacterium, or molecules bound to receptors.',
+              draw: function () { return vBase(FLAT) + particle(160, 62, 11); } },
+            { title: 'Membrane folds in', text: 'The plasma membrane bends inward around the material. This needs energy (ATP).',
+              draw: function () { return vBase(CUP) + particle(160, 118, 11); } },
+            { title: 'Vesicle pinches off', text: 'The membrane seals, forming a vesicle that carries the material into the cytoplasm. In animal cells it often fuses with a lysosome.',
+              draw: function () { return vBase(FLAT) + vesicle(160, 138); } }
+        ];
+        var EXO = [
+            { title: 'Vesicle moves to the membrane', text: 'A vesicle, often from the Golgi apparatus and carrying material the cell has made, travels toward the plasma membrane.',
+              draw: function () { return vBase(FLAT) + vesicle(160, 138); } },
+            { title: 'Vesicle fuses and opens outward', text: 'The vesicle membrane merges with the plasma membrane, and the vesicle opens to the outside.',
+              draw: function () { return vBase(CUP) + particle(160, 118, 11) + arrow(160, 104, 160, 62, MUTED, 2); } },
+            { title: 'Contents are released', text: 'The cargo leaves the cell. The vesicle membrane is now part of the plasma membrane. In plant cells this is how wall-building materials are delivered.',
+              draw: function () { return vBase(FLAT) + particle(120, 62, 9) + particle(160, 44, 9) + particle(200, 64, 9); } }
+        ];
+
+        /* --- sodium-potassium pump drawings --- */
+        function pumpBase(chipText) {
+            return zones(320, 230, 100, 128) + band(320, 100) +
+                label(8, 14, 'OUTSIDE') + label(8, 25, 'High Na+, low K+', 'start', 8) +
+                label(8, 222, 'INSIDE') + label(8, 211, 'Low Na+, high K+', 'start', 8) +
+                (chipText ? chip(232, 172, 82, chipText) : '');
+        }
+        function pumpBody(cavity) {
+            var body = '<rect x="118" y="84" width="84" height="60" rx="16" fill="' + MOSS + '" stroke="' + PINE + '" stroke-width="1.5"/>';
+            if (cavity === 'in') body += '<path d="M138 144 L182 144 L176 106 L144 106 Z" fill="#fff"/>';
+            if (cavity === 'out') body += '<path d="M138 84 L182 84 L176 122 L144 122 Z" fill="#fff"/>';
+            if (cavity === 'closed') body += '<ellipse cx="160" cy="114" rx="20" ry="16" fill="#fff"/>';
+            return body;
+        }
+        function phosphate(x, y, t) {
+            return '<circle cx="' + x + '" cy="' + y + '" r="6.5" fill="' + PHOS + '" stroke="#fff" stroke-width="1"/>' +
+                '<text x="' + x + '" y="' + (y + 2.4) + '" font-size="6.5" font-weight="700" text-anchor="middle" fill="#fff">' + t + '</text>';
+        }
+        var PUMP = [
+            { title: 'Sodium binds', text: 'Three Na+ ions from the cytoplasm bind inside the pump, which is open to the inside of the cell.',
+              draw: function () { return pumpBase('ATP ready') + pumpBody('in') + ion(150, 132, 'Na') + ion(170, 132, 'Na') + ion(160, 118, 'Na') + ion(96, 176, 'Na') + ion(214, 150, 'Na'); } },
+            { title: 'ATP powers the pump', text: 'ATP transfers a phosphate group (P) to the pump, which changes shape and closes around the sodium ions.',
+              draw: function () { return pumpBase('ATP → ADP') + pumpBody('closed') + ion(150, 118, 'Na') + ion(170, 118, 'Na') + ion(160, 107, 'Na') + phosphate(208, 112, 'P'); } },
+            { title: 'Sodium is released', text: 'The pump opens to the outside and releases the 3 Na+ ions outside the cell, against their gradient.',
+              draw: function () { return pumpBase('') + pumpBody('out') + phosphate(208, 112, 'P') + ion(138, 52, 'Na') + ion(160, 40, 'Na') + ion(182, 54, 'Na') + arrow(160, 82, 160, 56, INK, 2.2); } },
+            { title: 'Potassium binds', text: 'Two K+ ions from outside bind to the pump, and the phosphate group detaches.',
+              draw: function () { return pumpBase('') + pumpBody('out') + ion(152, 100, 'K') + ion(168, 100, 'K') + phosphate(262, 152, 'Pi'); } },
+            { title: 'Potassium is released', text: 'The pump returns to its original shape and releases the 2 K+ ions inside the cell. The cycle can start again.',
+              draw: function () { return pumpBase('') + pumpBody('in') + ion(148, 176, 'K') + ion(172, 184, 'K') + arrow(160, 148, 160, 164, INK, 2.2); } }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initExplorer();
+            initLab();
+            var e1 = document.getElementById('stepEndo'), e2 = document.getElementById('stepExo'), e3 = document.getElementById('stepPump');
+            if (e1) stepper(e1, { label: 'Interactive: endocytosis', vb: '0 0 320 190', alt: 'Endocytosis step by step', steps: ENDO });
+            if (e2) stepper(e2, { label: 'Interactive: exocytosis', vb: '0 0 320 190', alt: 'Exocytosis step by step', steps: EXO });
+            if (e3) stepper(e3, { label: 'Interactive: the sodium-potassium pump', vb: '0 0 320 230', alt: 'Sodium-potassium pump cycle step by step', steps: PUMP });
+        });
+    })();
     </script>
 </body>
 </html>

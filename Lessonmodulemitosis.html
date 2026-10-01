@@ -488,6 +488,256 @@
                 </div>
             </div>
         </section>
+        <!-- ===================== MITOSIS SIMULATOR ===================== -->
+<!-- Paste this whole block into Lessonmodulemitosis.html, just above the REFERENCES section -->
+
+<style>
+    .msim { background:#fff; border:1px solid #dfe7e1; border-radius:8px; padding:24px; margin:0 0 32px; color:#17302a; font-family:'IBM Plex Sans',system-ui,sans-serif; }
+    .msim-title { font-size:1.5rem; font-weight:700; margin:0 0 8px; }
+    .msim-lead { margin:0 0 18px; line-height:1.55; }
+    .msim-label { display:block; font-weight:700; font-size:.9rem; margin-bottom:6px; }
+    .msim-track { display:flex; align-items:center; gap:14px; font-size:.82rem; color:#5b6b63; }
+    .msim-track input { flex:1; accent-color:#1f6f4e; height:24px; }
+    .msim-controls { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:10px 0 14px; }
+    .msim-play { display:inline-flex; align-items:center; gap:6px; border:0; border-radius:6px; background:#1f6f4e; color:#fff; font-weight:600; padding:7px 14px; cursor:pointer; }
+    .msim-chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .msim-chips button { border:1px solid #c9d8cf; background:#fff; color:#17302a; border-radius:999px; padding:4px 12px; font-size:.82rem; cursor:pointer; }
+    .msim-chips button[aria-pressed="true"] { background:#e3f1e8; border-color:#1f6f4e; font-weight:600; }
+    .msim button:focus-visible, .msim input:focus-visible { outline:3px solid #2b8a5f; outline-offset:2px; }
+    .msim-banner { background:#f1f7f3; border:1px solid #dfe7e1; border-radius:6px; padding:12px 16px; margin-bottom:16px; line-height:1.5; }
+    .msim-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .msim-panel { border:1px solid #dfe7e1; border-radius:6px; overflow:hidden; background:#fff; }
+    .msim-panel h4 { margin:0; padding:10px 14px; font-size:.85rem; font-weight:700; border-bottom:1px solid #dfe7e1; display:flex; gap:8px; align-items:center; }
+    .msim-panel svg { display:block; width:100%; height:auto; background:#f1f7f3; }
+    .msim-cap { margin:0; padding:10px 14px 12px; font-size:.88rem; line-height:1.5; min-height:4.6em; }
+    .msim-legend { list-style:none; display:flex; flex-wrap:wrap; gap:8px 20px; padding:0; margin:16px 0 0; font-size:.82rem; color:#44564d; }
+    .msim-legend i { display:inline-block; width:14px; height:5px; border-radius:3px; margin-right:6px; vertical-align:middle; }
+    @media (max-width:768px) { .msim-grid { grid-template-columns:1fr; } .msim { padding:16px; } }
+</style>
+
+<div class="section-divider"><span>Simulation</span></div>
+
+<section class="msim" id="mitosisSim">
+    <h3 class="msim-title">Mitosis Simulator</h3>
+    <p class="msim-lead">Drag the slider to move through the stages of mitosis. Watch how the animal cell and the plant cell handle each stage side by side.</p>
+
+    <label class="msim-label" for="msimRange">Stage of mitosis</label>
+    <div class="msim-track">
+        <span>Interphase</span>
+        <input id="msimRange" type="range" min="0" max="5" step="0.01" value="0">
+        <span>Cytokinesis</span>
+    </div>
+
+    <div class="msim-controls">
+        <button id="msimPlay" class="msim-play" type="button"><i class="bi bi-play-fill"></i> Play</button>
+        <div class="msim-chips" id="msimChips" role="group" aria-label="Jump to stage"></div>
+    </div>
+
+    <div class="msim-banner" id="msimBanner" aria-live="polite"></div>
+
+    <div class="msim-grid">
+        <div class="msim-panel">
+            <h4><i class="bi bi-heart-pulse"></i> Animal cell</h4>
+            <svg id="msimAnimal" viewBox="0 0 300 300" role="img" aria-label="Animal cell dividing"></svg>
+            <p class="msim-cap" id="msimAnimalCap"></p>
+        </div>
+        <div class="msim-panel">
+            <h4><i class="bi bi-flower3"></i> Plant cell</h4>
+            <svg id="msimPlant" viewBox="0 0 300 300" role="img" aria-label="Plant cell dividing"></svg>
+            <p class="msim-cap" id="msimPlantCap"></p>
+        </div>
+    </div>
+
+    <ul class="msim-legend">
+        <li><i style="background:#8b2e6e"></i>Chromosomes</li>
+        <li><i style="background:#4a8bab"></i>Spindle fibers</li>
+        <li><i style="background:#1f6f8b"></i>Centrosome (animal only)</li>
+        <li><i style="background:#d9822b"></i>Preprophase band (plant only)</li>
+        <li><i style="background:#8b6b3e"></i>Cell wall / cell plate</li>
+    </ul>
+</section>
+
+<script>
+(function () {
+    const STAGES = ['Interphase', 'Prophase', 'Metaphase', 'Anaphase', 'Telophase', 'Cytokinesis'];
+    const INFO = [
+        'The cell grows and copies its DNA. The nucleus is intact and the chromosomes are still loose chromatin.',
+        'Chromatin condenses into visible chromosomes, the nuclear envelope starts to break down, and the spindle begins to form.',
+        'Chromosomes line up along the cell\u2019s equator, each attached to spindle fibers from both poles.',
+        'Sister chromatids separate and are pulled toward opposite poles.',
+        'Chromosomes reach the poles and a new nuclear envelope forms around each set.',
+        'The cytoplasm divides, producing two genetically identical daughter cells.'
+    ];
+    const ANIMAL = [
+        'The centrosome has duplicated next to the nucleus. There is no spindle yet.',
+        'Centrosomes move to opposite poles and grow aster fibers.',
+        'Spindle fibers radiate from the centrosomes to the chromosomes on the metaphase plate.',
+        'The cell stretches as the spindle fibers shorten and pull the chromatids apart.',
+        'Nuclear envelopes re-form and the membrane starts to pinch inward.',
+        'A cleavage furrow pinches the membrane until two cells form.'
+    ];
+    const PLANT = [
+        'A preprophase band (orange) marks the future division site. There are no centrioles.',
+        'The spindle forms from broad microtubule-organizing centers. There are no asters.',
+        'Chromosomes align at the equator. The rigid cell wall keeps the shape fixed.',
+        'Chromatids move apart, but the cell wall stops the cell from changing shape.',
+        'Nuclei re-form and the phragmoplast guides vesicles toward the center.',
+        'Vesicles fuse into a cell plate that grows outward until it meets the cell wall.'
+    ];
+
+    const CX = 150, CY = 150;
+    const XE = [-36, -12, 12, 36];
+    const SC = [[-16, -14], [16, -18], [-20, 12], [14, 16]];
+    const cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+    const ss = (a, b, x) => { x = cl((x - a) / (b - a)); return x * x * (3 - 2 * x); };
+    const K = (arr, t) => { const i = Math.min(Math.floor(t), arr.length - 2); return arr[i] + (arr[i + 1] - arr[i]) * (t - i); };
+    const n = v => v.toFixed(1);
+
+    function state(t, gap) {
+        return {
+            env: K([1, .35, 0, 0, 0, 0], t), nuc2: K([0, 0, 0, 0, .85, 1], t),
+            chrom: K([0, .95, 1, 1, .9, 0], t), align: cl(t - 1),
+            sep: K([0, 0, 0, 55, 70, 70], t) + gap / 2, clus: K([1, 1, 1, 1, .55, .55], t),
+            spin: K([0, .35, .9, .9, .3, 0], t), P: K([8, 50, 82, 94, 100, 100], t) + gap / 2
+        };
+    }
+
+    function chromPos(s) {
+        return XE.map((xe, k) => {
+            const x = (SC[k][0] + (xe - SC[k][0]) * s.align) * s.clus;
+            const y = (SC[k][1] * (1 - s.align)) * s.clus;
+            return { x: CX + x, y: CY + y };
+        });
+    }
+
+    function chromosomes(s) {
+        const dx = Math.sin(.35) * 11, dy = Math.cos(.35) * 11;
+        let g = '<g stroke="#8b2e6e" stroke-width="6" stroke-linecap="round" opacity="' + n(s.chrom) + '">';
+        chromPos(s).forEach(p => {
+            const ya = p.y - s.sep, yb = p.y + s.sep;
+            g += `<line x1="${n(p.x - dx)}" y1="${n(ya - dy)}" x2="${n(p.x + dx)}" y2="${n(ya + dy)}"/>`;
+            g += `<line x1="${n(p.x + dx)}" y1="${n(yb - dy)}" x2="${n(p.x - dx)}" y2="${n(yb + dy)}"/>`;
+        });
+        return g + '</g>';
+    }
+
+    function spindle(s, wide) {
+        let g = '<g stroke="#4a8bab" stroke-width="1.3" opacity="' + n(s.spin) + '">';
+        chromPos(s).forEach(p => {
+            const px = wide ? CX + (p.x - CX) * .9 : CX;
+            g += `<line x1="${n(px)}" y1="${n(CY - s.P)}" x2="${n(p.x)}" y2="${n(p.y - s.sep)}"/>`;
+            g += `<line x1="${n(px)}" y1="${n(CY + s.P)}" x2="${n(p.x)}" y2="${n(p.y + s.sep)}"/>`;
+        });
+        return g + '</g>';
+    }
+
+    function nuclei(s, fill, stroke, nucleolus) {
+        const one = `<g opacity="${n(s.env)}"><circle cx="${CX}" cy="${CY}" r="36" fill="${fill}" stroke="${stroke}" stroke-width="3"/><circle cx="${CX + 8}" cy="${CY - 6}" r="8" fill="${nucleolus}"/></g>`;
+        const ny = 70 + (s.P - 100);
+        let two = `<g opacity="${n(s.nuc2)}">`;
+        [-1, 1].forEach(d => {
+            two += `<circle cx="${CX}" cy="${n(CY + d * ny)}" r="30" fill="${fill}" stroke="${stroke}" stroke-width="3"/><circle cx="${CX + 6}" cy="${n(CY + d * ny - 4)}" r="6" fill="${nucleolus}"/>`;
+        });
+        return one + two + '</g>';
+    }
+
+    function animal(t) {
+        const gap = 10 * cl((t - 4.9) / .1);
+        const s = state(t, gap);
+        const rx = K([100, 100, 100, 95, 88, 88], t), ry = K([100, 100, 100, 112, 122, 122], t);
+        const pinch = ss(3.6, 4.9, t) * .98;
+        const N = 120, pts = [];
+        for (let i = 0; i <= N; i++) {
+            const a = i / N * 2 * Math.PI, y = ry * Math.sin(a);
+            const w = 1 - pinch * Math.exp(-Math.pow(y / (ry * .28), 2));
+            pts.push([CX + rx * Math.cos(a) * w, CY + y]);
+        }
+        const path = (arr, dy) => 'M' + arr.map(p => n(p[0]) + ' ' + n(p[1] + dy)).join('L') + 'Z';
+        const d = gap > 0 ? path(pts.slice(0, N / 2 + 1), gap / 2) + path(pts.slice(N / 2), -gap / 2) : path(pts, 0);
+        let out = `<path d="${d}" fill="#f5e3b4" stroke="#946b14" stroke-width="5" stroke-linejoin="round"/>`;
+        out += nuclei(s, '#e3b84f', '#a8730f', '#8a5a0a');
+        out += spindle(s, false);
+        // asters + centrosomes
+        const cxs = CX + 44 * (1 - cl(t));
+        [-1, 1].forEach(dir => {
+            const px = t < 1 ? cxs : CX, py = CY + dir * s.P;
+            let rays = '';
+            for (let k = 0; k < 7; k++) {
+                const a = (-150 + k * 20) * Math.PI / 180;
+                rays += `<line x1="${n(px)}" y1="${n(py)}" x2="${n(px + Math.cos(a) * 14)}" y2="${n(py + dir * Math.sin(a) * 14)}"/>`;
+            }
+            out += `<g stroke="#4a8bab" stroke-width="1.3" opacity="${n(s.spin)}">${rays}</g>`;
+            out += `<circle cx="${n(px)}" cy="${n(py)}" r="4.5" fill="#1f6f8b" stroke="#fff" stroke-width="1.5"/>`;
+        });
+        return out + chromosomes(s);
+    }
+
+    function plant(t) {
+        const s = state(t, 0);
+        let out = `<rect x="${CX - 98}" y="${CY - 120}" width="196" height="240" rx="8" fill="#8b6b3e"/>`;
+        out += `<rect x="${CX - 88}" y="${CY - 110}" width="176" height="220" rx="18" fill="#cfe6d6" stroke="#1f4d3a" stroke-width="4"/>`;
+        [-1, 1].forEach(d => {
+            out += `<ellipse cx="${CX + d * 70}" cy="${CY}" rx="14" ry="44" fill="#a8d4e3" stroke="#4a8bab" stroke-width="3"/>`;
+        });
+        const band = K([.6, 1, 0, 0, 0, 0], t);
+        [-1, 1].forEach(d => {
+            out += `<ellipse cx="${CX + d * 83}" cy="${CY}" rx="4" ry="16" fill="#d9822b" opacity="${n(band)}"/>`;
+        });
+        out += nuclei(s, '#9ccaa8', '#2f6f4e', '#2f6f4e');
+        out += spindle(s, true);
+        const h = 88 * cl(t - 4), solid = cl((t - 4.5) * 2);
+        if (h > 0) {
+            out += `<line x1="${n(CX - h)}" y1="${CY}" x2="${n(CX + h)}" y2="${CY}" stroke="#8b6b3e" stroke-width="6" stroke-linecap="round" stroke-dasharray="3 6" opacity="${n(1 - solid)}"/>`;
+            out += `<line x1="${n(CX - h)}" y1="${CY}" x2="${n(CX + h)}" y2="${CY}" stroke="#8b6b3e" stroke-width="7" stroke-linecap="round" opacity="${n(solid)}"/>`;
+        }
+        return out + chromosomes(s);
+    }
+
+    const rng = document.getElementById('msimRange');
+    const playBtn = document.getElementById('msimPlay');
+    const chipsBox = document.getElementById('msimChips');
+    const banner = document.getElementById('msimBanner');
+    const aSvg = document.getElementById('msimAnimal'), pSvg = document.getElementById('msimPlant');
+    const aCap = document.getElementById('msimAnimalCap'), pCap = document.getElementById('msimPlantCap');
+
+    const chips = STAGES.map((name, i) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.textContent = name;
+        b.addEventListener('click', () => { stop(); set(i); });
+        chipsBox.appendChild(b);
+        return b;
+    });
+
+    function set(t) {
+        t = cl(t, 0, 5);
+        rng.value = t;
+        aSvg.innerHTML = animal(t);
+        pSvg.innerHTML = plant(t);
+        const i = Math.round(t);
+        banner.innerHTML = '<strong>' + STAGES[i] + '.</strong> ' + INFO[i];
+        aCap.textContent = ANIMAL[i];
+        pCap.textContent = PLANT[i];
+        chips.forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+    }
+
+    let raf = 0, last = 0, playing = false;
+    const label = () => { playBtn.innerHTML = playing ? '<i class="bi bi-pause-fill"></i> Pause' : '<i class="bi bi-play-fill"></i> Play'; };
+    function tick(ts) {
+        if (!last) last = ts;
+        const dt = (ts - last) / 1000; last = ts;
+        set(+rng.value + dt * 0.5);
+        if (+rng.value >= 5) { stop(); return; }
+        raf = requestAnimationFrame(tick);
+    }
+    function play() { if (+rng.value >= 5) set(0); playing = true; last = 0; label(); raf = requestAnimationFrame(tick); }
+    function stop() { playing = false; cancelAnimationFrame(raf); label(); }
+
+    playBtn.addEventListener('click', () => (playing ? stop() : play()));
+    rng.addEventListener('input', () => { stop(); set(+rng.value); });
+    set(0);
+})();
+</script>
+<!-- =================== END MITOSIS SIMULATOR =================== -->
 
         <!-- REFERENCES -->
         <section class="references-section">

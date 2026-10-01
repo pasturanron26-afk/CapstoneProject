@@ -31,15 +31,15 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/auth.js"></script>
-</head>
 
-<style>
-  nav .nav-link.Lesson {
-    background-color: #40916C;
-    color: #ffffff !important;
-    font-weight: 600;
-  }
-</style>
+  <style>
+    nav .nav-link.Lesson {
+      background-color: #40916C;
+      color: #ffffff !important;
+      font-weight: 600;
+    }
+  </style>
+</head>
 
 <body>
 
@@ -135,7 +135,7 @@
     <header class="lessons-header">
       <h1 class="lessons-title">Explore Biology</h1>
       <p class="lessons-subtitle">
-        Choose a topic to start learning.
+        Every lesson compares animal and plant cells side by side.
       </p>
     </header>
 
@@ -164,6 +164,12 @@
           <h2 class="card-title">
             Animal Cell vs Plant Cell
           </h2>
+
+          <div class="card-compare" aria-label="Compares animal and plant cells">
+            <span class="compare-chip"><i class="bi bi-heart-pulse" aria-hidden="true"></i> Animal</span>
+            <span class="compare-vs" aria-hidden="true">vs</span>
+            <span class="compare-chip"><i class="bi bi-flower3" aria-hidden="true"></i> Plant</span>
+          </div>
 
           <p class="card-desc">
             Compare organelles, structures, and functions in animal and plant
@@ -205,15 +211,22 @@
             Mitosis of Plant and Animal Cells
           </h2>
 
-          <p class="card-desc">
-            Explore the stages of mitosis in plant and animal cells, from chromosome duplication to the formation of two identical daughter cells. Learn how each stage contributes to accurate cell division.
+          <div class="card-compare" aria-label="Compares animal and plant cells">
+            <span class="compare-chip"><i class="bi bi-heart-pulse" aria-hidden="true"></i> Animal</span>
+            <span class="compare-vs" aria-hidden="true">vs</span>
+            <span class="compare-chip"><i class="bi bi-flower3" aria-hidden="true"></i> Plant</span>
+          </div>
 
+          <p class="card-desc">
+            Explore the stages of mitosis in plant and animal cells, from
+            chromosome duplication to the formation of two identical daughter
+            cells. Learn how each stage contributes to accurate cell division.
           </p>
 
           <a
             class="card-btn"
             href="Lessonmodulemitosis.html"
-            aria-label="Open lesson: Cell Division: Mitosis vs Meiosis"
+            aria-label="Open lesson: Mitosis of Plant and Animal Cells"
           >
             Learn <span aria-hidden="true">→</span>
           </a>
@@ -245,12 +258,18 @@
             Cell Membrane and Transport
           </h2>
 
+          <div class="card-compare" aria-label="Compares animal and plant cells">
+            <span class="compare-chip"><i class="bi bi-heart-pulse" aria-hidden="true"></i> Animal</span>
+            <span class="compare-vs" aria-hidden="true">vs</span>
+            <span class="compare-chip"><i class="bi bi-flower3" aria-hidden="true"></i> Plant</span>
+          </div>
+
           <p class="card-desc">
-            Discover how substances move in and out of cells through
-            <span class="highlight">passive and active transport</span>.
-            Covers diffusion, osmosis, and endocytosis with
-            <span class="highlight">interactive 3D membrane models</span>
-            and quick checks.
+            See how substances cross the membrane through
+            <span class="highlight">passive and active transport</span>, then
+            compare what <span class="highlight">osmosis</span> does to each
+            cell type: animal cells shrink or burst, while plant cells become
+            turgid or pull away from the cell wall.
           </p>
 
           <a
@@ -272,131 +291,6 @@
 
         <div class="card-thumbnail">
           <img
-            src="imgs/cellRespiration.jpg"
-            alt="Diagram of mitochondria showing stages of cellular respiration"
-            loading="lazy"
-          >
-        </div>
-
-        <div class="card-content">
-
-          <p class="card-eyebrow">
-            MODULE 04 • CELL ENERGY
-          </p>
-
-          <h2 class="card-title">
-            Cell Respiration
-          </h2>
-
-          <p class="card-desc">
-            Understand how cells convert glucose into energy through aerobic
-            and anaerobic respiration. Explore the role of the
-            <span class="highlight">mitochondria</span>
-            in ATP production with
-            <span class="highlight">step-by-step visual breakdowns</span>
-            and quick checks.
-          </p>
-
-          <a
-            class="card-btn"
-            href="lesson-cell-respiration.html"
-            aria-label="Open lesson: Cell Respiration"
-          >
-            Learn <span aria-hidden="true">→</span>
-          </a>
-
-        </div>
-      </article>
-
-
-      <!-- =========================================
-           MODULE 05
-      ========================================== -->
-      <article class="lesson-card">
-
-        <div class="card-thumbnail">
-          <img
-            src="imgs/photosynthesis.jpg"
-            alt="Diagram of a chloroplast showing thylakoid and stroma"
-            loading="lazy"
-          >
-        </div>
-
-        <div class="card-content">
-
-          <p class="card-eyebrow">
-            MODULE 05 • CELL ENERGY
-          </p>
-
-          <h2 class="card-title">
-            Photosynthesis
-          </h2>
-
-          <p class="card-desc">
-            Explore how plant cells use sunlight to produce food through
-            light-dependent and light-independent reactions. Focuses on the
-            role of <span class="highlight">chloroplasts</span>
-            with <span class="highlight">interactive diagrams</span>
-            and quick checks.
-          </p>
-
-          <a
-            class="card-btn"
-            href="lesson-photosynthesis.html"
-            aria-label="Open lesson: Photosynthesis"
-          >
-            Learn <span aria-hidden="true">→</span>
-          </a>
-
-        </div>
-      </article>
-
-
-      <!-- =========================================
-           MODULE 06
-      ========================================== -->
-      <article class="lesson-card">
-
-        <div class="card-thumbnail">
-          <img
-            src="imgs/cellCycle.jpg"
-            alt="Circular diagram of the cell cycle with checkpoints"
-            loading="lazy"
-          >
-        </div>
-
-        <div class="card-content">
-
-          <p class="card-eyebrow">
-            MODULE 06 • CELL CYCLE
-          </p>
-
-          <h2 class="card-title">
-            Cell Cycle and Cancer
-          </h2>
-
-          <p class="card-desc">
-            Walk through the G1, S, G2, and M phases of the cell cycle and
-            learn how <span class="highlight">checkpoints prevent errors</span>.
-            Understand what happens when cell division goes wrong and how
-            <span class="highlight">cancer develops</span>.
-          </p>
-
-          <span class="card-btn is-disabled" aria-disabled="true">
-            Coming soon
-          </span>
-
-        </div>
-      </article>
-
-
-      <!-- =========================================
-           MODULE 07
-      ========================================== -->
-      <article class="lesson-card">
-
-        <div class="card-thumbnail">
-          <img
             src="imgs/cellDifferentiation.jpg"
             alt="Diagram showing stem cells differentiating into specialized cell types"
             loading="lazy"
@@ -406,19 +300,24 @@
         <div class="card-content">
 
           <p class="card-eyebrow">
-            MODULE 07 • CELL DEVELOPMENT
+            MODULE 04 • CELL DEVELOPMENT
           </p>
 
           <h2 class="card-title">
             Cell Differentiation and Specialization
           </h2>
 
+          <div class="card-compare" aria-label="Compares animal and plant cells">
+            <span class="compare-chip"><i class="bi bi-heart-pulse" aria-hidden="true"></i> Animal</span>
+            <span class="compare-vs" aria-hidden="true">vs</span>
+            <span class="compare-chip"><i class="bi bi-flower3" aria-hidden="true"></i> Plant</span>
+          </div>
+
           <p class="card-desc">
-            Learn how cells become specialized after division into skin,
-            muscle, nerve, and plant cells. Covers
-            <span class="highlight">stem cells</span>
-            and how differentiation shapes multicellular organisms through
-            <span class="highlight">interactive comparisons</span>.
+            Compare how <span class="highlight">animal stem cells</span> and
+            <span class="highlight">plant meristems</span> produce specialized
+            cells. Find out why a plant can regrow from a single cell
+            (totipotency) while most animal cells are far more limited.
           </p>
 
           <span class="card-btn is-disabled" aria-disabled="true">
@@ -430,7 +329,7 @@
 
 
       <!-- =========================================
-           MODULE 08
+           MODULE 05
       ========================================== -->
       <article class="lesson-card">
 
@@ -445,20 +344,24 @@
         <div class="card-content">
 
           <p class="card-eyebrow">
-            MODULE 08 • CELL COMMUNICATION
+            MODULE 05 • CELL COMMUNICATION
           </p>
 
           <h2 class="card-title">
             Cell Signaling and Communication
           </h2>
 
+          <div class="card-compare" aria-label="Compares animal and plant cells">
+            <span class="compare-chip"><i class="bi bi-heart-pulse" aria-hidden="true"></i> Animal</span>
+            <span class="compare-vs" aria-hidden="true">vs</span>
+            <span class="compare-chip"><i class="bi bi-flower3" aria-hidden="true"></i> Plant</span>
+          </div>
+
           <p class="card-desc">
-            Explore how cells send and receive signals through receptor
-            proteins and signal transduction pathways. Compare how
-            <span class="highlight">animal and plant cells</span>
-            communicate differently with
-            <span class="highlight">interactive models</span>
-            and quick checks.
+            Compare how neighboring cells connect and communicate:
+            <span class="highlight">gap junctions</span> in animal cells versus
+            <span class="highlight">plasmodesmata</span> in plant cells, plus
+            how receptors and hormones relay signals in each.
           </p>
 
           <span class="card-btn is-disabled" aria-disabled="true">
