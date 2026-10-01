@@ -214,17 +214,19 @@
 
             let fullName = user.user_metadata?.full_name || 'Student';
             let section = user.user_metadata?.section || '';
+            let storedAvatarUrl = '';
 
             try {
                 const { data: profile, error: profileError } = await ecoAuth.client
                     .from('profiles')
-                    .select('full_name, section')
+                    .select('full_name, section, avatar_url')
                     .eq('id', user.id)
                     .maybeSingle();
 
                 if (!profileError && profile) {
                     fullName = profile.full_name || fullName;
                     section = profile.section || section;
+                    storedAvatarUrl = profile.avatar_url || '';
                 }
             } catch (profileFetchError) {
                 // Fall back silently to user_metadata values above.
@@ -248,7 +250,7 @@
             setInitialFallback(fullName);
 
             const googlePhoto = user.user_metadata?.avatar_url || user.user_metadata?.picture;
-            let avatarSrc = googlePhoto || null;
+            let avatarSrc = googlePhoto || storedAvatarUrl || null;
 
             if (!avatarSrc && email && email !== '—') {
                 const hash = md5(email.trim().toLowerCase());
@@ -262,6 +264,9 @@
                 };
                 avatarImg.onerror = () => setInitialFallback(fullName);
                 avatarImg.src = avatarSrc;
+                if (avatarSrc !== storedAvatarUrl) {
+                    ecoAuth.client.from('profiles').update({ avatar_url: avatarSrc }).eq('id', user.id);
+                }
             }
 
             // ---- Edit name (pencil icon toggles the field) ----

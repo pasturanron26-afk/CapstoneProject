@@ -127,16 +127,13 @@
         { title: 'Cell Membrane and Transport',              img: 'imgs/cellMembrane.jpg',         id: '46254ff2-c787-4792-94db-5d33181f6b55' },
         { title: 'Cell Respiration',                         img: 'imgs/cellRespiration.jpg',      id: '1b15a414-7e6c-4992-b17c-1c924745366d' },
         { title: 'Photosynthesis',                           img: 'imgs/photosynthesis.jpg',       id: '81ece535-7d0b-47e9-a95a-ed8e0f25cc76' },
-        { title: 'Cell Cycle and Cancer',                    img: 'imgs/cellCycle.jpg',            id: '26dc1e4f-4a8b-45fc-8e12-ab7fd326eea1' },
-        { title: 'Cell Differentiation and Specialization',  img: 'imgs/cellDifferentiation.jpg',  id: '5149863c-8971-49ef-afa2-085cec2f3d1e' },
-        { title: 'Cell Signaling and Communication',         img: 'imgs/cellSignaling.jpg',        id: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9' },
     ].map((m, i) => ({ ...m, n: i + 1, desc: '', href: 'lesson.html', best: null }));
 
     const GOAL_GROUPS = [
         { label: 'Cell structure',                 modules: [1] },
-        { label: 'Cell division and cycle',        modules: [2, 6] },
+        { label: 'Cell division',                  modules: [2] },
         { label: 'Cell energy',                    modules: [4, 5] },
-        { label: 'Cell processes and signaling',   modules: [3, 7, 8] },
+        { label: 'Cell processes',                 modules: [3] },
     ];
 
     let query = '';
