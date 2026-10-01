@@ -97,7 +97,7 @@
 }
 
 .sidebar-bg #logoutButton:hover {
-  background: rgba(214, 69, 69, 0.35);
+  background: rgba(214, 69, 69, 0.35) !important;
   color: #ffffff !important;
 }
 
