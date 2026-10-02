@@ -302,6 +302,7 @@
                 <button
                     id="rotateModel"
                     aria-label="Rotate 3D model"
+                    aria-pressed="false"
                 >
                     <i class="bi bi-arrow-repeat"></i>
                 </button>
@@ -684,6 +685,7 @@
                 rotateButton.addEventListener('click', () => {
                     isAutoRotating = !isAutoRotating;
                     rotateButton.classList.toggle('active', isAutoRotating);
+                    rotateButton.setAttribute('aria-pressed', String(isAutoRotating));
                     
                     if (isAutoRotating) {
                         rotateButton.style.opacity = '1';

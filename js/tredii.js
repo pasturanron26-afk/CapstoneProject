@@ -1175,11 +1175,19 @@ function checkPerformance() {
 // ======================================================
 // ANIMATION LOOP
 // ======================================================
+let previousAnimationTime = 0;
+
 function animate() {
 
     requestAnimationFrame(
         animate
     );
+
+    const now = performance.now();
+    const frameScale = previousAnimationTime === 0
+        ? 0
+        : Math.min((now - previousAnimationTime) / (1000 / 60), 2);
+    previousAnimationTime = now;
 
     frameCounter++;
 
@@ -1195,7 +1203,7 @@ function animate() {
 
             animalCell.rotation.y +=
                 window.modelRotationState
-                    .getSpeed();
+                    .getSpeed() * frameScale;
         }
     }
 

@@ -133,8 +133,8 @@
 
 @media (max-width: 768px) {
   .lesson-tools {
-    top: 68px;
-    left: 12px;
+    top: 14px;
+    left: 68px;
     right: 12px;
     width: auto;
     flex-wrap: wrap;
