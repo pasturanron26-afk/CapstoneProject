@@ -1059,6 +1059,38 @@ function resetOrganelleInformation() {
 // SPEAKER / PRONUNCIATION
 // ======================================================
 
+// Voice used by the speaker button. The first name that matches an
+// installed voice wins. Reorder or replace names to change the voice.
+// If none match, any US English voice is used, then any English voice.
+const PREFERRED_PRONUNCIATION_VOICES = [
+    "Microsoft Aria Online (Natural)",
+    "Microsoft Jenny Online (Natural)",
+    "Microsoft Guy Online (Natural)",
+    "Google US English",
+    "Google UK English Female",
+    "Samantha",
+    "Microsoft Zira"
+];
+
+function pickPronunciationVoice() {
+    if (!("speechSynthesis" in window)) return null;
+    const voices = window.speechSynthesis.getVoices();
+
+    for (const name of PREFERRED_PRONUNCIATION_VOICES) {
+        const match = voices.find(function (v) { return v.name.indexOf(name) !== -1; });
+        if (match) return match;
+    }
+
+    return voices.find(function (v) { return /^en[-_]US/i.test(v.lang); })
+        || voices.find(function (v) { return /^en/i.test(v.lang); })
+        || null;
+}
+
+// Chrome loads its voice list lazily; ask for it once so it is ready on first click.
+if ("speechSynthesis" in window) {
+    window.speechSynthesis.getVoices();
+}
+
 if (speakButton) {
     speakButton.addEventListener("click", function () {
         if (!currentOrganelle || !organelleInformation[currentOrganelle]) return;
@@ -1070,7 +1102,14 @@ if (speakButton) {
 
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.85;
+        const voice = pickPronunciationVoice();
+        if (voice) {
+            utterance.voice = voice;
+            utterance.lang = voice.lang;
+        } else {
+            utterance.lang = "en-US";
+        }
+        utterance.rate = 0.9;
         utterance.pitch = 1;
         utterance.volume = 1;
         window.speechSynthesis.speak(utterance);
