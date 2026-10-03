@@ -992,18 +992,23 @@ function resetOrganelleInformation() {
 // SPEAKER / PRONUNCIATION
 // ======================================================
 
-// Voice used by the speaker button. The first name that matches an
-// installed voice wins. Reorder or replace names to change the voice.
-// If none match, any US English voice is used, then any English voice.
+// Voice used by the speaker button on this page: female voice (Plant Cell).
+// The first name that matches an installed voice wins. Browsers do not say
+// whether a voice is male or female, so voices are matched by name.
+// Reorder or replace names to change the voice.
 const PREFERRED_PRONUNCIATION_VOICES = [
     "Microsoft Aria Online (Natural)",
     "Microsoft Jenny Online (Natural)",
-    "Microsoft Guy Online (Natural)",
+    "Microsoft Michelle Online (Natural)",
+    "Microsoft Zira",
     "Google US English",
     "Google UK English Female",
     "Samantha",
-    "Microsoft Zira"
+    "Karen"
 ];
+
+// Pitch used when none of the names above are installed.
+const PRONUNCIATION_FALLBACK_PITCH = 1.15;
 
 function pickPronunciationVoice() {
     if (!("speechSynthesis" in window)) return null;
@@ -1014,9 +1019,7 @@ function pickPronunciationVoice() {
         if (match) return match;
     }
 
-    return voices.find(function (v) { return /^en[-_]US/i.test(v.lang); })
-        || voices.find(function (v) { return /^en/i.test(v.lang); })
-        || null;
+    return null;
 }
 
 // Chrome loads its voice list lazily; ask for it once so it is ready on first click.
@@ -1039,11 +1042,13 @@ if (speakButton) {
         if (voice) {
             utterance.voice = voice;
             utterance.lang = voice.lang;
+            utterance.pitch = 1;
         } else {
+            // No matching voice installed: shift the pitch of the default voice instead.
             utterance.lang = "en-US";
+            utterance.pitch = PRONUNCIATION_FALLBACK_PITCH;
         }
         utterance.rate = 0.9;
-        utterance.pitch = 1;
         utterance.volume = 1;
         window.speechSynthesis.speak(utterance);
     });
