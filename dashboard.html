@@ -42,8 +42,9 @@
 
         <header class="sd-header">
             <div>
-                <h1><span id="greeting">Welcome</span>, <span id="studentName">student</span></h1>
-                <p id="studentMeta">Pick up where you left off in Biology.</p>
+                <h1 id="studentName">Student</h1>
+                <p id="studentMeta">&nbsp;</p>
+                <p id="studentCourse">Biology</p>
             </div>
             <label class="sd-search">
                 <i class="bi bi-search" aria-hidden="true"></i>
@@ -236,8 +237,6 @@
 
     /* ---------- init ---------- */
     document.addEventListener('DOMContentLoaded', async () => {
-        const h = new Date().getHours();
-        document.getElementById('greeting').textContent = h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening');
         renderAll();
 
         document.getElementById('logoutButton')?.addEventListener('click', () => window.ecoAuth.signOut());
@@ -255,10 +254,10 @@
                 const { data: p } = await ecoAuth.client.from('profiles').select('full_name, section').eq('id', user.id).maybeSingle();
                 if (p) { fullName = p.full_name || fullName; section = p.section || section; }
             } catch (_) {}
-            const first = (fullName || user.email || 'student').split(/[\s@]/)[0];
-            document.getElementById('studentName').textContent = first;
-            document.getElementById('studentMeta').textContent =
-                (section ? `Section ${section} · ` : '') + 'Pick up where you left off in Biology.';
+            document.getElementById('studentName').textContent = fullName.trim() || 'Student';
+            document.getElementById('studentMeta').textContent = user.email || '';
+            document.getElementById('studentCourse').textContent =
+                'Biology' + (section ? ` · Section ${section}` : '');
         }
 
         await Promise.all([loadLessonDetails(), user ? loadScores(user) : Promise.resolve()]);
