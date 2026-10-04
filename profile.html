@@ -333,23 +333,58 @@
                 setTimeout(() => { saveStatus.textContent = ''; }, 2500);
             });
 
-            // ---- Quiz progress (from localStorage, set by the quiz pages) ----
-            const bestScore = Number(localStorage.getItem('ecolearn-quiz-animal-plant-best') || 0);
-            const isPerfect = localStorage.getItem('ecolearn-quiz-animal-plant-perfect') === 'true';
-
+            // ---- Quiz progress (synced from attempts, cached locally) ----
+            const quizLessonId = 'e43f6bee-bcff-4692-b5e2-396b4176eacd';
+            const cachedBest = Number(localStorage.getItem('ecolearn-quiz-animal-plant-best') || 0);
             const quizOneScore = document.getElementById('quizOneScore');
             const quizOneFill = document.getElementById('quizOneFill');
-            if (bestScore > 0) {
-                quizOneScore.textContent = `${bestScore}% best`;
-                quizOneFill.style.width = `${bestScore}%`;
-            }
-
             const quizTwoScore = document.getElementById('quizTwoScore');
             const quizTwoFill = document.getElementById('quizTwoFill');
-            if (isPerfect) {
-                quizTwoScore.textContent = 'Unlocked';
-                quizTwoFill.classList.remove('is-locked');
-                quizTwoFill.style.width = '0%';
+            const showQuizProgress = (bestScore, attempted) => {
+                if (attempted) {
+                    quizOneScore.textContent = `${bestScore}% best`;
+                    quizOneFill.style.width = `${bestScore}%`;
+                } else {
+                    quizOneScore.textContent = 'Not attempted';
+                    quizOneFill.style.width = '0%';
+                }
+
+                if (bestScore === 100) {
+                    quizTwoScore.textContent = 'Unlocked';
+                    quizTwoFill.classList.remove('is-locked');
+                    quizTwoFill.style.width = '0%';
+                }
+            };
+
+            const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
+            showQuizProgress(safeCachedBest, safeCachedBest > 0);
+
+            const { data: attempts, error: attemptsError } = await ecoAuth.client
+                .from('quiz_attempts')
+                .select('score')
+                .eq('user_id', user.id)
+                .eq('lesson_id', quizLessonId)
+                .order('score', { ascending: false });
+
+            if (attemptsError) {
+                console.error('Failed to load quiz progress:', attemptsError.message);
+                if (safeCachedBest === 0) quizOneScore.textContent = 'Unable to load';
+                else quizOneScore.textContent = `${safeCachedBest}% best (device only)`;
+            } else {
+                const hasAttempt = (attempts || []).length > 0;
+                const databaseBest = hasAttempt
+                    ? Math.round((Number(attempts[0].score) / 10) * 100)
+                    : 0;
+                const bestScore = Math.max(safeCachedBest, databaseBest);
+                const isPerfect = bestScore === 100;
+
+                if (bestScore > safeCachedBest) {
+                    localStorage.setItem('ecolearn-quiz-animal-plant-best', String(bestScore));
+                }
+                if (isPerfect) {
+                    localStorage.setItem('ecolearn-quiz-animal-plant-perfect', 'true');
+                }
+                showQuizProgress(bestScore, hasAttempt || safeCachedBest > 0);
             }
 
             // ---- Logout ----
