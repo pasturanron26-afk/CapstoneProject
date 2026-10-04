@@ -124,7 +124,12 @@ Compare organelles, structures, and functions in animal and plant cells. Include
 <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
 </div>
 <div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<div class="card-progress">
+<span class="card-progress-label" id="quizOneProgressLabel" aria-live="polite">Not attempted</span>
+<div class="progress-rail" id="quizOneProgress" role="progressbar" aria-label="Module 1 best quiz score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not attempted">
+<span class="progress-fill" id="quizOneProgressFill" style="width: 0%"></span>
+</div>
+</div>
 <a class="start-btn" href="quiz-animal-plant.html" aria-label="Start quiz: Animal Cell vs Plant Cell">
 Start quiz <i class="bi bi-arrow-right"></i>
 </a>
@@ -308,7 +313,79 @@ actions.insertAdjacentElement('afterend', note);
 }
 }
 }
-document.addEventListener('DOMContentLoaded', applyQuizLockState);
+async function applyModuleOneProgress() {
+const lessonId = 'e43f6bee-bcff-4692-b5e2-396b4176eacd';
+const storageKey = 'ecolearn-quiz-animal-plant-best';
+const progress = document.getElementById('quizOneProgress');
+const fill = document.getElementById('quizOneProgressFill');
+const label = document.getElementById('quizOneProgressLabel');
+if (!progress || !fill || !label) return;
+
+const cachedBest = Number(localStorage.getItem(storageKey) || 0);
+const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
+
+function renderProgress(score, attempted, message) {
+const description = attempted ? `${score}% best` : (message || 'Not attempted');
+fill.style.width = `${score}%`;
+label.textContent = description;
+progress.setAttribute('aria-valuenow', String(score));
+progress.setAttribute('aria-valuetext', description);
+}
+
+renderProgress(safeCachedBest, safeCachedBest > 0);
+
+const client = window.ecoAuth?.client;
+if (!client) {
+console.error('Unable to load Module 1 quiz progress: Supabase client is unavailable.');
+if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+return;
+}
+
+const { data: { session } = {}, error: userError } = await client.auth.getSession();
+if (userError) {
+console.error('Unable to load Module 1 quiz progress:', userError.message);
+if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+return;
+}
+const user = session?.user;
+if (!user) {
+if (safeCachedBest === 0) renderProgress(0, false, 'Sign in to view score');
+return;
+}
+
+const { data: attempts, error } = await client
+.from('quiz_attempts')
+.select('score')
+.eq('user_id', user.id)
+.eq('lesson_id', lessonId)
+.order('score', { ascending: false })
+.limit(1);
+
+if (error) {
+console.error('Unable to load Module 1 quiz progress:', error.message);
+if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+return;
+}
+
+const hasAttempt = (attempts || []).length > 0;
+const storedScore = hasAttempt ? Number(attempts[0].score) : 0;
+if (hasAttempt && (!Number.isFinite(storedScore) || storedScore < 0 || storedScore > 10)) {
+console.error('Unable to display Module 1 quiz progress: the saved score is invalid.');
+renderProgress(safeCachedBest, safeCachedBest > 0, safeCachedBest > 0 ? undefined : 'Unable to load score');
+return;
+}
+
+const databaseBest = hasAttempt ? Math.round((storedScore / 10) * 100) : 0;
+const bestScore = Math.max(safeCachedBest, databaseBest);
+if (bestScore > safeCachedBest) localStorage.setItem(storageKey, String(bestScore));
+if (bestScore === 100) localStorage.setItem('ecolearn-quiz-animal-plant-perfect', 'true');
+renderProgress(bestScore, hasAttempt || safeCachedBest > 0);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+await applyModuleOneProgress();
+applyQuizLockState();
+});
 </script>
 </body>
 </html>

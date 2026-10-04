@@ -197,8 +197,22 @@
   margin-top: 4px;
 }
 
+.card-progress {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.card-progress-label {
+  color: var(--ink-muted);
+  font-family: var(--font-sans);
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
 .progress-rail {
-  height: 6px;
+  height: 8px;
   background: var(--paper-line);
   border: none;
   border-radius: 999px;
