@@ -672,33 +672,42 @@ loader.load(
             "Animal Cell Loaded"
         );
 
-        document
-            .querySelector(".parent")
-            ?.classList.add("loaded");
-
-        viewer.classList.remove(
-            "loading"
-        );
-
-        modelLoading?.classList.add(
-            "hidden"
-        );
-
-        if (zoomControls) {
-            zoomControls.style.display =
-                "flex";
+        if (loadingPercentage) {
+            loadingPercentage.textContent = "100%";
+        }
+        if (loadingProgress) {
+            loadingProgress.style.width = "100%";
         }
 
-        if (infoLoading) {
-            infoLoading.style.display =
-                "none";
-        }
+        window.setTimeout(() => {
+            document
+                .querySelector(".parent")
+                ?.classList.add("loaded");
 
-        if (organelleInfo) {
-            organelleInfo.classList.add(
-                "loaded"
+            viewer.classList.remove(
+                "loading"
             );
-        }
+
+            modelLoading?.classList.add(
+                "hidden"
+            );
+
+            if (zoomControls) {
+                zoomControls.style.display =
+                    "flex";
+            }
+
+            if (infoLoading) {
+                infoLoading.style.display =
+                    "none";
+            }
+
+            if (organelleInfo) {
+                organelleInfo.classList.add(
+                    "loaded"
+                );
+            }
+        }, 180);
     },
 
     function(xhr) {
@@ -1175,11 +1184,19 @@ function checkPerformance() {
 // ======================================================
 // ANIMATION LOOP
 // ======================================================
+let previousAnimationTime = 0;
+
 function animate() {
 
     requestAnimationFrame(
         animate
     );
+
+    const now = performance.now();
+    const frameScale = previousAnimationTime === 0
+        ? 0
+        : Math.min((now - previousAnimationTime) / (1000 / 60), 2);
+    previousAnimationTime = now;
 
     frameCounter++;
 
@@ -1195,7 +1212,7 @@ function animate() {
 
             animalCell.rotation.y +=
                 window.modelRotationState
-                    .getSpeed();
+                    .getSpeed() * frameScale;
         }
     }
 

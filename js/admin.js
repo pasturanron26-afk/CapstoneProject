@@ -33,10 +33,8 @@
 ===================================================== */
 
 const MODULE_NAMES = [
-    'Cell Structure Basics', 'Cell Functions', 'Plant vs Animal Cells',
-    'DNA and Genetic Code', 'Cell Division', 'Cellular Energy',
-    'Transport Systems', 'Tissue Organization', 'Special Cells',
-    'Microscopy', 'Lab Review', 'Final Assessment'
+    'Animal Cell vs Plant Cell', 'Mitosis of Plant and Animal Cells',
+    'Cell Membrane and Transport', 'Cell Respiration', 'Photosynthesis'
 ];
 
 // Same lesson_id -> display name mapping dashboard.html uses
@@ -47,9 +45,6 @@ const LESSON_NAMES = {
     '46254ff2-c787-4792-94db-5d33181f6b55': 'Cell Membrane and Transport',
     '1b15a414-7e6c-4992-b17c-1c924745366d': 'Cell Respiration',
     '81ece535-7d0b-47e9-a95a-ed8e0f25cc76': 'Photosynthesis',
-    '26dc1e4f-4a8b-45fc-8e12-ab7fd326eea1': 'Cell Cycle and Cancer',
-    '5149863c-8971-49ef-afa2-085cec2f3d1e': 'Cell Differentiation and Specialization',
-    '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9': 'Cell Signaling and Communication',
 };
 const QUIZ_ORDER = Object.keys(LESSON_NAMES);
 
@@ -135,11 +130,22 @@ async function fetchStudents() {
 
     // Oldest first, so "No." is the enrolment order and never changes when
     // someone new signs up (it used to be a position in a newest-first list).
-    const { data, error } = await ecoAuth.client
+    let { data, error } = await ecoAuth.client
         .from('profiles')
-        .select('id, full_name, email, section, role, created_at, last_seen_at, archived, status')
+        .select('id, full_name, email, avatar_url, section, role, created_at, last_seen_at, archived, status')
         .eq('role', 'student')
         .order('created_at', { ascending: true });
+
+    // Keep the roster usable before the avatar_url migration is applied.
+    if (error && /avatar_url|column/i.test(error.message || '')) {
+        const fallback = await ecoAuth.client
+            .from('profiles')
+            .select('id, full_name, email, section, role, created_at, last_seen_at, archived, status')
+            .eq('role', 'student')
+            .order('created_at', { ascending: true });
+        data = (fallback.data || []).map(row => ({ ...row, avatar_url: '' }));
+        error = fallback.error;
+    }
 
     if (error) {
         console.error('Failed to load students from Supabase:', error.message);
@@ -162,6 +168,7 @@ async function fetchStudents() {
             catalogNo: String(idx + 1).padStart(3, '0'),
             name: cleanText(row.full_name) || row.email || 'Unnamed student',
             email: row.email || '—',
+            avatarUrl: cleanText(row.avatar_url),
             section: row.section || 'Unassigned',
             joined: row.created_at ? row.created_at.slice(0, 10) : '—',
             lastActive: presence.text,
@@ -328,9 +335,20 @@ function scoreCellHTML(s) {
     return `<span class="score"><span class="meter ${tone}" aria-hidden="true"><span style="width:${s.avgScore}%"></span></span><span class="score-num">${s.avgScore}%</span></span>`;
 }
 
+function avatarContentHTML(s) {
+    const fallback = escapeHtml(initialsOf(s.name));
+    return s.avatarUrl
+        ? `<img src="${escapeHtml(s.avatarUrl)}" alt="" loading="lazy" onerror="this.hidden=true"><span class="avatar-initial">${fallback}</span>`
+        : `<span class="avatar-initial">${fallback}</span>`;
+}
+
+function avatarHTML(s, large = false) {
+    return `<span class="avatar${large ? ' avatar-lg' : ''}" aria-hidden="true">${avatarContentHTML(s)}</span>`;
+}
+
 function personRowHTML(s, subHTML, trailingHTML = '') {
     return `<li><button type="button" class="person" data-open="${escapeHtml(s.id)}" data-role="person">
-        <span class="avatar" aria-hidden="true">${escapeHtml(initialsOf(s.name))}</span>
+        ${avatarHTML(s)}
         <span class="person-text">
             <span class="person-name">${escapeHtml(s.name)}</span>
             <span class="person-sub">${subHTML}</span>
@@ -539,7 +557,7 @@ function studentRowHTML(s) {
         <td class="cell-no" data-label="No.">${escapeHtml(s.catalogNo)}</td>
         <td class="cell-student" data-label="Student">
             <div class="student-cell">
-                <span class="avatar" aria-hidden="true">${escapeHtml(initialsOf(s.name))}</span>
+                ${avatarHTML(s)}
                 <span class="student-text">
                     <button type="button" class="student-link" data-open="${id}" data-role="name">${name}</button>
                     <span class="student-email">${email}</span>
@@ -642,7 +660,7 @@ function renderArchivedTable() {
                     <td class="cell-no" data-label="No.">${escapeHtml(s.catalogNo)}</td>
                     <td class="cell-student" data-label="Student">
                         <div class="student-cell">
-                            <span class="avatar" aria-hidden="true">${escapeHtml(initialsOf(s.name))}</span>
+                            ${avatarHTML(s)}
                             <span class="student-text">
                                 <button type="button" class="student-link" data-open="${id}" data-role="name">${name}</button>
                                 <span class="student-email">${email}</span>
@@ -879,7 +897,7 @@ function quizRowsHTML(s) {
 }
 
 function renderDrawer(s, { keepTab = false } = {}) {
-    el('drawerAvatar').textContent = initialsOf(s.name);
+    el('drawerAvatar').innerHTML = avatarContentHTML(s);
     el('drawerName').textContent = s.name;
     el('drawerEmail').textContent = s.email === '—' ? 'No email on file' : s.email;
 

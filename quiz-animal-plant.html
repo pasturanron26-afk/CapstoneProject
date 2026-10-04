@@ -69,6 +69,14 @@
     <h1 class="quiz-play-title">Animal Cell vs Plant Cell</h1>
     <p class="quiz-play-subtitle">Get every question right to unlock the Cell Division quiz.</p>
 
+    <div class="quiz-session-bar" aria-label="Quiz status">
+      <span class="quiz-session-hint"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Stay focused</span>
+      <span class="quiz-timer" id="quizTimer" role="timer" aria-live="polite">
+        <i class="bi bi-stopwatch" aria-hidden="true"></i>
+        <span id="quizTimerValue">5:00</span>
+      </span>
+    </div>
+
     <div class="quiz-progress-track">
       <div class="quiz-progress-fill" id="quizProgressFill" style="width: 0%;"></div>
     </div>
@@ -143,6 +151,13 @@
     const resultsBadge   = document.getElementById('quizResultsBadge');
     const resultsNote    = document.getElementById('quizResultsNote');
     const retryButton    = document.getElementById('quizRetryButton');
+    const timerEl        = document.getElementById('quizTimer');
+    const timerValueEl   = document.getElementById('quizTimerValue');
+    const QUIZ_TIME_LIMIT = 5 * 60;
+    let remainingSeconds = QUIZ_TIME_LIMIT;
+    let timerId          = null;
+    let quizTimedOut     = false;
+    let quizFinished     = false;
 
     // ── STEP 1: Load 10 random questions from Supabase ───────
     async function loadQuiz() {
@@ -151,6 +166,7 @@
       questionPanel.style.display = 'none';
       resultsPanel.style.display  = 'none';
       progressFill.style.width    = '0%';
+      resetTimer();
 
       // Get supabase client from auth.js
       const client = window.ecoAuth?.client;
@@ -206,11 +222,46 @@
       selectedChoiceId = null;
       answers          = [];
       answered         = false;
+      quizTimedOut     = false;
+      quizFinished     = false;
 
       // Show question panel
       loadingPanel.style.display  = 'none';
       questionPanel.style.display = 'block';
       renderQuestion();
+      startTimer();
+    }
+
+    function resetTimer() {
+      window.clearInterval(timerId);
+      timerId = null;
+      remainingSeconds = QUIZ_TIME_LIMIT;
+      quizTimedOut = false;
+      updateTimer();
+    }
+
+    function startTimer() {
+      window.clearInterval(timerId);
+      updateTimer();
+      timerId = window.setInterval(() => {
+        remainingSeconds -= 1;
+        updateTimer();
+        if (remainingSeconds <= 0) {
+          window.clearInterval(timerId);
+          timerId = null;
+          quizTimedOut = true;
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(Math.max(remainingSeconds, 0) / 60);
+      const seconds = Math.max(remainingSeconds, 0) % 60;
+      timerValueEl.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+      timerEl.classList.toggle('is-warning', remainingSeconds <= 60 && remainingSeconds > 10);
+      timerEl.classList.toggle('is-urgent', remainingSeconds <= 10);
+      timerEl.setAttribute('aria-label', `${minutes} minutes ${seconds} seconds remaining`);
     }
 
     // ── STEP 2: Render current question ──────────────────────
@@ -294,6 +345,7 @@
       // Brief pause so student sees the feedback, then advance
       nextButton.disabled = true;
       setTimeout(async () => {
+        if (quizFinished) return;
         if (currentIndex < QUESTIONS_PER_SESSION - 1) {
           currentIndex++;
           renderQuestion();
@@ -305,6 +357,14 @@
 
     // ── STEP 5: Save attempt to Supabase ─────────────────────
     async function submitQuiz() {
+      if (quizFinished) return;
+      quizFinished = true;
+      window.clearInterval(timerId);
+      timerId = null;
+      nextButton.disabled = true;
+      optionsEl.querySelectorAll('.quiz-option').forEach((button) => {
+        button.disabled = true;
+      });
       const score  = answers.filter(a => a.is_correct).length;
       const client = window.ecoAuth?.client;
 
@@ -376,6 +436,11 @@
         resultsBadge.className = 'quiz-results-badge fail';
         resultsBadge.innerHTML = '<i class="bi bi-arrow-repeat"></i> Keep practicing';
         resultsNote.textContent = 'Review the lesson and try again — a perfect score unlocks the next quiz.';
+      }
+      if (quizTimedOut) {
+        resultsBadge.className = 'quiz-results-badge timeout';
+        resultsBadge.innerHTML = '<i class="bi bi-stopwatch"></i> Time is up';
+        resultsNote.textContent = `You answered ${answers.length} of ${QUESTIONS_PER_SESSION} questions. Try again and keep an eye on the timer.`;
       }
     }
 

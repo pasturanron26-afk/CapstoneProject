@@ -1,0 +1,66 @@
+.voice-search-button {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.voice-search-button:hover,
+.voice-search-button.is-listening {
+    color: var(--moss, #1E7245);
+}
+
+.voice-search-button:focus-visible {
+    outline: 2px solid var(--moss, #1E7245);
+    outline-offset: 2px;
+}
+
+.voice-search-button .bi {
+    font-size: .9rem;
+}
+
+.sd-search,
+.model-search,
+.topbar-search,
+.voice-search-status {
+    position: absolute;
+}
+
+.sd-search,
+.model-search,
+.topbar-search {
+    position: relative;
+}
+
+.voice-search-status {
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 10;
+    width: max-content;
+    max-width: min(320px, 80vw);
+    padding: 6px 10px;
+    border: 1px solid var(--line-strong, #C5D3CA);
+    border-radius: 7px;
+    background: var(--pine, #123D27);
+    box-shadow: 0 4px 12px rgba(18, 61, 39, .16);
+    color: #fff;
+    font-size: .75rem;
+    line-height: 1.4;
+}
+
+.voice-search-status:empty {
+    display: none;
+}
+
+.lesson-search {
+    position: relative;
+}

@@ -200,7 +200,8 @@
 }
 
 .model-search input {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     border: 0;
     outline: 0;
     color: var(--ink);

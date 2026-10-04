@@ -218,19 +218,21 @@ body {
     justify-content: center;
     min-height: 40px;
     padding: 0 18px;
-    background-color: var(--pine);
+    background: linear-gradient(135deg, var(--pine), var(--moss));
     color: #ffffff;
     border: 1px solid var(--pine);
     border-radius: var(--radius-control);
     font-weight: 600;
     font-size: .86rem;
     cursor: pointer;
-    transition: background-color .15s ease, border-color .15s ease;
+    transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
 }
 
 .profile-save-btn:hover:not(:disabled) {
-    background-color: var(--moss);
     border-color: var(--moss);
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 8px 18px rgba(18, 61, 39, .18);
 }
 
 .profile-save-btn:disabled {
@@ -352,18 +354,55 @@ body {
         margin-left: 0;
     }
     .profile-content {
-        padding: 24px 20px 30px;
+        width: 100%;
+        min-width: 0;
+        padding: 16px 16px 30px;
+    }
+    .profile-grid > *,
+    .page-header > div:first-child {
+        min-width: 0;
+    }
+    .profile-email {
+        flex-wrap: wrap;
+        overflow-wrap: anywhere;
+    }
+    .quiz-progress-label {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .quiz-progress-label > span:first-child {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+    .quiz-progress-score {
+        flex-shrink: 0;
+        margin-left: auto;
+        text-align: right;
     }
 }
 
 @media (max-width: 560px) {
     .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 14px;
+        align-items: center;
+        padding: 18px;
     }
     .profile-avatar {
-        order: -1;
+        width: 56px;
+        height: 56px;
+        font-size: 1.5rem;
+    }
+    .page-header h1 {
+        font-size: 1.35rem;
+        overflow-wrap: anywhere;
+    }
+    .profile-email {
+        font-size: .82rem;
+    }
+    .panel {
+        padding: 18px;
+    }
+    .quiz-progress-label {
+        gap: 4px 8px;
     }
     .profile-form-actions {
         flex-direction: column;
@@ -371,5 +410,8 @@ body {
     }
     .profile-save-btn {
         justify-content: center;
+    }
+    .profile-save-status {
+        text-align: center;
     }
 }

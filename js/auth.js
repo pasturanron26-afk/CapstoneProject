@@ -132,6 +132,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const { data } = await ecoSupabase.auth.getSession();
   if (!data.session) return;
 
+  const avatarUrl = data.session.user?.user_metadata?.avatar_url
+    || data.session.user?.user_metadata?.picture;
+  if (avatarUrl) {
+    const { error: avatarError } = await ecoSupabase
+      .from('profiles')
+      .update({ avatar_url: avatarUrl })
+      .eq('id', data.session.user.id);
+    if (avatarError && !/avatar_url|column/i.test(avatarError.message || '')) {
+      console.error('Profile avatar sync failed:', avatarError.message);
+    }
+  }
+
   const beat = () => {
     ecoSupabase.rpc('touch_last_seen').then(({ error }) => {
       if (error) console.error('Heartbeat failed:', error.message);

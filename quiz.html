@@ -124,7 +124,12 @@ Compare organelles, structures, and functions in animal and plant cells. Include
 <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
 </div>
 <div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+<div class="card-progress">
+<span class="card-progress-label" id="quizOneProgressLabel" aria-live="polite">Not attempted</span>
+<div class="progress-rail" id="quizOneProgress" role="progressbar" aria-label="Module 1 best quiz score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not attempted">
+<span class="progress-fill" id="quizOneProgressFill" style="width: 0%"></span>
+</div>
+</div>
 <a class="start-btn" href="quiz-animal-plant.html" aria-label="Start quiz: Animal Cell vs Plant Cell">
 Start quiz <i class="bi bi-arrow-right"></i>
 </a>
@@ -251,96 +256,6 @@ Start quiz <i class="bi bi-arrow-right"></i>
 </div>
 </div>
 </article>
-<!-- QUIZ CARD 6 -->
-<article class="quiz-card" id="quizCard06">
-<div class="quiz-thumb">
-<div class="thumb-frame">
-<img src="imgs/cellCycle.jpg" alt="Circular diagram of the cell cycle with checkpoints">
-</div>
-</div>
-<div class="quiz-content">
-<div class="content-top">
-<p class="content-eyebrow">MODULE 06 • CELL CYCLE</p>
-<span class="level-badge level-advanced">Advanced Theory</span>
-</div>
-<h2 class="content-title">Cell Cycle and Cancer</h2>
-<p class="content-desc">
-Walk through the G1, S, G2, and M phases of the cell cycle and learn how checkpoints prevent errors. Understand what happens when cell division goes wrong and how cancer develops.
-</p>
-<div class="meta-chips">
-<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-</div>
-<div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
-<a class="start-btn" href="quiz-cell-cycle.html" aria-label="Start quiz: Cell Cycle and Cancer">
-Start quiz <i class="bi bi-arrow-right"></i>
-</a>
-</div>
-</div>
-</article>
-<!-- QUIZ CARD 7 -->
-<article class="quiz-card" id="quizCard07">
-<div class="quiz-thumb">
-<div class="thumb-frame">
-<img src="imgs/cellDifferentiation.jpg" alt="Diagram showing stem cells differentiating into specialized cell types">
-</div>
-</div>
-<div class="quiz-content">
-<div class="content-top">
-<p class="content-eyebrow">MODULE 07 • CELL DEVELOPMENT</p>
-<span class="level-badge level-primary">Primary Standard</span>
-</div>
-<h2 class="content-title">Cell Differentiation and Specialization</h2>
-<p class="content-desc">
-Learn how cells become specialized after division into skin, muscle, nerve, and plant cells. Covers stem cells and how differentiation shapes multicellular organisms through interactive comparisons.
-</p>
-<div class="meta-chips">
-<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-</div>
-<div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
-<a class="start-btn" href="quiz-differentiation.html" aria-label="Start quiz: Cell Differentiation and Specialization">
-Start quiz <i class="bi bi-arrow-right"></i>
-</a>
-</div>
-</div>
-</article>
-<!-- QUIZ CARD 8 -->
-<article class="quiz-card" id="quizCard08">
-<div class="quiz-thumb">
-<div class="thumb-frame">
-<img src="imgs/cellSignaling.jpg" alt="Diagram of cell membrane receptor proteins and signaling molecules">
-</div>
-</div>
-<div class="quiz-content">
-<div class="content-top">
-<p class="content-eyebrow">MODULE 08 • CELL COMMUNICATION</p>
-<span class="level-badge level-advanced">Advanced Theory</span>
-</div>
-<h2 class="content-title">Cell Signaling and Communication</h2>
-<p class="content-desc">
-Explore how cells send and receive signals through receptor proteins and signal transduction pathways. Compare how animal and plant cells communicate differently with interactive models and quick checks.
-</p>
-<div class="meta-chips">
-<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-</div>
-<div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
-<a class="start-btn" href="quiz-signaling.html" aria-label="Start quiz: Cell Signaling and Communication">
-Start quiz <i class="bi bi-arrow-right"></i>
-</a>
-</div>
-</div>
-</article>
 </section>
 </main>
 <script>
@@ -366,12 +281,9 @@ const QUIZ_UNLOCK_KEYS = {
 3: 'ecolearn-quiz-02-perfect',
 4: 'ecolearn-quiz-03-perfect',
 5: 'ecolearn-quiz-04-perfect',
-6: 'ecolearn-quiz-05-perfect',
-7: 'ecolearn-quiz-06-perfect',
-8: 'ecolearn-quiz-07-perfect',
 };
 function applyQuizLockState() {
-for (let i = 2; i <= 8; i++) {
+for (let i = 2; i <= 5; i++) {
 const card = document.getElementById(`quizCard0${i}`);
 if (!card) continue;
 const unlocked = localStorage.getItem(QUIZ_UNLOCK_KEYS[i]) === 'true';
@@ -401,7 +313,79 @@ actions.insertAdjacentElement('afterend', note);
 }
 }
 }
-document.addEventListener('DOMContentLoaded', applyQuizLockState);
+async function applyModuleOneProgress() {
+const lessonId = 'e43f6bee-bcff-4692-b5e2-396b4176eacd';
+const storageKey = 'ecolearn-quiz-animal-plant-best';
+const progress = document.getElementById('quizOneProgress');
+const fill = document.getElementById('quizOneProgressFill');
+const label = document.getElementById('quizOneProgressLabel');
+if (!progress || !fill || !label) return;
+
+const cachedBest = Number(localStorage.getItem(storageKey) || 0);
+const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
+
+function renderProgress(score, attempted, message) {
+const description = attempted ? `${score}% best` : (message || 'Not attempted');
+fill.style.width = `${score}%`;
+label.textContent = description;
+progress.setAttribute('aria-valuenow', String(score));
+progress.setAttribute('aria-valuetext', description);
+}
+
+renderProgress(safeCachedBest, safeCachedBest > 0);
+
+const client = window.ecoAuth?.client;
+if (!client) {
+console.error('Unable to load Module 1 quiz progress: Supabase client is unavailable.');
+if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+return;
+}
+
+const { data: { session } = {}, error: userError } = await client.auth.getSession();
+if (userError) {
+console.error('Unable to load Module 1 quiz progress:', userError.message);
+if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+return;
+}
+const user = session?.user;
+if (!user) {
+if (safeCachedBest === 0) renderProgress(0, false, 'Sign in to view score');
+return;
+}
+
+const { data: attempts, error } = await client
+.from('quiz_attempts')
+.select('score')
+.eq('user_id', user.id)
+.eq('lesson_id', lessonId)
+.order('score', { ascending: false })
+.limit(1);
+
+if (error) {
+console.error('Unable to load Module 1 quiz progress:', error.message);
+if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+return;
+}
+
+const hasAttempt = (attempts || []).length > 0;
+const storedScore = hasAttempt ? Number(attempts[0].score) : 0;
+if (hasAttempt && (!Number.isFinite(storedScore) || storedScore < 0 || storedScore > 10)) {
+console.error('Unable to display Module 1 quiz progress: the saved score is invalid.');
+renderProgress(safeCachedBest, safeCachedBest > 0, safeCachedBest > 0 ? undefined : 'Unable to load score');
+return;
+}
+
+const databaseBest = hasAttempt ? Math.round((storedScore / 10) * 100) : 0;
+const bestScore = Math.max(safeCachedBest, databaseBest);
+if (bestScore > safeCachedBest) localStorage.setItem(storageKey, String(bestScore));
+if (bestScore === 100) localStorage.setItem('ecolearn-quiz-animal-plant-perfect', 'true');
+renderProgress(bestScore, hasAttempt || safeCachedBest > 0);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+await applyModuleOneProgress();
+applyQuizLockState();
+});
 </script>
 </body>
 </html>

@@ -14,9 +14,11 @@
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/voice-search.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
+    <script src="js/voiceSearch.js" defer></script>
 </head>
 <body>
     <a class="sd-skip" href="#main">Skip to content</a>
@@ -42,13 +44,18 @@
 
         <header class="sd-header">
             <div>
-                <h1><span id="greeting">Welcome</span>, <span id="studentName">student</span></h1>
-                <p id="studentMeta">Pick up where you left off in Biology.</p>
+                <h1 id="studentName">Student</h1>
+                <p id="studentMeta">&nbsp;</p>
+                <p id="studentCourse">Biology</p>
             </div>
             <label class="sd-search">
                 <i class="bi bi-search" aria-hidden="true"></i>
                 <span class="sd-sr">Search lessons</span>
                 <input id="dashboardSearch" type="search" placeholder="Search lessons" autocomplete="off">
+                <button class="voice-search-button" type="button" aria-label="Search by voice" title="Search by voice" aria-pressed="false">
+                    <i class="bi bi-mic-fill" aria-hidden="true"></i>
+                </button>
+                <span class="voice-search-status" aria-live="polite"></span>
             </label>
         </header>
 
@@ -127,16 +134,13 @@
         { title: 'Cell Membrane and Transport',              img: 'imgs/cellMembrane.jpg',         id: '46254ff2-c787-4792-94db-5d33181f6b55' },
         { title: 'Cell Respiration',                         img: 'imgs/cellRespiration.jpg',      id: '1b15a414-7e6c-4992-b17c-1c924745366d' },
         { title: 'Photosynthesis',                           img: 'imgs/photosynthesis.jpg',       id: '81ece535-7d0b-47e9-a95a-ed8e0f25cc76' },
-        { title: 'Cell Cycle and Cancer',                    img: 'imgs/cellCycle.jpg',            id: '26dc1e4f-4a8b-45fc-8e12-ab7fd326eea1' },
-        { title: 'Cell Differentiation and Specialization',  img: 'imgs/cellDifferentiation.jpg',  id: '5149863c-8971-49ef-afa2-085cec2f3d1e' },
-        { title: 'Cell Signaling and Communication',         img: 'imgs/cellSignaling.jpg',        id: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9' },
     ].map((m, i) => ({ ...m, n: i + 1, desc: '', href: 'lesson.html', best: null }));
 
     const GOAL_GROUPS = [
         { label: 'Cell structure',                 modules: [1] },
-        { label: 'Cell division and cycle',        modules: [2, 6] },
+        { label: 'Cell division',                  modules: [2] },
         { label: 'Cell energy',                    modules: [4, 5] },
-        { label: 'Cell processes and signaling',   modules: [3, 7, 8] },
+        { label: 'Cell processes',                 modules: [3] },
     ];
 
     let query = '';
@@ -239,8 +243,6 @@
 
     /* ---------- init ---------- */
     document.addEventListener('DOMContentLoaded', async () => {
-        const h = new Date().getHours();
-        document.getElementById('greeting').textContent = h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening');
         renderAll();
 
         document.getElementById('logoutButton')?.addEventListener('click', () => window.ecoAuth.signOut());
@@ -258,10 +260,10 @@
                 const { data: p } = await ecoAuth.client.from('profiles').select('full_name, section').eq('id', user.id).maybeSingle();
                 if (p) { fullName = p.full_name || fullName; section = p.section || section; }
             } catch (_) {}
-            const first = (fullName || user.email || 'student').split(/[\s@]/)[0];
-            document.getElementById('studentName').textContent = first;
-            document.getElementById('studentMeta').textContent =
-                (section ? `Section ${section} · ` : '') + 'Pick up where you left off in Biology.';
+            document.getElementById('studentName').textContent = fullName.trim() || 'Student';
+            document.getElementById('studentMeta').textContent = user.email || '';
+            document.getElementById('studentCourse').textContent =
+                'Biology' + (section ? ` · Section ${section}` : '');
         }
 
         await Promise.all([loadLessonDetails(), user ? loadScores(user) : Promise.resolve()]);

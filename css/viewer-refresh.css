@@ -17,6 +17,7 @@
 .parent {
     --stage: #EEF5F0;
     --surface: #FFFFFF;
+    --selection: #DDF2E5;
     --line: #DCE6DF;
     --ink-soft: #4F5F55;          /* 6.8:1 on white (old --ink-faint was 2.7:1) */
     --radius-sm: 8px;
@@ -99,7 +100,7 @@
 }
 .viewMode button:hover { color: var(--ink); }
 .viewMode button[aria-pressed="true"] {
-    background: var(--pine);
+    background: linear-gradient(135deg, var(--pine), var(--moss));
     color: #fff;
 }
 
@@ -133,7 +134,7 @@
 .zoomControls button:hover       { background: var(--stage); color: var(--pine); transform: none; }
 .zoomControls button:active      { background: var(--line); transform: none; }
 .zoomControls button.active,
-.zoomControls button[aria-pressed="true"] { background: var(--pine); color: #fff; }
+.zoomControls button[aria-pressed="true"] { background: linear-gradient(135deg, var(--pine), var(--moss)); color: #fff; }
 
 /* Instant tooltips from aria-label (remove the title="" attributes so you don't get two). */
 .zoomControls button::after {
@@ -269,7 +270,7 @@
 .organelleButton:hover { background: rgba(255, 255, 255, .08); color: #fff; }
 .organelleButton.active,
 .organelleButton[aria-pressed="true"] {
-    background: #fff;
+    background: var(--selection);
     color: var(--pine);
     font-weight: 600;
 }
@@ -550,6 +551,8 @@
     .railGroup { flex-direction: row; align-items: center; gap: 6px; flex: none; scroll-snap-align: start; }
     .railGroupTitle { display: none; }                  /* dot colour + chip in the panel carry the meaning */
     .organelleButton { flex: none; width: auto; min-height: 40px; padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, .08); white-space: nowrap; }
+    .organelleButton.active,
+    .organelleButton[aria-pressed="true"] { background: var(--selection); color: var(--pine); }
 }
 
 /* Pinning the model + chips is now for TABLETS / very tall screens only (>= 900px tall).

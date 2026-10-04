@@ -1059,6 +1059,43 @@ function resetOrganelleInformation() {
 // SPEAKER / PRONUNCIATION
 // ======================================================
 
+// Voice used by the speaker button on this page: male voice (Animal Cell).
+// The first name that matches an installed voice wins. Browsers do not say
+// whether a voice is male or female, so voices are matched by name.
+// Reorder or replace names to change the voice.
+const PREFERRED_PRONUNCIATION_VOICES = [
+    "Microsoft Guy Online (Natural)",
+    "Microsoft Davis Online (Natural)",
+    "Microsoft Andrew Online (Natural)",
+    "Microsoft Brian Online (Natural)",
+    "Microsoft Christopher Online (Natural)",
+    "Microsoft Mark",
+    "Microsoft David",
+    "Google UK English Male",
+    "Daniel",
+    "Alex"
+];
+
+// Pitch used when none of the names above are installed.
+const PRONUNCIATION_FALLBACK_PITCH = 0.8;
+
+function pickPronunciationVoice() {
+    if (!("speechSynthesis" in window)) return null;
+    const voices = window.speechSynthesis.getVoices();
+
+    for (const name of PREFERRED_PRONUNCIATION_VOICES) {
+        const match = voices.find(function (v) { return v.name.indexOf(name) !== -1; });
+        if (match) return match;
+    }
+
+    return null;
+}
+
+// Chrome loads its voice list lazily; ask for it once so it is ready on first click.
+if ("speechSynthesis" in window) {
+    window.speechSynthesis.getVoices();
+}
+
 if (speakButton) {
     speakButton.addEventListener("click", function () {
         if (!currentOrganelle || !organelleInformation[currentOrganelle]) return;
@@ -1070,8 +1107,17 @@ if (speakButton) {
 
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.85;
-        utterance.pitch = 1;
+        const voice = pickPronunciationVoice();
+        if (voice) {
+            utterance.voice = voice;
+            utterance.lang = voice.lang;
+            utterance.pitch = 1;
+        } else {
+            // No matching voice installed: shift the pitch of the default voice instead.
+            utterance.lang = "en-US";
+            utterance.pitch = PRONUNCIATION_FALLBACK_PITCH;
+        }
+        utterance.rate = 0.9;
         utterance.volume = 1;
         window.speechSynthesis.speak(utterance);
     });

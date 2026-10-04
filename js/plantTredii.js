@@ -319,18 +319,23 @@ loader.load(
         });
         console.log("Plant Cell Loaded");
 
-        document.querySelector(".parent").classList.add("loaded");
-        viewer.classList.remove("loading");
-        modelLoading.classList.add("hidden");
+        if (loadingPercentage) loadingPercentage.textContent = "100%";
+        if (loadingProgress) loadingProgress.style.width = "100%";
 
-        if (zoomControls) {
-            zoomControls.style.display = "flex";
-        }
+        window.setTimeout(() => {
+            document.querySelector(".parent").classList.add("loaded");
+            viewer.classList.remove("loading");
+            modelLoading.classList.add("hidden");
 
-        if (infoLoading) infoLoading.style.display = "none";
-        if (organelleInfo) organelleInfo.classList.add("loaded");
+            if (zoomControls) {
+                zoomControls.style.display = "flex";
+            }
 
-        requestRender();
+            if (infoLoading) infoLoading.style.display = "none";
+            if (organelleInfo) organelleInfo.classList.add("loaded");
+
+            requestRender();
+        }, 180);
     },
     function (xhr) {
         // Vercel doesn't send Content-Length, so xhr.total is 0.
