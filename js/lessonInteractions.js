@@ -25,13 +25,26 @@
 
     const cards = [...list.querySelectorAll(".lesson-card")];
     const tools = createElement("div", "lesson-catalog-tools");
+    const search = createElement("label", "lesson-search");
     const filter = document.createElement("input");
     filter.className = "lesson-filter";
     filter.type = "search";
     filter.placeholder = "Search lessons";
     filter.setAttribute("aria-label", "Search lessons");
+    const microphone = document.createElement("button");
+    microphone.className = "voice-search-button";
+    microphone.type = "button";
+    microphone.setAttribute("aria-label", "Search by voice");
+    microphone.setAttribute("aria-pressed", "false");
+    microphone.title = "Search by voice";
+    const microphoneIcon = createElement("i", "bi bi-mic-fill");
+    microphoneIcon.setAttribute("aria-hidden", "true");
+    microphone.append(microphoneIcon);
+    const voiceStatus = createElement("span", "voice-search-status");
+    voiceStatus.setAttribute("aria-live", "polite");
+    search.append(filter, microphone, voiceStatus);
     const results = createElement("p", "lesson-results", `${cards.length} modules`);
-    tools.append(filter, results);
+    tools.append(search, results);
     header.after(tools);
 
     const updateResults = () => {

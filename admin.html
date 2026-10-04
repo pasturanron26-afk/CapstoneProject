@@ -17,9 +17,11 @@
     <link rel="stylesheet" href="css/global.css">
     <!-- admin.css is self-contained now: dashboard.css is no longer loaded on this page -->
     <link rel="stylesheet" href="css/admin.css?v=1">
+    <link rel="stylesheet" href="css/voice-search.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
+    <script src="js/voiceSearch.js" defer></script>
 </head>
 <body>
     <a class="skip-link" href="#adminMain">Skip to content</a>
@@ -67,6 +69,10 @@
                 <span class="visually-hidden">Search students by name or email</span>
                 <input id="topbarSearch" type="search" placeholder="Search students by name or email" autocomplete="off">
                 <kbd class="search-hint" aria-hidden="true">/</kbd>
+                <button class="voice-search-button" type="button" aria-label="Search by voice" title="Search by voice" aria-pressed="false">
+                    <i class="bi bi-mic-fill" aria-hidden="true"></i>
+                </button>
+                <span class="voice-search-status" aria-live="polite"></span>
             </label>
 
             <div class="topbar-actions">

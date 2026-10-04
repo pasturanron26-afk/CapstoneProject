@@ -14,9 +14,11 @@
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/voice-search.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
+    <script src="js/voiceSearch.js" defer></script>
 </head>
 <body>
     <a class="sd-skip" href="#main">Skip to content</a>
@@ -50,6 +52,10 @@
                 <i class="bi bi-search" aria-hidden="true"></i>
                 <span class="sd-sr">Search lessons</span>
                 <input id="dashboardSearch" type="search" placeholder="Search lessons" autocomplete="off">
+                <button class="voice-search-button" type="button" aria-label="Search by voice" title="Search by voice" aria-pressed="false">
+                    <i class="bi bi-mic-fill" aria-hidden="true"></i>
+                </button>
+                <span class="voice-search-status" aria-live="polite"></span>
             </label>
         </header>
 
