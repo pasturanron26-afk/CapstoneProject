@@ -27,24 +27,20 @@
 
 /* Logo Sizing */
 .logo-img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.88);
-  background: #ffffff;
-}
-
-/* Brand Header - !important prevents Bootstrap from overriding it to black */
-.brand-title {
-  color: #D8F3DC !important;
-  font-family: 'Poppins', system-ui, sans-serif !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.2px !important;
+  width: 190px;
+  height: auto;
+  object-fit: contain;
+  border: 0;
+  background: transparent;
+  margin-bottom: 1.5rem !important;
 }
 
 /* Base Link Styles (scoped to sidebar only).
    !important prevents Bootstrap / .text-white-50 overrides. */
 .sidebar-bg .nav-link {
+  display: flex;
+  align-items: center;
+  height: 46px;
   color: rgba(232, 245, 233, 0.86) !important;
   font-family: 'Poppins', system-ui, sans-serif;
   font-size: 0.9rem !important;
@@ -52,6 +48,7 @@
   padding: 10px 14px;
   border-radius: 8px;
   background: none;
+  white-space: nowrap;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
@@ -82,6 +79,7 @@
   flex-direction: column;
   width: 100%;
   flex-grow: 1;
+  margin-top: 3.75rem;
 }
 
 /* Log out - pinned to the bottom */
