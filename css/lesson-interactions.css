@@ -369,9 +369,6 @@
 .lesson-card:hover { transform: none; border-color: var(--moss); }
 .lesson-card:focus-within { border-color: var(--moss); box-shadow: 0 0 0 3px var(--moss-tint); }
 
-/* The whole card opens the lesson; the button stays the keyboard target. */
-.lesson-card .card-btn::after { content: ""; position: absolute; inset: 0; }
-
 .lesson-card .card-content { grid-template-rows: auto auto 1fr auto auto; }
 
 .card-progress { width: 100%; max-width: 360px; margin: 0 0 14px; }

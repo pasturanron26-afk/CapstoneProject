@@ -201,14 +201,15 @@
             return;
         }
         grid.innerHTML = list.map(m => `
-            <a class="sd-module" href="${esc(m.href)}">
+            <article class="sd-module" aria-label="${esc(m.title)} module">
                 <img src="${esc(m.img)}" alt="" loading="lazy">
                 <div class="sd-module-body">
                     <span class="sd-module-no">Module ${String(m.n).padStart(2, '0')}</span>
                     <h3>${esc(m.title)}</h3>
                     <span class="sd-chip is-${tier(m.best)}">${m.best === null ? 'Quiz not taken' : `Best score ${m.best}%`}</span>
+                    <a class="sd-btn sd-module-btn" href="${esc(m.href)}" aria-label="Open ${esc(m.title)}">${m.best === null ? 'Start lesson' : 'Review lesson'}</a>
                 </div>
-            </a>`).join('');
+            </article>`).join('');
     }
 
     const renderAll = () => { renderContinue(); renderPath(); renderProgress(); renderModules(); };
