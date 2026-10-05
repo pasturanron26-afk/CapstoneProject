@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cell Signaling and Communication · EcoLearn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/ledger-theme.css">
+    <link rel="stylesheet" href="css/lessonModuleOne.css">
+    <link rel="stylesheet" href="css/lesson-interactions.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/lessonInteractions.js" defer></script>
+
+<style>
+/* Module 05 components (built on ledger-theme tokens) */
+.tag-passive { color: var(--moss); }
+.hero-question { margin: 18px 0 0; padding: 12px 16px; border-left: 3px solid var(--stamp-gold); font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; line-height: 1.55; }
+.organelle-text p { line-height: 1.75; }
+.organelle-text ul { padding-left: 1.2rem; margin: 10px 0 0; line-height: 1.7; }
+.comparison-table td { vertical-align: top; }
+.lesson-note { margin-top: 18px; padding: 14px 16px; border: 1px solid var(--paper-line); border-left: 3px solid var(--moss); border-radius: var(--radius-inner); background: var(--paper); font-size: .93rem; line-height: 1.65; }
+.lesson-note h4 { margin: 0 0 6px; font-size: .9rem; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--pine); display: flex; align-items: center; gap: 8px; }
+.lesson-note h4 i { color: var(--moss); } .lesson-note p { margin: 0; }
+.lesson-note.why { border-left-color: var(--stamp-gold); } .lesson-note.why h4 i { color: var(--stamp-gold); }
+.mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 18px; }
+.mini-card { border: 1px solid var(--paper-line); background: var(--paper); border-radius: var(--radius-inner); padding: 14px 16px; }
+.mini-card h5 { margin: 0 0 6px; font-size: .9rem; font-weight: 700; color: var(--pine); }
+.mini-card p { margin: 0; font-size: .88rem; line-height: 1.6; color: var(--ink-muted); }
+
+/* interactive widgets */
+.ix-widget { margin-top: 22px; border: 1px solid var(--paper-line); border-radius: 3px; background: var(--panel-bg); overflow: hidden; }
+.ix-head { padding: 10px 14px; border-bottom: 1px solid var(--paper-line); display: flex; align-items: center; gap: 8px; font: 700 .78rem var(--font-sans); text-transform: uppercase; letter-spacing: .05em; color: var(--pine); }
+.ix-body { padding: 14px; }
+.ix-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.ix-chip { border: 1.5px solid var(--paper-line); background: var(--panel-bg); color: var(--ink); padding: 5px 12px; border-radius: 999px; font: 600 .78rem var(--font-sans); cursor: pointer; }
+.ix-chip:hover { border-color: var(--moss); }
+.ix-chip[aria-pressed="true"] { border-color: var(--moss); background: var(--moss-tint); color: var(--pine); }
+.ix-chip:focus-visible, .ix-btn:focus-visible, .ix-step:focus-visible { outline: 3px solid rgba(30,114,69,.3); outline-offset: 1px; }
+.ix-btn { border: 1.5px solid var(--pine); background: var(--pine); color: #fff; padding: 6px 14px; border-radius: 6px; font: 600 .82rem var(--font-sans); cursor: pointer; }
+.ix-btn.ghost { background: transparent; color: var(--pine); } .ix-btn:disabled { opacity: .4; cursor: default; }
+.ix-info { margin: 12px 0 0; padding: 10px 14px; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 3px; font-size: .92rem; line-height: 1.6; }
+.ix-info strong { color: var(--pine); }
+.ix-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.ix-steps { display: flex; gap: 6px; flex-wrap: wrap; }
+.ix-step { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--paper-line); background: var(--panel-bg); font: 700 .78rem var(--font-sans); color: var(--ink); cursor: pointer; }
+.ix-step[aria-current="step"] { background: var(--pine); border-color: var(--pine); color: #fff; }
+.ix-label { margin: 0 0 6px; font: 700 .72rem var(--font-sans); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-muted); }
+.dg { display: block; width: 100%; height: auto; background: var(--paper); }
+.dg-scroll { overflow-x: auto; } .dg { min-width: 460px; }
+.takeaways { margin-top: 50px; padding: 26px 28px; background: var(--panel-bg); border: 1px solid var(--paper-line); border-radius: var(--radius-card); }
+.takeaways ul { margin: 12px 0 0; padding-left: 1.2rem; line-height: 1.75; }
+@media (max-width: 768px) { .takeaways { padding: 20px 18px; } }
+</style>
+</head>
+
+<body>
+    <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
+        <img src="imgs/Logo.jpg" alt="Logo" class="rounded-circle logo-img mb-2">
+        <h3 class="h5 brand-title mb-4">EcoLearn</h3>
+        <ul class="nav nav-pills flex-column w-100">
+            <li class="nav-item mb-1"><a class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2" href="dashboard.html"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
+            <li class="nav-item mb-1"><a class="nav-link CellModel text-white-50 d-flex align-items-center gap-2" href="choose.html"><i class="bi bi-boxes"></i> Cell Models</a></li>
+            <li class="nav-item mb-1"><a class="nav-link Lesson active text-white-50 d-flex align-items-center gap-2" href="lesson.html" aria-current="page"><i class="bi bi-book"></i> Lessons</a></li>
+            <li class="nav-item mb-1"><a class="nav-link Quiz text-white-50 d-flex align-items-center gap-2" href="quiz.html"><i class="bi bi-question-circle"></i> Quizzes</a></li>
+            <li class="nav-item mb-1"><a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html"><i class="bi bi-person"></i> Profile</a></li>
+            <li class="nav-item mt-auto"><button id="logoutButton" class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0" style="background:none;cursor:pointer;"><i class="bi bi-box-arrow-right"></i> Logout</button></li>
+        </ul>
+    </nav>
+
+    <main class="lesson-page">
+
+        <!-- HERO -->
+        <section class="lesson-hero">
+            <div class="hero-content">
+                <h1 class="hero-title">Cell Signaling and Communication: Animal vs Plant</h1>
+                <p class="hero-intro">Cells do not work alone. They send chemical messages, receive them, and pass small molecules directly to their neighbors. This lesson shows how a signal is received and relayed inside a cell, then compares how animal cells connect through gap junctions and plant cells connect through plasmodesmata.</p>
+                <p class="hero-question">A hormone flows past thousands of cells, yet only some respond. How does a cell know the message is for it, and how do neighboring cells share messages directly?</p>
+            </div>
+        </section>
+
+        <!-- COMPARISON TABLE -->
+        <section class="comparison-section">
+            <h2 class="section-title">Animal vs Plant: Cell Communication</h2>
+            <div class="table-responsive">
+                <table class="comparison-table">
+                    <thead><tr><th>Feature</th><th>Animal</th><th>Plant</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Direct cell-to-cell channel</strong></td><td>Gap junctions</td><td>Plasmodesmata</td></tr>
+                        <tr><td><strong>How the channel is built</strong></td><td>Two protein half-channels (connexons, each made of six connexin proteins) dock across the narrow gap between two cells</td><td>A tunnel through the cell wall, lined by the plasma membrane, with an ER strand (the desmotubule) running through the middle</td></tr>
+                        <tr><td><strong>What passes through</strong></td><td>Ions and small molecules (up to about 1,000 daltons), not proteins</td><td>Sugars, ions, hormones, and, when the channel widens, some RNAs and proteins</td></tr>
+                        <tr><td><strong>How it is closed</strong></td><td>High calcium or low pH closes the channel</td><td>Callose (a wall polysaccharide) is deposited at the opening</td></tr>
+                        <tr><td><strong>Main signal molecules</strong></td><td>Hormones (such as adrenaline, insulin), neurotransmitters, growth factors</td><td>Plant hormones (auxin, cytokinin, gibberellin, ethylene, abscisic acid)</td></tr>
+                        <tr><td><strong>Typical receptors</strong></td><td>G protein-coupled receptors, receptor tyrosine kinases, ion channels, intracellular receptors</td><td>Many receptor kinases at the cell surface, plus receptors inside the cell (such as the auxin receptor in the nucleus)</td></tr>
+                        <tr><td><strong>Long-distance signals</strong></td><td>Bloodstream and nerves</td><td>Phloem and xylem</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SHARED FOUNDATION -->
+        <div class="section-divider"><span>Shared Foundation (Both Cells)</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Forms of Cell Signaling</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <div class="organelle-text">
+                <p>Cell signaling means one cell releasing or displaying a signal that another cell detects and responds to. Signals are grouped by how far they travel and who receives them. The cell that responds is the <strong>target cell</strong>. A cell responds only if it has the right <strong>receptor</strong>, a protein that fits the signal like a lock fits a key.</p>
+                <div class="function-box">
+                    <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                    <p>Signaling coordinates the body or plant: it times growth and division, controls metabolism, triggers defense, and keeps cells working together instead of each acting alone.</p>
+                </div>
+
+                <div class="ix-widget" id="formsX">
+                    <div class="ix-head"><i class="bi bi-hand-index"></i> Interactive: how far does the signal go?</div>
+                    <div class="ix-body">
+                        <div class="ix-chips" id="formsChips" role="group" aria-label="Choose a form of signaling"></div>
+                        <div class="dg-scroll"><svg class="dg" id="formsSvg" viewBox="0 0 420 200" role="img" aria-label="Diagram of the selected form of cell signaling"></svg></div>
+                        <p class="ix-info" id="formsInfo" aria-live="polite"></p>
+                    </div>
+                </div>
+
+                <div class="lesson-note"><h4><i class="bi bi-intersect"></i> Animal vs Plant</h4><p>Plants use the same ideas. Plant hormones can act on nearby cells or travel long distances in the phloem. For example, the flowering signal FT protein is made in leaves and moves through the phloem to the shoot tip.</p></div>
+            </div>
+        </section>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Receptors and Signal Transduction</h3>
+                <span class="cell-tag tag-both"><i class="bi bi-intersect"></i> Both Cells</span>
+            </div>
+            <div class="organelle-text">
+                <p>Signaling has three stages. In <strong>reception</strong>, the signal binds a receptor. In <strong>transduction</strong>, the message is passed along a chain of molecules inside the cell, often with <strong>second messengers</strong> such as cAMP and with enzymes that add phosphate groups (kinases). In the <strong>response</strong>, the cell changes what it does, for example by switching genes on or activating enzymes.</p>
+                <div class="function-box">
+                    <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                    <p>Transduction converts a signal outside the cell into a response inside it, and it amplifies the message: one signal molecule can lead to thousands of activated enzymes.</p>
+                </div>
+                <div class="mini-grid">
+                    <div class="mini-card"><h5>Receptor on the surface</h5><p>Water-soluble signals (such as adrenaline or insulin) cannot cross the lipid bilayer, so they bind receptors in the plasma membrane.</p></div>
+                    <div class="mini-card"><h5>Receptor inside the cell</h5><p>Small or fat-soluble signals (such as steroid hormones, or auxin entering the nucleus) can enter the cell and bind receptors inside.</p></div>
+                </div>
+
+                <div class="ix-widget" id="pathX">
+                    <div class="ix-head"><i class="bi bi-play-circle"></i> Interactive: follow a signal inside the cell</div>
+                    <div class="ix-body">
+                        <div class="ix-chips" id="pathChips" role="group" aria-label="Choose a pathway"></div>
+                        <div class="dg-scroll"><svg class="dg" id="pathSvg" viewBox="0 0 400 230" role="img" aria-label="Signal transduction pathway, step by step"></svg></div>
+                        <p class="ix-info" id="pathInfo" aria-live="polite"></p>
+                        <div class="ix-controls" id="pathControls"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ANIMAL -->
+        <div class="section-divider"><span>Animal Cell Emphasis</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Gap Junctions</h3>
+                <span class="cell-tag tag-animal"><i class="bi bi-heart-pulse"></i> Animal Emphasis</span>
+            </div>
+            <div class="organelle-text">
+                <p>A gap junction is a cluster of channels that directly connects the cytoplasm of two neighboring animal cells. Each channel is made of two <strong>connexons</strong>, one from each cell, and each connexon is built from six <strong>connexin</strong> proteins. The channel is narrow, so ions and small molecules (up to about 1,000 daltons) can pass, but proteins cannot.</p>
+                <div class="function-box">
+                    <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                    <p>Gap junctions let cells share ions, second messengers (such as cAMP), and small metabolites, so groups of cells can act together. In heart muscle, they let electrical signals spread quickly so the heart beats in time. Raised calcium or lower pH closes the channels, which helps cut off a damaged cell from its neighbors.</p>
+                </div>
+
+                <div class="ix-widget" id="gjX">
+                    <div class="ix-head"><i class="bi bi-hand-index"></i> Interactive: what can cross a gap junction?</div>
+                    <div class="ix-body">
+                        <p class="ix-label">Choose a molecule</p>
+                        <div class="ix-chips" id="gjChips" role="group" aria-label="Choose a molecule"></div>
+                        <div class="ix-chips"><button type="button" class="ix-chip" id="gjClose" aria-pressed="false">Close the channel (high calcium)</button></div>
+                        <div class="dg-scroll"><svg class="dg" id="gjSvg" viewBox="0 0 420 230" role="img" aria-label="Two animal cells joined by a gap junction channel"></svg></div>
+                        <p class="ix-info" id="gjInfo" aria-live="polite"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PLANT -->
+        <div class="section-divider"><span>Plant Cell Emphasis</span></div>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Plasmodesmata</h3>
+                <span class="cell-tag tag-plant"><i class="bi bi-flower3"></i> Plant Emphasis</span>
+            </div>
+            <div class="organelle-text">
+                <p>A cell wall separates neighboring plant cells, so plants use <strong>plasmodesmata</strong>: narrow channels that pass through the wall and are lined by the plasma membrane. A strand of endoplasmic reticulum, the <strong>desmotubule</strong>, runs through the middle. Together, the connected cytoplasm of a plant's cells forms one network called the <strong>symplast</strong>.</p>
+                <div class="function-box">
+                    <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                    <p>Plasmodesmata move water, ions, sugars, and hormones between cells, and the channel can be regulated. During development, it can widen to let some RNAs and proteins through. Depositing callose at the opening narrows or plugs it, which can isolate a damaged or infected cell. Some plant viruses use special movement proteins to open plasmodesmata and spread.</p>
+                </div>
+
+                <div class="ix-widget" id="pdX">
+                    <div class="ix-head"><i class="bi bi-hand-index"></i> Interactive: control the plasmodesma</div>
+                    <div class="ix-body">
+                        <p class="ix-label">Choose a state</p>
+                        <div class="ix-chips" id="pdChips" role="group" aria-label="Choose a plasmodesma state"></div>
+                        <div class="dg-scroll"><svg class="dg" id="pdSvg" viewBox="0 0 420 230" role="img" aria-label="Two plant cells joined by a plasmodesma through the cell wall"></svg></div>
+                        <p class="ix-info" id="pdInfo" aria-live="polite"></p>
+                    </div>
+                </div>
+
+                <div class="lesson-note why">
+                    <h4><i class="bi bi-question-circle"></i> Why different channels?</h4>
+                    <p>Animal cells touch each other's membranes directly, so a short protein channel can span the gap between them. Plant cells are separated by a thick wall, so a channel has to run through the wall itself, and the plant lines it with the cell's own membrane and ER.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="organelle-section">
+            <div class="organelle-header">
+                <h3 class="organelle-name">Plant Hormones and Receptors</h3>
+                <span class="cell-tag tag-plant"><i class="bi bi-flower3"></i> Plant Emphasis</span>
+            </div>
+            <div class="organelle-text">
+                <p>Plants do not have a bloodstream or nerves, so they coordinate growth and defense with hormones. Plant hormones act in tiny amounts, and each one affects many processes depending on the tissue and on the other hormones present. Plant cells detect them with receptors in the plasma membrane (many are receptor kinases), in the endoplasmic reticulum membrane (the ethylene receptors), or in the nucleus (the auxin receptor).</p>
+                <div class="function-box">
+                    <h4><i class="bi bi-lightning-charge-fill"></i> Function</h4>
+                    <p>Plant hormones coordinate growth, development, and responses to light, water, and attack, so the whole plant acts as one organism even though its cells cannot move.</p>
+                </div>
+                <div class="mini-grid">
+                    <div class="mini-card"><h5>Auxin</h5><p>Promotes cell elongation and bends shoots toward light. A high auxin-to-cytokinin ratio favors roots in tissue culture.</p></div>
+                    <div class="mini-card"><h5>Cytokinin</h5><p>Promotes cell division. A high cytokinin-to-auxin ratio favors shoots in tissue culture.</p></div>
+                    <div class="mini-card"><h5>Gibberellin</h5><p>Promotes stem elongation and seed germination.</p></div>
+                    <div class="mini-card"><h5>Ethylene</h5><p>A gas that promotes fruit ripening and leaf drop.</p></div>
+                    <div class="mini-card"><h5>Abscisic acid</h5><p>Closes stomata during drought and keeps seeds dormant.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="takeaways">
+            <h2 class="section-title">Key Takeaways</h2>
+            <ul>
+                <li>A cell responds to a signal only if it has the matching receptor.</li>
+                <li>Signaling has three stages: reception, transduction, and response. Transduction often amplifies the signal.</li>
+                <li>Signals are grouped by distance: endocrine (far), paracrine (near), autocrine (self), juxtacrine (contact), and direct (through channels).</li>
+                <li>Animal cells connect directly through gap junctions, which pass ions and small molecules but not proteins.</li>
+                <li>Plant cells connect through plasmodesmata that cross the cell wall. Their opening can be widened or plugged with callose.</li>
+                <li>Plants use hormones such as auxin, cytokinin, gibberellin, ethylene, and abscisic acid to coordinate the whole plant.</li>
+            </ul>
+        </section>
+
+        <section class="references-section">
+            <h2 class="section-title">References</h2>
+            <div class="references-group">
+                <h3>Cell Signaling and Communication Sources</h3>
+                <ul class="references-list">
+                    <li>Alberts, B., Johnson, A., Lewis, J., Morgan, D., Raff, M., Roberts, K., &amp; Walter, P. (2015). <em>Molecular biology of the cell</em> (6th ed.). Garland Science.</li>
+                    <li>Goodenough, D. A., &amp; Paul, D. L. (2009). Gap junctions. <em>Cold Spring Harbor Perspectives in Biology, 1</em>(1), a002576.</li>
+                    <li>Lucas, W. J., &amp; Lee, J.-Y. (2004). Plasmodesmata as a supracellular control network in plants. <em>Nature Reviews Molecular Cell Biology, 5</em>(9), 712-726.</li>
+                    <li>Reece, J. B., Urry, L. A., Cain, M. L., Wasserman, S. A., Minorsky, P. V., &amp; Jackson, R. B. (2014). <em>Campbell biology</em> (10th ed.). Pearson Education.</li>
+                    <li>Santner, A., &amp; Estelle, M. (2009). Recent advances and emerging trends in plant hormone signalling. <em>Nature, 459</em>, 1071-1078.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const b = document.getElementById('logoutButton');
+            if (b) b.addEventListener('click', async () => { await window.ecoAuth.signOut(); });
+        });
+    </script>
+
+    <script>
+    (function () {
+        var GOLD = '#C9971F', GS = '#8F6A12', PINE = '#123D27', MOSS = '#1E7245', MUTED = '#5B6B60', INK = '#1B2A20', RED = '#B33A3A', VIO = '#8B2E6E', BLU = '#4A8BAB';
+        var $ = function (id) { return document.getElementById(id); };
+        function R(x, y, w, h, f, s, rx, o) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (rx || 0) + '" fill="' + f + '"' + (s ? ' stroke="' + s + '" stroke-width="2"' : '') + (o != null ? ' opacity="' + o + '"' : '') + '/>'; }
+        function C(x, y, r, f, s, o) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + f + '"' + (s ? ' stroke="' + s + '" stroke-width="2"' : '') + (o != null ? ' opacity="' + o + '"' : '') + '/>'; }
+        function E(x, y, rx, ry, f, s, o) { return '<ellipse cx="' + x + '" cy="' + y + '" rx="' + rx + '" ry="' + ry + '" fill="' + f + '"' + (s ? ' stroke="' + s + '" stroke-width="3"' : '') + (o != null ? ' opacity="' + o + '"' : '') + '/>'; }
+        function L(x1, y1, x2, y2, s, w, ex) { return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + s + '" stroke-width="' + (w || 2) + '" stroke-linecap="round" ' + (ex || '') + '/>'; }
+        function T(x, y, t, size, fill, anchor, w, o) { return '<text x="' + x + '" y="' + y + '" font-size="' + (size || 11) + '" font-weight="' + (w || 600) + '" fill="' + (fill || INK) + '" text-anchor="' + (anchor || 'middle') + '"' + (o != null ? ' opacity="' + o + '"' : '') + '>' + t + '</text>'; }
+        function AR(x1, y1, x2, y2, c) {
+            var a = Math.atan2(y2 - y1, x2 - x1), h = 8;
+            var p = [[x2, y2], [x2 - h * Math.cos(a - .45), y2 - h * Math.sin(a - .45)], [x2 - h * Math.cos(a + .45), y2 - h * Math.sin(a + .45)]];
+            return L(x1, y1, x2, y2, c, 3) + '<polygon points="' + p.map(function (q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ') + '" fill="' + c + '"/>';
+        }
+        function chips(box, labels, cb) {
+            labels.forEach(function (l, i) {
+                var b = document.createElement('button'); b.type = 'button'; b.className = 'ix-chip'; b.textContent = l;
+                b.addEventListener('click', function () { cb(i); }); box.appendChild(b);
+            });
+        }
+        function press(box, i) { box.querySelectorAll('.ix-chip').forEach(function (b, k) { b.setAttribute('aria-pressed', String(k === i)); }); }
+
+        /* ---------- 1. FORMS OF SIGNALING ---------- */
+        var FORMS = [
+            ['Endocrine', 'A cell releases a hormone into the bloodstream, which carries it to target cells far away. Only cells with the matching receptor respond. Examples: insulin from the pancreas and adrenaline from the adrenal glands.'],
+            ['Paracrine', 'A cell releases a signal that diffuses to nearby cells. Examples: growth factors, and neurotransmitters crossing a synapse.'],
+            ['Autocrine', 'A cell responds to a signal that it released itself. Examples: some immune cells and many cancer cells stimulate their own growth this way.'],
+            ['Juxtacrine', 'A signal on the surface of one cell binds a receptor on a touching neighbor. Cells must be in contact. Example: Notch and Delta proteins in development.'],
+            ['Direct (channels)', 'Cells pass small molecules straight through channels that join their cytoplasm: gap junctions in animals and plasmodesmata in plants. The sections below explain each.']
+        ];
+        function cell(x, y, r, f, label, lf) { return C(x, y, r, f, GS) + (label ? T(x, y + r + 14, label, 9, MUTED, 'middle', 600) : ''); }
+        function formsSvg(k) {
+            var s = '', sender = '#F3D98A', target = '#C9A2D6', off = '#D5DBD7', i;
+            if (k === 0) {
+                s += R(100, 92, 250, 16, '#F6C9C3', RED, 8);
+                for (i = 0; i < 5; i++) s += C(140 + i * 45, 100, 4, GOLD, GS);
+                s += cell(60, 100, 28, sender, 'Secreting cell') + cell(385, 100, 26, target, 'Target (has receptor)');
+                s += cell(230, 40, 20, off, 'No receptor') + cell(300, 165, 20, off, 'No receptor') + T(225, 130, 'bloodstream', 10, RED);
+            } else if (k === 1) {
+                s += cell(100, 100, 28, sender, 'Secreting cell') + cell(190, 55, 22, target) + cell(190, 145, 22, target) + cell(245, 100, 22, target, 'Nearby targets');
+                s += AR(128, 90, 166, 64, GOLD) + AR(128, 110, 166, 136, GOLD) + AR(130, 100, 220, 100, GOLD);
+                s += cell(350, 50, 20, off, 'Too far') + cell(350, 150, 20, off);
+            } else if (k === 2) {
+                s += cell(210, 100, 34, sender, 'Same cell is sender and target');
+                s += '<path d="M190 66 C170 10, 270 10, 238 70" fill="none" stroke="' + GOLD + '" stroke-width="3"/><polygon points="238,70 228,58 244,60" fill="' + GOLD + '"/>';
+                s += cell(90, 100, 20, off) + cell(335, 100, 20, off);
+            } else if (k === 3) {
+                s += cell(160, 100, 40, sender, 'Signaling cell') + cell(260, 100, 40, target, 'Touching target cell');
+                s += L(200, 90, 212, 90, VIO, 3) + C(214, 90, 5, GOLD, GS) + R(216, 82, 6, 16, BLU, null, 2) + L(200, 112, 212, 112, VIO, 3) + C(214, 112, 5, GOLD, GS) + R(216, 104, 6, 16, BLU, null, 2);
+            } else {
+                s += cell(150, 100, 42, sender, 'Cell A') + cell(270, 100, 42, target, 'Cell B');
+                [84, 100, 116].forEach(function (y) { s += R(192, y - 4, 36, 8, '#E8D9B0', GS, 3); });
+                s += C(205, 100, 3, GOLD, GS) + C(215, 84, 3, GOLD, GS) + C(212, 116, 3, GOLD, GS);
+                s += T(210, 168, 'channels join the cytoplasm of both cells', 10, MUTED);
+            }
+            return s;
+        }
+        (function () {
+            var box = $('formsChips'); if (!box) return;
+            chips(box, FORMS.map(function (f) { return f[0]; }), show);
+            function show(i) {
+                press(box, i);
+                $('formsSvg').innerHTML = formsSvg(i);
+                $('formsInfo').innerHTML = '<strong>' + FORMS[i][0] + '.</strong> ' + FORMS[i][1];
+            }
+            show(0);
+        })();
+
+        /* ---------- 2. SIGNAL TRANSDUCTION PATHWAYS ---------- */
+        var PATHS = [
+            { name: 'Animal: adrenaline', steps: [
+                ['Reception', 'Adrenaline is water-soluble and cannot cross the membrane. It binds a G protein-coupled receptor on the surface of a liver cell.'],
+                ['Receptor activates a G protein', 'The receptor changes shape and activates a G protein on the inner face of the membrane.'],
+                ['Second messenger is made', 'The G protein switches on adenylyl cyclase, an enzyme that makes many molecules of the second messenger cAMP.'],
+                ['Kinase cascade amplifies', 'cAMP activates protein kinase A, which activates further enzymes in turn. Each step multiplies the signal.'],
+                ['Response', 'The cascade activates enzymes that break down glycogen, so the liver cell releases glucose into the blood.']] },
+            { name: 'Plant: auxin', steps: [
+                ['No auxin: genes off', 'Without auxin, Aux/IAA repressor proteins bind to ARF transcription factors in the nucleus and keep auxin-response genes switched off.'],
+                ['Auxin binds its receptor', 'Auxin is a small molecule that enters the nucleus and binds the TIR1/AFB receptor. This helps the receptor grip the Aux/IAA repressor.'],
+                ['Repressor is tagged', 'The receptor is part of a complex that tags Aux/IAA with ubiquitin, which marks it for destruction.'],
+                ['Genes switch on', 'With the repressor gone, ARF proteins are free to switch on auxin-response genes.'],
+                ['Response', 'Auxin-response genes help the cell grow, for example by loosening its wall, so the cell elongates.']] }
+        ];
+        function animalScene(s) {
+            var o = R(0, 0, 400, 70, '#EAF4EC') + R(0, 86, 400, 144, '#FBF3DE') + R(0, 70, 400, 16, '#E0A84F');
+            o += T(8, 14, 'OUTSIDE', 9, MUTED, 'start', 700) + T(8, 222, 'CYTOPLASM', 9, MUTED, 'start', 700);
+            o += R(120, 58, 26, 40, VIO, null, 6) + T(133, 112, 'Receptor', 9, MUTED);
+            o += C(133, s === 0 ? 28 : 52, 8, GOLD, GS) + T(80, s === 0 ? 31 : 55, 'Adrenaline', 10, INK, 'end');
+            if (s >= 1) o += E(s >= 2 ? 215 : 170, 100, 24, 10, MOSS) + T(s >= 2 ? 215 : 170, 124, 'G protein', 9, MUTED);
+            if (s >= 2) { o += R(235, 60, 36, 36, BLU, null, 6) + T(253, 52, 'Adenylyl cyclase', 9, MUTED); [0, 1, 2].forEach(function (i) { o += C(250 + i * 12, 122 + (i % 2) * 8, 5, '#F2C230', GS); }); o += T(300, 130, 'cAMP', 10, GS, 'start'); }
+            if (s >= 3) { o += R(100, 150, 70, 22, '#CFE8D5', MOSS, 4) + T(135, 165, 'Kinase A', 10) + R(190, 150, 70, 22, '#CFE8D5', MOSS, 4) + T(225, 165, 'Kinase B', 10) + R(280, 150, 70, 22, '#CFE8D5', MOSS, 4) + T(315, 165, 'Kinase C', 10); o += AR(170, 161, 188, 161, INK) + AR(260, 161, 278, 161, INK); }
+            if (s >= 4) o += R(110, 190, 180, 30, '#F3D98A', GS, 6) + T(200, 210, 'Glycogen broken down: glucose released', 10);
+            return o;
+        }
+        function plantScene(s) {
+            var o = R(0, 0, 400, 230, '#F4F8F2') + E(200, 112, 175, 90, '#E3F1E8', MOSS) + T(200, 36, 'NUCLEUS', 9, MUTED, 'middle', 700);
+            o += L(50, 150, 350, 150, VIO, 5) + (s >= 3 ? R(240, 143, 90, 14, '#F3D98A', GS, 3) : R(240, 143, 90, 14, '#E1E7E2', '#C9D6CC', 3)) + T(285, 172, 'Auxin-response gene', 9, MUTED);
+            o += C(280, 134, 10, MOSS) + T(300, 128, 'ARF', 9, MUTED, 'start');
+            if (s <= 2) o += R(264, 108, 34, 16, RED, null, 3) + T(281, 120, 'Aux/IAA', 8, '#fff') + (s === 2 ? C(250, 104, 4, GOLD, GS) + C(262, 98, 4, GOLD, GS) + C(300, 100, 4, GOLD, GS) + T(281, 98, 'Ub', 9, GS, 'middle', 700) : '');
+            if (s >= 1) { o += C(150, 100, 17, BLU, '#2b5f7a') + T(150, 104, 'TIR1', 9, '#fff') + C(150, 76, 6, GOLD, GS) + T(166, 70, 'Auxin', 10, INK, 'start'); if (s <= 2) o += L(165, 108, 264, 117, BLU, 3, 'stroke-dasharray="5 4"'); }
+            if (s === 2) o += T(281, 94, '', 9);
+            if (s >= 3) o += '<path d="M330 140 q15 -16 30 0 t30 0" fill="none" stroke="' + GS + '" stroke-width="3"/>' + T(360, 128, 'mRNA', 9, GS, 'middle', 700);
+            if (s >= 4) o += R(110, 196, 180, 28, '#CFE8D5', MOSS, 6) + T(200, 215, 'Growth genes on: cell elongates', 10);
+            return o;
+        }
+        (function () {
+            var box = $('pathChips'); if (!box) return;
+            var p = 0, s = 0, timer = null, ctl = $('pathControls'), dots = '', k;
+            for (k = 0; k < 5; k++) dots += '<button type="button" class="ix-step" data-i="' + k + '" aria-label="Go to step ' + (k + 1) + '">' + (k + 1) + '</button>';
+            ctl.innerHTML = '<button type="button" class="ix-btn ghost" data-a="prev">Back</button><div class="ix-steps">' + dots + '</div><button type="button" class="ix-btn ghost" data-a="next">Next</button><button type="button" class="ix-btn" data-a="play">Play</button>';
+            var prev = ctl.querySelector('[data-a="prev"]'), next = ctl.querySelector('[data-a="next"]'), play = ctl.querySelector('[data-a="play"]'), btns = ctl.querySelectorAll('.ix-step');
+            function show() {
+                $('pathSvg').innerHTML = p === 0 ? animalScene(s) : plantScene(s);
+                var st = PATHS[p].steps[s];
+                $('pathInfo').innerHTML = '<strong>Step ' + (s + 1) + ' of 5: ' + st[0] + '.</strong> ' + st[1];
+                btns.forEach(function (b, q) { if (q === s) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+                prev.disabled = s === 0; next.disabled = s === 4; press(box, p);
+            }
+            function stop() { if (timer) { clearInterval(timer); timer = null; } play.textContent = 'Play'; }
+            chips(box, PATHS.map(function (x) { return x.name; }), function (i) { stop(); p = i; s = 0; show(); });
+            prev.addEventListener('click', function () { stop(); s -= 1; show(); });
+            next.addEventListener('click', function () { stop(); s += 1; show(); });
+            play.addEventListener('click', function () { if (timer) { stop(); } else { play.textContent = 'Pause'; timer = setInterval(function () { s = (s + 1) % 5; show(); }, 2600); } });
+            btns.forEach(function (b) { b.addEventListener('click', function () { stop(); s = Number(b.getAttribute('data-i')); show(); }); });
+            show();
+        })();
+
+        /* ---------- 3. GAP JUNCTION EXPLORER ---------- */
+        var MOLS = [
+            ['Potassium ion (K⁺)', true, 'about 40 daltons', 4],
+            ['cAMP (second messenger)', true, 'about 330 daltons', 6],
+            ['Glucose', true, 'about 180 daltons', 6],
+            ['Protein', false, 'tens of thousands of daltons', 12]
+        ];
+        function gjSvg(mi, closed) {
+            var m = MOLS[mi], pass = m[1] && !closed;
+            var o = R(0, 0, 420, 92, '#FBF3DE') + R(0, 92, 420, 10, '#E0A84F') + R(0, 102, 420, 16, '#EAF4EC') + R(0, 118, 420, 10, '#E0A84F') + R(0, 128, 420, 102, '#FBF3DE');
+            o += T(10, 16, 'CELL A', 9, MUTED, 'start', 700) + T(10, 222, 'CELL B', 9, MUTED, 'start', 700);
+            o += R(190, 88, 40, 18, VIO, null, 4) + R(190, 114, 40, 18, VIO, null, 4) + R(203, 88, 14, 44, closed ? VIO : '#FFFDF4');
+            if (closed) o += R(203, 100, 14, 20, RED);
+            o += T(310, 114, 'Gap junction channel', 10, INK, 'start') + L(235, 110, 305, 110, MUTED, 1);
+            if (pass) {
+                o += C(210, 58, m[3], GOLD, GS) + AR(210, 66, 210, 150, GOLD) + C(210, 178, m[3], GOLD, GS, .55);
+                o += T(210, 205, m[0] + ' passes to cell B', 10, MOSS, 'middle', 700);
+            } else {
+                o += C(210, 58, m[3], GOLD, GS) + T(262, 70, '✕', 22, RED, 'middle', 700);
+                o += T(210, 205, closed ? 'Channel closed: nothing passes' : m[0] + ' is too large: blocked', 10, RED, 'middle', 700);
+            }
+            return o;
+        }
+        (function () {
+            var box = $('gjChips'); if (!box) return;
+            var mi = 0, closed = false, cb = $('gjClose');
+            chips(box, MOLS.map(function (m) { return m[0]; }), function (i) { mi = i; show(); });
+            cb.addEventListener('click', function () { closed = !closed; show(); });
+            function show() {
+                press(box, mi); cb.setAttribute('aria-pressed', String(closed));
+                $('gjSvg').innerHTML = gjSvg(mi, closed);
+                var m = MOLS[mi];
+                $('gjInfo').innerHTML = closed ? '<strong>Channel closed.</strong> High calcium or low pH closes gap junctions, which isolates a damaged cell from its neighbors.'
+                    : '<strong>' + m[0] + ' (' + m[2] + ').</strong> ' + (m[1] ? 'Small enough to fit through the channel, so it moves from cell A to cell B.' : 'Too large for the channel (the limit is about 1,000 daltons), so it stays in cell A.');
+            }
+            show();
+        })();
+
+        /* ---------- 4. PLASMODESMA EXPLORER ---------- */
+        var PD = [
+            ['Normal', 'Sugars, ions, and other small molecules pass through the gap between the desmotubule and the membrane. A protein or RNA is too large.', 100, false],
+            ['Widened', 'The channel opens wider, as during development or when a virus movement protein acts, so larger molecules such as some proteins and RNAs can pass.', 88, false],
+            ['Plugged with callose', 'Callose is deposited at both ends of the channel and blocks it. The plant uses this to isolate a damaged or infected cell.', 100, true]
+        ];
+        function pdSvg(i) {
+            var top = PD[i][2], plug = PD[i][3], bot = 232 - top, sugarOk = !plug, protOk = i === 1;
+            var o = R(0, 0, 180, 230, '#E6F2E8') + R(240, 0, 180, 230, '#E6F2E8') + R(180, 0, 60, 230, '#D9C28F');
+            for (var y = 20; y < 230; y += 30) o += L(186, y, 234, y + 10, '#B89B5E', 2);
+            o += R(180, top, 60, bot - top, '#DCEFE0') + L(180, top, 240, top, '#1B4332', 3) + L(180, bot, 240, bot, '#1B4332', 3);
+            o += L(150, 116, 270, 116, VIO, 7) + T(210, 188, 'Desmotubule (ER strand)', 9, VIO, 'middle', 700);
+            if (plug) o += R(176, top - 4, 12, bot - top + 8, '#D9822B', null, 4) + R(232, top - 4, 12, bot - top + 8, '#D9822B', null, 4) + T(210, 24, 'Callose plugs the channel', 9, '#B5651A', 'middle', 700);
+            o += T(210, 14, plug ? '' : 'Cell wall', 9, MUTED, 'middle', 700) + T(10, 16, 'CELL 1', 9, MUTED, 'start', 700) + T(410, 16, 'CELL 2', 9, MUTED, 'end', 700);
+            var sy = 126, py = 100;
+            o += C(110, sy, 5, GOLD, GS) + T(110, sy + 20, 'Sugar', 9, MUTED);
+            o += C(110, py, 11, BLU, '#2b5f7a') + T(110, py - 18, 'Protein or RNA', 9, MUTED);
+            if (sugarOk) o += AR(122, sy, 160, sy, GOLD) + C(310, sy, 5, GOLD, GS, .6); else o += C(166, sy, 5, GOLD, GS) + T(166, sy + 22, '✕', 16, RED, 'middle', 700);
+            if (protOk) o += AR(126, py, 160, py, BLU) + C(310, py, 11, BLU, '#2b5f7a', .6); else o += C(160, py, 11, BLU, '#2b5f7a') + T(160, py - 16, '✕', 16, RED, 'middle', 700);
+            o += T(110, 215, 'Sugar: ' + (sugarOk ? 'passes' : 'blocked'), 10, sugarOk ? MOSS : RED, 'middle', 700) + T(310, 215, 'Protein or RNA: ' + (protOk ? 'passes' : 'blocked'), 10, protOk ? MOSS : RED, 'middle', 700);
+            return o;
+        }
+        (function () {
+            var box = $('pdChips'); if (!box) return;
+            chips(box, PD.map(function (x) { return x[0]; }), show);
+            function show(i) {
+                press(box, i);
+                $('pdSvg').innerHTML = pdSvg(i);
+                $('pdInfo').innerHTML = '<strong>' + PD[i][0] + '.</strong> ' + PD[i][1];
+            }
+            show(0);
+        })();
+    })();
+    </script>
+</body>
+</html>
