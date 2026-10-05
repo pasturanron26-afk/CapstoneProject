@@ -18,10 +18,10 @@
    - Archive / Manage write to profiles.archived / profiles.status /
      full_name / email through persistProfileUpdate(). Needs the
      admin UPDATE policy + grant (persist-archive-status.sql).
-   - Lesson/module progress is STILL not recorded anywhere (no
-     lesson_progress table). MODULE_NAMES / moduleProgress stay in
-     the data model for when it exists, but the UI no longer shows a
-     column of zeros. The drawer says so instead.
+   - Lesson reading progress comes from `lesson_progress` (user_id,
+     lesson_key, sections_done, total_sections, completed_at,
+     updated_at), written by js/lessonInteractions.js. Needs
+     supabase-lesson-progress.sql, including its admin read policy.
 
    UI (new)
    - One view at a time (#overview / #students / #archived), so the
@@ -48,6 +48,16 @@ const LESSON_NAMES = {
 };
 const QUIZ_ORDER = Object.keys(LESSON_NAMES);
 
+// Lesson pages, in study order. lesson_key is the page's file name in lower
+// case, the same key js/lessonInteractions.js saves reading progress under.
+const LESSON_PAGES = [
+    { key: 'lessonmoduleone.html',              name: 'Animal Cell vs Plant Cell' },
+    { key: 'lessonmodulemitosis.html',          name: 'Mitosis of Plant and Animal Cells' },
+    { key: 'lesson-cell-membrane.html',         name: 'Cell Membrane and Transport' },
+    { key: 'lesson-cell-differentiation.html',  name: 'Cell Differentiation and Specialization' },
+    { key: 'lesson-photosynthesis.html',        name: 'Photosynthesis' }
+];
+
 const PASS_MARK = 75;                        // quiz cards say "75% to pass"
 const STALE_AFTER_MINUTES = 7 * 24 * 60;     // "needs attention" after a week away
 const OFFLINE_AFTER_MS = 2 * 60 * 1000;      // heartbeats fire every 60s (auth.js)
@@ -59,6 +69,8 @@ const REFRESH_EVERY_MS = 30 * 1000;
 // "query failed" apart from "this student has no attempts".
 let QUIZ_LOAD_ERROR = null;
 let STUDENTS_LOAD_ERROR = null;
+let LESSON_LOAD_ERROR = null;
+let LESSON_ROWS_TOTAL = 0;   // lesson_progress rows this admin can see, for all students
 
 async function fetchQuizAttemptsByUser() {
     const { data, error } = await ecoAuth.client
@@ -79,6 +91,49 @@ async function fetchQuizAttemptsByUser() {
         byUser[row.user_id].push(row);
     });
     return byUser;
+}
+
+async function fetchLessonProgressByUser() {
+    const { data, error } = await ecoAuth.client
+        .from('lesson_progress')
+        .select('user_id, lesson_key, sections_done, total_sections, completed_at, updated_at');
+
+    if (error) {
+        console.error('Failed to load lesson progress from Supabase:', error.message);
+        LESSON_LOAD_ERROR = error.message;
+        return {};
+    }
+    LESSON_LOAD_ERROR = null;
+    LESSON_ROWS_TOTAL = (data || []).length;
+
+    const byUser = {};
+    (data || []).forEach(row => {
+        if (!byUser[row.user_id]) byUser[row.user_id] = {};
+        byUser[row.user_id][row.lesson_key] = row;
+    });
+    return byUser;
+}
+
+// One entry per lesson page, in study order, for one student.
+function summarizeLessons(rows) {
+    return LESSON_PAGES.map(page => {
+        const row = (rows || {})[page.key];
+        const total = row ? Number(row.total_sections) || 0 : 0;
+        const read = row ? Math.min(Number(row.sections_done) || 0, total || Infinity) : 0;
+        const complete = Boolean(row && row.completed_at);
+        const percent = complete ? 100 : total ? Math.round((read / total) * 100) : 0;
+        return {
+            key: page.key,
+            name: page.name,
+            read: complete ? total : read,
+            total,
+            complete,
+            started: complete || read > 0,
+            percent,
+            date: row && row.updated_at ? row.updated_at.slice(0, 10) : '—',
+            completedDate: row && row.completed_at ? row.completed_at.slice(0, 10) : '—'
+        };
+    });
 }
 
 // One row per lesson: best score, attempt count, latest attempt date.
@@ -153,11 +208,15 @@ async function fetchStudents() {
         return [];
     }
 
-    const attemptsByUser = await fetchQuizAttemptsByUser();
+    const [attemptsByUser, progressByUser] = await Promise.all([
+        fetchQuizAttemptsByUser(),
+        fetchLessonProgressByUser()
+    ]);
 
     return (data || []).map((row, idx) => {
         const attempts = attemptsByUser[row.id] || [];
         const quizzes = summarizeQuizzes(attempts);
+        const lessons = summarizeLessons(progressByUser[row.id]);
         const avgScore = quizzes.length
             ? Math.round(quizzes.reduce((sum, q) => sum + q.score, 0) / quizzes.length)
             : null;
@@ -174,9 +233,9 @@ async function fetchStudents() {
             lastActive: presence.text,
             lastActiveMinutesAgo: presence.minutesAgo,
             isOnline: presence.online,
-            // Not recorded anywhere yet (see header). Kept for later.
-            modulesCompleted: 0,
-            moduleProgress: MODULE_NAMES.map(name => ({ name, percent: 0 })),
+            lessons,
+            modulesCompleted: lessons.filter(l => l.complete).length,
+            moduleProgress: lessons.map(l => ({ name: l.name, percent: l.percent })),
             quizzes,
             avgScore,
             status: row.status || 'active',
@@ -896,6 +955,30 @@ function quizRowsHTML(s) {
     }).join('');
 }
 
+function lessonRowsHTML(s) {
+    return s.lessons.map(l => {
+        if (!l.started) {
+            return `<li class="quiz-row is-empty">
+                <span class="quiz-main"><span class="quiz-name">${escapeHtml(l.name)}</span><span class="quiz-sub">Not started</span></span>
+            </li>`;
+        }
+        const sub = l.complete
+            ? `Finished on ${escapeHtml(l.completedDate)}`
+            : `${l.read} of ${l.total} sections read, last on ${escapeHtml(l.date)}`;
+        return `<li class="quiz-row">
+            <span class="quiz-main">
+                <span class="quiz-name">${escapeHtml(l.name)}</span>
+                <span class="quiz-sub">${sub}</span>
+            </span>
+            <span class="quiz-result">
+                <span class="quiz-score">${l.percent}%</span>
+                <span class="meter ${l.complete ? 'is-pass' : ''}" aria-hidden="true"><span style="width:${l.percent}%"></span></span>
+                <span class="quiz-flag ${l.complete ? 'is-pass' : 'is-progress'}">${l.complete ? 'Completed' : 'In progress'}</span>
+            </span>
+        </li>`;
+    }).join('');
+}
+
 function renderDrawer(s, { keepTab = false } = {}) {
     el('drawerAvatar').innerHTML = avatarContentHTML(s);
     el('drawerName').textContent = s.name;
@@ -914,6 +997,16 @@ function renderDrawer(s, { keepTab = false } = {}) {
         ? `Average ${s.avgScore}% across ${plural(s.quizzes.length, 'quiz', 'quizzes')}. The pass mark is ${PASS_MARK}%.`
         : (QUIZ_LOAD_ERROR ? `Couldn't load quiz data: ${QUIZ_LOAD_ERROR}` : 'No quiz attempts yet.');
     el('quizList').innerHTML = quizRowsHTML(s);
+
+    const lessonsDone = s.lessons.filter(l => l.complete).length;
+    el('lessonSummary').textContent = LESSON_LOAD_ERROR
+        ? `Couldn't load lesson progress: ${LESSON_LOAD_ERROR}`
+        : (s.lessons.some(l => l.started)
+            ? `${lessonsDone} of ${s.lessons.length} lessons completed. A lesson is complete when every section has been read.`
+            : (LESSON_ROWS_TOTAL === 0
+                ? 'No lesson progress is visible yet. If students have been reading, re-run supabase-lesson-progress.sql so admins are allowed to read it.'
+                : 'No lessons started yet.'));
+    el('lessonList').innerHTML = lessonRowsHTML(s);
 
     el('accountId').value = s.id;
     el('accountName').value = s.name;

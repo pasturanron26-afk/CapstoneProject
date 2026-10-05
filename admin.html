@@ -256,15 +256,19 @@
             </dl>
 
             <div class="tabs" role="tablist" aria-label="Student details">
-                <button type="button" class="tab" role="tab" id="tabQuiz" aria-controls="panelQuiz" aria-selected="true" data-tab="quiz">Quiz results</button>
+                <button type="button" class="tab" role="tab" id="tabQuiz" aria-controls="panelQuiz" aria-selected="true" data-tab="quiz">Progress</button>
                 <button type="button" class="tab" role="tab" id="tabAccount" aria-controls="panelAccount" aria-selected="false" tabindex="-1" data-tab="account">Account</button>
             </div>
 
             <div class="drawer-body">
                 <div id="panelQuiz" role="tabpanel" aria-labelledby="tabQuiz">
+                    <h3 class="drawer-subhead">Lessons read</h3>
+                    <p class="muted" id="lessonSummary"></p>
+                    <ul class="quiz-list" id="lessonList"></ul>
+
+                    <h3 class="drawer-subhead">Quizzes</h3>
                     <p class="muted" id="quizSummary"></p>
                     <ul class="quiz-list" id="quizList"></ul>
-                    <p class="muted note">Lesson completion isn't recorded yet. It will appear here once lesson tracking is added.</p>
                 </div>
 
                 <div id="panelAccount" role="tabpanel" aria-labelledby="tabAccount" hidden>

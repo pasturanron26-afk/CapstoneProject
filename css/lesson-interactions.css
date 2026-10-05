@@ -101,6 +101,15 @@
   white-space: nowrap;
 }
 
+.lesson-sync {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink-muted);
+  font-size: 1.05rem;
+}
+
+.lesson-sync[hidden] { display: none; }
+
 .lesson-done {
   display: inline-flex;
   align-items: center;
@@ -210,6 +219,16 @@
 .lesson-resume .resume-go:hover { background: var(--moss); border-color: var(--moss); }
 .lesson-resume .resume-dismiss { color: var(--ink-muted); background: transparent; border: 1px solid transparent; }
 .lesson-resume .resume-dismiss:hover { color: var(--ink); background: var(--paper); }
+
+/* Check beside a heading once that section has been read. */
+.section-read-mark {
+  margin-left: .5rem;
+  color: var(--moss);
+  font-size: .72em;
+  vertical-align: .08em;
+}
+
+.section-read-mark[hidden] { display: none; }
 
 /* ---------- Lesson content ---------- */
 
@@ -420,8 +439,9 @@
   .lesson-search { width: 100%; }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 640px) {
   .lesson-progress-text,
+  .lesson-sync,
   .lesson-done { display: none; }
 }
 
