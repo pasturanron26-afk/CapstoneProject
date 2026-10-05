@@ -127,6 +127,14 @@
     z-index: 1200;
   }
 
+  .sidebar-bg .logo-img {
+    margin-top: 3rem;
+  }
+
+  .sidebar-bg .nav {
+    margin-top: 1rem;
+  }
+
   .sidebar-bg.is-open {
     transform: translateX(0);
   }
