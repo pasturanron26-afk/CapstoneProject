@@ -65,24 +65,23 @@ body {
 }
 
 .auth-logo-wrap {
-    width: 60px;
-    height: 60px;
+    width: min(100%, 200px);
     margin: 0 auto 12px;
-    overflow: hidden;
-    border-radius: 50%;
-    background: var(--auth-green-pale);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible;
+    background: transparent;
 }
 
 .auth-logo {
+    display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
-    border-radius: 50%;
     border: 0;
     padding: 0;
+    filter: drop-shadow(0 6px 12px rgba(12, 37, 26, 0.10));
 }
 
 .auth-title {
@@ -92,6 +91,29 @@ body {
     color: var(--auth-ink);
     margin-bottom: 6px;
     letter-spacing: -0.01em;
+}
+
+.auth-campus-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    margin: 0 auto 10px;
+    text-align: center;
+    color: var(--auth-green-deep);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.auth-campus-name span:first-child {
+    font-weight: 700;
+}
+
+.auth-campus-name span:last-child {
+    font-weight: 400;
 }
 
 .auth-subtitle {
@@ -348,6 +370,7 @@ body {
     padding: 4px;
     margin-bottom: 22px;
     position: relative;
+    overflow: hidden;
 }
 
 .tab-btn {
@@ -361,7 +384,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     border-radius: 9px;
-    transition: color 0.3s ease;
+    transition: color 0.22s ease, transform 0.22s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -372,6 +395,7 @@ body {
 
 .tab-btn.active {
     color: var(--auth-white);
+    transform: translateY(-1px);
 }
 
 .tab-slider {
@@ -382,7 +406,7 @@ body {
     height: calc(100% - 8px);
     background: linear-gradient(135deg, var(--auth-green-deep), var(--auth-green));
     border-radius: 9px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease;
     box-shadow: 0 4px 12px rgba(18, 61, 39, 0.3);
     z-index: 0;
 }
