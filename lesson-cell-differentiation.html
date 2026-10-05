@@ -42,7 +42,7 @@
 .ix-chip { border: 1.5px solid var(--paper-line); background: var(--panel-bg); color: var(--ink); padding: 5px 12px; border-radius: 999px; font: 600 .78rem var(--font-sans); cursor: pointer; }
 .ix-chip:hover { border-color: var(--moss); }
 .ix-chip[aria-pressed="true"] { border-color: var(--moss); background: var(--moss-tint); color: var(--pine); }
-.ix-chip:focus-visible, .ix-btn:focus-visible, .ix-step:focus-visible, .rung:focus-visible, .qc-opt:focus-visible { outline: 3px solid rgba(30,114,69,.3); outline-offset: 1px; }
+.ix-chip:focus-visible, .ix-btn:focus-visible, .ix-step:focus-visible, .rung:focus-visible { outline: 3px solid rgba(30,114,69,.3); outline-offset: 1px; }
 .ix-btn { border: 1.5px solid var(--pine); background: var(--pine); color: #fff; padding: 6px 14px; border-radius: 6px; font: 600 .82rem var(--font-sans); cursor: pointer; }
 .ix-btn.ghost { background: transparent; color: var(--pine); } .ix-btn:disabled { opacity: .4; cursor: default; }
 .ix-info { margin: 12px 0 0; padding: 10px 14px; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 3px; font-size: .92rem; line-height: 1.6; }
@@ -63,18 +63,6 @@
 .rung small { display: block; font-weight: 500; color: var(--ink-muted); }
 .rung[aria-pressed="true"] { border-color: var(--moss); background: var(--moss-tint); }
 
-/* quick checks */
-.quickcheck-section { margin-top: 60px; }
-.qc { background: var(--panel-bg); border: 1px solid var(--paper-line); border-radius: var(--radius-card); padding: 22px 24px; margin-bottom: 18px; }
-.qc-q { font-weight: 600; margin: 0 0 14px; line-height: 1.55; }
-.qc-options { display: grid; gap: 8px; }
-.qc-opt { text-align: left; width: 100%; padding: 11px 14px; border: 1.5px solid var(--paper-line); background: var(--panel-bg); border-radius: var(--radius-control); font: 500 .92rem var(--font-sans); color: var(--ink); cursor: pointer; }
-.qc-opt:hover:not(:disabled) { border-color: var(--moss); background: var(--moss-tint); }
-.qc-opt:disabled { cursor: default; }
-.qc-opt.correct { border-color: #2d8a5b; background: rgba(45,138,91,.12); }
-.qc-opt.wrong { border-color: var(--stamp); background: rgba(214,69,69,.08); }
-.qc-explain { margin: 14px 0 0; padding: 12px 14px; border-radius: var(--radius-inner); background: var(--paper); border: 1px solid var(--paper-line); font-size: .9rem; line-height: 1.65; }
-.qc-explain[hidden] { display: none !important; }
 .takeaways { margin-top: 50px; padding: 26px 28px; background: var(--panel-bg); border: 1px solid var(--paper-line); border-radius: var(--radius-card); }
 .takeaways ul { margin: 12px 0 0; padding-left: 1.2rem; line-height: 1.75; }
 @media (max-width: 768px) { .takeaways { padding: 20px 18px; } }
@@ -193,6 +181,20 @@
                     </div>
                 </div>
 
+                <div class="ix-widget" id="pot3d">
+                    <div class="ix-head"><i class="bi bi-box"></i> 3D models: stem cells</div>
+                    <div class="ix-body">
+                        <div class="ix-chips" id="pot3dChips" role="group" aria-label="Choose a stem cell model"></div>
+                        <div class="organelle-embed" style="width:100%">
+                            <div class="sketchfab-embed-wrapper">
+                                <iframe id="pot3dFrame" title="Zygote" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share loading="lazy" width="100%" height="400" src="https://sketchfab.com/models/cdf81a00a7ef47419580cf5ff7c1c335/embed"></iframe>
+                                <p id="pot3dCredit" style="font-size:13px; font-weight:normal; margin:5px; color:var(--ink-muted);"></p>
+                            </div>
+                        </div>
+                        <p class="ix-info" id="pot3dInfo" aria-live="polite"></p>
+                    </div>
+                </div>
+
                 <div class="lesson-note why">
                     <h4><i class="bi bi-question-circle"></i> Can an animal cell go back?</h4>
                     <p>Not naturally in most cases, but scientists have done it. In 1962 John Gurdon placed a nucleus from a tadpole intestinal cell into an egg and obtained tadpoles, showing that a specialized cell's nucleus keeps the full genome. In 2006 Shinya Yamanaka's team turned mouse skin cells into induced pluripotent stem (iPS) cells with just four genes. Gurdon and Yamanaka shared the 2012 Nobel Prize in Physiology or Medicine for these discoveries.</p>
@@ -294,31 +296,6 @@
                         <tr><td><strong>Root hair cell</strong></td><td>Plant</td><td>Long thin extension of the cell</td><td>Absorbs water and minerals</td></tr>
                     </tbody>
                 </table>
-            </div>
-        </section>
-
-        <!-- QUICK CHECKS -->
-        <section class="quickcheck-section">
-            <h2 class="section-title">Quick Checks</h2>
-            <div class="qc" data-a="0">
-                <p class="qc-q">1. Which cell is totipotent?</p>
-                <div class="qc-options"><button class="qc-opt" type="button">A fertilized egg (zygote)</button><button class="qc-opt" type="button">A neuron</button><button class="qc-opt" type="button">A blood stem cell in bone marrow</button><button class="qc-opt" type="button">A red blood cell</button></div>
-                <p class="qc-explain" hidden><strong>The zygote.</strong> It can form every cell type of the organism. Blood stem cells are multipotent: they make only blood cell types.</p>
-            </div>
-            <div class="qc" data-a="1">
-                <p class="qc-q">2. A piece of carrot root grows into a whole plant in tissue culture. What best explains this?</p>
-                <div class="qc-options"><button class="qc-opt" type="button">The cells permanently lost their DNA mutations</button><button class="qc-opt" type="button">Mature cells dedifferentiated into callus, then redifferentiated into shoots and roots</button><button class="qc-opt" type="button">Animal-style stem cells migrated into the root</button><button class="qc-opt" type="button">Cell walls turned into stem cells</button></div>
-                <p class="qc-explain" hidden><strong>Dedifferentiation, then redifferentiation.</strong> Hormones such as auxin and cytokinin steer callus into shoots or roots.</p>
-            </div>
-            <div class="qc" data-a="3">
-                <p class="qc-q">3. Which tissue makes a tree trunk thicker each year?</p>
-                <div class="qc-options"><button class="qc-opt" type="button">Shoot apical meristem</button><button class="qc-opt" type="button">Root apical meristem</button><button class="qc-opt" type="button">Intercalary meristem</button><button class="qc-opt" type="button">Vascular cambium (a lateral meristem)</button></div>
-                <p class="qc-explain" hidden><strong>Vascular cambium.</strong> Lateral meristems cause secondary growth (increase in girth). Apical meristems add length.</p>
-            </div>
-            <div class="qc" data-a="1">
-                <p class="qc-q">4. Why does a skin cell have the same DNA as a neuron but a different shape and job?</p>
-                <div class="qc-options"><button class="qc-opt" type="button">It has different genes in its genome</button><button class="qc-opt" type="button">It switches on a different set of the same genes</button><button class="qc-opt" type="button">It has more mitochondria</button><button class="qc-opt" type="button">It is older</button></div>
-                <p class="qc-explain" hidden><strong>Different gene expression.</strong> Differentiation changes which genes are active, not the DNA itself.</p>
             </div>
         </section>
 
@@ -498,23 +475,8 @@
             show(0);
         }
 
-        /* ---------- 5. QUICK CHECKS ---------- */
-        function quick() {
-            document.querySelectorAll('.qc').forEach(function (q) {
-                var ans = Number(q.getAttribute('data-a')), opts = q.querySelectorAll('.qc-opt'), ex = q.querySelector('.qc-explain');
-                opts.forEach(function (o, k) {
-                    o.addEventListener('click', function () {
-                        opts.forEach(function (x, m) { x.disabled = true; if (m === ans) x.classList.add('correct'); });
-                        if (k !== ans) o.classList.add('wrong');
-                        ex.hidden = false;
-                    });
-                });
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', function () {
             var e = $('stepTot'); if (e) stepper(e, { label: 'Interactive: from one cell to a whole plant', alt: 'Plant regeneration from a single cell, step by step', steps: TOT });
-            quick();
         });
     })();
     </script>
@@ -553,6 +515,7 @@
         });
     })();
     </script>
+
     <script>
     (function () {
         var P = [
