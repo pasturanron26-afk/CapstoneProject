@@ -96,7 +96,7 @@ async function fetchQuizAttemptsByUser() {
 async function fetchLessonProgressByUser() {
     const { data, error } = await ecoAuth.client
         .from('lesson_progress')
-        .select('user_id, lesson_key, sections_done, total_sections, completed_at, updated_at');
+        .select('user_id, lesson_key, sections_read, sections_done, total_sections, completed_at, updated_at');
 
     if (error) {
         console.error('Failed to load lesson progress from Supabase:', error.message);
@@ -118,8 +118,10 @@ async function fetchLessonProgressByUser() {
 function summarizeLessons(rows) {
     return LESSON_PAGES.map(page => {
         const row = (rows || {})[page.key];
-        const total = row ? Number(row.total_sections) || 0 : 0;
-        const read = row ? Math.min(Number(row.sections_done) || 0, total || Infinity) : 0;
+        const total = row ? Number(row.total_sections || 0) : 0;
+        const arrayReadCount = Array.isArray(row?.sections_read) ? row.sections_read.length : 0;
+        const rawDone = Number(row?.sections_done ?? 0) || 0;
+        const read = row ? Math.min(Math.max(rawDone, arrayReadCount), total || Infinity) : 0;
         const complete = Boolean(row && row.completed_at);
         const percent = complete ? 100 : total ? Math.round((read / total) * 100) : 0;
         return {

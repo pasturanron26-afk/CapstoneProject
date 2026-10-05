@@ -107,7 +107,7 @@
     if (!client || !userId) return { rows: [], ok: false };
     const { data, error } = await client
       .from("lesson_progress")
-      .select("lesson_key, sections_done, total_sections, completed_at")
+      .select("lesson_key, sections_read, sections_done, total_sections, completed_at")
       .eq("user_id", userId);
     if (error) { warnRemote(error); return { rows: [], ok: false }; }
     return { rows: data || [], ok: true };
@@ -115,15 +115,16 @@
 
   const saveRemote = async (userId, file, state) => {
     if (!client || !userId) return false;
-    const { error } = await client.from("lesson_progress").upsert({
+    const payload = {
       user_id: userId,
       lesson_key: file.toLowerCase(),
-      sections_read: state.read,
-      sections_done: state.done,
-      total_sections: state.total,
-      completed_at: state.completedAt,
+      sections_read: Array.isArray(state.read) ? state.read : [],
+      sections_done: Number(state.done) || 0,
+      total_sections: Number(state.total) || 0,
+      completed_at: state.completedAt || null,
       updated_at: new Date().toISOString()
-    }, { onConflict: "user_id,lesson_key" });
+    };
+    const { error } = await client.from("lesson_progress").upsert(payload, { onConflict: "user_id,lesson_key" });
     if (error) { warnRemote(error); return false; }
     return true;
   };
@@ -245,10 +246,12 @@
         const local = localStates[index];
         const row = rows.find((entry) => entry.lesson_key === item.file.toLowerCase());
         if (!row) return local;
+        const remoteReadCount = Array.isArray(row.sections_read) ? row.sections_read.length : 0;
+        const remoteDone = Math.max(Number(row.sections_done || 0), remoteReadCount);
         const complete = local.complete || Boolean(row.completed_at);
-        const remoteBetter = (row.sections_done || 0) > local.done;
+        const remoteBetter = remoteDone > local.done;
         return {
-          done: remoteBetter ? row.sections_done : local.done,
+          done: remoteBetter ? remoteDone : local.done,
           total: remoteBetter || !local.total ? (row.total_sections || local.total) : local.total,
           complete
         };
