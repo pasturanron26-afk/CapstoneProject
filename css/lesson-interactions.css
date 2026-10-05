@@ -1,86 +1,324 @@
-/* Shared interaction layer for the lesson catalog and every lesson module. */
+/* =====================================================
+   ECOLEARN — LESSON EXPERIENCE LAYER
+   Shared by the lesson catalog (lesson.html) and every lesson
+   module. Loaded after the page's own stylesheet, so the rules
+   here set the common lesson layout:
+
+     • lesson bar     sticky, flat, with a reading-progress line
+     • lesson header  compact hero with read time and section count
+     • resume prompt  "continue where you left off"
+     • lesson end     completion panel + previous / next pager
+     • catalog        status and progress on each lesson card
+===================================================== */
+
+/* ---------- Lesson page frame ---------- */
+
+.lesson-page {
+  max-width: 1180px;
+  padding: 0 32px 64px;
+}
+
+/* Without JavaScript there is no lesson bar, so keep the original top spacing. */
+.lesson-page:not(.has-lesson-tools) { padding-top: 40px; }
+
+.lesson-page > section[id] { scroll-margin-top: 76px; }
+
+/* ---------- Lesson bar ---------- */
+
 .lesson-tools {
-  position: fixed;
-  top: 12px;
-  left: calc(250px + 32px);
-  right: 32px;
-  width: min(calc(100% - 314px), 1090px);
+  position: sticky;
+  top: 0;
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin: 0;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, .94);
-  border: 1px solid var(--paper-line);
-  border-radius: var(--radius-control);
-  box-shadow: 0 8px 24px rgba(18, 61, 39, .1);
-  backdrop-filter: blur(12px);
+  gap: 12px;
+  margin: 0 -32px 28px;
+  padding: 10px 32px 12px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--paper-line);
 }
-.lesson-page.has-lesson-tools { padding-top: 112px; }
+
 .lesson-tools > * { min-width: 0; }
-.lesson-tools a,
-.lesson-tools button,
-.lesson-tools select {
-  font: 600 .82rem var(--font-sans);
-}
-.lesson-tools a {
-  min-height: 36px;
+
+.lesson-back,
+.lesson-step {
   display: inline-flex;
   align-items: center;
-  color: var(--moss);
-  text-decoration: none;
-  white-space: nowrap;
-}
-.lesson-tools a:hover { color: var(--pine); text-decoration: underline; }
-.lesson-tools select {
-  min-width: 180px;
-  max-width: 34vw;
-  min-height: 36px;
-  padding: 0 30px 0 10px;
-  color: var(--ink);
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 12px;
+  color: var(--pine);
   background: var(--panel-bg);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-control);
+  font: 600 .84rem var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
 }
-.lesson-tools select:focus-visible,
-.lesson-tools a:focus-visible,
-.lesson-tools button:focus-visible,
-.lesson-filter:focus-visible {
-  outline: 3px solid rgba(82, 183, 136, .4);
-  outline-offset: 2px;
+
+.lesson-back:hover,
+.lesson-step:hover {
+  color: var(--pine);
+  background: var(--moss-tint);
+  border-color: var(--moss);
 }
-.lesson-tools-spacer { flex: 1; }
-.lesson-tools-progress {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 150px;
+
+.lesson-back:active,
+.lesson-step:active { background: rgba(30, 114, 69, .2); }
+
+.lesson-step[hidden] { display: none; }
+
+.lesson-position {
   color: var(--ink-muted);
-  font-size: .76rem;
+  font-size: .84rem;
   white-space: nowrap;
 }
-.lesson-progress-track {
-  width: 78px;
-  height: 6px;
-  overflow: hidden;
-  background: var(--paper-line);
-  border-radius: 99px;
+
+.lesson-jump { display: inline-flex; margin: 0; }
+
+.lesson-jump select {
+  min-width: 200px;
+  max-width: 320px;
+  min-height: 40px;
+  padding: 0 32px 0 12px;
+  color: var(--ink);
+  background-color: var(--panel-bg);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  font: 500 .86rem var(--font-sans);
+  cursor: pointer;
 }
+
+.lesson-jump select:hover { border-color: var(--moss); }
+
+.lesson-tools-spacer { flex: 1; }
+
+.lesson-progress-text {
+  color: var(--ink-muted);
+  font-size: .82rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lesson-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--moss);
+  font-size: .82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lesson-done[hidden] { display: none; }
+
+.lesson-progress-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background: transparent;
+  pointer-events: none;
+}
+
 .lesson-progress-fill {
   display: block;
-  width: 0;
+  width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, var(--moss), var(--lichen));
-  border-radius: inherit;
-  transition: width .2s ease;
+  background: var(--moss);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform .12s linear;
 }
+
+.lesson-back:focus-visible,
+.lesson-step:focus-visible,
+.lesson-jump select:focus-visible,
+.lesson-pager a:focus-visible,
+.lesson-action:focus-visible,
+.lesson-resume button:focus-visible,
+.lesson-filter:focus-visible {
+  outline: 3px solid rgba(30, 114, 69, .35);
+  outline-offset: 2px;
+}
+
+/* ---------- Lesson header (hero) ---------- */
+
+.lesson-hero {
+  padding: 32px 36px;
+  margin-bottom: 24px;
+  box-shadow: none;
+}
+
+.lesson-hero .hero-title {
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.15rem);
+  margin-bottom: 12px;
+}
+
+.lesson-hero .hero-intro {
+  margin-bottom: 0;
+  font-size: 1rem;
+  line-height: 1.65;
+  opacity: .95;
+}
+
+.lesson-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 22px 0 0;
+  padding: 16px 0 0;
+  list-style: none;
+  border-top: 1px solid rgba(243, 250, 246, .22);
+  color: rgba(243, 250, 246, .92);
+  font-size: .86rem;
+}
+
+.lesson-meta li { display: inline-flex; align-items: center; gap: 7px; }
+.lesson-meta .bi { font-size: 1rem; }
+
+/* ---------- Resume prompt ---------- */
+
+.lesson-resume {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 24px;
+  padding: 12px 16px;
+  background: var(--panel-bg);
+  border: 1px solid var(--paper-line);
+  border-left: 4px solid var(--moss);
+  border-radius: var(--radius-inner);
+  font-size: .92rem;
+}
+
+.lesson-resume[hidden] { display: none; }
+.lesson-resume p { flex: 1; margin: 0; color: var(--ink); }
+
+.lesson-resume button {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-control);
+  font: 600 .84rem var(--font-sans);
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.lesson-resume .resume-go { color: #fff; background: var(--pine); border: 1px solid var(--pine); }
+.lesson-resume .resume-go:hover { background: var(--moss); border-color: var(--moss); }
+.lesson-resume .resume-dismiss { color: var(--ink-muted); background: transparent; border: 1px solid transparent; }
+.lesson-resume .resume-dismiss:hover { color: var(--ink); background: var(--paper); }
+
+/* ---------- Lesson content ---------- */
+
+.organelle-section { padding: 28px 30px; margin-bottom: 20px; box-shadow: none; }
+
+.organelle-text p,
+.function-box p {
+  max-width: 72ch;
+  font-size: .98rem;
+  line-height: 1.7;
+}
+
+.comparison-section { margin-bottom: 36px; }
+
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.comparison-table { min-width: 520px; box-shadow: none; }
+.organelle-embed,
+.model-slot,
+.sketchfab-embed-wrapper { min-width: 0; }
+
+/* ---------- Lesson end: completion + pager ---------- */
+
+.lesson-complete {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 36px;
+  padding: 18px 20px;
+  color: var(--ink);
+  background: var(--panel-bg);
+  border: 1px solid var(--paper-line);
+  border-left: 4px solid var(--moss);
+  border-radius: var(--radius-inner);
+}
+
+.lesson-complete[hidden] { display: none; }
+.lesson-complete > .bi { flex: none; color: var(--moss); font-size: 1.6rem; }
+.lesson-complete .lesson-complete-copy { flex: 1; min-width: 0; }
+.lesson-complete p { margin: 0; color: var(--ink-muted); font-size: .9rem; }
+.lesson-complete strong { display: block; margin-bottom: 2px; color: var(--ink); font-size: 1.02rem; }
+
+.lesson-action {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  color: #fff;
+  background: var(--pine);
+  border: 1px solid var(--pine);
+  border-radius: var(--radius-control);
+  font: 600 .86rem var(--font-sans);
+  text-decoration: none;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.lesson-action:hover { color: #fff; background: var(--moss); border-color: var(--moss); }
+
+.lesson-pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+/* Both cards are buttons: Previous is the outlined one, Next is the filled one. */
+.lesson-pager a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 14px 20px;
+  text-decoration: none;
+  border-radius: var(--radius-control);
+  border: 2px solid var(--pine);
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.lesson-pager a[hidden] { display: none; }
+
+.lesson-pager .bi { flex: none; font-size: 1.4rem; transition: transform .15s ease; }
+.lesson-pager .pager-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lesson-pager .pager-label { font-size: .8rem; font-weight: 500; }
+.lesson-pager .pager-title { font-size: 1rem; font-weight: 600; line-height: 1.35; }
+
+/* Previous: outlined */
+.lesson-pager .pager-prev { grid-column: 1; justify-content: flex-start; color: var(--pine); background: var(--panel-bg); }
+.lesson-pager .pager-prev .pager-label { color: var(--ink-muted); }
+.lesson-pager .pager-prev:hover { background: var(--moss-tint); border-color: var(--moss); }
+.lesson-pager .pager-prev:hover .bi { transform: translateX(-3px); }
+
+/* Next: filled */
+.lesson-pager .pager-next { grid-column: 2; justify-content: space-between; text-align: left; color: #fff; background: var(--pine); }
+.lesson-pager .pager-next .pager-label { color: rgba(255, 255, 255, .82); }
+.lesson-pager .pager-next:hover { background: var(--moss); border-color: var(--moss); }
+.lesson-pager .pager-next:hover .bi { transform: translateX(3px); }
+
+.lesson-pager a:active { transform: translateY(1px); }
+
+/* ---------- Lesson catalog (lesson.html) ---------- */
+
 .lesson-catalog-tools {
   display: flex;
   align-items: center;
   gap: 12px;
   margin: -8px 0 22px;
 }
+
 .lesson-search {
   display: flex;
   align-items: center;
@@ -93,6 +331,7 @@
   background: var(--panel-bg);
   color: var(--ink);
 }
+
 .lesson-filter {
   flex: 1;
   min-width: 0;
@@ -102,77 +341,102 @@
   color: var(--ink);
   font: .88rem var(--font-sans);
 }
+
 .lesson-search:focus-within { border-color: var(--moss); box-shadow: 0 0 0 3px var(--moss-tint); }
-.lesson-results { margin: 0; color: var(--ink-muted); font-size: .82rem; }
+.lesson-results { margin: 0; color: var(--ink-muted); font-size: .86rem; }
+
+.lesson-card { position: relative; transition: border-color .15s ease, box-shadow .15s ease; }
 .lesson-card[hidden] { display: none; }
-.lesson-card { transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
-.lesson-card:hover { transform: translateY(-3px); }
+.lesson-card:hover { transform: none; border-color: var(--moss); }
 .lesson-card:focus-within { border-color: var(--moss); box-shadow: 0 0 0 3px var(--moss-tint); }
-.table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.comparison-table { min-width: 520px; }
-.organelle-embed,
-.model-slot,
-.sketchfab-embed-wrapper { min-width: 0; }
-.lesson-complete {
+
+/* The whole card opens the lesson; the button stays the keyboard target. */
+.lesson-card .card-btn::after { content: ""; position: absolute; inset: 0; }
+
+.lesson-card .card-content { grid-template-rows: auto auto 1fr auto auto; }
+
+.card-progress { width: 100%; max-width: 360px; margin: 0 0 14px; }
+
+.card-progress-label {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 34px;
-  padding: 18px 20px;
-  color: var(--paper);
-  background: linear-gradient(135deg, var(--pine), var(--moss));
-  border-radius: var(--radius-card);
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--ink-muted);
+  font-size: .84rem;
+  font-weight: 500;
 }
-.lesson-complete p { margin: 0; font-size: .9rem; }
-.lesson-complete strong { display: block; margin-bottom: 3px; font-size: 1rem; }
-.lesson-complete a {
-  flex: none;
-  padding: 9px 14px;
-  color: var(--pine);
-  background: var(--paper);
-  border-radius: var(--radius-control);
-  font-size: .82rem;
-  font-weight: 700;
-  text-decoration: none;
+
+.card-progress.is-complete .card-progress-label { color: var(--moss); font-weight: 600; }
+.card-progress.is-started .card-progress-label { color: var(--pine); }
+
+.card-progress-track { height: 6px; overflow: hidden; background: var(--paper-line); border-radius: 999px; }
+.card-progress-fill { display: block; height: 100%; background: var(--moss); border-radius: inherit; }
+
+/* ---------- Narrow screens ---------- */
+
+@media (max-width: 1024px) {
+  .lesson-jump select { min-width: 160px; max-width: 240px; }
+  .lesson-position { display: none; }
 }
-.lesson-complete a:hover { background: #fff; transform: translateY(-1px); }
-.lesson-complete a:focus-visible { outline: 3px solid rgba(255, 255, 255, .7); outline-offset: 2px; }
 
 @media (max-width: 768px) {
+  .lesson-page { padding: 0 20px 48px; }
+  .lesson-page:not(.has-lesson-tools) { padding-top: 20px; }
+
+  /* One compact row so the sticky bar leaves room to read. */
   .lesson-tools {
-    top: 14px;
-    left: 68px;
-    right: 12px;
-    width: auto;
-    flex-wrap: wrap;
-    margin: 0;
-    gap: 8px 12px;
-    padding: 8px 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin: 0 -20px 20px;
+    padding: 8px 20px 10px 68px;
   }
-  .lesson-tools a { min-height: 40px; }
-  .lesson-page.has-lesson-tools { padding-top: 112px; }
-  .lesson-tools select { order: 3; width: 100%; max-width: none; }
+
   .lesson-tools-spacer { display: none; }
-  .lesson-tools-progress { margin-left: auto; }
+  .lesson-back span,
+  .lesson-step span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .lesson-back,
+  .lesson-step { width: 44px; height: 44px; padding: 0; justify-content: center; }
+  .lesson-jump { flex: 1 1 auto; min-width: 0; }
+  .lesson-jump select { width: 100%; min-width: 0; max-width: none; min-height: 44px; }
+  .lesson-progress-text { margin-left: auto; }
+  .lesson-done span { display: none; }
+
+  .lesson-hero { padding: 24px 20px; }
+  .lesson-meta { gap: 8px 16px; }
+  .organelle-section { padding: 22px 18px; }
+
+  .lesson-resume { flex-wrap: wrap; }
+  .lesson-resume p { flex: 1 1 100%; }
+  .lesson-complete { flex-wrap: wrap; }
+  .lesson-action { width: 100%; justify-content: center; }
+  .lesson-pager { grid-template-columns: 1fr; }
+  .lesson-pager .pager-prev,
+  .lesson-pager .pager-next { grid-column: 1; }
+
+  .comparison-section { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
   .lesson-catalog-tools { align-items: stretch; flex-direction: column; }
   .lesson-search { width: 100%; }
-  .lesson-complete { align-items: stretch; flex-direction: column; }
-  .lesson-complete a { text-align: center; }
+}
+
+@media (max-width: 560px) {
+  .lesson-progress-text,
+  .lesson-done { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .lesson-card,
   .lesson-progress-fill,
-  .lesson-complete a { transition: none; }
+  .lesson-back,
+  .lesson-step,
+  .lesson-pager a,
+  .lesson-action,
+  .lesson-pager .bi { transition: none; }
 }
 
-@media (max-width: 420px) {
-  .lesson-tools-progress { min-width: 0; }
-  .lesson-progress-track { width: 56px; }
-  .lesson-tools-progress .lesson-progress-text { font-size: .7rem; }
-  .lesson-tools a { font-size: .78rem; }
-}
+/* Long reference URLs wrap instead of running past the page edge. */
+.references-list li { overflow-wrap: anywhere; }
+
+/* Catalog buttons size to their label. */
+.lesson-card .card-btn { width: auto; min-width: 168px; justify-self: start; }

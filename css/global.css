@@ -7,12 +7,16 @@
 html {
     max-width: 100%;
     overflow-x: hidden;
+    /* clip hides sideways overflow without turning html/body into scroll
+       containers, which would stop position: sticky from working. */
+    overflow-x: clip;
 }
 
 body {
     margin-left: 250px;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-x: clip;
     background: linear-gradient(135deg, #f3faf6 0%, #e6f3eb 100%);
     color: #16281D;
 }

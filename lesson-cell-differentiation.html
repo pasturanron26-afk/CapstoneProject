@@ -13,12 +13,12 @@
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/ledger-theme.css">
     <link rel="stylesheet" href="css/lessonModuleOne.css">
+    <link rel="stylesheet" href="css/lesson-interactions.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
+    <script src="js/lessonInteractions.js" defer></script>
 
 <style>
-nav .nav-link.Lesson { background: rgba(82,183,136,.12); border-left: 3px solid var(--lichen); color: var(--paper) !important; font-weight: 600; }
-
 /* Module 04 components (built on ledger-theme tokens) */
 .tag-passive { color: var(--moss); } .tag-bulk { color: var(--pine); }
 .hero-question { margin: 18px 0 0; padding: 12px 16px; border-left: 3px solid var(--stamp-gold); font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; line-height: 1.55; }
@@ -190,20 +190,6 @@ nav .nav-link.Lesson { background: rgba(82,183,136,.12); border-left: 3px solid 
                     <div class="ix-body">
                         <div class="ladder" id="ladder" role="group" aria-label="Choose a potency level"></div>
                         <p class="ix-info" id="potencyInfo" aria-live="polite"></p>
-                    </div>
-                </div>
-
-                <div class="ix-widget" id="pot3d">
-                    <div class="ix-head"><i class="bi bi-box"></i> 3D models: stem cells</div>
-                    <div class="ix-body">
-                        <div class="ix-chips" id="pot3dChips" role="group" aria-label="Choose a stem cell model"></div>
-                        <div class="organelle-embed" style="width:100%">
-                            <div class="sketchfab-embed-wrapper">
-                                <iframe id="pot3dFrame" title="Zygote" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share loading="lazy" width="100%" height="400" src="https://sketchfab.com/models/cdf81a00a7ef47419580cf5ff7c1c335/embed"></iframe>
-                                <p id="pot3dCredit" style="font-size:13px; font-weight:normal; margin:5px; color:var(--ink-muted);"></p>
-                            </div>
-                        </div>
-                        <p class="ix-info" id="pot3dInfo" aria-live="polite"></p>
                     </div>
                 </div>
 
@@ -534,45 +520,6 @@ nav .nav-link.Lesson { background: rgba(82,183,136,.12); border-left: 3px solid 
             M.forEach(function (m, i) {
                 var b = document.createElement('button'); b.type = 'button'; b.className = 'ix-chip'; b.textContent = m.k;
                 b.addEventListener('click', function () { show(i, true); }); box.appendChild(b);
-            });
-            show(0, false);
-        });
-    })();
-    </script>
-
-    <script>
-    (function () {
-        var P = [
-            { k: 'Totipotent: zygote', id: 'cdf81a00a7ef47419580cf5ff7c1c335', slug: 'zygote', title: 'Zygote', au: 'SourLobster5747', auUrl: 'SourLobster5747',
-              t: 'A zygote inside its clear shell (zona pellucida). Look for the two pronuclei, which carry the DNA from the sperm and the egg. This single cell can form every cell type, plus the tissues that support the embryo.' },
-            { k: 'Pluripotent: blastocyst', id: 'df91bf0fc50248b3ad280e876f183707', slug: 'blastocyst', title: 'blastocyst', au: 'SourLobster5747', auUrl: 'SourLobster5747',
-              t: 'Look for the outer cell layer, the fluid-filled cavity, and the orange clump of cells on one side. That clump is the inner cell mass, which holds the embryonic stem cells.' },
-            { k: 'Multipotent: blood stem cell', id: '86f8f057c7b147b6928eb44f95ac3f38', slug: 'blood-stem-cell', title: 'blood stem cell', au: 'SourLobster5747', auUrl: 'SourLobster5747',
-              t: 'Look for the large nucleus that fills most of the cell. This blood-forming stem cell can make all blood cell types, but not neurons or muscle.' },
-            { k: 'Unipotent: muscle satellite cell', id: '59443f2415784171a9341713ead818c0', slug: 'muscle-satellite-cell', title: 'muscle satellite cell', au: 'SourLobster5747', auUrl: 'SourLobster5747',
-              t: 'A small stem cell that lies against a muscle fiber, shown here on its own. Look for the large nucleus. It can renew itself and can make only muscle cells.' },
-            { k: 'Differentiated: blood cells', id: 'e1b30076aeb34af6833af300a27fdef2', slug: 'blood-cells', title: 'Blood Cells', au: 'Negrin', auUrl: 'negrin',
-              t: 'Mature blood cells. Each type has a fixed shape and job, such as carrying oxygen or fighting infection, and normally keeps its identity instead of turning into another cell type.' }
-        ];
-        document.addEventListener('DOMContentLoaded', function () {
-            var box = document.getElementById('pot3dChips'); if (!box) return;
-            var frame = document.getElementById('pot3dFrame'), cred = document.getElementById('pot3dCredit'), info = document.getElementById('pot3dInfo');
-            var L = 'style="font-weight:bold; color:#1CAAD9;"';
-            function show(i, load) {
-                var m = P[i];
-                if (load) { frame.src = 'https://sketchfab.com/models/' + m.id + '/embed'; }
-                frame.title = m.title;
-                cred.innerHTML = '<a href="https://sketchfab.com/3d-models/' + m.slug + '-' + m.id + '" target="_blank" rel="nofollow" ' + L + '>' + m.title + '</a> by <a href="https://sketchfab.com/' + m.auUrl + '" target="_blank" rel="nofollow" ' + L + '>' + m.au + '</a> on <a href="https://sketchfab.com" target="_blank" rel="nofollow" ' + L + '>Sketchfab</a>';
-                info.innerHTML = '<strong>' + m.k + '.</strong> ' + m.t;
-                box.querySelectorAll('.ix-chip').forEach(function (b, q) { b.setAttribute('aria-pressed', String(q === i)); });
-            }
-            P.forEach(function (m, i) {
-                var b = document.createElement('button'); b.type = 'button'; b.className = 'ix-chip'; b.textContent = m.k;
-                b.addEventListener('click', function () { show(i, true); }); box.appendChild(b);
-            });
-            /* clicking the first three rungs of the potency ladder also switches the model */
-            document.querySelectorAll('#ladder .rung').forEach(function (r, i) {
-                if (i < P.length) r.addEventListener('click', function () { show(i, true); });
             });
             show(0, false);
         });
