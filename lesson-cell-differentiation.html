@@ -237,6 +237,20 @@ nav .nav-link.Lesson { background: rgba(82,183,136,.12); border-left: 3px solid 
                         <p class="ix-info" id="plInfo" aria-live="polite"></p>
                     </div>
                 </div>
+
+                <div class="ix-widget" id="pl3d">
+                    <div class="ix-head"><i class="bi bi-box"></i> 3D models: meristems</div>
+                    <div class="ix-body">
+                        <div class="ix-chips" id="pl3dChips" role="group" aria-label="Choose a meristem model"></div>
+                        <div class="organelle-embed" style="width:100%">
+                            <div class="sketchfab-embed-wrapper">
+                                <iframe id="pl3dFrame" title="Shoot apical meristem" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share loading="lazy" width="100%" height="400" src="https://sketchfab.com/models/8313759de20e475d8bb5572f0af08a82/embed"></iframe>
+                                <p id="pl3dCredit" style="font-size:13px; font-weight:normal; margin:5px; color:var(--ink-muted);"></p>
+                            </div>
+                        </div>
+                        <p class="ix-info" id="pl3dInfo" aria-live="polite"></p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -252,6 +266,20 @@ nav .nav-link.Lesson { background: rgba(82,183,136,.12); border-left: 3px solid 
                     <p>This flexibility lets plants heal wounds, grow from cuttings, and be cloned in tissue culture. The balance of two hormones steers the result: a higher ratio of auxin to cytokinin favors roots, and a higher ratio of cytokinin to auxin favors shoots.</p>
                 </div>
                 <div class="ix-widget" id="stepTot"></div>
+
+                <div class="ix-widget" id="tot3d">
+                    <div class="ix-head"><i class="bi bi-box"></i> 3D models: from one cell to a plantlet</div>
+                    <div class="ix-body">
+                        <div class="ix-chips" id="tot3dChips" role="group" aria-label="Choose a regeneration model"></div>
+                        <div class="organelle-embed" style="width:100%">
+                            <div class="sketchfab-embed-wrapper">
+                                <iframe id="tot3dFrame" title="Palisade cell" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share loading="lazy" width="100%" height="400" src="https://sketchfab.com/models/f17363bcc0004c86a1f3dfd28034e180/embed"></iframe>
+                                <p id="tot3dCredit" style="font-size:13px; font-weight:normal; margin:5px; color:var(--ink-muted);"></p>
+                            </div>
+                        </div>
+                        <p class="ix-info" id="tot3dInfo" aria-live="polite"></p>
+                    </div>
+                </div>
 
                 <div class="lesson-note why">
                     <h4><i class="bi bi-question-circle"></i> Why are plants more flexible?</h4>
@@ -574,6 +602,91 @@ nav .nav-link.Lesson { background: rgba(82,183,136,.12); border-left: 3px solid 
             document.querySelectorAll('#ladder .rung').forEach(function (r, i) {
                 if (i < P.length) r.addEventListener('click', function () { show(i, true); });
             });
+            show(0, false);
+        });
+    })();
+    </script>
+
+    <script>
+    (function () {
+        var Q = [
+            { key: 'shoot', k: 'Shoot apical meristem', id: '8313759de20e475d8bb5572f0af08a82', slug: 'shoot-apical-meristem', title: 'Shoot apical meristem',
+              t: 'Look for the small dome of cells with large nuclei at the top. These dividing cells make the new stem and leaves. The colors are for teaching, and the cells are drawn much larger than real ones.' },
+            { key: 'cambium', k: 'Vascular cambium', id: '4ed6f1069bb4446689dacbaacd2c75b7', slug: 'vascular-cambium-woody-stem', title: 'Vascular cambium (woody stem)',
+              t: 'Look for the thin green ring between the wood on the inside and the phloem and bark on the outside. Its cells divide to add wood inward and phloem outward, so the stem grows thicker.' },
+            { key: 'root', k: 'Root apical meristem', id: '711a4c4ef6334cc182bae2c4a5eabe4b', slug: 'root-apical-meristem', title: 'Root apical meristem',
+              t: 'Look for the rounded root cap at the tip, then the zone of small, square cells with large nuclei just behind it. That zone is the meristem. Further up, the cells lengthen. The colors are for teaching, and the cells are drawn much larger than real ones.' }
+        ];
+        document.addEventListener('DOMContentLoaded', function () {
+            var box = document.getElementById('pl3dChips'); if (!box) return;
+            var frame = document.getElementById('pl3dFrame'), cred = document.getElementById('pl3dCredit'), info = document.getElementById('pl3dInfo');
+            var L = 'style="font-weight:bold; color:#1CAAD9;"';
+            function show(i, load) {
+                var m = Q[i];
+                if (load) { frame.src = 'https://sketchfab.com/models/' + m.id + '/embed'; }
+                frame.title = m.title;
+                cred.innerHTML = '<a href="https://sketchfab.com/3d-models/' + m.slug + '-' + m.id + '" target="_blank" rel="nofollow" ' + L + '>' + m.title + '</a> by <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" ' + L + '>SourLobster5747</a> on <a href="https://sketchfab.com" target="_blank" rel="nofollow" ' + L + '>Sketchfab</a>';
+                info.innerHTML = '<strong>' + m.k + '.</strong> ' + m.t;
+                box.querySelectorAll('.ix-chip').forEach(function (b, q) { b.setAttribute('aria-pressed', String(q === i)); });
+            }
+            function indexOf(key) { for (var i = 0; i < Q.length; i++) if (Q[i].key === key) return i; return -1; }
+            Q.forEach(function (m, i) {
+                var b = document.createElement('button'); b.type = 'button'; b.className = 'ix-chip'; b.textContent = m.k;
+                b.addEventListener('click', function () { show(i, true); }); box.appendChild(b);
+            });
+            /* choosing a meristem in the diagram above also switches the model (intercalary has no model) */
+            document.querySelectorAll('#plChips .ix-chip').forEach(function (c) {
+                c.addEventListener('click', function () { var i = indexOf(c.getAttribute('data-k')); if (i > -1) show(i, true); });
+            });
+            document.querySelectorAll('#plSvg [data-part]').forEach(function (g) {
+                g.addEventListener('click', function () { var i = indexOf(g.getAttribute('data-part')); if (i > -1) show(i, true); });
+            });
+            show(0, false);
+        });
+    })();
+    </script>
+
+    <script>
+    (function () {
+        var R = [
+            { k: 'Mature cell', id: 'f17363bcc0004c86a1f3dfd28034e180', slug: 'palisade-cell', title: 'Palisade cell',
+              t: 'The starting point: a mature, specialized plant cell, here a leaf palisade cell. Under the right conditions a cell like this can dedifferentiate.' },
+            { k: 'Callus', id: '3a74c79ea3a34529b04955504054b763', slug: 'callus', title: 'Callus',
+              t: 'A callus is a mass of loosely packed, unspecialized cells. Look for the small gaps between the cells and the single nucleus in each one. It has no leaves or roots.' },
+            { k: 'Shoots and roots forming', id: 'f788a684ad134531b6e4eaf760ec493d', slug: 'shoots-and-roots-forming', title: 'Shoots and roots forming',
+              t: 'The callus redifferentiates, and a shoot and roots appear. More cytokinin favors shoots and more auxin favors roots. In real cultures the two often form on different media, so one lump showing both is a simplification.' },
+            { k: 'Whole plantlet', id: '3314064e1ef445498e05ad2ac2719de5', slug: 'whole-plantlet', title: 'Whole plantlet',
+              t: 'A whole plantlet with stem, leaves and roots. It is genetically identical to the plant the original cell came from, so it is a clone.' }
+        ];
+        /* stepper step (0-4) -> model */
+        var STEP = [0, 0, 1, 2, 3];
+        document.addEventListener('DOMContentLoaded', function () {
+            var box = document.getElementById('tot3dChips'); if (!box) return;
+            var frame = document.getElementById('tot3dFrame'), cred = document.getElementById('tot3dCredit'), info = document.getElementById('tot3dInfo');
+            var L = 'style="font-weight:bold; color:#1CAAD9;"', cur = -1;
+            function show(i, load) {
+                if (i === cur) return;
+                cur = i;
+                var m = R[i];
+                if (load) { frame.src = 'https://sketchfab.com/models/' + m.id + '/embed'; }
+                frame.title = m.title;
+                cred.innerHTML = '<a href="https://sketchfab.com/3d-models/' + m.slug + '-' + m.id + '" target="_blank" rel="nofollow" ' + L + '>' + m.title + '</a> by <a href="https://sketchfab.com/SourLobster5747" target="_blank" rel="nofollow" ' + L + '>SourLobster5747</a> on <a href="https://sketchfab.com" target="_blank" rel="nofollow" ' + L + '>Sketchfab</a>';
+                info.innerHTML = '<strong>' + m.k + '.</strong> ' + m.t;
+                box.querySelectorAll('.ix-chip').forEach(function (b, q) { b.setAttribute('aria-pressed', String(q === i)); });
+            }
+            R.forEach(function (m, i) {
+                var b = document.createElement('button'); b.type = 'button'; b.className = 'ix-chip'; b.textContent = m.k;
+                b.addEventListener('click', function () { show(i, true); }); box.appendChild(b);
+            });
+            /* follow the stepper above, including Play (watches which step button is current) */
+            var st = document.getElementById('stepTot');
+            function sync() {
+                var btns = st.querySelectorAll('.ix-step');
+                for (var q = 0; q < btns.length; q++) {
+                    if (btns[q].getAttribute('aria-current') === 'step') { show(STEP[q], true); return; }
+                }
+            }
+            if (st) new MutationObserver(sync).observe(st, { subtree: true, attributes: true, attributeFilter: ['aria-current'] });
             show(0, false);
         });
     })();
