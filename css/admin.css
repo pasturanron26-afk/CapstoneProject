@@ -238,9 +238,16 @@ button { font-family: inherit; }
 }
 .chip:hover { border-color: var(--moss); background: var(--wash-2); }
 .chip[aria-pressed="true"] {
-    background: var(--pine);
+    background: linear-gradient(135deg, var(--pine), var(--moss));
     border-color: var(--pine);
     color: #fff;
+    box-shadow: 0 7px 18px rgba(18, 61, 39, .16);
+}
+.chip[aria-pressed="true"]:hover {
+    background: linear-gradient(135deg, var(--pine), var(--lichen));
+    border-color: var(--moss);
+    filter: brightness(1.05);
+    box-shadow: 0 10px 22px rgba(18, 61, 39, .22);
 }
 .chip-count {
     min-width: 20px;
