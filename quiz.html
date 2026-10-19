@@ -1,388 +1,446 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Quizzes · EcoLearn</title>
-<!-- Bootstrap + Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-<!-- Fonts (same as lessons/dashboard) -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
-<!-- Your CSS -->
-<link rel="stylesheet" href="css/sidebar.css" />
-<link rel="stylesheet" href="css/global.css" />
-<link rel="stylesheet" href="css/ledger-theme.css" />
-<link rel="stylesheet" href="css/quiz.css" />
-<!-- Supabase & Auth -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/auth.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quizzes · EcoLearn</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <!-- Fonts (same as lessons/dashboard) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/ledger-theme.css" />
+  <link rel="stylesheet" href="css/quiz.css" />
+
+  <!-- Supabase & Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
 </head>
+
 <body>
-<!-- Your existing sidebar is handled globally (no extra <aside> here) -->
-<nav
-class="d-flex flex-column align-items-center p-3 sidebar-bg"
->
-<img
-src="imgs/EcoLearn.png"
-alt="EcoLearn logo"
-class="logo-img mb-2"
->
-<ul class="nav nav-pills flex-column w-100">
-<!-- DASHBOARD -->
-<li class="nav-item mb-1">
-<a
-class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
-href="dashboard.html"
->
-<i class="bi bi-grid-1x2"></i>
-Dashboard
-</a>
-</li>
-<!-- CELL MODELS -->
-<li class="nav-item mb-1">
-<a
-class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
-href="choose.html"
->
-<i class="bi bi-boxes"></i>
-Cell Models
-</a>
-</li>
-<!-- Lesson -->
-<li class="nav-item mb-1">
-<a
-class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
-href="lesson.html"
->
-<i class="bi bi-book"></i>
-Lessons
-</a>
-</li>
-<!-- QUIZ -->
-<li class="nav-item mb-1">
-<a
-class="nav-link Quiz active text-white-50 d-flex align-items-center gap-2"
-href="quiz.html" aria-current="page">
-<i class="bi bi-question-circle"></i>
-Quizzes
-</a>
-</li>
-<li class="nav-item mb-1">
-<a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
-<i class="bi bi-person"></i>
-Profile
-</a>
-</li>
-<!-- LOGOUT -->
-<li class="nav-item mt-auto">
-<button
-id="logoutButton"
-class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
-style="background: none; cursor: pointer;"
->
-<i class="bi bi-box-arrow-right"></i>
-Log out
-</button>
-</li>
-</ul>
-</nav>
-<!-- Main -->
-<main class="quizzes-main" id="main-content">
-<!-- Header -->
-<header class="quizzes-header">
-<h1 class="quizzes-title">Quizzes</h1>
-<p class="quizzes-subtitle">Choose a topic and test your biology knowledge</p>
-</header>
-<!-- Quiz list -->
-<section class="quizzes-list">
-<!-- QUIZ CARD 1 -->
-<article class="quiz-card" id="quizCard01">
-<div class="quiz-thumb">
-<div class="thumb-frame">
-<img src="imgs/animalVSplant.jpg" alt="Animal vs Plant cell comparison diagram">
-</div>
-</div>
-<div class="quiz-content">
-<div class="content-top">
-<p class="content-eyebrow">MODULE 01 • CELLULAR STRUCTURE</p>
-<span class="level-badge level-primary">Primary Standard</span>
-</div>
-<h2 class="content-title">Animal Cell vs Plant Cell</h2>
-<p class="content-desc">
-Compare organelles, structures, and functions in animal and plant cells. Includes interactive diagrams and quick checks.
-</p>
-<div class="meta-chips">
-<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-</div>
-<div class="card-actions">
-<div class="card-progress">
-<span class="card-progress-label" id="quizOneProgressLabel" aria-live="polite">Not attempted</span>
-<div class="progress-rail" id="quizOneProgress" role="progressbar" aria-label="Module 1 best quiz score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not attempted">
-<span class="progress-fill" id="quizOneProgressFill" style="width: 0%"></span>
-</div>
-</div>
-<a class="start-btn" href="quiz-animal-plant.html" aria-label="Start quiz: Animal Cell vs Plant Cell">
-Start quiz <i class="bi bi-arrow-right"></i>
-</a>
-</div>
-</div>
-</article>
-<!-- QUIZ CARD 2 -->
-<article class="quiz-card" id="quizCard02">
-<div class="quiz-thumb">
-<div class="thumb-frame">
-<img src="imgs/cellDivision.jpg" alt="Illustration of cell division">
-</div>
-</div>
-<div class="quiz-content">
-<div class="content-top">
-<p class="content-eyebrow">MODULE 02 • CELL DIVISION</p>
-<span class="level-badge level-advanced">Advanced Theory</span>
-</div>
-<h2 class="content-title">Mitosis of Plant and Animal Cells</h2>
-<p class="content-desc">
-Explore the stages of mitosis in plant and animal cells, from chromosome duplication to the formation of two identical daughter cells. Learn how each stage contributes to accurate cell division.
-</p>
-<div class="meta-chips">
-<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-</div>
-<div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
-<a class="start-btn" href="quiz-mitosis.html" aria-label="Start quiz: Mitosis of Plant and Animal Cells">
-Start quiz <i class="bi bi-arrow-right"></i>
-</a>
-</div>
-</div>
-</article>
-<!-- QUIZ CARD 3 -->
-<article class="quiz-card" id="quizCard03">
-<div class="quiz-thumb">
-<div class="thumb-frame">
-<img src="imgs/cellMembrane.jpg" alt="Diagram of a cell membrane with phospholipid bilayer and transport proteins">
-</div>
-</div>
-<div class="quiz-content">
-<div class="content-top">
-<p class="content-eyebrow">MODULE 03 • CELL PROCESSES</p>
-<span class="level-badge level-primary">Primary Standard</span>
-</div>
-<h2 class="content-title">Cell Membrane and Transport</h2>
-<p class="content-desc">
-Discover how substances move in and out of cells through passive and active transport. Covers diffusion, osmosis, and endocytosis with interactive 3D membrane models and quick checks.
-</p>
-<div class="meta-chips">
-<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-</div>
-<div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
-<a class="start-btn" href="quiz-membrane.html" aria-label="Start quiz: Cell Membrane and Transport">
-Start quiz <i class="bi bi-arrow-right"></i>
-</a>
-</div>
-</div>
-</article>
-<!-- QUIZ CARD 4 -->
-<article class="quiz-card" id="quizCard04">
-<div class="quiz-thumb">
-<div class="thumb-frame">
-<img src="imgs/cellRespiration.jpg" alt="Diagram of mitochondria showing stages of cellular respiration">
-</div>
-</div>
-<div class="quiz-content">
-<div class="content-top">
-<p class="content-eyebrow">MODULE 04 • CELL ENERGY</p>
-<span class="level-badge level-advanced">Advanced Theory</span>
-</div>
-<h2 class="content-title">Cell Respiration</h2>
-<p class="content-desc">
-Understand how cells convert glucose into energy through aerobic and anaerobic respiration. Explore the role of the mitochondria in ATP production with step-by-step visual breakdowns and quick checks.
-</p>
-<div class="meta-chips">
-<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-</div>
-<div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
-<a class="start-btn" href="quiz-respiration.html" aria-label="Start quiz: Cell Respiration">
-Start quiz <i class="bi bi-arrow-right"></i>
-</a>
-</div>
-</div>
-</article>
-<!-- QUIZ CARD 5 -->
-<article class="quiz-card" id="quizCard05">
-<div class="quiz-thumb">
-<div class="thumb-frame">
-<img src="imgs/photosynthesis.jpg" alt="Diagram of a chloroplast showing thylakoid and stroma">
-</div>
-</div>
-<div class="quiz-content">
-<div class="content-top">
-<p class="content-eyebrow">MODULE 05 • CELL ENERGY</p>
-<span class="level-badge level-primary">Primary Standard</span>
-</div>
-<h2 class="content-title">Photosynthesis</h2>
-<p class="content-desc">
-Explore how plant cells use sunlight to produce food through light-dependent and light-independent reactions. Focuses on the role of chloroplasts with interactive diagrams and quick checks.
-</p>
-<div class="meta-chips">
-<span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
-<span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
-<span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
-<span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
-</div>
-<div class="card-actions">
-<div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
-<a class="start-btn" href="quiz-photosynthesis.html" aria-label="Start quiz: Photosynthesis">
-Start quiz <i class="bi bi-arrow-right"></i>
-</a>
-</div>
-</div>
-</article>
-</section>
-</main>
-<script>
-// Optional: require auth like other pages
-// ecoAuth.requireStudent?.();
-document.addEventListener('DOMContentLoaded', () => {
-const logoutButton = document.getElementById('logoutButton');
-if (logoutButton) {
-logoutButton.addEventListener('click', async () => {
-await window.ecoAuth?.signOut?.();
-});
-}
-});
-</script>
-<!-- =========================================
-QUIZ LOCK LOGIC
-Each quiz stays locked until the previous
-quiz gets a perfect score (100%).
-========================================= -->
-<script>
-const QUIZ_UNLOCK_KEYS = {
-2: 'ecolearn-quiz-animal-plant-perfect', // must match UNLOCK_KEY in quiz-animal-plant.html
-3: 'ecolearn-quiz-02-perfect',
-4: 'ecolearn-quiz-03-perfect',
-5: 'ecolearn-quiz-04-perfect',
-};
-function applyQuizLockState() {
-for (let i = 2; i <= 5; i++) {
-const card = document.getElementById(`quizCard0${i}`);
-if (!card) continue;
-const unlocked = localStorage.getItem(QUIZ_UNLOCK_KEYS[i]) === 'true';
-if (unlocked) continue;
-card.classList.add('is-locked');
-const thumbFrame = card.querySelector('.thumb-frame');
-if (thumbFrame) {
-const overlay = document.createElement('div');
-overlay.className = 'lock-overlay';
-overlay.innerHTML = '<i class="bi bi-lock-fill"></i>';
-thumbFrame.appendChild(overlay);
-}
-const startBtn = card.querySelector('.start-btn');
-if (startBtn) {
-startBtn.classList.add('is-disabled');
-startBtn.setAttribute('aria-disabled', 'true');
-startBtn.removeAttribute('href');
-startBtn.innerHTML = '<i class="bi bi-lock-fill"></i> Locked';
-startBtn.addEventListener('click', (event) => event.preventDefault());
-}
-const actions = card.querySelector('.card-actions');
-if (actions) {
-const note = document.createElement('p');
-note.className = 'lock-note';
-note.innerHTML = `<i class="bi bi-info-circle"></i> Get a perfect score on Module ${String(i-1).padStart(2, '0')} to unlock this quiz.`;
-actions.insertAdjacentElement('afterend', note);
-}
-}
-}
-async function applyModuleOneProgress() {
-const lessonId = 'e43f6bee-bcff-4692-b5e2-396b4176eacd';
-const storageKey = 'ecolearn-quiz-animal-plant-best';
-const progress = document.getElementById('quizOneProgress');
-const fill = document.getElementById('quizOneProgressFill');
-const label = document.getElementById('quizOneProgressLabel');
-if (!progress || !fill || !label) return;
 
-const cachedBest = Number(localStorage.getItem(storageKey) || 0);
-const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
+  <!-- SIDEBAR -->
+  <nav class="d-flex flex-column align-items-center p-3 sidebar-bg">
 
-function renderProgress(score, attempted, message) {
-const description = attempted ? `${score}% best` : (message || 'Not attempted');
-fill.style.width = `${score}%`;
-label.textContent = description;
-progress.setAttribute('aria-valuenow', String(score));
-progress.setAttribute('aria-valuetext', description);
-}
+    <img
+      src="imgs/EcoLearn.png"
+      alt="EcoLearn logo"
+      class="logo-img mb-2"
+    >
 
-renderProgress(safeCachedBest, safeCachedBest > 0);
+    <ul class="nav nav-pills flex-column w-100">
 
-const client = window.ecoAuth?.client;
-if (!client) {
-console.error('Unable to load Module 1 quiz progress: Supabase client is unavailable.');
-if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
-return;
-}
+      <!-- DASHBOARD -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link Dashboard text-white-50 d-flex align-items-center gap-2"
+          href="dashboard.html"
+        >
+          <i class="bi bi-grid-1x2"></i>
+          Dashboard
+        </a>
+      </li>
 
-const { data: { session } = {}, error: userError } = await client.auth.getSession();
-if (userError) {
-console.error('Unable to load Module 1 quiz progress:', userError.message);
-if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
-return;
-}
-const user = session?.user;
-if (!user) {
-if (safeCachedBest === 0) renderProgress(0, false, 'Sign in to view score');
-return;
-}
+      <!-- CELL MODELS -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link CellModel text-white-50 d-flex align-items-center gap-2"
+          href="choose.html"
+        >
+          <i class="bi bi-boxes"></i>
+          Cell Models
+        </a>
+      </li>
 
-const { data: attempts, error } = await client
-.from('quiz_attempts')
-.select('score')
-.eq('user_id', user.id)
-.eq('lesson_id', lessonId)
-.order('score', { ascending: false })
-.limit(1);
+      <!-- Lesson -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link Lesson text-white-50 d-flex align-items-center gap-2"
+          href="lesson.html"
+        >
+          <i class="bi bi-book"></i>
+          Lessons
+        </a>
+      </li>
 
-if (error) {
-console.error('Unable to load Module 1 quiz progress:', error.message);
-if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
-return;
-}
+      <!-- QUIZ -->
+      <li class="nav-item mb-1">
+        <a
+          class="nav-link Quiz active text-white-50 d-flex align-items-center gap-2"
+          href="quiz.html" aria-current="page">
+          <i class="bi bi-question-circle"></i>
+          Quizzes
+        </a>
+      </li>
 
-const hasAttempt = (attempts || []).length > 0;
-const storedScore = hasAttempt ? Number(attempts[0].score) : 0;
-if (hasAttempt && (!Number.isFinite(storedScore) || storedScore < 0 || storedScore > 10)) {
-console.error('Unable to display Module 1 quiz progress: the saved score is invalid.');
-renderProgress(safeCachedBest, safeCachedBest > 0, safeCachedBest > 0 ? undefined : 'Unable to load score');
-return;
-}
+      <li class="nav-item mb-1">
+        <a class="nav-link Profile text-white-50 d-flex align-items-center gap-2" href="profile.html">
+          <i class="bi bi-person"></i>
+          Profile
+        </a>
+      </li>
 
-const databaseBest = hasAttempt ? Math.round((storedScore / 10) * 100) : 0;
-const bestScore = Math.max(safeCachedBest, databaseBest);
-if (bestScore > safeCachedBest) localStorage.setItem(storageKey, String(bestScore));
-if (bestScore === 100) localStorage.setItem('ecolearn-quiz-animal-plant-perfect', 'true');
-renderProgress(bestScore, hasAttempt || safeCachedBest > 0);
-}
+      <!-- LOGOUT -->
+      <li class="nav-item mt-auto">
+        <button
+          id="logoutButton"
+          class="nav-link text-white-50 d-flex align-items-center gap-2 w-100 border-0"
+          style="background: none; cursor: pointer;"
+        >
+          <i class="bi bi-box-arrow-right"></i>
+          Log out
+        </button>
+      </li>
 
-document.addEventListener('DOMContentLoaded', async () => {
-await applyModuleOneProgress();
-applyQuizLockState();
-});
-</script>
+    </ul>
+  </nav>
+
+  <!-- Main -->
+  <main class="quizzes-main" id="main-content">
+
+    <!-- Header -->
+    <header class="quizzes-header">
+      <h1 class="quizzes-title">Quizzes</h1>
+      <p class="quizzes-subtitle">Choose a topic and test your biology knowledge</p>
+    </header>
+
+    <!-- Quiz list -->
+    <section class="quizzes-list">
+
+      <!-- QUIZ CARD 1 -->
+      <article class="quiz-card" id="quizCard01">
+        <div class="quiz-thumb">
+          <div class="thumb-frame">
+            <img src="imgs/animalVSplant.jpg" alt="Illustration comparing animal and plant cells">
+          </div>
+        </div>
+
+        <div class="quiz-content">
+          <div class="content-top">
+            <p class="content-eyebrow">MODULE 01 • CELLULAR STRUCTURE</p>
+            <span class="level-badge level-primary">Primary Standard</span>
+          </div>
+
+          <h2 class="content-title">Cell Structure and Organelles</h2>
+
+          <p class="content-desc">
+            Compare organelles, structures, and functions in animal and plant cells. Includes interactive diagrams and quick checks.
+          </p>
+
+          <div class="meta-chips">
+            <span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+            <span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+            <span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+            <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+          </div>
+
+          <div class="card-actions">
+            <div class="card-progress">
+              <span class="card-progress-label" id="quizOneProgressLabel" aria-live="polite">Not attempted</span>
+              <div class="progress-rail" id="quizOneProgress" role="progressbar" aria-label="Module 1 best quiz score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not attempted">
+                <span class="progress-fill" id="quizOneProgressFill" style="width: 0%"></span>
+              </div>
+            </div>
+            <a class="start-btn" href="quiz-animal-plant.html" aria-label="Start quiz: Cell Structure and Organelles">
+              Start quiz <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- QUIZ CARD 2 -->
+      <article class="quiz-card" id="quizCard02">
+        <div class="quiz-thumb">
+          <div class="thumb-frame">
+            <img src="imgs/cellDivision.jpg" alt="Illustration of cell division">
+          </div>
+        </div>
+
+        <div class="quiz-content">
+          <div class="content-top">
+            <p class="content-eyebrow">MODULE 02 • CELL DIVISION</p>
+            <span class="level-badge level-advanced">Advanced Theory</span>
+          </div>
+
+          <h2 class="content-title">Mitosis of Plant and Animal Cells</h2>
+
+          <p class="content-desc">
+            Explore the stages of mitosis in plant and animal cells, from chromosome duplication to the formation of two identical daughter cells. Learn how each stage contributes to accurate cell division.
+          </p>
+
+          <div class="meta-chips">
+            <span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+            <span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+            <span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+            <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+          </div>
+
+          <div class="card-actions">
+            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+            <a class="start-btn" href="quiz-mitosis.html" aria-label="Start quiz: Mitosis of Plant and Animal Cells">
+              Start quiz <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- QUIZ CARD 3 -->
+      <article class="quiz-card" id="quizCard03">
+        <div class="quiz-thumb">
+          <div class="thumb-frame">
+            <img src="imgs/cellMembrane.jpg" alt="Diagram of a cell membrane with phospholipid bilayer and transport proteins">
+          </div>
+        </div>
+
+        <div class="quiz-content">
+          <div class="content-top">
+            <p class="content-eyebrow">MODULE 03 • CELL PROCESSES</p>
+            <span class="level-badge level-primary">Primary Standard</span>
+          </div>
+
+          <h2 class="content-title">Cell Membrane and Transport</h2>
+
+          <p class="content-desc">
+            Test how substances cross the membrane through passive and active transport, and how osmosis affects animal and plant cells differently: lysis and crenation versus turgor and plasmolysis.
+          </p>
+
+          <div class="meta-chips">
+            <span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+            <span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+            <span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+            <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+          </div>
+
+          <div class="card-actions">
+            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+            <a class="start-btn" href="quiz-membrane.html" aria-label="Start quiz: Cell Membrane and Transport">
+              Start quiz <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- QUIZ CARD 4 -->
+      <article class="quiz-card" id="quizCard04">
+        <div class="quiz-thumb">
+          <div class="thumb-frame">
+            <img src="imgs/cellDifferentiation.jpg" alt="Diagram showing stem cells becoming specialized cell types">
+          </div>
+        </div>
+
+        <div class="quiz-content">
+          <div class="content-top">
+            <p class="content-eyebrow">MODULE 04 • CELL SPECIALIZATION</p>
+            <span class="level-badge level-advanced">Advanced Theory</span>
+          </div>
+
+          <h2 class="content-title">Cell Differentiation and Specialization</h2>
+
+          <p class="content-desc">
+            Compare how animal stem cells and plant meristems produce specialized cells. Covers potency, gene expression, and why a plant can regrow from a single cell (totipotency) while most animal cells cannot.
+          </p>
+
+          <div class="meta-chips">
+            <span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+            <span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+            <span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+            <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+          </div>
+
+          <div class="card-actions">
+            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+            <a class="start-btn" href="quiz-differentiation.html" aria-label="Start quiz: Cell Differentiation and Specialization">
+              Start quiz <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- QUIZ CARD 5 -->
+      <article class="quiz-card" id="quizCard05">
+        <div class="quiz-thumb">
+          <div class="thumb-frame">
+            <img src="imgs/cellSignaling.jpg" alt="Diagram of cell signaling pathways">
+          </div>
+        </div>
+
+        <div class="quiz-content">
+          <div class="content-top">
+            <p class="content-eyebrow">MODULE 05 • CELL COMMUNICATION</p>
+            <span class="level-badge level-primary">Primary Standard</span>
+          </div>
+
+          <h2 class="content-title">Cell Signaling</h2>
+
+          <p class="content-desc">
+            Test your knowledge of how cells send and receive signals. Covers receptors and signal transduction, gap junctions in animal cells, plasmodesmata in plant cells, and plant hormones.
+          </p>
+
+          <div class="meta-chips">
+            <span class="chip"><i class="bi bi-list-ol"></i> 10 questions</span>
+            <span class="chip"><i class="bi bi-clock"></i> 5:00 time limit</span>
+            <span class="chip"><i class="bi bi-award"></i> 75% to pass</span>
+            <span class="chip"><i class="bi bi-ui-checks-grid"></i> Multiple types</span>
+          </div>
+
+          <div class="card-actions">
+            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+            <a class="start-btn" href="quiz-signaling.html" aria-label="Start quiz: Cell Signaling">
+              Start quiz <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <script>
+    // Optional: require auth like other pages
+    // ecoAuth.requireStudent?.();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutButton = document.getElementById('logoutButton');
+      if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+          await window.ecoAuth?.signOut?.();
+        });
+      }
+    });
+  </script>
+
+  <!-- =========================================
+       QUIZ LOCK LOGIC
+       Each quiz stays locked until the previous
+       quiz gets a perfect score (100%).
+  ========================================= -->
+  <script>
+    const QUIZ_UNLOCK_KEYS = {
+      2: 'ecolearn-quiz-animal-plant-perfect', // must match UNLOCK_KEY in quiz-animal-plant.html
+      3: 'ecolearn-quiz-02-perfect',
+      4: 'ecolearn-quiz-03-perfect',
+      5: 'ecolearn-quiz-04-perfect',
+    };
+
+    function applyQuizLockState() {
+      for (let i = 2; i <= 5; i++) {
+        const card = document.getElementById(`quizCard0${i}`);
+        if (!card) continue;
+
+        const unlocked = localStorage.getItem(QUIZ_UNLOCK_KEYS[i]) === 'true';
+        if (unlocked) continue;
+
+        card.classList.add('is-locked');
+
+        const thumbFrame = card.querySelector('.thumb-frame');
+        if (thumbFrame) {
+          const overlay = document.createElement('div');
+          overlay.className = 'lock-overlay';
+          overlay.innerHTML = '<i class="bi bi-lock-fill"></i>';
+          thumbFrame.appendChild(overlay);
+        }
+
+        const startBtn = card.querySelector('.start-btn');
+        if (startBtn) {
+          startBtn.classList.add('is-disabled');
+          startBtn.setAttribute('aria-disabled', 'true');
+          startBtn.removeAttribute('href');
+          startBtn.innerHTML = '<i class="bi bi-lock-fill"></i> Locked';
+          startBtn.addEventListener('click', (event) => event.preventDefault());
+        }
+
+        const actions = card.querySelector('.card-actions');
+        if (actions) {
+          const note = document.createElement('p');
+          note.className = 'lock-note';
+          note.innerHTML = `<i class="bi bi-info-circle"></i> Get a perfect score on Module ${String(i-1).padStart(2, '0')} to unlock this quiz.`;
+          actions.insertAdjacentElement('afterend', note);
+        }
+      }
+    }
+
+    async function applyModuleOneProgress() {
+      const lessonId = 'e43f6bee-bcff-4692-b5e2-396b4176eacd';
+      const storageKey = 'ecolearn-quiz-animal-plant-best';
+      const progress = document.getElementById('quizOneProgress');
+      const fill = document.getElementById('quizOneProgressFill');
+      const label = document.getElementById('quizOneProgressLabel');
+      if (!progress || !fill || !label) return;
+
+      const cachedBest = Number(localStorage.getItem(storageKey) || 0);
+      const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
+
+      function renderProgress(score, attempted, message) {
+        const description = attempted ? `${score}% best` : (message || 'Not attempted');
+        fill.style.width = `${score}%`;
+        label.textContent = description;
+        progress.setAttribute('aria-valuenow', String(score));
+        progress.setAttribute('aria-valuetext', description);
+      }
+
+      renderProgress(safeCachedBest, safeCachedBest > 0);
+
+      const client = window.ecoAuth?.client;
+      if (!client) {
+        console.error('Unable to load Module 1 quiz progress: Supabase client is unavailable.');
+        if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+        return;
+      }
+
+      const { data: { session } = {}, error: userError } = await client.auth.getSession();
+      if (userError) {
+        console.error('Unable to load Module 1 quiz progress:', userError.message);
+        if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+        return;
+      }
+      const user = session?.user;
+      if (!user) {
+        if (safeCachedBest === 0) renderProgress(0, false, 'Sign in to view score');
+        return;
+      }
+
+      const { data: attempts, error } = await client
+        .from('quiz_attempts')
+        .select('score')
+        .eq('user_id', user.id)
+        .eq('lesson_id', lessonId)
+        .order('score', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.error('Unable to load Module 1 quiz progress:', error.message);
+        if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+        return;
+      }
+
+      const hasAttempt = (attempts || []).length > 0;
+      const storedScore = hasAttempt ? Number(attempts[0].score) : 0;
+      if (hasAttempt && (!Number.isFinite(storedScore) || storedScore < 0 || storedScore > 10)) {
+        console.error('Unable to display Module 1 quiz progress: the saved score is invalid.');
+        renderProgress(safeCachedBest, safeCachedBest > 0, safeCachedBest > 0 ? undefined : 'Unable to load score');
+        return;
+      }
+
+      const databaseBest = hasAttempt ? Math.round((storedScore / 10) * 100) : 0;
+      const bestScore = Math.max(safeCachedBest, databaseBest);
+      if (bestScore > safeCachedBest) localStorage.setItem(storageKey, String(bestScore));
+      if (bestScore === 100) localStorage.setItem('ecolearn-quiz-animal-plant-perfect', 'true');
+      renderProgress(bestScore, hasAttempt || safeCachedBest > 0);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await applyModuleOneProgress();
+      applyQuizLockState();
+    });
+  </script>
+
 </body>
 </html>
