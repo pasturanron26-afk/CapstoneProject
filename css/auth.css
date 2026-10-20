@@ -433,3 +433,77 @@ body {
         font-size: 22px;
     }
 }
+
+/* =========================================
+   SECTION CODE (login.html join step)
+========================================= */
+[hidden] {
+    display: none !important;
+}
+
+.code-input {
+    font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 16px !important;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.code-input::placeholder {
+    font-weight: 400;
+    letter-spacing: 0.08em;
+}
+
+.input-wrapper input[aria-invalid="true"] {
+    border-color: var(--auth-error);
+}
+
+.field-hint {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--auth-ink-muted);
+}
+
+.join-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+}
+
+.join-panel .auth-form {
+    text-align: left;
+}
+
+.auth-links-center {
+    justify-content: center;
+    margin-top: 0;
+}
+
+.auth-notice {
+    padding: 11px 13px;
+    border: 1px solid var(--auth-border);
+    border-radius: 10px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1.45;
+    text-align: left;
+}
+
+.auth-notice.is-info {
+    background: var(--auth-green-pale-2);
+    border-color: var(--auth-border);
+    color: var(--auth-ink);
+}
+
+.auth-notice.is-success {
+    background: var(--auth-green-pale);
+    border-color: var(--auth-green-light);
+    color: var(--auth-green-deep);
+}
+
+.auth-notice.is-error {
+    background: #FDEDED;
+    border-color: #F0C4C4;
+    color: #A32020;
+}

@@ -7,6 +7,9 @@
      - View Overall Statistics
      - Manage Student Accounts
      - Archive Inactive Students
+     - Section Codes (generate / regenerate / disable / expire / delete
+       the codes students paste on login.html to join a section; needs
+       supabase-section-codes.sql)
 
    DATA (unchanged from the previous version)
    - Students come from `profiles` (role = 'student'). Needs the
@@ -246,6 +249,48 @@ async function fetchStudents() {
     });
 }
 
+/* ===================== SECTION CODES: DATA ===================== */
+
+let CODES = [];
+let CODES_LOAD_ERROR = null;
+
+function toCode(row) {
+    return {
+        id: row.id,
+        code: row.code,
+        section: row.section,
+        active: !!row.is_active,
+        expiresAt: row.expires_at || null,
+        createdAt: row.created_at || null,
+        uses: Number(row.section_code_redemptions?.[0]?.count || 0)
+    };
+}
+
+// 'active' | 'expired' | 'disabled'. Worked out at render time so a code
+// flips to Expired on screen without a reload.
+function codeStatus(c) {
+    if (!c.active) return 'disabled';
+    if (c.expiresAt && new Date(c.expiresAt).getTime() <= Date.now()) return 'expired';
+    return 'active';
+}
+
+async function fetchSectionCodes() {
+    const { data, error } = await ecoAuth.client
+        .from('section_codes')
+        .select('id, code, section, is_active, expires_at, created_at, section_code_redemptions(count)')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Failed to load section codes from Supabase:', error.message);
+        CODES_LOAD_ERROR = /section_codes|schema cache|does not exist/i.test(error.message || '')
+            ? 'Section codes are not set up yet. Run supabase-section-codes.sql in the Supabase SQL editor, then refresh.'
+            : `Couldn't load section codes: ${error.message}`;
+        return null;
+    }
+    CODES_LOAD_ERROR = null;
+    return (data || []).map(toCode);
+}
+
 /* ===================== STATE ===================== */
 
 let STUDENTS = [];
@@ -270,6 +315,7 @@ const drawer = { id: null, tab: 'quiz', opener: null };
 const VIEWS = {
     overview: { title: 'Overview' },
     students: { title: 'Students' },
+    codes: { title: 'Section codes' },
     archived: { title: 'Archived students' }
 };
 
@@ -486,6 +532,8 @@ function renderSubtitle() {
         p.textContent = `${greeting()}${who}. ${scope}${online ? `, ${online} online now` : ''}.`;
     } else if (state.view === 'students') {
         p.textContent = 'Everyone enrolled in the biology course. Select a student to see quiz results or manage their account.';
+    } else if (state.view === 'codes') {
+        p.textContent = 'Give each section its own code. Students paste it on the login page the first time they sign in and join that section automatically.';
     } else {
         p.textContent = 'Students set aside after prolonged inactivity. Restore an account to bring the student back.';
     }
@@ -749,7 +797,108 @@ function renderAll() {
     renderOverview();
     renderStudentTable();
     renderArchivedTable();
+    renderCodes();
     renderUpdated();
+}
+
+/* ===================== RENDER: SECTION CODES ===================== */
+
+const codeSections = () => knownSections().filter(v => v !== 'Unassigned');
+
+function formatDay(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime())
+        ? '—'
+        : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+// <input type="date"> value (YYYY-MM-DD) in the admin's own time zone.
+function toDateInputValue(iso) {
+    const d = new Date(iso);
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+// A code that "expires on the 30th" works through the end of the 30th.
+function endOfDayISO(dateValue) {
+    const [y, m, d] = dateValue.split('-').map(Number);
+    return new Date(y, m - 1, d, 23, 59, 59).toISOString();
+}
+
+const visibleCodes = () => state.section === 'all'
+    ? CODES
+    : CODES.filter(c => c.section === state.section);
+
+function renderCodeForm() {
+    const select = el('codeSection');
+    const sections = codeSections();
+    const signature = sections.join('|');
+    if (select.dataset.sig === signature) return;       // keep focus / selection between refreshes
+
+    const keep = select.value;
+    select.dataset.sig = signature;
+    select.innerHTML = '<option value="" disabled selected>Choose a section</option>' +
+        sections.map(v => `<option value="${escapeHtml(v)}">Section ${escapeHtml(v)}</option>`).join('');
+    select.value = sections.includes(keep) ? keep : '';
+}
+
+function codeRowHTML(c) {
+    const id = escapeHtml(c.id);
+    const code = escapeHtml(c.code);
+    const status = codeStatus(c);
+    const statusTag = {
+        active: '<span class="tag tag-ok">Active</span>',
+        expired: '<span class="tag tag-warn">Expired</span>',
+        disabled: '<span class="tag tag-muted">Disabled</span>'
+    }[status];
+    const action = (name, icon, label, extra = '') =>
+        `<button type="button" class="icon-btn icon-btn-sm${extra}" data-code-action="${name}" data-id="${id}" data-role="${name}" aria-label="${label} ${code}" title="${label}"><i class="bi ${icon}" aria-hidden="true"></i></button>`;
+
+    return `<tr data-id="${id}" class="code-row${status === 'active' ? '' : ' is-off'}">
+        <td class="cell-code" data-label="Code">
+            <span class="code-chip">${code}</span>
+            ${action('copy', 'bi-clipboard', 'Copy code')}
+        </td>
+        <td data-label="Section"><span class="tag">${escapeHtml(c.section)}</span></td>
+        <td data-label="Created">${escapeHtml(formatDay(c.createdAt))}</td>
+        <td data-label="Expires">${c.expiresAt ? escapeHtml(formatDay(c.expiresAt)) : '<span class="muted">Never</span>'}</td>
+        <td data-label="Status">${statusTag}</td>
+        <td data-label="Used by" class="cell-used">${plural(c.uses, 'student', 'students')}</td>
+        <td class="cell-actions" data-label="Actions">
+            ${action('regenerate', 'bi-arrow-repeat', 'Regenerate')}
+            ${action('toggle', c.active ? 'bi-slash-circle' : 'bi-check-circle', c.active ? 'Disable' : 'Enable')}
+            ${action('expiry', 'bi-calendar-event', 'Set expiry for')}
+            ${action('delete', 'bi-trash', 'Delete', ' icon-btn-danger')}
+        </td>
+    </tr>`;
+}
+
+function renderCodes() {
+    renderCodeForm();
+
+    const rows = visibleCodes();
+    const active = CODES.filter(c => codeStatus(c) === 'active').length;
+    const filtered = state.section !== 'all';
+
+    el('codeCount').textContent = (!state.loaded || (CODES_LOAD_ERROR && !CODES.length)) ? ''
+        : `${plural(rows.length, 'code', 'codes')}${filtered ? ` for section ${state.section}` : ''}, ${active} active`;
+
+    el('codesError').hidden = !CODES_LOAD_ERROR;
+    el('codesErrorText').textContent = CODES_LOAD_ERROR || '';
+
+    const tbody = el('codesTableBody');
+    withFocusKept(tbody, () => {
+        if (state.loading) {
+            tbody.innerHTML = skeletonRows(3, 7);
+        } else if (CODES_LOAD_ERROR && !CODES.length) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-cell">Section codes are unavailable right now.</td></tr>';
+        } else if (!rows.length) {
+            tbody.innerHTML = `<tr><td colspan="7" class="empty-cell"><strong>${filtered ? 'No codes for this section yet.' : 'No codes yet.'}</strong> Choose a section above and generate its code.</td></tr>`;
+        } else {
+            tbody.innerHTML = rows.map(codeRowHTML).join('');
+        }
+    });
 }
 
 /* ===================== NAVIGATION ===================== */
@@ -904,6 +1053,7 @@ async function saveAccount(event) {
     const name = cleanText(el('accountName').value);
     const email = el('accountEmail').value.trim();
     const status = el('accountStatus').value;
+    const section = el('accountSection').value;      // '' = Unassigned (student joins again with a code)
 
     const nameBad = !name;
     const emailBad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -915,15 +1065,234 @@ async function saveAccount(event) {
     const saveBtn = el('accountSave');
     const ok = await withBusy(saveBtn, async () => {
         saveBtn.textContent = 'Saving…';
-        return persistProfileUpdate(id, { full_name: name, email, status });
+        return persistProfileUpdate(id, { full_name: name, email, status, section: section || null });
     });
     if (!ok) return;
 
     const fresh = findStudent(id) || s;
-    Object.assign(fresh, { name, email, status });
+    Object.assign(fresh, { name, email, status, section: section || 'Unassigned' });
     renderAll();
     renderDrawer(fresh, { keepTab: true });
     toast(`Saved changes for ${name}.`);
+}
+
+/* ===================== SECTION CODES: ACTIONS ===================== */
+
+async function copyText(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        return true;
+    } catch (e) {
+        // Fallback for http pages / older browsers.
+        const box = document.createElement('textarea');
+        box.value = text;
+        box.setAttribute('readonly', '');
+        box.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+        document.body.append(box);
+        box.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+        box.remove();
+        return ok;
+    }
+}
+
+async function copyCode(c) {
+    const ok = await copyText(c.code);
+    toast(ok ? `Copied ${c.code} (section ${c.section}).` : `Couldn't copy automatically. The code is ${c.code}.`,
+        { tone: ok ? 'info' : 'error' });
+}
+
+async function generateCode(event) {
+    event.preventDefault();
+    const section = el('codeSection').value;
+    const expiryValue = el('codeExpiry').value;
+
+    const sectionBad = !section;
+    const expiresAt = expiryValue ? endOfDayISO(expiryValue) : null;
+    const expiryBad = !!expiresAt && new Date(expiresAt).getTime() <= Date.now();
+    setFieldError('codeSection', 'codeSectionError', sectionBad);
+    setFieldError('codeExpiry', 'codeExpiryError', expiryBad);
+    if (sectionBad) { el('codeSection').focus(); return; }
+    if (expiryBad) { el('codeExpiry').focus(); return; }
+
+    const btn = el('codeGenerateBtn');
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    btn.setAttribute('aria-busy', 'true');
+    btn.textContent = 'Generating…';
+
+    const { data, error } = await ecoAuth.client.rpc('admin_generate_section_code', {
+        p_section: section,
+        p_expires_at: expiresAt
+    });
+
+    btn.disabled = false;
+    btn.removeAttribute('aria-busy');
+    btn.innerHTML = label;
+
+    if (error || !data) {
+        console.error('Failed to generate a section code:', error && error.message);
+        toast(`Couldn't create the code. ${error ? error.message : 'Please try again.'}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+
+    const created = toCode(data);
+    CODES = [created, ...CODES.filter(c => c.id !== created.id)];
+    el('codeExpiry').value = '';
+    renderCodes();
+    toast(`Code ${created.code} created for section ${created.section}.`, {
+        actionLabel: 'Copy',
+        timeout: 12000,
+        onAction: () => copyCode(created)
+    });
+}
+
+async function regenerateCode(c, button) {
+    const ok = window.confirm(
+        `Regenerate the code for section ${c.section}?\n\n` +
+        `The current code ${c.code} stops working right away. Students who already joined keep their section.`);
+    if (!ok) return;
+
+    button.disabled = true;
+    const { data, error } = await ecoAuth.client.rpc('admin_regenerate_section_code', { p_id: c.id });
+    button.disabled = false;
+
+    if (error || !data) {
+        console.error('Failed to regenerate a section code:', error && error.message);
+        toast(`Couldn't regenerate the code. ${error ? error.message : 'Please try again.'}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+    c.code = data.code;
+    renderCodes();
+    toast(`New code for section ${c.section}: ${c.code}`, {
+        actionLabel: 'Copy',
+        timeout: 12000,
+        onAction: () => copyCode(c)
+    });
+}
+
+// RLS can block a write without an error, so check that a row came back.
+async function updateCodeRow(c, patch) {
+    const { data, error } = await ecoAuth.client
+        .from('section_codes')
+        .update(patch)
+        .eq('id', c.id)
+        .select('id');
+
+    if (error) {
+        console.error('Failed to update a section code:', error.message);
+        toast(`Couldn't save that change. ${error.message}`, { tone: 'error', timeout: 10000 });
+        return false;
+    }
+    if (!data || !data.length) {
+        toast("Couldn't save that change. The code may have been deleted, or you may not have permission.", { tone: 'error', timeout: 10000 });
+        return false;
+    }
+    return true;
+}
+
+async function toggleCode(c, button) {
+    button.disabled = true;
+    const next = !c.active;
+    const ok = await updateCodeRow(c, { is_active: next });
+    button.disabled = false;
+    if (!ok) return;
+    c.active = next;
+    renderCodes();
+    toast(next ? `Code ${c.code} is on again.` : `Code ${c.code} is turned off. Students can't use it until you enable it.`);
+}
+
+async function deleteCode(c, button) {
+    const ok = window.confirm(
+        `Delete the code ${c.code} for section ${c.section}?\n\n` +
+        `Students who already joined keep their section. Nobody can use this code again.`);
+    if (!ok) return;
+
+    button.disabled = true;
+    const { data, error } = await ecoAuth.client
+        .from('section_codes')
+        .delete()
+        .eq('id', c.id)
+        .select('id');
+    button.disabled = false;
+
+    if (error || !data || !data.length) {
+        console.error('Failed to delete a section code:', error && error.message);
+        toast(`Couldn't delete the code. ${error ? error.message : 'You may not have permission.'}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+    CODES = CODES.filter(x => x.id !== c.id);
+    renderCodes();
+    ensureFocus();
+    toast(`Code ${c.code} was deleted.`);
+}
+
+/* Expiry dialog */
+const expiry = { code: null };
+
+function openExpiryDialog(c) {
+    expiry.code = c;
+    el('expiryText').textContent = `Code ${c.code} for section ${c.section}. After this day, students can no longer use it.`;
+    const input = el('expiryDate');
+    input.min = toDateInputValue(new Date().toISOString());
+    input.value = c.expiresAt ? toDateInputValue(c.expiresAt) : '';
+    setFieldError('expiryDate', 'expiryDateError', false);
+
+    const dlg = el('expiryDialog');
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', '');
+    input.focus();
+}
+
+function closeExpiryDialog() {
+    const dlg = el('expiryDialog');
+    const id = expiry.code && expiry.code.id;
+    if (typeof dlg.close === 'function') dlg.close();
+    else dlg.removeAttribute('open');
+    expiry.code = null;
+    // The table may have re-rendered while the dialog was open: refocus by id.
+    const back = id && document.querySelector(`[data-code-action="expiry"][data-id="${CSS.escape(id)}"]`);
+    if (back) back.focus({ preventScroll: true });
+}
+
+async function saveExpiry({ clear = false } = {}) {
+    const c = expiry.code;
+    if (!c) return;
+
+    let expiresAt = null;
+    if (!clear) {
+        const value = el('expiryDate').value;
+        expiresAt = value ? endOfDayISO(value) : null;
+        const bad = !expiresAt || new Date(expiresAt).getTime() <= Date.now();
+        setFieldError('expiryDate', 'expiryDateError', bad);
+        if (bad) { el('expiryDate').focus(); return; }
+    }
+
+    const buttons = ['expirySave', 'expiryClear', 'expiryCancel'].map(el);
+    buttons.forEach(b => { b.disabled = true; });
+    const ok = await updateCodeRow(c, { expires_at: expiresAt });
+    buttons.forEach(b => { b.disabled = false; });
+    if (!ok) return;
+
+    c.expiresAt = expiresAt;
+    closeExpiryDialog();
+    renderCodes();
+    toast(expiresAt
+        ? `Code ${c.code} works through ${formatDay(expiresAt)}.`
+        : `Code ${c.code} no longer expires.`);
+}
+
+function handleCodeAction(button) {
+    const c = CODES.find(x => x.id === button.dataset.id);
+    if (!c) return;
+    switch (button.dataset.codeAction) {
+        case 'copy':       copyCode(c); break;
+        case 'regenerate': regenerateCode(c, button); break;
+        case 'toggle':     toggleCode(c, button); break;
+        case 'expiry':     openExpiryDialog(c); break;
+        case 'delete':     deleteCode(c, button); break;
+    }
 }
 
 /* ===================== DRAWER ===================== */
@@ -1014,6 +1383,13 @@ function renderDrawer(s, { keepTab = false } = {}) {
     el('accountName').value = s.name;
     el('accountEmail').value = s.email === '—' ? '' : s.email;
     el('accountStatus').value = s.status;
+
+    const sectionSelect = el('accountSection');
+    const sectionOptions = codeSections();
+    if (s.section !== 'Unassigned' && !sectionOptions.includes(s.section)) sectionOptions.push(s.section);
+    sectionSelect.innerHTML = '<option value="">Unassigned</option>' +
+        sectionOptions.map(v => `<option value="${escapeHtml(v)}">Section ${escapeHtml(v)}</option>`).join('');
+    sectionSelect.value = s.section === 'Unassigned' ? '' : s.section;
     setFieldError('accountName', 'accountNameError', false);
     setFieldError('accountEmail', 'accountEmailError', false);
 
@@ -1110,7 +1486,8 @@ async function refreshData({ manual = false } = {}) {
     btn.classList.add('is-spinning');
     btn.setAttribute('aria-busy', 'true');
 
-    const next = await fetchStudents();
+    const [next, nextCodes] = await Promise.all([fetchStudents(), fetchSectionCodes()]);
+    if (nextCodes) CODES = nextCodes;
 
     if (STUDENTS_LOAD_ERROR) {
         if (state.loaded) {
@@ -1151,6 +1528,9 @@ function clearFilters() {
 function bindEvents() {
     document.addEventListener('click', (e) => {
         const t = e.target;
+
+        const codeAction = t.closest('[data-code-action]');
+        if (codeAction) { handleCodeAction(codeAction); return; }
 
         const open = t.closest('[data-open]');
         if (open) { openDrawer(open.dataset.open, 'quiz', open); return; }
@@ -1243,6 +1623,16 @@ function bindEvents() {
 
     el('refreshBtn').addEventListener('click', () => refreshData({ manual: true }));
     el('loadErrorRetry').addEventListener('click', () => refreshData({ manual: true }));
+
+    el('codeForm').addEventListener('submit', generateCode);
+    el('codeSection').addEventListener('change', () => setFieldError('codeSection', 'codeSectionError', false));
+    el('codeExpiry').addEventListener('input', () => setFieldError('codeExpiry', 'codeExpiryError', false));
+    el('codesErrorRetry').addEventListener('click', () => refreshData({ manual: true }));
+    el('expiryForm').addEventListener('submit', (e) => { e.preventDefault(); saveExpiry(); });
+    el('expiryClear').addEventListener('click', () => saveExpiry({ clear: true }));
+    el('expiryCancel').addEventListener('click', closeExpiryDialog);
+    el('expiryDialog').addEventListener('close', () => { expiry.code = null; });          // Esc also closes it natively
+    el('expiryDate').addEventListener('input', () => setFieldError('expiryDate', 'expiryDateError', false));
 
     el('accountForm').addEventListener('submit', saveAccount);
     el('accountName').addEventListener('input', () => setFieldError('accountName', 'accountNameError', false));
