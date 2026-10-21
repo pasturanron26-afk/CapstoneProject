@@ -103,13 +103,13 @@ body {
     display: block;
     width: clamp(44px, 7vw, 94px);
     aspect-ratio: 1;
-    border: 1px solid rgba(174, 220, 255, 0.42);
+    border: 1px solid rgba(var(--cell-rgb, 90, 180, 255), 0.46);
     border-radius: 44% 56% 62% 38% / 48% 41% 59% 52%;
     background:
         radial-gradient(ellipse at 28% 20%, rgba(239, 250, 255, 0.32), transparent 24%),
-        radial-gradient(ellipse at 72% 76%, rgba(185, 112, 255, 0.13), transparent 42%),
-        radial-gradient(ellipse at 34% 28%, rgba(78, 180, 255, 0.16), rgba(30, 95, 148, 0.035) 68%);
-    box-shadow: inset 2px 2px 9px rgba(235, 250, 255, 0.14), inset -4px -5px 12px rgba(50, 117, 193, 0.12), 0 0 24px rgba(93, 172, 255, 0.08);
+        radial-gradient(ellipse at 72% 76%, rgba(var(--cell-rgb, 90, 180, 255), 0.13), transparent 42%),
+        radial-gradient(ellipse at 34% 28%, rgba(var(--cell-rgb, 90, 180, 255), 0.16), rgba(var(--cell-shadow-rgb, 50, 117, 193), 0.035) 68%);
+    box-shadow: inset 2px 2px 9px rgba(235, 250, 255, 0.14), inset -4px -5px 12px rgba(var(--cell-shadow-rgb, 50, 117, 193), 0.12), 0 0 24px rgba(var(--cell-rgb, 90, 180, 255), 0.08);
     animation: cell-drift var(--duration, 20s) ease-in-out infinite;
     translate: var(--pointer-shift-x, 0px) var(--pointer-shift-y, 0px);
     transition: translate 700ms ease-out, scale 420ms ease-out;
@@ -120,7 +120,7 @@ body {
     content: "";
     position: absolute;
     display: block;
-    border: 1px solid rgba(190, 238, 211, 0.2);
+    border: 1px solid rgba(var(--cell-highlight-rgb, 190, 238, 255), 0.2);
     border-radius: 50%;
 }
 
@@ -129,13 +129,13 @@ body {
     height: 40%;
     left: 28%;
     top: 29%;
-    border-color: rgba(220, 192, 255, 0.42);
+    border-color: rgba(var(--cell-highlight-rgb, 190, 238, 255), 0.42);
     background:
         radial-gradient(ellipse at 31% 28%, rgba(255, 227, 250, 0.7), transparent 18%),
-        radial-gradient(ellipse at 67% 68%, rgba(93, 206, 255, 0.62), transparent 26%),
+        radial-gradient(ellipse at 67% 68%, rgba(var(--cell-highlight-rgb, 93, 206, 255), 0.62), transparent 26%),
         radial-gradient(ellipse at 38% 40%, rgba(var(--nucleus-rgb, 151, 106, 255), 0.82), transparent 40%),
-        radial-gradient(ellipse at 55% 55%, rgba(62, 98, 209, 0.86), rgba(83, 75, 173, 0.7) 68%);
-    box-shadow: 0 0 10px rgba(112, 171, 255, 0.24), inset 2px 2px 6px rgba(255, 239, 255, 0.42), inset -3px -4px 8px rgba(47, 57, 145, 0.5);
+        radial-gradient(ellipse at 55% 55%, rgba(var(--nucleus-rgb, 62, 98, 209), 0.86), rgba(var(--cell-shadow-rgb, 83, 75, 173), 0.7) 68%);
+    box-shadow: 0 0 10px rgba(var(--cell-rgb, 112, 171, 255), 0.24), inset 2px 2px 6px rgba(255, 255, 255, 0.42), inset -3px -4px 8px rgba(var(--cell-shadow-rgb, 47, 57, 145), 0.5);
 }
 
 .floating-cell::after {
@@ -144,8 +144,8 @@ body {
     left: 67%;
     top: 64%;
     border: 0;
-    background: rgba(162, 226, 255, 0.7);
-    box-shadow: -17px -14px 0 -2px rgba(168, 125, 255, 0.6), 14px -9px 0 -3px rgba(255, 143, 211, 0.65), -11px 15px 0 -3px rgba(103, 205, 255, 0.66), 8px 13px 0 -4px rgba(235, 219, 255, 0.7);
+    background: rgba(var(--cell-highlight-rgb, 162, 226, 255), 0.7);
+    box-shadow: -17px -14px 0 -2px rgba(var(--cell-detail-rgb, 168, 125, 255), 0.6), 14px -9px 0 -3px rgba(var(--cell-highlight-rgb, 255, 143, 211), 0.65), -11px 15px 0 -3px rgba(var(--cell-rgb, 103, 205, 255), 0.66), 8px 13px 0 -4px rgba(var(--cell-highlight-rgb, 235, 219, 255), 0.7);
 }
 
 .cell-particle {
@@ -457,6 +457,22 @@ body {
     --turn: -15deg;
     --nucleus-rgb: 255, 115, 199;
     animation-delay: -2s;
+}
+
+.plant-cell {
+    --cell-rgb: 77, 204, 134;
+    --cell-shadow-rgb: 29, 119, 76;
+    --cell-highlight-rgb: 184, 255, 213;
+    --cell-detail-rgb: 109, 222, 152;
+    --nucleus-rgb: 47, 157, 96;
+}
+
+.animal-cell {
+    --cell-rgb: 82, 170, 255;
+    --cell-shadow-rgb: 35, 83, 172;
+    --cell-highlight-rgb: 196, 231, 255;
+    --cell-detail-rgb: 123, 166, 255;
+    --nucleus-rgb: 45, 105, 207;
 }
 
 @keyframes cell-drift {
