@@ -402,7 +402,7 @@ body {
     position: absolute;
     top: 4px;
     left: 4px;
-    width: calc(50% - 4px);
+    width: calc((100% - 8px) / 3);
     height: calc(100% - 8px);
     background: linear-gradient(135deg, var(--auth-green-deep), var(--auth-green));
     border-radius: 9px;
@@ -411,8 +411,12 @@ body {
     z-index: 0;
 }
 
-.auth-tabs.admin .tab-slider {
+.auth-tabs.instructor .tab-slider {
     transform: translateX(100%);
+}
+
+.auth-tabs.admin .tab-slider {
+    transform: translateX(200%);
 }
 
 @media (max-width: 480px) {

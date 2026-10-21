@@ -27,12 +27,15 @@
 
         <hr class="auth-hr">
 
-        <div class="auth-tabs" id="tabs">
+        <div class="auth-tabs" id="tabs" role="group" aria-label="Sign in as">
             <div class="tab-slider"></div>
-            <button type="button" class="tab-btn active" data-role="student" id="tabStudent">
+            <button type="button" class="tab-btn active" data-role="student" id="tabStudent" aria-pressed="true">
                 <i class="bi bi-mortarboard"></i> Student
             </button>
-            <button type="button" class="tab-btn" data-role="admin" id="tabAdmin">
+            <button type="button" class="tab-btn" data-role="instructor" id="tabInstructor" aria-pressed="false">
+                <i class="bi bi-person-badge"></i> Instructor
+            </button>
+            <button type="button" class="tab-btn" data-role="admin" id="tabAdmin" aria-pressed="false">
                 <i class="bi bi-shield-lock"></i> Admin
             </button>
         </div>
@@ -110,6 +113,7 @@
     <script>
         const tabs = document.getElementById('tabs');
         const tabStudent = document.getElementById('tabStudent');
+        const tabInstructor = document.getElementById('tabInstructor');
         const tabAdmin = document.getElementById('tabAdmin');
         const idLabelText = document.getElementById('idLabelText');
         const idField = document.getElementById('idField');
@@ -119,23 +123,21 @@
 
         function setRole(role) {
             selectedRole = role;
-            codeGroup.hidden = role === 'admin';      // admins never use a section code
-            if (role === 'admin') {
-                tabs.classList.add('admin');
-                tabAdmin.classList.add('active');
-                tabStudent.classList.remove('active');
-                idLabelText.textContent = 'Admin Email';
-                idField.placeholder = 'admin@partido.edu.ph';
-            } else {
-                tabs.classList.remove('admin');
-                tabStudent.classList.add('active');
-                tabAdmin.classList.remove('active');
-                idLabelText.textContent = 'Student Email';
-                idField.placeholder = 'you.pbox@parsu.edu.ph';
-            }
+            const isStudent = role === 'student';
+            tabs.classList.toggle('instructor', role === 'instructor');
+            tabs.classList.toggle('admin', role === 'admin');
+            codeGroup.hidden = !isStudent;
+            [tabStudent, tabInstructor, tabAdmin].forEach((tab) => {
+                const active = tab.dataset.role === role;
+                tab.classList.toggle('active', active);
+                tab.setAttribute('aria-pressed', String(active));
+            });
+            idLabelText.textContent = isStudent ? 'Student Email' : `${role === 'admin' ? 'Admin' : 'Instructor'} Email`;
+            idField.placeholder = isStudent ? 'you.pbox@parsu.edu.ph' : 'admin@partido.edu.ph';
         }
 
         tabStudent.addEventListener('click', () => setRole('student'));
+        tabInstructor.addEventListener('click', () => setRole('instructor'));
         tabAdmin.addEventListener('click', () => setRole('admin'));
 
         const togglePass = document.getElementById('togglePass');
@@ -282,9 +284,30 @@
                 return;
             }
 
-            if (accountRole !== selectedRole) {
+            let isMainAdmin = true;
+            if (accountRole === 'admin') {
+                const { data: profile, error: profileError } = await ecoAuth.client
+                    .from('profiles')
+                    .select('is_main_admin')
+                    .eq('id', data.session.user.id)
+                    .maybeSingle();
+                if (profileError && !/column .*is_main_admin.*does not exist/i.test(profileError.message)) {
+                    await ecoAuth.client.auth.signOut();
+                    alert(`Unable to verify your account type: ${profileError.message}`);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Sign In';
+                    return;
+                }
+                if (!profileError) isMainAdmin = !!profile?.is_main_admin;
+            }
+
+            const roleMatches = selectedRole === 'student'
+                ? accountRole === 'student'
+                : accountRole === 'admin' && (selectedRole === 'admin' ? isMainAdmin : !isMainAdmin);
+            if (!roleMatches) {
                 await ecoAuth.client.auth.signOut();
-                alert(`This account is registered as ${accountRole}. Select the ${accountRole} login to continue.`);
+                const expectedRole = selectedRole === 'student' ? 'Student' : selectedRole === 'admin' ? 'Main admin' : 'Instructor';
+                alert(`This account is not registered as ${expectedRole}. Select the correct login to continue.`);
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Sign In';
                 return;

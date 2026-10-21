@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/global.css">
     <!-- admin.css is self-contained now: dashboard.css is no longer loaded on this page -->
-    <link rel="stylesheet" href="css/admin.css?v=2">
+    <link rel="stylesheet" href="css/admin.css?v=3">
     <link rel="stylesheet" href="css/voice-search.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -48,6 +48,11 @@
             <li class="nav-item mb-1">
                 <a class="nav-link d-flex align-items-center gap-2" href="#codes" data-view="codes">
                     <i class="bi bi-key" aria-hidden="true"></i> Section codes
+                </a>
+            </li>
+            <li class="nav-item mb-1" id="navTeachers" hidden>
+                <a class="nav-link d-flex align-items-center gap-2" href="#teachers" data-view="teachers">
+                    <i class="bi bi-person-badge" aria-hidden="true"></i> Teachers
                 </a>
             </li>
             <li class="nav-item mb-1">
@@ -84,6 +89,7 @@
                     <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
                     <span id="updatedAt">Loading…</span>
                 </button>
+                <span class="role-chip" id="roleChip" hidden></span>
                 <span class="avatar" id="topbarAvatar" title="Admin">A</span>
             </div>
         </div>
@@ -200,6 +206,74 @@
                             </tr>
                         </thead>
                         <tbody id="studentTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================
+             TEACHERS (main admins only)
+        ========================================= -->
+        <section class="admin-view" data-view="teachers" aria-labelledby="viewTitle">
+            <div class="notice notice-error" id="teachersError" role="alert" hidden>
+                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                <p id="teachersErrorText">Couldn't load teachers.</p>
+                <button class="btn btn-quiet" id="teachersErrorRetry" type="button">Try again</button>
+            </div>
+
+            <section class="panel codes-generate" aria-labelledby="teacherFormTitle">
+                <div class="panel-head">
+                    <h2 id="teacherFormTitle">Add or update a teacher</h2>
+                </div>
+                <p class="muted codes-intro">The person must have signed up first. Enter the email they used and pick their subject. They get teacher access the next time they open the admin, and they see only the students who join with their own codes.</p>
+
+                <form id="teacherForm" class="teacher-form" novalidate>
+                    <div class="field">
+                        <label for="teacherEmail">Email</label>
+                        <input type="email" id="teacherEmail" autocomplete="off" placeholder="teacher@example.com">
+                        <p class="field-error" id="teacherEmailError" hidden>Enter a valid email address.</p>
+                    </div>
+                    <div class="field">
+                        <label for="teacherSubject">Subject</label>
+                        <select id="teacherSubject">
+                            <option value="">No subject (main admin only)</option>
+                            <option value="zoology">Zoology</option>
+                            <option value="botany">Botany</option>
+                        </select>
+                        <p class="field-error" id="teacherSubjectError" hidden>Choose a subject, or tick Main admin.</p>
+                    </div>
+                    <div class="field teacher-main">
+                        <label class="check" for="teacherMain">
+                            <input type="checkbox" id="teacherMain"> Main admin
+                        </label>
+                        <p class="field-help">Sees every student and manages teachers.</p>
+                    </div>
+                    <div class="field codes-submit">
+                        <button type="submit" class="btn btn-primary" id="teacherSaveBtn">
+                            <i class="bi bi-person-check" aria-hidden="true"></i> Save teacher
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <div class="panel panel-flush">
+                <div class="toolbar">
+                    <p class="result-count" id="teacherCount" aria-live="polite"></p>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table teachers-table" id="teachersTable">
+                        <caption class="visually-hidden">Teachers and admins</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col-teacher">Teacher</th>
+                                <th scope="col" class="col-subject">Subject</th>
+                                <th scope="col" class="col-access">Access</th>
+                                <th scope="col" class="col-tstudents">Students</th>
+                                <th scope="col" class="col-tcodes">Active codes</th>
+                                <th scope="col" class="col-tactions"><span class="visually-hidden">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachersTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -354,6 +428,11 @@
                             <select id="accountSection"></select>
                             <p class="field-help">Students can't change their own section. Set it to Unassigned and they can join again with a new code.</p>
                         </div>
+                        <div class="field" id="accountTeacherField" hidden>
+                            <label for="accountTeacher">Teacher</label>
+                            <select id="accountTeacher"></select>
+                            <p class="field-help">Only this teacher (and main admins) can see this student's records. Students get their teacher from the code they join with.</p>
+                        </div>
                         <div class="field">
                             <label for="accountStatus">Account status</label>
                             <select id="accountStatus">
@@ -377,6 +456,23 @@
         </aside>
     </div>
 
+    <!-- Give students who have no teacher yet to one teacher -->
+    <dialog id="assignDialog" class="dialog" aria-labelledby="assignTitle">
+        <form id="assignForm" novalidate>
+            <h2 id="assignTitle">Assign students</h2>
+            <p class="muted" id="assignText"></p>
+            <div class="field">
+                <label for="assignSection">Which students</label>
+                <select id="assignSection"></select>
+                <p class="field-help" id="assignHelp"></p>
+            </div>
+            <div class="dialog-actions">
+                <button type="button" class="btn btn-quiet" id="assignCancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="assignSave">Assign</button>
+            </div>
+        </form>
+    </dialog>
+
     <!-- Set / clear a section code's expiry date -->
     <dialog id="expiryDialog" class="dialog" aria-labelledby="expiryTitle">
         <form id="expiryForm" novalidate>
@@ -398,6 +494,6 @@
     <!-- Toasts: save confirmations, Undo for archive, errors -->
     <div class="toasts" id="toasts" role="region" aria-label="Notifications" aria-live="polite"></div>
 
-    <script src="js/admin.js?v=2"></script>
+    <script src="js/admin.js?v=3"></script>
 </body>
 </html>

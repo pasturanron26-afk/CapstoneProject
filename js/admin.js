@@ -7,6 +7,9 @@
      - View Overall Statistics
      - Manage Student Accounts
      - Archive Inactive Students
+     - Teachers (main admins only): add Zoology / Botany teachers, assign
+       students. A teacher sees only the students who joined with their own
+       codes; needs supabase-teachers.sql
      - Section Codes (generate / regenerate / disable / expire / delete
        the codes students paste on login.html to join a section; needs
        supabase-section-codes.sql)
@@ -192,7 +195,7 @@ async function fetchStudents() {
     // someone new signs up (it used to be a position in a newest-first list).
     let { data, error } = await ecoAuth.client
         .from('profiles')
-        .select('id, full_name, email, avatar_url, section, role, created_at, last_seen_at, archived, status')
+        .select('id, full_name, email, avatar_url, section, teacher_id, role, created_at, last_seen_at, archived, status')
         .eq('role', 'student')
         .order('created_at', { ascending: true });
 
@@ -234,6 +237,7 @@ async function fetchStudents() {
             email: row.email || '—',
             avatarUrl: cleanText(row.avatar_url),
             section: row.section || 'Unassigned',
+            teacherId: row.teacher_id || null,
             joined: row.created_at ? row.created_at.slice(0, 10) : '—',
             lastActive: presence.text,
             lastActiveMinutesAgo: presence.minutesAgo,
@@ -249,6 +253,46 @@ async function fetchStudents() {
     });
 }
 
+/* ===================== WHO IS SIGNED IN + TEACHERS ===================== */
+
+// Until supabase-teachers.sql has run, every admin behaves like a main admin
+// (the old behaviour), so nothing breaks before the migration.
+const ME = { id: null, ready: false, isMain: true, subject: '' };
+const SUBJECT_LABEL = { zoology: 'Zoology', botany: 'Botany' };
+const canManageTeachers = () => ME.ready && ME.isMain;
+
+let TEACHERS = [];
+let TEACHERS_LOAD_ERROR = null;
+
+async function fetchTeachers() {
+    if (!canManageTeachers()) return [];
+    const { data, error } = await ecoAuth.client
+        .from('profiles')
+        .select('id, full_name, email, subject, is_main_admin')
+        .eq('role', 'admin')
+        .order('full_name', { ascending: true });
+
+    if (error) {
+        console.error('Failed to load teachers from Supabase:', error.message);
+        TEACHERS_LOAD_ERROR = `Couldn't load teachers: ${error.message}`;
+        return null;
+    }
+    TEACHERS_LOAD_ERROR = null;
+    return (data || []).map(r => ({
+        id: r.id,
+        name: cleanText(r.full_name) || r.email || 'Unnamed',
+        email: r.email || '',
+        subject: r.subject || '',
+        isMain: !!r.is_main_admin
+    }));
+}
+
+// "Zoology · Maria Santos" for a teacher id (main admins only see other teachers).
+function teacherLabel(id) {
+    const t = id && TEACHERS.find(x => x.id === id);
+    return t ? `${SUBJECT_LABEL[t.subject] || 'Main admin'} · ${t.name}` : '';
+}
+
 /* ===================== SECTION CODES: DATA ===================== */
 
 let CODES = [];
@@ -262,6 +306,7 @@ function toCode(row) {
         active: !!row.is_active,
         expiresAt: row.expires_at || null,
         createdAt: row.created_at || null,
+        teacherId: row.teacher_id || null,
         uses: Number(row.section_code_redemptions?.[0]?.count || 0)
     };
 }
@@ -275,10 +320,15 @@ function codeStatus(c) {
 }
 
 async function fetchSectionCodes() {
-    const { data, error } = await ecoAuth.client
+    const base = 'id, code, section, is_active, expires_at, created_at';
+    const query = (cols) => ecoAuth.client
         .from('section_codes')
-        .select('id, code, section, is_active, expires_at, created_at, section_code_redemptions(count)')
+        .select(`${cols}, section_code_redemptions(count)`)
         .order('created_at', { ascending: false });
+
+    let { data, error } = await query(`${base}, teacher_id`);
+    // Before supabase-teachers.sql has run there is no teacher_id column.
+    if (error && /teacher_id/i.test(error.message || '')) ({ data, error } = await query(base));
 
     if (error) {
         console.error('Failed to load section codes from Supabase:', error.message);
@@ -316,6 +366,7 @@ const VIEWS = {
     overview: { title: 'Overview' },
     students: { title: 'Students' },
     codes: { title: 'Section codes' },
+    teachers: { title: 'Teachers' },
     archived: { title: 'Archived students' }
 };
 
@@ -493,8 +544,10 @@ function renderNavCounts() {
 }
 
 function knownSections() {
-    const set = new Set(['1-A', '1-B', '1-C']);
-    STUDENTS.forEach(s => { if (s.section && s.section !== 'Unassigned') set.add(s.section); });
+    const set = new Set(['1-A', '1-B']);
+    STUDENTS.forEach(s => {
+        if (s.section && s.section !== 'Unassigned' && s.section !== '1-C') set.add(s.section);
+    });
     const list = [...set].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
     if (STUDENTS.some(s => s.section === 'Unassigned')) list.push('Unassigned');
     return list;
@@ -531,9 +584,15 @@ function renderSubtitle() {
         const who = state.adminFirstName ? `, ${state.adminFirstName}` : '';
         p.textContent = `${greeting()}${who}. ${scope}${online ? `, ${online} online now` : ''}.`;
     } else if (state.view === 'students') {
-        p.textContent = 'Everyone enrolled in the biology course. Select a student to see quiz results or manage their account.';
+        p.textContent = (ME.ready && !ME.isMain)
+            ? 'Students who joined with your section codes. Select a student to see quiz results or manage their account.'
+            : 'Everyone enrolled in the biology course. Select a student to see quiz results or manage their account.';
     } else if (state.view === 'codes') {
-        p.textContent = 'Give each section its own code. Students paste it on the login page the first time they sign in and join that section automatically.';
+        p.textContent = (ME.ready && !ME.isMain)
+            ? 'Make a code for a section and give it to your students. Everyone who joins with it becomes your student.'
+            : 'Give each section its own code. Students paste it on the login page the first time they sign in and join that section automatically.';
+    } else if (state.view === 'teachers') {
+        p.textContent = 'Add Zoology and Botany teachers. Each teacher sees only the students who join with their own codes.';
     } else {
         p.textContent = 'Students set aside after prolonged inactivity. Restore an account to bring the student back.';
     }
@@ -798,6 +857,7 @@ function renderAll() {
     renderStudentTable();
     renderArchivedTable();
     renderCodes();
+    renderTeachers();
     renderUpdated();
 }
 
@@ -847,6 +907,7 @@ function codeRowHTML(c) {
     const id = escapeHtml(c.id);
     const code = escapeHtml(c.code);
     const status = codeStatus(c);
+    const owner = canManageTeachers() ? teacherLabel(c.teacherId) : '';
     const statusTag = {
         active: '<span class="tag tag-ok">Active</span>',
         expired: '<span class="tag tag-warn">Expired</span>',
@@ -860,7 +921,7 @@ function codeRowHTML(c) {
             <span class="code-chip">${code}</span>
             ${action('copy', 'bi-clipboard', 'Copy code')}
         </td>
-        <td data-label="Section"><span class="tag">${escapeHtml(c.section)}</span></td>
+        <td data-label="Section"><span class="tag">${escapeHtml(c.section)}</span>${owner ? `<span class="code-owner">${escapeHtml(owner)}</span>` : ''}</td>
         <td data-label="Created">${escapeHtml(formatDay(c.createdAt))}</td>
         <td data-label="Expires">${c.expiresAt ? escapeHtml(formatDay(c.expiresAt)) : '<span class="muted">Never</span>'}</td>
         <td data-label="Status">${statusTag}</td>
@@ -905,6 +966,7 @@ function renderCodes() {
 
 function routeFromHash() {
     const h = location.hash.replace('#', '');
+    if (h === 'teachers' && !canManageTeachers()) return 'overview';
     return VIEWS[h] ? h : 'overview';
 }
 
@@ -1054,6 +1116,7 @@ async function saveAccount(event) {
     const email = el('accountEmail').value.trim();
     const status = el('accountStatus').value;
     const section = el('accountSection').value;      // '' = Unassigned (student joins again with a code)
+    const teacher = canManageTeachers() ? el('accountTeacher').value : null;   // '' = no teacher; null = not editable here
 
     const nameBad = !name;
     const emailBad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -1065,15 +1128,195 @@ async function saveAccount(event) {
     const saveBtn = el('accountSave');
     const ok = await withBusy(saveBtn, async () => {
         saveBtn.textContent = 'Saving…';
-        return persistProfileUpdate(id, { full_name: name, email, status, section: section || null });
+        const patch = { full_name: name, email, status, section: section || null };
+        if (teacher !== null) patch.teacher_id = teacher || null;
+        return persistProfileUpdate(id, patch);
     });
     if (!ok) return;
 
     const fresh = findStudent(id) || s;
     Object.assign(fresh, { name, email, status, section: section || 'Unassigned' });
+    if (teacher !== null) fresh.teacherId = teacher || null;
     renderAll();
     renderDrawer(fresh, { keepTab: true });
     toast(`Saved changes for ${name}.`);
+}
+
+/* ===================== TEACHERS: RENDER + ACTIONS ===================== */
+
+function teacherRowHTML(t) {
+    const id = escapeHtml(t.id);
+    const mine = t.id === ME.id;
+    const students = STUDENTS.filter(x => x.teacherId === t.id && !x.archived).length;
+    const codes = CODES.filter(c => c.teacherId === t.id && codeStatus(c) === 'active').length;
+    const action = (name, icon, label, extra = '') =>
+        `<button type="button" class="icon-btn icon-btn-sm${extra}" data-teacher-action="${name}" data-id="${id}" data-role="${name}" aria-label="${label} ${escapeHtml(t.name)}" title="${label}"><i class="bi ${icon}" aria-hidden="true"></i></button>`;
+
+    return `<tr data-id="${id}">
+        <td class="cell-student" data-label="Teacher">
+            <span class="student-text">
+                <span class="teacher-name">${escapeHtml(t.name)}${mine ? ' <span class="muted">(you)</span>' : ''}</span>
+                <span class="student-email">${escapeHtml(t.email || '—')}</span>
+            </span>
+        </td>
+        <td data-label="Subject">${t.subject ? `<span class="tag">${escapeHtml(SUBJECT_LABEL[t.subject] || t.subject)}</span>` : '<span class="muted">—</span>'}</td>
+        <td data-label="Access">${t.isMain ? '<span class="tag tag-ok">Main admin</span>' : '<span class="tag">Teacher</span>'}</td>
+        <td data-label="Students" class="cell-used">${students}</td>
+        <td data-label="Active codes" class="cell-used">${codes}</td>
+        <td class="cell-actions" data-label="Actions">
+            ${action('edit', 'bi-pencil', 'Edit')}
+            ${action('assign', 'bi-person-plus', 'Assign students to')}
+            ${mine ? '' : action('remove', 'bi-person-dash', 'Remove teacher access for', ' icon-btn-danger')}
+        </td>
+    </tr>`;
+}
+
+function renderTeachers() {
+    if (!canManageTeachers()) return;
+    el('teachersError').hidden = !TEACHERS_LOAD_ERROR;
+    el('teachersErrorText').textContent = TEACHERS_LOAD_ERROR || '';
+    el('teacherCount').textContent = state.loaded ? plural(TEACHERS.length, 'person', 'people') + ' with admin access' : '';
+
+    const rows = [...TEACHERS].sort((a, b) => (b.isMain - a.isMain) || a.name.localeCompare(b.name));
+    const body = el('teachersTableBody');
+    withFocusKept(body, () => {
+        if (state.loading) body.innerHTML = skeletonRows(2, 6);
+        else if (TEACHERS_LOAD_ERROR && !TEACHERS.length) body.innerHTML = '<tr><td colspan="6" class="empty-cell">Teachers are unavailable right now.</td></tr>';
+        else if (!rows.length) body.innerHTML = '<tr><td colspan="6" class="empty-cell"><strong>No teachers yet.</strong> Add one above.</td></tr>';
+        else body.innerHTML = rows.map(teacherRowHTML).join('');
+    });
+}
+
+function fillTeacherForm(t) {
+    el('teacherEmail').value = t.email || '';
+    el('teacherSubject').value = t.subject || '';
+    el('teacherMain').checked = t.isMain;
+    ['teacherEmail', 'teacherSubject'].forEach(id => setFieldError(id, id + 'Error', false));
+    el('teacherForm').scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el('teacherSubject').focus({ preventScroll: true });
+}
+
+async function saveTeacher(event) {
+    event.preventDefault();
+    const email = el('teacherEmail').value.trim();
+    const subject = el('teacherSubject').value;
+    const main = el('teacherMain').checked;
+
+    const emailBad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const subjectBad = !subject && !main;
+    setFieldError('teacherEmail', 'teacherEmailError', emailBad);
+    setFieldError('teacherSubject', 'teacherSubjectError', subjectBad);
+    if (emailBad) { el('teacherEmail').focus(); return; }
+    if (subjectBad) { el('teacherSubject').focus(); return; }
+
+    const btn = el('teacherSaveBtn');
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    const { data, error } = await ecoAuth.client.rpc('main_admin_set_teacher', {
+        p_email: email,
+        p_subject: subject || null,
+        p_main: main
+    });
+    btn.disabled = false;
+    btn.innerHTML = label;
+
+    if (error || !data) {
+        console.error('Failed to save a teacher:', error && error.message);
+        toast(`Couldn't save the teacher. ${error ? error.message : 'Please try again.'}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+
+    el('teacherForm').reset();
+    const name = cleanText(data.full_name) || data.email;
+    toast(`${name} is now ${main ? 'a main admin' : `a ${SUBJECT_LABEL[subject]} teacher`}.`);
+    await refreshData();
+}
+
+async function removeTeacher(t, button) {
+    const n = STUDENTS.filter(x => x.teacherId === t.id).length;
+    const ok = window.confirm(
+        `Remove ${t.name}'s teacher access?\n\n` +
+        `Their ${plural(n, 'student', 'students')} will have no teacher until you assign them again, ` +
+        `and their active codes will be switched off. Nothing is deleted.`);
+    if (!ok) return;
+
+    button.disabled = true;
+    const { data, error } = await ecoAuth.client.rpc('main_admin_remove_teacher', { p_id: t.id });
+    button.disabled = false;
+
+    if (error) {
+        console.error('Failed to remove a teacher:', error.message);
+        toast(`Couldn't remove the teacher. ${error.message}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+    toast(`${t.name} is no longer a teacher. ${plural(data?.students_unassigned || 0, 'student', 'students')} released, ${plural(data?.codes_disabled || 0, 'code', 'codes')} switched off.`, { timeout: 9000 });
+    await refreshData();
+}
+
+/* Assign students dialog */
+const assignState = { teacher: null };
+const unownedStudents = (section) => STUDENTS.filter(s => !s.teacherId && (!section || s.section === section));
+
+function updateAssignHelp() {
+    const n = unownedStudents(el('assignSection').value).length;
+    el('assignHelp').textContent = n
+        ? `${plural(n, 'student', 'students')} without a teacher will be assigned.`
+        : 'No students without a teacher here.';
+    el('assignSave').disabled = !n;
+}
+
+function openAssignDialog(t) {
+    assignState.teacher = t;
+    el('assignText').textContent = `Give students who don't have a teacher yet to ${t.name}. Students who joined with a code already belong to the teacher who made it.`;
+    el('assignSection').innerHTML = '<option value="">All sections</option>' +
+        codeSections().map(v => `<option value="${escapeHtml(v)}">Section ${escapeHtml(v)}</option>`).join('');
+    updateAssignHelp();
+    const dlg = el('assignDialog');
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', '');
+    el('assignSection').focus();
+}
+
+function closeAssignDialog() {
+    const dlg = el('assignDialog');
+    if (typeof dlg.close === 'function') dlg.close();
+    else dlg.removeAttribute('open');
+    assignState.teacher = null;
+}
+
+async function saveAssign(event) {
+    event.preventDefault();
+    const t = assignState.teacher;
+    if (!t) return;
+    const section = el('assignSection').value;
+
+    const btn = el('assignSave');
+    btn.disabled = true;
+    const { data, error } = await ecoAuth.client.rpc('main_admin_assign_students', {
+        p_teacher: t.id,
+        p_section: section || null
+    });
+    btn.disabled = false;
+
+    if (error) {
+        console.error('Failed to assign students:', error.message);
+        toast(`Couldn't assign students. ${error.message}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+    closeAssignDialog();
+    toast(`${plural(Number(data) || 0, 'student', 'students')} assigned to ${t.name}.`);
+    await refreshData();
+}
+
+function handleTeacherAction(button) {
+    const t = TEACHERS.find(x => x.id === button.dataset.id);
+    if (!t) return;
+    switch (button.dataset.teacherAction) {
+        case 'edit':   fillTeacherForm(t); break;
+        case 'assign': openAssignDialog(t); break;
+        case 'remove': removeTeacher(t, button); break;
+    }
 }
 
 /* ===================== SECTION CODES: ACTIONS ===================== */
@@ -1390,6 +1633,15 @@ function renderDrawer(s, { keepTab = false } = {}) {
     sectionSelect.innerHTML = '<option value="">Unassigned</option>' +
         sectionOptions.map(v => `<option value="${escapeHtml(v)}">Section ${escapeHtml(v)}</option>`).join('');
     sectionSelect.value = s.section === 'Unassigned' ? '' : s.section;
+
+    // Main admins can move a student to another teacher.
+    el('accountTeacherField').hidden = !canManageTeachers();
+    if (canManageTeachers()) {
+        const teacherSelect = el('accountTeacher');
+        teacherSelect.innerHTML = '<option value="">No teacher yet</option>' +
+            TEACHERS.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.name)} (${escapeHtml(SUBJECT_LABEL[t.subject] || 'Main admin')})</option>`).join('');
+        teacherSelect.value = s.teacherId || '';
+    }
     setFieldError('accountName', 'accountNameError', false);
     setFieldError('accountEmail', 'accountEmailError', false);
 
@@ -1486,8 +1738,9 @@ async function refreshData({ manual = false } = {}) {
     btn.classList.add('is-spinning');
     btn.setAttribute('aria-busy', 'true');
 
-    const [next, nextCodes] = await Promise.all([fetchStudents(), fetchSectionCodes()]);
+    const [next, nextCodes, nextTeachers] = await Promise.all([fetchStudents(), fetchSectionCodes(), fetchTeachers()]);
     if (nextCodes) CODES = nextCodes;
+    if (nextTeachers) TEACHERS = nextTeachers;
 
     if (STUDENTS_LOAD_ERROR) {
         if (state.loaded) {
@@ -1531,6 +1784,9 @@ function bindEvents() {
 
         const codeAction = t.closest('[data-code-action]');
         if (codeAction) { handleCodeAction(codeAction); return; }
+
+        const teacherAction = t.closest('[data-teacher-action]');
+        if (teacherAction) { handleTeacherAction(teacherAction); return; }
 
         const open = t.closest('[data-open]');
         if (open) { openDrawer(open.dataset.open, 'quiz', open); return; }
@@ -1624,6 +1880,14 @@ function bindEvents() {
     el('refreshBtn').addEventListener('click', () => refreshData({ manual: true }));
     el('loadErrorRetry').addEventListener('click', () => refreshData({ manual: true }));
 
+    el('teacherForm').addEventListener('submit', saveTeacher);
+    el('teacherSubject').addEventListener('change', () => setFieldError('teacherSubject', 'teacherSubjectError', false));
+    el('teacherEmail').addEventListener('input', () => setFieldError('teacherEmail', 'teacherEmailError', false));
+    el('teachersErrorRetry').addEventListener('click', () => refreshData({ manual: true }));
+    el('assignForm').addEventListener('submit', saveAssign);
+    el('assignCancel').addEventListener('click', closeAssignDialog);
+    el('assignSection').addEventListener('change', updateAssignHelp);
+    el('assignDialog').addEventListener('close', () => { assignState.teacher = null; });
     el('codeForm').addEventListener('submit', generateCode);
     el('codeSection').addEventListener('change', () => setFieldError('codeSection', 'codeSectionError', false));
     el('codeExpiry').addEventListener('input', () => setFieldError('codeExpiry', 'codeExpiryError', false));
@@ -1652,6 +1916,21 @@ function bindEvents() {
 
 /* ===================== INIT ===================== */
 
+// Role badge in the top bar and the Teachers link (main admins only).
+function applyRoleUI() {
+    const subject = SUBJECT_LABEL[ME.subject] || '';
+    const chip = el('roleChip');
+    if (ME.ready) {
+        chip.textContent = ME.isMain
+            ? (subject ? `Main admin · ${subject}` : 'Main admin')
+            : (subject ? `${subject} teacher` : 'Teacher');
+        chip.hidden = false;
+    } else {
+        chip.hidden = true;
+    }
+    el('navTeachers').hidden = !canManageTeachers();
+}
+
 async function loadAdminIdentity() {
     try {
         const { data } = await ecoAuth.client.auth.getSession();
@@ -1662,10 +1941,21 @@ async function loadAdminIdentity() {
         // differently-encoded copy of the name.
         let name = '';
         try {
-            const { data: prof } = await ecoAuth.client
-                .from('profiles').select('full_name').eq('id', user.id).maybeSingle();
+            let { data: prof, error } = await ecoAuth.client
+                .from('profiles').select('full_name, subject, is_main_admin').eq('id', user.id).maybeSingle();
+            // Before supabase-teachers.sql runs these columns don't exist: keep the old behaviour.
+            if (error) {
+                ({ data: prof } = await ecoAuth.client
+                    .from('profiles').select('full_name').eq('id', user.id).maybeSingle());
+            } else if (prof) {
+                ME.ready = true;
+                ME.isMain = !!prof.is_main_admin;
+                ME.subject = prof.subject || '';
+            }
             name = cleanText(prof?.full_name);
         } catch (e) { /* fall through to metadata */ }
+        ME.id = user.id;
+        applyRoleUI();
         name = name || cleanText(user.user_metadata?.full_name) || user.email || 'Admin';
 
         state.adminName = name;
@@ -1684,6 +1974,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.ecoAuth) {
         await ecoAuth.requireAdmin();
         await loadAdminIdentity();
+        showView(routeFromHash());                 // now that we know the role (e.g. #teachers)
         const logoutButton = el('logoutButton');
         if (logoutButton) logoutButton.addEventListener('click', () => window.ecoAuth.signOut());
     }
