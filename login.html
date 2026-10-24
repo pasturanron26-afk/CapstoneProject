@@ -13,6 +13,43 @@
     <script src="js/auth.js"></script>
 </head>
 <body>
+    <div class="cell-field" aria-hidden="true">
+        <span class="floating-cell cell-one plant-cell"></span>
+        <span class="floating-cell cell-two animal-cell"></span>
+        <span class="floating-cell cell-three plant-cell"></span>
+        <span class="floating-cell cell-four animal-cell"></span>
+        <span class="floating-cell cell-five plant-cell"></span>
+        <span class="floating-cell cell-six animal-cell"></span>
+        <span class="floating-cell cell-seven plant-cell"></span>
+        <span class="floating-cell cell-eight animal-cell"></span>
+        <span class="floating-cell cell-nine plant-cell"></span>
+        <span class="floating-cell cell-ten animal-cell"></span>
+        <span class="floating-cell cell-eleven plant-cell"></span>
+        <span class="floating-cell cell-twelve animal-cell"></span>
+        <span class="floating-cell cell-thirteen plant-cell"></span>
+        <span class="floating-cell cell-fourteen animal-cell"></span>
+        <span class="floating-cell cell-fifteen plant-cell"></span>
+        <span class="floating-cell cell-sixteen animal-cell"></span>
+        <span class="floating-cell cell-seventeen plant-cell"></span>
+        <span class="floating-cell cell-eighteen animal-cell"></span>
+        <span class="floating-cell cell-nineteen plant-cell"></span>
+        <span class="floating-cell cell-twenty animal-cell"></span>
+        <span class="floating-cell cell-twenty-one plant-cell"></span>
+        <span class="floating-cell cell-twenty-two animal-cell"></span>
+        <span class="cell-particle particle-one"></span>
+        <span class="cell-particle particle-two"></span>
+        <span class="cell-particle particle-three"></span>
+        <span class="cell-particle particle-four"></span>
+        <span class="cell-particle particle-five"></span>
+        <span class="cell-particle particle-six"></span>
+        <span class="cell-particle particle-seven"></span>
+        <span class="cell-particle particle-eight"></span>
+        <span class="cell-particle particle-nine"></span>
+        <span class="cell-particle particle-ten"></span>
+        <span class="cell-particle particle-eleven"></span>
+        <span class="cell-particle particle-twelve"></span>
+    </div>
+
     <div class="auth-container">
         <div class="auth-header">
             <div class="auth-logo-wrap">
@@ -27,12 +64,15 @@
 
         <hr class="auth-hr">
 
-        <div class="auth-tabs" id="tabs">
+        <div class="auth-tabs" id="tabs" role="group" aria-label="Sign in as">
             <div class="tab-slider"></div>
-            <button type="button" class="tab-btn active" data-role="student" id="tabStudent">
+            <button type="button" class="tab-btn active" data-role="student" id="tabStudent" aria-pressed="true">
                 <i class="bi bi-mortarboard"></i> Student
             </button>
-            <button type="button" class="tab-btn" data-role="admin" id="tabAdmin">
+            <button type="button" class="tab-btn" data-role="instructor" id="tabInstructor" aria-pressed="false">
+                <i class="bi bi-person-badge"></i> Instructor
+            </button>
+            <button type="button" class="tab-btn" data-role="admin" id="tabAdmin" aria-pressed="false">
                 <i class="bi bi-shield-lock"></i> Admin
             </button>
         </div>
@@ -55,6 +95,14 @@
                 </div>
             </div>
 
+            <div class="form-group" id="codeGroup">
+                <label for="codeField"><i class="bi bi-key"></i> Section Code</label>
+                <div class="input-wrapper">
+                    <input type="text" id="codeField" class="code-input" placeholder="e.g. K7M2QX" maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="codeHelp">
+                </div>
+                <p class="field-hint" id="codeHelp">First sign-in only. Paste the code your teacher gave you for your section. Already in a section? Leave this blank.</p>
+            </div>
+
             <div class="auth-links">
                 <a href="signup.html">Create account</a>
                 <a href="forgot-password.html">Forgot Password?</a>
@@ -71,6 +119,29 @@
             </button>
         </form>
 
+        <!-- Join step: a signed-in student with no section yet lands here -->
+        <section id="joinPanel" class="join-panel" aria-labelledby="joinTitle" hidden>
+            <h1 class="auth-title" id="joinTitle">Join your section</h1>
+            <p class="auth-subtitle">Enter the section code your teacher gave you. You only do this once.</p>
+
+            <div class="auth-notice" id="joinNotice" role="status" aria-live="polite" hidden></div>
+
+            <form id="joinForm" class="auth-form" novalidate>
+                <div class="form-group">
+                    <label for="joinCode"><i class="bi bi-key"></i> Section Code</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="joinCode" class="code-input" placeholder="e.g. K7M2QX" maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" id="joinBtn">
+                    <i class="bi bi-people"></i> Join section
+                </button>
+                <div class="auth-links auth-links-center">
+                    <a href="#" id="joinSignOut">Sign out and use a different account</a>
+                </div>
+            </form>
+        </section>
+
         <div class="auth-footer">
             © 2026 EcoLearn. All rights reserved.
         </div>
@@ -79,29 +150,31 @@
     <script>
         const tabs = document.getElementById('tabs');
         const tabStudent = document.getElementById('tabStudent');
+        const tabInstructor = document.getElementById('tabInstructor');
         const tabAdmin = document.getElementById('tabAdmin');
         const idLabelText = document.getElementById('idLabelText');
         const idField = document.getElementById('idField');
+        const codeGroup = document.getElementById('codeGroup');
+        const codeField = document.getElementById('codeField');
         let selectedRole = 'student';
 
         function setRole(role) {
             selectedRole = role;
-            if (role === 'admin') {
-                tabs.classList.add('admin');
-                tabAdmin.classList.add('active');
-                tabStudent.classList.remove('active');
-                idLabelText.textContent = 'Admin Email';
-                idField.placeholder = 'admin@partido.edu.ph';
-            } else {
-                tabs.classList.remove('admin');
-                tabStudent.classList.add('active');
-                tabAdmin.classList.remove('active');
-                idLabelText.textContent = 'Student Email';
-                idField.placeholder = 'you.pbox@parsu.edu.ph';
-            }
+            const isStudent = role === 'student';
+            tabs.classList.toggle('instructor', role === 'instructor');
+            tabs.classList.toggle('admin', role === 'admin');
+            codeGroup.hidden = !isStudent;
+            [tabStudent, tabInstructor, tabAdmin].forEach((tab) => {
+                const active = tab.dataset.role === role;
+                tab.classList.toggle('active', active);
+                tab.setAttribute('aria-pressed', String(active));
+            });
+            idLabelText.textContent = isStudent ? 'Student Email' : `${role === 'admin' ? 'Admin' : 'Instructor'} Email`;
+            idField.placeholder = isStudent ? 'you.pbox@parsu.edu.ph' : 'admin@partido.edu.ph';
         }
 
         tabStudent.addEventListener('click', () => setRole('student'));
+        tabInstructor.addEventListener('click', () => setRole('instructor'));
         tabAdmin.addEventListener('click', () => setRole('admin'));
 
         const togglePass = document.getElementById('togglePass');
@@ -115,7 +188,102 @@
             eyeIcon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
         });
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        /* ===== SECTION CODE HELPERS ===== */
+        const loginForm = document.getElementById('loginForm');
+        const joinPanel = document.getElementById('joinPanel');
+        const joinForm = document.getElementById('joinForm');
+        const joinCode = document.getElementById('joinCode');
+        const joinBtn = document.getElementById('joinBtn');
+        const joinNotice = document.getElementById('joinNotice');
+
+        // Pasted codes may arrive lower-case or with spaces / dashes.
+        function normalizeCode(value) {
+            return String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+        }
+        [codeField, joinCode].forEach((input) => {
+            input.addEventListener('input', () => {
+                const clean = normalizeCode(input.value);
+                if (clean !== input.value) input.value = clean;
+                input.removeAttribute('aria-invalid');
+            });
+        });
+
+        function showNotice(tone, text) {
+            joinNotice.hidden = false;
+            joinNotice.className = `auth-notice is-${tone}`;
+            joinNotice.setAttribute('role', tone === 'error' ? 'alert' : 'status');
+            joinNotice.textContent = text;
+        }
+
+        // Swap the sign-in form for the "join your section" step.
+        function showJoinStep(tone, text, prefill = '') {
+            document.getElementById('tabs').hidden = true;
+            loginForm.hidden = true;
+            joinPanel.hidden = false;
+            if (prefill) joinCode.value = prefill;
+            if (text) showNotice(tone, text);
+            joinBtn.disabled = false;
+            joinBtn.innerHTML = '<i class="bi bi-people"></i> Join section';
+            joinCode.focus();
+        }
+
+        function finishJoin(section) {
+            document.getElementById('tabs').hidden = true;
+            loginForm.hidden = true;
+            joinPanel.hidden = false;
+            document.getElementById('joinTitle').textContent = 'Section joined';
+            joinForm.hidden = true;
+            showNotice('success', `You have joined Section ${section}. Taking you to your dashboard…`);
+            setTimeout(() => window.location.replace('dashboard.html'), 1400);
+        }
+
+        async function submitJoin(code) {
+            const result = await ecoAuth.redeemSectionCode(code);
+            if (result.ok) { finishJoin(result.section); return true; }
+            if (result.error === 'already_in_section') {
+                window.location.replace('dashboard.html');      // nothing to join, carry on
+                return true;
+            }
+            showJoinStep('error', ecoAuth.sectionCodeMessage(result), code);
+            if (result.error === 'invalid_code') joinCode.setAttribute('aria-invalid', 'true');
+            return false;
+        }
+
+        joinForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = normalizeCode(joinCode.value);
+            if (!code) {
+                joinCode.setAttribute('aria-invalid', 'true');
+                showNotice('error', 'Enter the section code your teacher gave you.');
+                joinCode.focus();
+                return;
+            }
+            joinBtn.disabled = true;
+            joinBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Checking code...';
+            const { data } = await ecoAuth.client.auth.getSession();
+            if (!data.session) { window.location.replace('login.html'); return; }
+            await submitJoin(code);
+        });
+
+        document.getElementById('joinSignOut').addEventListener('click', (e) => {
+            e.preventDefault();
+            ecoAuth.signOut();
+        });
+
+        // A student who is already signed in but has no section (for example
+        // after a first Google sign-in) goes straight to the join step.
+        (async () => {
+            try {
+                const { data } = await ecoAuth.client.auth.getSession();
+                if (!data.session) return;
+                if (await ecoAuth.getRole(data.session) !== 'student') return;
+                if (!(await ecoAuth.getSection(data.session))) {
+                    showJoinStep('info', 'Enter the section code from your teacher to continue.');
+                }
+            } catch (err) { /* stay on the normal sign-in form */ }
+        })();
+
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const idVal = idField.value.trim();
             const passVal = passField.value;
@@ -153,12 +321,59 @@
                 return;
             }
 
-            if (accountRole !== selectedRole) {
+            let isMainAdmin = true;
+            if (accountRole === 'admin') {
+                const { data: profile, error: profileError } = await ecoAuth.client
+                    .from('profiles')
+                    .select('is_main_admin')
+                    .eq('id', data.session.user.id)
+                    .maybeSingle();
+                if (profileError && !/column .*is_main_admin.*does not exist/i.test(profileError.message)) {
+                    await ecoAuth.client.auth.signOut();
+                    alert(`Unable to verify your account type: ${profileError.message}`);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Sign In';
+                    return;
+                }
+                if (!profileError) isMainAdmin = !!profile?.is_main_admin;
+            }
+
+            const roleMatches = selectedRole === 'student'
+                ? accountRole === 'student'
+                : accountRole === 'admin' && (selectedRole === 'admin' ? isMainAdmin : !isMainAdmin);
+            if (!roleMatches) {
                 await ecoAuth.client.auth.signOut();
-                alert(`This account is registered as ${accountRole}. Select the ${accountRole} login to continue.`);
+                const expectedRole = selectedRole === 'student' ? 'Student' : selectedRole === 'admin' ? 'Main admin' : 'Instructor';
+                alert(`This account is not registered as ${expectedRole}. Select the correct login to continue.`);
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Sign In';
                 return;
+            }
+
+            // STUDENTS MUST BELONG TO A SECTION. If they have none yet, the code
+            // typed above is redeemed now; with no code they get the join step.
+            if (accountRole === 'student') {
+                let section;
+                try {
+                    section = await ecoAuth.getSection(data.session);
+                } catch (sectionError) {
+                    await ecoAuth.client.auth.signOut();
+                    alert(sectionError.message);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Sign In';
+                    return;
+                }
+                if (!section) {
+                    const code = normalizeCode(codeField.value);
+                    if (!code) {
+                        showJoinStep('info', 'Signed in. Enter the section code from your teacher to finish.');
+                    } else {
+                        await submitJoin(code);
+                    }
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Sign In';
+                    return;
+                }
             }
 
             // REDIRECTS TO DASHBOARD FOR STUDENTS, ADMIN.HTML FOR ADMINS
@@ -180,6 +395,8 @@
                 alert(message);
             }
         });
+
     </script>
+    <script src="js/cellBackground.js"></script>
 </body>
 </html>

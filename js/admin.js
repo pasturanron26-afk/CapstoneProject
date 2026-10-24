@@ -7,6 +7,12 @@
      - View Overall Statistics
      - Manage Student Accounts
      - Archive Inactive Students
+     - Teachers (main admins only): add Zoology / Botany teachers, assign
+       students. A teacher sees only the students who joined with their own
+       codes; needs supabase-teachers.sql
+     - Section Codes (generate / regenerate / disable / expire / delete
+       the codes students paste on login.html to join a section; needs
+       supabase-section-codes.sql)
 
    DATA (unchanged from the previous version)
    - Students come from `profiles` (role = 'student'). Needs the
@@ -189,7 +195,7 @@ async function fetchStudents() {
     // someone new signs up (it used to be a position in a newest-first list).
     let { data, error } = await ecoAuth.client
         .from('profiles')
-        .select('id, full_name, email, avatar_url, section, role, created_at, last_seen_at, archived, status')
+        .select('id, full_name, email, avatar_url, section, teacher_id, role, created_at, last_seen_at, archived, status')
         .eq('role', 'student')
         .order('created_at', { ascending: true });
 
@@ -231,6 +237,7 @@ async function fetchStudents() {
             email: row.email || '—',
             avatarUrl: cleanText(row.avatar_url),
             section: row.section || 'Unassigned',
+            teacherId: row.teacher_id || null,
             joined: row.created_at ? row.created_at.slice(0, 10) : '—',
             lastActive: presence.text,
             lastActiveMinutesAgo: presence.minutesAgo,
@@ -244,6 +251,94 @@ async function fetchStudents() {
             archived: !!row.archived
         };
     });
+}
+
+/* ===================== WHO IS SIGNED IN + TEACHERS ===================== */
+
+// Until supabase-teachers.sql has run, every admin behaves like a main admin
+// (the old behaviour), so nothing breaks before the migration.
+const ME = { id: null, ready: false, isMain: true, subject: '' };
+const SUBJECT_LABEL = { zoology: 'Zoology', botany: 'Botany' };
+const canManageTeachers = () => ME.ready && ME.isMain;
+
+let TEACHERS = [];
+let TEACHERS_LOAD_ERROR = null;
+
+async function fetchTeachers() {
+    if (!canManageTeachers()) return [];
+    const { data, error } = await ecoAuth.client
+        .from('profiles')
+        .select('id, full_name, email, subject, is_main_admin')
+        .eq('role', 'admin')
+        .order('full_name', { ascending: true });
+
+    if (error) {
+        console.error('Failed to load teachers from Supabase:', error.message);
+        TEACHERS_LOAD_ERROR = `Couldn't load teachers: ${error.message}`;
+        return null;
+    }
+    TEACHERS_LOAD_ERROR = null;
+    return (data || []).map(r => ({
+        id: r.id,
+        name: cleanText(r.full_name) || r.email || 'Unnamed',
+        email: r.email || '',
+        subject: r.subject || '',
+        isMain: !!r.is_main_admin
+    }));
+}
+
+// "Zoology · Maria Santos" for a teacher id (main admins only see other teachers).
+function teacherLabel(id) {
+    const t = id && TEACHERS.find(x => x.id === id);
+    return t ? `${SUBJECT_LABEL[t.subject] || 'Main admin'} · ${t.name}` : '';
+}
+
+/* ===================== SECTION CODES: DATA ===================== */
+
+let CODES = [];
+let CODES_LOAD_ERROR = null;
+
+function toCode(row) {
+    return {
+        id: row.id,
+        code: row.code,
+        section: row.section,
+        active: !!row.is_active,
+        expiresAt: row.expires_at || null,
+        createdAt: row.created_at || null,
+        teacherId: row.teacher_id || null,
+        uses: Number(row.section_code_redemptions?.[0]?.count || 0)
+    };
+}
+
+// 'active' | 'expired' | 'disabled'. Worked out at render time so a code
+// flips to Expired on screen without a reload.
+function codeStatus(c) {
+    if (!c.active) return 'disabled';
+    if (c.expiresAt && new Date(c.expiresAt).getTime() <= Date.now()) return 'expired';
+    return 'active';
+}
+
+async function fetchSectionCodes() {
+    const base = 'id, code, section, is_active, expires_at, created_at';
+    const query = (cols) => ecoAuth.client
+        .from('section_codes')
+        .select(`${cols}, section_code_redemptions(count)`)
+        .order('created_at', { ascending: false });
+
+    let { data, error } = await query(`${base}, teacher_id`);
+    // Before supabase-teachers.sql has run there is no teacher_id column.
+    if (error && /teacher_id/i.test(error.message || '')) ({ data, error } = await query(base));
+
+    if (error) {
+        console.error('Failed to load section codes from Supabase:', error.message);
+        CODES_LOAD_ERROR = /section_codes|schema cache|does not exist/i.test(error.message || '')
+            ? 'Section codes are not set up yet. Run supabase-section-codes.sql in the Supabase SQL editor, then refresh.'
+            : `Couldn't load section codes: ${error.message}`;
+        return null;
+    }
+    CODES_LOAD_ERROR = null;
+    return (data || []).map(toCode);
 }
 
 /* ===================== STATE ===================== */
@@ -270,6 +365,8 @@ const drawer = { id: null, tab: 'quiz', opener: null };
 const VIEWS = {
     overview: { title: 'Overview' },
     students: { title: 'Students' },
+    codes: { title: 'Section codes' },
+    teachers: { title: 'Teachers' },
     archived: { title: 'Archived students' }
 };
 
@@ -447,8 +544,10 @@ function renderNavCounts() {
 }
 
 function knownSections() {
-    const set = new Set(['1-A', '1-B', '1-C']);
-    STUDENTS.forEach(s => { if (s.section && s.section !== 'Unassigned') set.add(s.section); });
+    const set = new Set(['1-A', '1-B']);
+    STUDENTS.forEach(s => {
+        if (s.section && s.section !== 'Unassigned' && s.section !== '1-C') set.add(s.section);
+    });
     const list = [...set].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
     if (STUDENTS.some(s => s.section === 'Unassigned')) list.push('Unassigned');
     return list;
@@ -485,7 +584,15 @@ function renderSubtitle() {
         const who = state.adminFirstName ? `, ${state.adminFirstName}` : '';
         p.textContent = `${greeting()}${who}. ${scope}${online ? `, ${online} online now` : ''}.`;
     } else if (state.view === 'students') {
-        p.textContent = 'Everyone enrolled in the biology course. Select a student to see quiz results or manage their account.';
+        p.textContent = (ME.ready && !ME.isMain)
+            ? 'Students who joined with your section codes. Select a student to see quiz results or manage their account.'
+            : 'Everyone enrolled in the biology course. Select a student to see quiz results or manage their account.';
+    } else if (state.view === 'codes') {
+        p.textContent = (ME.ready && !ME.isMain)
+            ? 'Make a code for a section and give it to your students. Everyone who joins with it becomes your student.'
+            : 'Give each section its own code. Students paste it on the login page the first time they sign in and join that section automatically.';
+    } else if (state.view === 'teachers') {
+        p.textContent = 'Add Zoology and Botany teachers. Each teacher sees only the students who join with their own codes.';
     } else {
         p.textContent = 'Students set aside after prolonged inactivity. Restore an account to bring the student back.';
     }
@@ -749,13 +856,117 @@ function renderAll() {
     renderOverview();
     renderStudentTable();
     renderArchivedTable();
+    renderCodes();
+    renderTeachers();
     renderUpdated();
+}
+
+/* ===================== RENDER: SECTION CODES ===================== */
+
+const codeSections = () => knownSections().filter(v => v !== 'Unassigned');
+
+function formatDay(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime())
+        ? '—'
+        : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+// <input type="date"> value (YYYY-MM-DD) in the admin's own time zone.
+function toDateInputValue(iso) {
+    const d = new Date(iso);
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+// A code that "expires on the 30th" works through the end of the 30th.
+function endOfDayISO(dateValue) {
+    const [y, m, d] = dateValue.split('-').map(Number);
+    return new Date(y, m - 1, d, 23, 59, 59).toISOString();
+}
+
+const visibleCodes = () => state.section === 'all'
+    ? CODES
+    : CODES.filter(c => c.section === state.section);
+
+function renderCodeForm() {
+    const select = el('codeSection');
+    const sections = codeSections();
+    const signature = sections.join('|');
+    if (select.dataset.sig === signature) return;       // keep focus / selection between refreshes
+
+    const keep = select.value;
+    select.dataset.sig = signature;
+    select.innerHTML = '<option value="" disabled selected>Choose a section</option>' +
+        sections.map(v => `<option value="${escapeHtml(v)}">Section ${escapeHtml(v)}</option>`).join('');
+    select.value = sections.includes(keep) ? keep : '';
+}
+
+function codeRowHTML(c) {
+    const id = escapeHtml(c.id);
+    const code = escapeHtml(c.code);
+    const status = codeStatus(c);
+    const owner = canManageTeachers() ? teacherLabel(c.teacherId) : '';
+    const statusTag = {
+        active: '<span class="tag tag-ok">Active</span>',
+        expired: '<span class="tag tag-warn">Expired</span>',
+        disabled: '<span class="tag tag-muted">Disabled</span>'
+    }[status];
+    const action = (name, icon, label, extra = '') =>
+        `<button type="button" class="icon-btn icon-btn-sm${extra}" data-code-action="${name}" data-id="${id}" data-role="${name}" aria-label="${label} ${code}" title="${label}"><i class="bi ${icon}" aria-hidden="true"></i></button>`;
+
+    return `<tr data-id="${id}" class="code-row${status === 'active' ? '' : ' is-off'}">
+        <td class="cell-code" data-label="Code">
+            <span class="code-chip">${code}</span>
+            ${action('copy', 'bi-clipboard', 'Copy code')}
+        </td>
+        <td data-label="Section"><span class="tag">${escapeHtml(c.section)}</span>${owner ? `<span class="code-owner">${escapeHtml(owner)}</span>` : ''}</td>
+        <td data-label="Created">${escapeHtml(formatDay(c.createdAt))}</td>
+        <td data-label="Expires">${c.expiresAt ? escapeHtml(formatDay(c.expiresAt)) : '<span class="muted">Never</span>'}</td>
+        <td data-label="Status">${statusTag}</td>
+        <td data-label="Used by" class="cell-used">${plural(c.uses, 'student', 'students')}</td>
+        <td class="cell-actions" data-label="Actions">
+            ${action('regenerate', 'bi-arrow-repeat', 'Regenerate')}
+            ${action('toggle', c.active ? 'bi-slash-circle' : 'bi-check-circle', c.active ? 'Disable' : 'Enable')}
+            ${action('expiry', 'bi-calendar-event', 'Set expiry for')}
+            ${action('delete', 'bi-trash', 'Delete', ' icon-btn-danger')}
+        </td>
+    </tr>`;
+}
+
+function renderCodes() {
+    renderCodeForm();
+
+    const rows = visibleCodes();
+    const active = CODES.filter(c => codeStatus(c) === 'active').length;
+    const filtered = state.section !== 'all';
+
+    el('codeCount').textContent = (!state.loaded || (CODES_LOAD_ERROR && !CODES.length)) ? ''
+        : `${plural(rows.length, 'code', 'codes')}${filtered ? ` for section ${state.section}` : ''}, ${active} active`;
+
+    el('codesError').hidden = !CODES_LOAD_ERROR;
+    el('codesErrorText').textContent = CODES_LOAD_ERROR || '';
+
+    const tbody = el('codesTableBody');
+    withFocusKept(tbody, () => {
+        if (state.loading) {
+            tbody.innerHTML = skeletonRows(3, 7);
+        } else if (CODES_LOAD_ERROR && !CODES.length) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-cell">Section codes are unavailable right now.</td></tr>';
+        } else if (!rows.length) {
+            tbody.innerHTML = `<tr><td colspan="7" class="empty-cell"><strong>${filtered ? 'No codes for this section yet.' : 'No codes yet.'}</strong> Choose a section above and generate its code.</td></tr>`;
+        } else {
+            tbody.innerHTML = rows.map(codeRowHTML).join('');
+        }
+    });
 }
 
 /* ===================== NAVIGATION ===================== */
 
 function routeFromHash() {
     const h = location.hash.replace('#', '');
+    if (h === 'teachers' && !canManageTeachers()) return 'overview';
     return VIEWS[h] ? h : 'overview';
 }
 
@@ -904,6 +1115,8 @@ async function saveAccount(event) {
     const name = cleanText(el('accountName').value);
     const email = el('accountEmail').value.trim();
     const status = el('accountStatus').value;
+    const section = el('accountSection').value;      // '' = Unassigned (student joins again with a code)
+    const teacher = canManageTeachers() ? el('accountTeacher').value : null;   // '' = no teacher; null = not editable here
 
     const nameBad = !name;
     const emailBad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -915,15 +1128,414 @@ async function saveAccount(event) {
     const saveBtn = el('accountSave');
     const ok = await withBusy(saveBtn, async () => {
         saveBtn.textContent = 'Saving…';
-        return persistProfileUpdate(id, { full_name: name, email, status });
+        const patch = { full_name: name, email, status, section: section || null };
+        if (teacher !== null) patch.teacher_id = teacher || null;
+        return persistProfileUpdate(id, patch);
     });
     if (!ok) return;
 
     const fresh = findStudent(id) || s;
-    Object.assign(fresh, { name, email, status });
+    Object.assign(fresh, { name, email, status, section: section || 'Unassigned' });
+    if (teacher !== null) fresh.teacherId = teacher || null;
     renderAll();
     renderDrawer(fresh, { keepTab: true });
     toast(`Saved changes for ${name}.`);
+}
+
+/* ===================== TEACHERS: RENDER + ACTIONS ===================== */
+
+function teacherRowHTML(t) {
+    const id = escapeHtml(t.id);
+    const mine = t.id === ME.id;
+    const students = STUDENTS.filter(x => x.teacherId === t.id && !x.archived).length;
+    const codes = CODES.filter(c => c.teacherId === t.id && codeStatus(c) === 'active').length;
+    const action = (name, icon, label, extra = '') =>
+        `<button type="button" class="icon-btn icon-btn-sm${extra}" data-teacher-action="${name}" data-id="${id}" data-role="${name}" aria-label="${label} ${escapeHtml(t.name)}" title="${label}"><i class="bi ${icon}" aria-hidden="true"></i></button>`;
+
+    return `<tr data-id="${id}">
+        <td class="cell-student" data-label="Teacher">
+            <span class="student-text">
+                <span class="teacher-name">${escapeHtml(t.name)}${mine ? ' <span class="muted">(you)</span>' : ''}</span>
+                <span class="student-email">${escapeHtml(t.email || '—')}</span>
+            </span>
+        </td>
+        <td data-label="Subject">${t.subject ? `<span class="tag">${escapeHtml(SUBJECT_LABEL[t.subject] || t.subject)}</span>` : '<span class="muted">—</span>'}</td>
+        <td data-label="Access">${t.isMain ? '<span class="tag tag-ok">Main admin</span>' : '<span class="tag">Teacher</span>'}</td>
+        <td data-label="Students" class="cell-used">${students}</td>
+        <td data-label="Active codes" class="cell-used">${codes}</td>
+        <td class="cell-actions" data-label="Actions">
+            ${action('edit', 'bi-pencil', 'Edit')}
+            ${action('assign', 'bi-person-plus', 'Assign students to')}
+            ${mine ? '' : action('remove', 'bi-person-dash', 'Remove teacher access for', ' icon-btn-danger')}
+        </td>
+    </tr>`;
+}
+
+function renderTeachers() {
+    if (!canManageTeachers()) return;
+    el('teachersError').hidden = !TEACHERS_LOAD_ERROR;
+    el('teachersErrorText').textContent = TEACHERS_LOAD_ERROR || '';
+    el('teacherCount').textContent = state.loaded ? plural(TEACHERS.length, 'person', 'people') + ' with admin access' : '';
+
+    const rows = [...TEACHERS].sort((a, b) => (b.isMain - a.isMain) || a.name.localeCompare(b.name));
+    const body = el('teachersTableBody');
+    withFocusKept(body, () => {
+        if (state.loading) body.innerHTML = skeletonRows(2, 6);
+        else if (TEACHERS_LOAD_ERROR && !TEACHERS.length) body.innerHTML = '<tr><td colspan="6" class="empty-cell">Teachers are unavailable right now.</td></tr>';
+        else if (!rows.length) body.innerHTML = '<tr><td colspan="6" class="empty-cell"><strong>No teachers yet.</strong> Add one above.</td></tr>';
+        else body.innerHTML = rows.map(teacherRowHTML).join('');
+    });
+}
+
+function fillTeacherForm(t) {
+    el('teacherEmail').value = t.email || '';
+    el('teacherSubject').value = t.subject || '';
+    el('teacherMain').checked = t.isMain;
+    ['teacherEmail', 'teacherSubject'].forEach(id => setFieldError(id, id + 'Error', false));
+    el('teacherForm').scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el('teacherSubject').focus({ preventScroll: true });
+}
+
+async function saveTeacher(event) {
+    event.preventDefault();
+    const email = el('teacherEmail').value.trim();
+    const subject = el('teacherSubject').value;
+    const main = el('teacherMain').checked;
+
+    const emailBad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const subjectBad = !subject && !main;
+    setFieldError('teacherEmail', 'teacherEmailError', emailBad);
+    setFieldError('teacherSubject', 'teacherSubjectError', subjectBad);
+    if (emailBad) { el('teacherEmail').focus(); return; }
+    if (subjectBad) { el('teacherSubject').focus(); return; }
+
+    const btn = el('teacherSaveBtn');
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    const { data, error } = await ecoAuth.client.rpc('main_admin_set_teacher', {
+        p_email: email,
+        p_subject: subject || null,
+        p_main: main
+    });
+    btn.disabled = false;
+    btn.innerHTML = label;
+
+    if (error || !data) {
+        console.error('Failed to save a teacher:', error && error.message);
+        toast(`Couldn't save the teacher. ${error ? error.message : 'Please try again.'}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+
+    el('teacherForm').reset();
+    const name = cleanText(data.full_name) || data.email;
+    toast(`${name} is now ${main ? 'a main admin' : `a ${SUBJECT_LABEL[subject]} teacher`}.`);
+    await refreshData();
+}
+
+async function removeTeacher(t, button) {
+    const n = STUDENTS.filter(x => x.teacherId === t.id).length;
+    const ok = window.confirm(
+        `Remove ${t.name}'s teacher access?\n\n` +
+        `Their ${plural(n, 'student', 'students')} will have no teacher until you assign them again, ` +
+        `and their active codes will be switched off. Nothing is deleted.`);
+    if (!ok) return;
+
+    button.disabled = true;
+    const { data, error } = await ecoAuth.client.rpc('main_admin_remove_teacher', { p_id: t.id });
+    button.disabled = false;
+
+    if (error) {
+        console.error('Failed to remove a teacher:', error.message);
+        toast(`Couldn't remove the teacher. ${error.message}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+    toast(`${t.name} is no longer a teacher. ${plural(data?.students_unassigned || 0, 'student', 'students')} released, ${plural(data?.codes_disabled || 0, 'code', 'codes')} switched off.`, { timeout: 9000 });
+    await refreshData();
+}
+
+/* Assign students dialog */
+const assignState = { teacher: null };
+const unownedStudents = (section) => STUDENTS.filter(s => !s.teacherId && (!section || s.section === section));
+
+function updateAssignHelp() {
+    const n = unownedStudents(el('assignSection').value).length;
+    el('assignHelp').textContent = n
+        ? `${plural(n, 'student', 'students')} without a teacher will be assigned.`
+        : 'No students without a teacher here.';
+    el('assignSave').disabled = !n;
+}
+
+function openAssignDialog(t) {
+    assignState.teacher = t;
+    el('assignText').textContent = `Give students who don't have a teacher yet to ${t.name}. Students who joined with a code already belong to the teacher who made it.`;
+    el('assignSection').innerHTML = '<option value="">All sections</option>' +
+        codeSections().map(v => `<option value="${escapeHtml(v)}">Section ${escapeHtml(v)}</option>`).join('');
+    updateAssignHelp();
+    const dlg = el('assignDialog');
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', '');
+    el('assignSection').focus();
+}
+
+function closeAssignDialog() {
+    const dlg = el('assignDialog');
+    if (typeof dlg.close === 'function') dlg.close();
+    else dlg.removeAttribute('open');
+    assignState.teacher = null;
+}
+
+async function saveAssign(event) {
+    event.preventDefault();
+    const t = assignState.teacher;
+    if (!t) return;
+    const section = el('assignSection').value;
+
+    const btn = el('assignSave');
+    btn.disabled = true;
+    const { data, error } = await ecoAuth.client.rpc('main_admin_assign_students', {
+        p_teacher: t.id,
+        p_section: section || null
+    });
+    btn.disabled = false;
+
+    if (error) {
+        console.error('Failed to assign students:', error.message);
+        toast(`Couldn't assign students. ${error.message}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+    closeAssignDialog();
+    toast(`${plural(Number(data) || 0, 'student', 'students')} assigned to ${t.name}.`);
+    await refreshData();
+}
+
+function handleTeacherAction(button) {
+    const t = TEACHERS.find(x => x.id === button.dataset.id);
+    if (!t) return;
+    switch (button.dataset.teacherAction) {
+        case 'edit':   fillTeacherForm(t); break;
+        case 'assign': openAssignDialog(t); break;
+        case 'remove': removeTeacher(t, button); break;
+    }
+}
+
+/* ===================== SECTION CODES: ACTIONS ===================== */
+
+async function copyText(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        return true;
+    } catch (e) {
+        // Fallback for http pages / older browsers.
+        const box = document.createElement('textarea');
+        box.value = text;
+        box.setAttribute('readonly', '');
+        box.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+        document.body.append(box);
+        box.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+        box.remove();
+        return ok;
+    }
+}
+
+async function copyCode(c) {
+    const ok = await copyText(c.code);
+    toast(ok ? `Copied ${c.code} (section ${c.section}).` : `Couldn't copy automatically. The code is ${c.code}.`,
+        { tone: ok ? 'info' : 'error' });
+}
+
+async function generateCode(event) {
+    event.preventDefault();
+    const section = el('codeSection').value;
+    const expiryValue = el('codeExpiry').value;
+
+    const sectionBad = !section;
+    const expiresAt = expiryValue ? endOfDayISO(expiryValue) : null;
+    const expiryBad = !!expiresAt && new Date(expiresAt).getTime() <= Date.now();
+    setFieldError('codeSection', 'codeSectionError', sectionBad);
+    setFieldError('codeExpiry', 'codeExpiryError', expiryBad);
+    if (sectionBad) { el('codeSection').focus(); return; }
+    if (expiryBad) { el('codeExpiry').focus(); return; }
+
+    const btn = el('codeGenerateBtn');
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    btn.setAttribute('aria-busy', 'true');
+    btn.textContent = 'Generating…';
+
+    const { data, error } = await ecoAuth.client.rpc('admin_generate_section_code', {
+        p_section: section,
+        p_expires_at: expiresAt
+    });
+
+    btn.disabled = false;
+    btn.removeAttribute('aria-busy');
+    btn.innerHTML = label;
+
+    if (error || !data) {
+        console.error('Failed to generate a section code:', error && error.message);
+        toast(`Couldn't create the code. ${error ? error.message : 'Please try again.'}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+
+    const created = toCode(data);
+    CODES = [created, ...CODES.filter(c => c.id !== created.id)];
+    el('codeExpiry').value = '';
+    renderCodes();
+    toast(`Code ${created.code} created for section ${created.section}.`, {
+        actionLabel: 'Copy',
+        timeout: 12000,
+        onAction: () => copyCode(created)
+    });
+}
+
+async function regenerateCode(c, button) {
+    const ok = window.confirm(
+        `Regenerate the code for section ${c.section}?\n\n` +
+        `The current code ${c.code} stops working right away. Students who already joined keep their section.`);
+    if (!ok) return;
+
+    button.disabled = true;
+    const { data, error } = await ecoAuth.client.rpc('admin_regenerate_section_code', { p_id: c.id });
+    button.disabled = false;
+
+    if (error || !data) {
+        console.error('Failed to regenerate a section code:', error && error.message);
+        toast(`Couldn't regenerate the code. ${error ? error.message : 'Please try again.'}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+    c.code = data.code;
+    renderCodes();
+    toast(`New code for section ${c.section}: ${c.code}`, {
+        actionLabel: 'Copy',
+        timeout: 12000,
+        onAction: () => copyCode(c)
+    });
+}
+
+// RLS can block a write without an error, so check that a row came back.
+async function updateCodeRow(c, patch) {
+    const { data, error } = await ecoAuth.client
+        .from('section_codes')
+        .update(patch)
+        .eq('id', c.id)
+        .select('id');
+
+    if (error) {
+        console.error('Failed to update a section code:', error.message);
+        toast(`Couldn't save that change. ${error.message}`, { tone: 'error', timeout: 10000 });
+        return false;
+    }
+    if (!data || !data.length) {
+        toast("Couldn't save that change. The code may have been deleted, or you may not have permission.", { tone: 'error', timeout: 10000 });
+        return false;
+    }
+    return true;
+}
+
+async function toggleCode(c, button) {
+    button.disabled = true;
+    const next = !c.active;
+    const ok = await updateCodeRow(c, { is_active: next });
+    button.disabled = false;
+    if (!ok) return;
+    c.active = next;
+    renderCodes();
+    toast(next ? `Code ${c.code} is on again.` : `Code ${c.code} is turned off. Students can't use it until you enable it.`);
+}
+
+async function deleteCode(c, button) {
+    const ok = window.confirm(
+        `Delete the code ${c.code} for section ${c.section}?\n\n` +
+        `Students who already joined keep their section. Nobody can use this code again.`);
+    if (!ok) return;
+
+    button.disabled = true;
+    const { data, error } = await ecoAuth.client
+        .from('section_codes')
+        .delete()
+        .eq('id', c.id)
+        .select('id');
+    button.disabled = false;
+
+    if (error || !data || !data.length) {
+        console.error('Failed to delete a section code:', error && error.message);
+        toast(`Couldn't delete the code. ${error ? error.message : 'You may not have permission.'}`, { tone: 'error', timeout: 10000 });
+        return;
+    }
+    CODES = CODES.filter(x => x.id !== c.id);
+    renderCodes();
+    ensureFocus();
+    toast(`Code ${c.code} was deleted.`);
+}
+
+/* Expiry dialog */
+const expiry = { code: null };
+
+function openExpiryDialog(c) {
+    expiry.code = c;
+    el('expiryText').textContent = `Code ${c.code} for section ${c.section}. After this day, students can no longer use it.`;
+    const input = el('expiryDate');
+    input.min = toDateInputValue(new Date().toISOString());
+    input.value = c.expiresAt ? toDateInputValue(c.expiresAt) : '';
+    setFieldError('expiryDate', 'expiryDateError', false);
+
+    const dlg = el('expiryDialog');
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', '');
+    input.focus();
+}
+
+function closeExpiryDialog() {
+    const dlg = el('expiryDialog');
+    const id = expiry.code && expiry.code.id;
+    if (typeof dlg.close === 'function') dlg.close();
+    else dlg.removeAttribute('open');
+    expiry.code = null;
+    // The table may have re-rendered while the dialog was open: refocus by id.
+    const back = id && document.querySelector(`[data-code-action="expiry"][data-id="${CSS.escape(id)}"]`);
+    if (back) back.focus({ preventScroll: true });
+}
+
+async function saveExpiry({ clear = false } = {}) {
+    const c = expiry.code;
+    if (!c) return;
+
+    let expiresAt = null;
+    if (!clear) {
+        const value = el('expiryDate').value;
+        expiresAt = value ? endOfDayISO(value) : null;
+        const bad = !expiresAt || new Date(expiresAt).getTime() <= Date.now();
+        setFieldError('expiryDate', 'expiryDateError', bad);
+        if (bad) { el('expiryDate').focus(); return; }
+    }
+
+    const buttons = ['expirySave', 'expiryClear', 'expiryCancel'].map(el);
+    buttons.forEach(b => { b.disabled = true; });
+    const ok = await updateCodeRow(c, { expires_at: expiresAt });
+    buttons.forEach(b => { b.disabled = false; });
+    if (!ok) return;
+
+    c.expiresAt = expiresAt;
+    closeExpiryDialog();
+    renderCodes();
+    toast(expiresAt
+        ? `Code ${c.code} works through ${formatDay(expiresAt)}.`
+        : `Code ${c.code} no longer expires.`);
+}
+
+function handleCodeAction(button) {
+    const c = CODES.find(x => x.id === button.dataset.id);
+    if (!c) return;
+    switch (button.dataset.codeAction) {
+        case 'copy':       copyCode(c); break;
+        case 'regenerate': regenerateCode(c, button); break;
+        case 'toggle':     toggleCode(c, button); break;
+        case 'expiry':     openExpiryDialog(c); break;
+        case 'delete':     deleteCode(c, button); break;
+    }
 }
 
 /* ===================== DRAWER ===================== */
@@ -1014,6 +1626,22 @@ function renderDrawer(s, { keepTab = false } = {}) {
     el('accountName').value = s.name;
     el('accountEmail').value = s.email === '—' ? '' : s.email;
     el('accountStatus').value = s.status;
+
+    const sectionSelect = el('accountSection');
+    const sectionOptions = codeSections();
+    if (s.section !== 'Unassigned' && !sectionOptions.includes(s.section)) sectionOptions.push(s.section);
+    sectionSelect.innerHTML = '<option value="">Unassigned</option>' +
+        sectionOptions.map(v => `<option value="${escapeHtml(v)}">Section ${escapeHtml(v)}</option>`).join('');
+    sectionSelect.value = s.section === 'Unassigned' ? '' : s.section;
+
+    // Main admins can move a student to another teacher.
+    el('accountTeacherField').hidden = !canManageTeachers();
+    if (canManageTeachers()) {
+        const teacherSelect = el('accountTeacher');
+        teacherSelect.innerHTML = '<option value="">No teacher yet</option>' +
+            TEACHERS.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.name)} (${escapeHtml(SUBJECT_LABEL[t.subject] || 'Main admin')})</option>`).join('');
+        teacherSelect.value = s.teacherId || '';
+    }
     setFieldError('accountName', 'accountNameError', false);
     setFieldError('accountEmail', 'accountEmailError', false);
 
@@ -1110,7 +1738,9 @@ async function refreshData({ manual = false } = {}) {
     btn.classList.add('is-spinning');
     btn.setAttribute('aria-busy', 'true');
 
-    const next = await fetchStudents();
+    const [next, nextCodes, nextTeachers] = await Promise.all([fetchStudents(), fetchSectionCodes(), fetchTeachers()]);
+    if (nextCodes) CODES = nextCodes;
+    if (nextTeachers) TEACHERS = nextTeachers;
 
     if (STUDENTS_LOAD_ERROR) {
         if (state.loaded) {
@@ -1151,6 +1781,12 @@ function clearFilters() {
 function bindEvents() {
     document.addEventListener('click', (e) => {
         const t = e.target;
+
+        const codeAction = t.closest('[data-code-action]');
+        if (codeAction) { handleCodeAction(codeAction); return; }
+
+        const teacherAction = t.closest('[data-teacher-action]');
+        if (teacherAction) { handleTeacherAction(teacherAction); return; }
 
         const open = t.closest('[data-open]');
         if (open) { openDrawer(open.dataset.open, 'quiz', open); return; }
@@ -1244,6 +1880,24 @@ function bindEvents() {
     el('refreshBtn').addEventListener('click', () => refreshData({ manual: true }));
     el('loadErrorRetry').addEventListener('click', () => refreshData({ manual: true }));
 
+    el('teacherForm').addEventListener('submit', saveTeacher);
+    el('teacherSubject').addEventListener('change', () => setFieldError('teacherSubject', 'teacherSubjectError', false));
+    el('teacherEmail').addEventListener('input', () => setFieldError('teacherEmail', 'teacherEmailError', false));
+    el('teachersErrorRetry').addEventListener('click', () => refreshData({ manual: true }));
+    el('assignForm').addEventListener('submit', saveAssign);
+    el('assignCancel').addEventListener('click', closeAssignDialog);
+    el('assignSection').addEventListener('change', updateAssignHelp);
+    el('assignDialog').addEventListener('close', () => { assignState.teacher = null; });
+    el('codeForm').addEventListener('submit', generateCode);
+    el('codeSection').addEventListener('change', () => setFieldError('codeSection', 'codeSectionError', false));
+    el('codeExpiry').addEventListener('input', () => setFieldError('codeExpiry', 'codeExpiryError', false));
+    el('codesErrorRetry').addEventListener('click', () => refreshData({ manual: true }));
+    el('expiryForm').addEventListener('submit', (e) => { e.preventDefault(); saveExpiry(); });
+    el('expiryClear').addEventListener('click', () => saveExpiry({ clear: true }));
+    el('expiryCancel').addEventListener('click', closeExpiryDialog);
+    el('expiryDialog').addEventListener('close', () => { expiry.code = null; });          // Esc also closes it natively
+    el('expiryDate').addEventListener('input', () => setFieldError('expiryDate', 'expiryDateError', false));
+
     el('accountForm').addEventListener('submit', saveAccount);
     el('accountName').addEventListener('input', () => setFieldError('accountName', 'accountNameError', false));
     el('accountEmail').addEventListener('input', () => setFieldError('accountEmail', 'accountEmailError', false));
@@ -1262,6 +1916,21 @@ function bindEvents() {
 
 /* ===================== INIT ===================== */
 
+// Role badge in the top bar and the Teachers link (main admins only).
+function applyRoleUI() {
+    const subject = SUBJECT_LABEL[ME.subject] || '';
+    const chip = el('roleChip');
+    if (ME.ready) {
+        chip.textContent = ME.isMain
+            ? (subject ? `Main admin · ${subject}` : 'Main admin')
+            : (subject ? `${subject} teacher` : 'Teacher');
+        chip.hidden = false;
+    } else {
+        chip.hidden = true;
+    }
+    el('navTeachers').hidden = !canManageTeachers();
+}
+
 async function loadAdminIdentity() {
     try {
         const { data } = await ecoAuth.client.auth.getSession();
@@ -1272,10 +1941,21 @@ async function loadAdminIdentity() {
         // differently-encoded copy of the name.
         let name = '';
         try {
-            const { data: prof } = await ecoAuth.client
-                .from('profiles').select('full_name').eq('id', user.id).maybeSingle();
+            let { data: prof, error } = await ecoAuth.client
+                .from('profiles').select('full_name, subject, is_main_admin').eq('id', user.id).maybeSingle();
+            // Before supabase-teachers.sql runs these columns don't exist: keep the old behaviour.
+            if (error) {
+                ({ data: prof } = await ecoAuth.client
+                    .from('profiles').select('full_name').eq('id', user.id).maybeSingle());
+            } else if (prof) {
+                ME.ready = true;
+                ME.isMain = !!prof.is_main_admin;
+                ME.subject = prof.subject || '';
+            }
             name = cleanText(prof?.full_name);
         } catch (e) { /* fall through to metadata */ }
+        ME.id = user.id;
+        applyRoleUI();
         name = name || cleanText(user.user_metadata?.full_name) || user.email || 'Admin';
 
         state.adminName = name;
@@ -1294,6 +1974,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.ecoAuth) {
         await ecoAuth.requireAdmin();
         await loadAdminIdentity();
+        showView(routeFromHash());                 // now that we know the role (e.g. #teachers)
         const logoutButton = el('logoutButton');
         if (logoutButton) logoutButton.addEventListener('click', () => window.ecoAuth.signOut());
     }

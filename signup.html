@@ -13,13 +13,50 @@
     <script src="js/auth.js"></script>
 </head>
 <body>
+        <div class="cell-field" aria-hidden="true">
+            <span class="floating-cell cell-one plant-cell"></span>
+            <span class="floating-cell cell-two animal-cell"></span>
+            <span class="floating-cell cell-three plant-cell"></span>
+            <span class="floating-cell cell-four animal-cell"></span>
+            <span class="floating-cell cell-five plant-cell"></span>
+            <span class="floating-cell cell-six animal-cell"></span>
+            <span class="floating-cell cell-seven plant-cell"></span>
+            <span class="floating-cell cell-eight animal-cell"></span>
+            <span class="floating-cell cell-nine plant-cell"></span>
+            <span class="floating-cell cell-ten animal-cell"></span>
+            <span class="floating-cell cell-eleven plant-cell"></span>
+            <span class="floating-cell cell-twelve animal-cell"></span>
+            <span class="floating-cell cell-thirteen plant-cell"></span>
+            <span class="floating-cell cell-fourteen animal-cell"></span>
+            <span class="floating-cell cell-fifteen plant-cell"></span>
+            <span class="floating-cell cell-sixteen animal-cell"></span>
+            <span class="floating-cell cell-seventeen plant-cell"></span>
+            <span class="floating-cell cell-eighteen animal-cell"></span>
+            <span class="floating-cell cell-nineteen plant-cell"></span>
+            <span class="floating-cell cell-twenty animal-cell"></span>
+            <span class="floating-cell cell-twenty-one plant-cell"></span>
+            <span class="floating-cell cell-twenty-two animal-cell"></span>
+            <span class="cell-particle particle-one"></span>
+            <span class="cell-particle particle-two"></span>
+            <span class="cell-particle particle-three"></span>
+            <span class="cell-particle particle-four"></span>
+            <span class="cell-particle particle-five"></span>
+            <span class="cell-particle particle-six"></span>
+            <span class="cell-particle particle-seven"></span>
+            <span class="cell-particle particle-eight"></span>
+            <span class="cell-particle particle-nine"></span>
+            <span class="cell-particle particle-ten"></span>
+            <span class="cell-particle particle-eleven"></span>
+            <span class="cell-particle particle-twelve"></span>
+        </div>
+
     <div class="auth-container">
         <div class="auth-header">
             <div class="auth-logo-wrap">
                 <img src="imgs/EcoLearn.png" alt="EcoLearn Logo" class="auth-logo">
             </div>
             <h1 class="auth-title">Create Account</h1>
-            <p class="auth-subtitle">Register as a new Biology student and start accessing your learning resources.</p>
+            <p class="auth-subtitle">Register as a new Biology student. After you confirm your email, sign in and enter the section code from your teacher.</p>
         </div>
 
         <hr class="auth-hr">
@@ -36,19 +73,6 @@
                 <label for="emailField"><i class="bi bi-envelope"></i> Student Email</label>
                 <div class="input-wrapper">
                     <input type="email" id="emailField" placeholder="you.pbox@parsu.edu.ph" autocomplete="email" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="sectionField"><i class="bi bi-mortarboard"></i> Section</label>
-                <div class="input-wrapper select-wrapper">
-                    <select id="sectionField" required>
-                        <option value="" disabled selected>Select your section</option>
-                        <option value="1-A">Section 1-A</option>
-                        <option value="1-B">Section 1-B</option>
-                        <option value="1-C">Section 1-C</option>
-                    </select>
-                    <i class="bi bi-chevron-down select-caret" aria-hidden="true"></i>
                 </div>
             </div>
 
@@ -96,12 +120,11 @@
 
             const fullName = document.getElementById('fullName').value.trim();
             const email = document.getElementById('emailField').value.trim();
-            const section = document.getElementById('sectionField').value;
             const password = passField.value;
             const confirmPassword = document.getElementById('confirmPassField').value;
 
-            if (!fullName || !email || !section || !password || !confirmPassword) {
-                alert('Please complete all fields, including your section.');
+            if (!fullName || !email || !password || !confirmPassword) {
+                alert('Please complete all fields.');
                 return;
             }
 
@@ -126,7 +149,6 @@
                     options: {
                         data: {
                             full_name: fullName,
-                            section,
                             role: 'student'
                         }
                     }
@@ -134,10 +156,11 @@
 
                 if (error) throw error;
 
-                // NOTE: the profile row (including section) is created
-                // server-side by a database trigger (see fix-profile-trigger.sql)
-                // that reads full_name/section/role straight from this signUp
-                // call's metadata.
+                // NOTE: the profile row is created server-side by a database
+                // trigger (see fix-profile-trigger.sql) that reads full_name/role
+                // from this signUp call's metadata. The section is NOT chosen
+                // here any more: the student joins one on login.html with the
+                // section code from their teacher (see supabase-section-codes.sql).
                 //
                 // Email confirmation is required for this project, so signUp()
                 // does NOT log the student in yet -- data.session comes back
@@ -150,7 +173,7 @@
                 // their own new account.
                 await ecoAuth.client.auth.signOut();
 
-                alert('Account created! Check your email for a confirmation link, then sign in below.');
+                alert('Account created! Check your email for a confirmation link, then sign in and enter the section code from your teacher.');
                 window.location.href = 'login.html';
             } catch (error) {
                 alert(error.message || 'Unable to create account. Please try again.');
@@ -159,5 +182,6 @@
             }
         });
     </script>
+    <script src="js/cellBackground.js"></script>
 </body>
 </html>

@@ -48,7 +48,441 @@ body {
     background-attachment: fixed;
 }
 
+.cell-field {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cell-field::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: radial-gradient(circle at var(--pulse-x, 50%) var(--pulse-y, 50%), rgba(151, 222, 255, 0.24), rgba(106, 188, 255, 0.08) 40px, transparent 110px);
+}
+
+.cell-field.is-pulsing::after {
+    animation: background-pulse 750ms ease-out;
+}
+
+.floating-cell,
+.cell-particle {
+    pointer-events: auto;
+    cursor: grab;
+    touch-action: none;
+}
+
+.floating-cell.is-dragging,
+.cell-particle.is-dragging {
+    z-index: 2;
+    cursor: grabbing;
+    transition-duration: 0ms;
+}
+
+.floating-cell.is-merging {
+    z-index: 3;
+    pointer-events: none;
+    transition: none;
+    animation: cell-absorb 440ms ease-in forwards;
+}
+
+.floating-cell.is-merge-target {
+    z-index: 2;
+    animation: cell-merge-receive 440ms ease-out;
+}
+
+.floating-cell.is-merged {
+    scale: var(--merge-scale, 1.12);
+}
+
+.floating-cell {
+    position: absolute;
+    display: block;
+    width: clamp(44px, 7vw, 94px);
+    aspect-ratio: 1;
+    border: 1px solid rgba(var(--cell-rgb, 90, 180, 255), 0.46);
+    border-radius: 44% 56% 62% 38% / 48% 41% 59% 52%;
+    background:
+        radial-gradient(ellipse at 28% 20%, rgba(239, 250, 255, 0.32), transparent 24%),
+        radial-gradient(ellipse at 72% 76%, rgba(var(--cell-rgb, 90, 180, 255), 0.13), transparent 42%),
+        radial-gradient(ellipse at 34% 28%, rgba(var(--cell-rgb, 90, 180, 255), 0.16), rgba(var(--cell-shadow-rgb, 50, 117, 193), 0.035) 68%);
+    box-shadow: inset 2px 2px 9px rgba(235, 250, 255, 0.14), inset -4px -5px 12px rgba(var(--cell-shadow-rgb, 50, 117, 193), 0.12), 0 0 24px rgba(var(--cell-rgb, 90, 180, 255), 0.08);
+    animation: cell-drift var(--duration, 20s) ease-in-out infinite;
+    translate: var(--pointer-shift-x, 0px) var(--pointer-shift-y, 0px);
+    transition: translate 700ms ease-out, scale 420ms ease-out;
+}
+
+.floating-cell::before,
+.floating-cell::after {
+    content: "";
+    position: absolute;
+    display: block;
+    border: 1px solid rgba(var(--cell-highlight-rgb, 190, 238, 255), 0.2);
+    border-radius: 50%;
+}
+
+.floating-cell::before {
+    width: 43%;
+    height: 40%;
+    left: 28%;
+    top: 29%;
+    border-color: rgba(var(--cell-highlight-rgb, 190, 238, 255), 0.42);
+    background:
+        radial-gradient(ellipse at 31% 28%, rgba(255, 227, 250, 0.7), transparent 18%),
+        radial-gradient(ellipse at 67% 68%, rgba(var(--cell-highlight-rgb, 93, 206, 255), 0.62), transparent 26%),
+        radial-gradient(ellipse at 38% 40%, rgba(var(--nucleus-rgb, 151, 106, 255), 0.82), transparent 40%),
+        radial-gradient(ellipse at 55% 55%, rgba(var(--nucleus-rgb, 62, 98, 209), 0.86), rgba(var(--cell-shadow-rgb, 83, 75, 173), 0.7) 68%);
+    box-shadow: 0 0 10px rgba(var(--cell-rgb, 112, 171, 255), 0.24), inset 2px 2px 6px rgba(255, 255, 255, 0.42), inset -3px -4px 8px rgba(var(--cell-shadow-rgb, 47, 57, 145), 0.5);
+}
+
+.floating-cell::after {
+    width: 9%;
+    aspect-ratio: 1;
+    left: 67%;
+    top: 64%;
+    border: 0;
+    background: rgba(var(--cell-highlight-rgb, 162, 226, 255), 0.7);
+    box-shadow: -17px -14px 0 -2px rgba(var(--cell-detail-rgb, 168, 125, 255), 0.6), 14px -9px 0 -3px rgba(var(--cell-highlight-rgb, 255, 143, 211), 0.65), -11px 15px 0 -3px rgba(var(--cell-rgb, 103, 205, 255), 0.66), 8px 13px 0 -4px rgba(var(--cell-highlight-rgb, 235, 219, 255), 0.7);
+}
+
+.cell-particle {
+    position: absolute;
+    display: block;
+    width: var(--particle-size, 8px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: rgba(144, 213, 255, 0.68);
+    filter: blur(var(--particle-blur, 3px));
+    box-shadow: 0 0 14px 3px rgba(92, 178, 255, 0.3);
+    opacity: 0.68;
+    animation: particle-drift var(--particle-duration, 16s) ease-in-out infinite alternate;
+    translate: var(--pointer-shift-x, 0px) var(--pointer-shift-y, 0px);
+    transition: translate 700ms ease-out;
+}
+
+.particle-one { left: 13%; top: 30%; --particle-size: 9px; --particle-blur: 4px; --particle-duration: 13s; }
+.particle-two { left: 31%; top: 18%; --particle-size: 5px; --particle-blur: 2px; --particle-duration: 19s; --particle-x: 12px; --particle-y: -15px; }
+.particle-three { left: 7%; top: 62%; --particle-size: 12px; --particle-blur: 5px; --particle-duration: 17s; --particle-x: -10px; --particle-y: 18px; }
+.particle-four { left: 23%; top: 79%; --particle-size: 6px; --particle-blur: 3px; --particle-duration: 14s; --particle-x: 15px; }
+.particle-five { left: 42%; top: 12%; --particle-size: 10px; --particle-blur: 4px; --particle-duration: 21s; --particle-x: -14px; --particle-y: 12px; }
+.particle-six { right: 30%; top: 25%; --particle-size: 5px; --particle-blur: 2px; --particle-duration: 16s; --particle-x: 10px; --particle-y: 15px; }
+.particle-seven { right: 12%; top: 37%; --particle-size: 11px; --particle-blur: 5px; --particle-duration: 18s; --particle-x: -12px; }
+.particle-eight { right: 23%; top: 72%; --particle-size: 7px; --particle-blur: 3px; --particle-duration: 15s; --particle-x: 12px; --particle-y: -13px; }
+.particle-nine { left: 35%; bottom: 5%; --particle-size: 9px; --particle-blur: 4px; --particle-duration: 20s; --particle-x: -9px; }
+.particle-ten { right: 5%; bottom: 11%; --particle-size: 5px; --particle-blur: 2px; --particle-duration: 13s; --particle-x: -14px; --particle-y: 11px; }
+.particle-eleven { left: 3%; top: 10%; --particle-size: 7px; --particle-blur: 3px; --particle-duration: 18s; --particle-x: 11px; --particle-y: 14px; }
+.particle-twelve { right: 41%; bottom: 17%; --particle-size: 10px; --particle-blur: 4px; --particle-duration: 22s; --particle-x: 13px; --particle-y: -12px; }
+
+@keyframes particle-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(var(--particle-x, 12px), var(--particle-y, -14px), 0); }
+}
+
+@keyframes background-pulse {
+    0% { opacity: 0.8; }
+    100% { opacity: 0; }
+}
+
+@keyframes cell-absorb {
+    0% { transform: scale(1); opacity: 1; filter: blur(0); }
+    60% { opacity: 0.9; }
+    100% { transform: scale(0.08); opacity: 0; filter: blur(4px); }
+}
+
+@keyframes cell-merge-receive {
+    0%, 100% { transform: scale(1); }
+    45% { transform: scale(1.2); }
+}
+
+.cell-one {
+    left: 8%;
+    top: 15%;
+    width: clamp(88px, 11vw, 148px);
+    --duration: 21s;
+    --drift-x: 18px;
+    --drift-y: -24px;
+    --turn: 16deg;
+}
+
+.cell-two {
+    right: 9%;
+    top: 12%;
+    width: clamp(96px, 13vw, 176px);
+    --nucleus-rgb: 255, 83, 171;
+    --duration: 25s;
+    --drift-x: -20px;
+    --drift-y: 28px;
+    --turn: -18deg;
+    animation-delay: -8s;
+}
+
+.cell-three {
+    right: 5%;
+    top: 59%;
+    width: clamp(42px, 6vw, 78px);
+    --nucleus-rgb: 59, 180, 255;
+    --duration: 19s;
+    --drift-x: -14px;
+    --drift-y: -22px;
+    --turn: 20deg;
+    animation-delay: -12s;
+}
+
+.cell-four {
+    left: 12%;
+    bottom: 8%;
+    width: clamp(82px, 10vw, 136px);
+    --nucleus-rgb: 255, 109, 195;
+    --duration: 23s;
+    --drift-x: 22px;
+    --drift-y: -18px;
+    --turn: -14deg;
+    animation-delay: -5s;
+}
+
+.cell-five {
+    left: 48%;
+    top: 4%;
+    width: clamp(38px, 5vw, 66px);
+    --nucleus-rgb: 95, 177, 255;
+    --duration: 27s;
+    --drift-x: 16px;
+    --drift-y: 22px;
+    --turn: 14deg;
+    animation-delay: -16s;
+}
+
+.cell-six {
+    right: 18%;
+    bottom: 5%;
+    width: clamp(38px, 5vw, 68px);
+    --nucleus-rgb: 255, 103, 184;
+    --duration: 22s;
+    --drift-x: -18px;
+    --drift-y: -20px;
+    --turn: -16deg;
+    animation-delay: -10s;
+}
+
+.cell-seven {
+    left: 26%;
+    top: 10%;
+    width: clamp(34px, 4vw, 54px);
+    --duration: 18s;
+    --drift-x: -12px;
+    --drift-y: 16px;
+    --turn: 18deg;
+    --nucleus-rgb: 255, 108, 195;
+    animation-delay: -7s;
+}
+
+.cell-eight {
+    right: 28%;
+    top: 22%;
+    width: clamp(68px, 8vw, 108px);
+    --duration: 24s;
+    --drift-x: 14px;
+    --drift-y: -18px;
+    --turn: -12deg;
+    --nucleus-rgb: 91, 193, 255;
+    animation-delay: -13s;
+}
+
+.cell-nine {
+    left: 4%;
+    top: 49%;
+    width: clamp(32px, 4vw, 52px);
+    --duration: 20s;
+    --drift-x: 12px;
+    --drift-y: 19px;
+    --turn: -20deg;
+    --nucleus-rgb: 255, 94, 174;
+    animation-delay: -3s;
+}
+
+.cell-ten {
+    right: 3%;
+    bottom: 25%;
+    width: clamp(42px, 5vw, 66px);
+    --duration: 26s;
+    --drift-x: -14px;
+    --drift-y: -16px;
+    --turn: 13deg;
+    --nucleus-rgb: 121, 117, 255;
+    animation-delay: -18s;
+}
+
+.cell-eleven {
+    left: 33%;
+    bottom: 9%;
+    width: clamp(36px, 4.5vw, 60px);
+    --duration: 22s;
+    --drift-x: 17px;
+    --drift-y: -13px;
+    --turn: 16deg;
+    --nucleus-rgb: 86, 188, 255;
+    animation-delay: -11s;
+}
+
+.cell-twelve {
+    right: 37%;
+    top: 7%;
+    width: clamp(28px, 3.5vw, 46px);
+    --duration: 19s;
+    --drift-x: -11px;
+    --drift-y: 14px;
+    --turn: -16deg;
+    --nucleus-rgb: 255, 123, 205;
+    animation-delay: -15s;
+}
+
+.cell-thirteen {
+    left: 17%;
+    top: 34%;
+    width: clamp(36px, 4.5vw, 60px);
+    --duration: 25s;
+    --drift-x: 13px;
+    --drift-y: -18px;
+    --turn: 12deg;
+    --nucleus-rgb: 102, 190, 255;
+    animation-delay: -9s;
+}
+
+.cell-fourteen {
+    right: 13%;
+    top: 39%;
+    width: clamp(32px, 4vw, 52px);
+    --duration: 21s;
+    --drift-x: -12px;
+    --drift-y: 17px;
+    --turn: -14deg;
+    --nucleus-rgb: 255, 98, 177;
+    animation-delay: -6s;
+}
+
+.cell-fifteen {
+    left: 2%;
+    top: 5%;
+    width: clamp(26px, 3vw, 40px);
+    --duration: 23s;
+    --drift-x: 10px;
+    --drift-y: 14px;
+    --turn: 15deg;
+    --nucleus-rgb: 90, 184, 255;
+    animation-delay: -14s;
+}
+
+.cell-sixteen {
+    right: 2%;
+    top: 31%;
+    width: clamp(30px, 3.5vw, 46px);
+    --duration: 20s;
+    --drift-x: -12px;
+    --drift-y: 13px;
+    --turn: -17deg;
+    --nucleus-rgb: 255, 108, 192;
+    animation-delay: -4s;
+}
+
+.cell-seventeen {
+    left: 7%;
+    top: 84%;
+    width: clamp(28px, 3.2vw, 42px);
+    --duration: 25s;
+    --drift-x: 13px;
+    --drift-y: -12px;
+    --turn: 12deg;
+    --nucleus-rgb: 255, 119, 199;
+    animation-delay: -17s;
+}
+
+.cell-eighteen {
+    right: 6%;
+    top: 82%;
+    width: clamp(34px, 4vw, 52px);
+    --duration: 22s;
+    --drift-x: -11px;
+    --drift-y: -15px;
+    --turn: -14deg;
+    --nucleus-rgb: 89, 188, 255;
+    animation-delay: -9s;
+}
+
+.cell-nineteen {
+    left: 38%;
+    top: 91%;
+    width: clamp(24px, 2.8vw, 36px);
+    --duration: 19s;
+    --drift-x: 10px;
+    --drift-y: -13px;
+    --turn: 19deg;
+    --nucleus-rgb: 255, 101, 177;
+    animation-delay: -12s;
+}
+
+.cell-twenty {
+    right: 35%;
+    top: 2%;
+    width: clamp(24px, 2.8vw, 36px);
+    --duration: 24s;
+    --drift-x: -9px;
+    --drift-y: 13px;
+    --turn: -12deg;
+    --nucleus-rgb: 112, 133, 255;
+    animation-delay: -19s;
+}
+
+.cell-twenty-one {
+    left: 1%;
+    top: 66%;
+    width: clamp(30px, 3.4vw, 44px);
+    --duration: 21s;
+    --drift-x: 12px;
+    --drift-y: -11px;
+    --turn: 16deg;
+    --nucleus-rgb: 93, 196, 255;
+    animation-delay: -8s;
+}
+
+.cell-twenty-two {
+    right: 1%;
+    top: 6%;
+    width: clamp(28px, 3.2vw, 42px);
+    --duration: 26s;
+    --drift-x: -10px;
+    --drift-y: 12px;
+    --turn: -15deg;
+    --nucleus-rgb: 255, 115, 199;
+    animation-delay: -2s;
+}
+
+.plant-cell {
+    --cell-rgb: 77, 204, 134;
+    --cell-shadow-rgb: 29, 119, 76;
+    --cell-highlight-rgb: 184, 255, 213;
+    --cell-detail-rgb: 109, 222, 152;
+    --nucleus-rgb: 47, 157, 96;
+}
+
+.animal-cell {
+    --cell-rgb: 82, 170, 255;
+    --cell-shadow-rgb: 35, 83, 172;
+    --cell-highlight-rgb: 196, 231, 255;
+    --cell-detail-rgb: 123, 166, 255;
+    --nucleus-rgb: 45, 105, 207;
+}
+
+@keyframes cell-drift {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    50% { transform: translate3d(var(--drift-x, 16px), var(--drift-y, -20px), 0) rotate(var(--turn, 14deg)); }
+}
+
 .auth-container {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 392px;
     background: var(--auth-white);
@@ -57,6 +491,19 @@ body {
     box-shadow: 0 30px 70px rgba(6, 30, 18, 0.45), 0 2px 8px rgba(6, 30, 18, 0.08);
     overflow: hidden;
     margin: 20px 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floating-cell,
+    .cell-particle {
+        animation: none;
+        transition: none;
+        translate: none;
+    }
+
+    .cell-field.is-pulsing::after {
+        animation-duration: 1ms;
+    }
 }
 
 .auth-header {
@@ -402,7 +849,7 @@ body {
     position: absolute;
     top: 4px;
     left: 4px;
-    width: calc(50% - 4px);
+    width: calc((100% - 8px) / 3);
     height: calc(100% - 8px);
     background: linear-gradient(135deg, var(--auth-green-deep), var(--auth-green));
     border-radius: 9px;
@@ -411,8 +858,12 @@ body {
     z-index: 0;
 }
 
-.auth-tabs.admin .tab-slider {
+.auth-tabs.instructor .tab-slider {
     transform: translateX(100%);
+}
+
+.auth-tabs.admin .tab-slider {
+    transform: translateX(200%);
 }
 
 @media (max-width: 480px) {
@@ -432,4 +883,78 @@ body {
     .auth-title {
         font-size: 22px;
     }
+}
+
+/* =========================================
+   SECTION CODE (login.html join step)
+========================================= */
+[hidden] {
+    display: none !important;
+}
+
+.code-input {
+    font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 16px !important;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.code-input::placeholder {
+    font-weight: 400;
+    letter-spacing: 0.08em;
+}
+
+.input-wrapper input[aria-invalid="true"] {
+    border-color: var(--auth-error);
+}
+
+.field-hint {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--auth-ink-muted);
+}
+
+.join-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+}
+
+.join-panel .auth-form {
+    text-align: left;
+}
+
+.auth-links-center {
+    justify-content: center;
+    margin-top: 0;
+}
+
+.auth-notice {
+    padding: 11px 13px;
+    border: 1px solid var(--auth-border);
+    border-radius: 10px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1.45;
+    text-align: left;
+}
+
+.auth-notice.is-info {
+    background: var(--auth-green-pale-2);
+    border-color: var(--auth-border);
+    color: var(--auth-ink);
+}
+
+.auth-notice.is-success {
+    background: var(--auth-green-pale);
+    border-color: var(--auth-green-light);
+    color: var(--auth-green-deep);
+}
+
+.auth-notice.is-error {
+    background: #FDEDED;
+    border-color: #F0C4C4;
+    color: #A32020;
 }

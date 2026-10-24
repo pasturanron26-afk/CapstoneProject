@@ -25,6 +25,63 @@ window.ecoAuth = {
     return profile?.role || user.user_metadata?.role || 'student';
   },
 
+  // Section lives only in profiles.section (set by a section code or by an
+  // admin). Returns null when the student has not joined a section yet.
+  async getSection(session) {
+    const user = session?.user;
+    if (!user) return null;
+
+    const { data: profile, error } = await ecoSupabase
+      .from('profiles')
+      .select('section')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (error) throw new Error(`Unable to read your section: ${error.message}`);
+
+    const section = String(profile?.section ?? '').trim();
+    return section || null;
+  },
+
+  // Calls the redeem_section_code() database function
+  // (see supabase-section-codes.sql). Always resolves to an object:
+  // { ok: true, section } or { ok: false, error, ... }.
+  async redeemSectionCode(code) {
+    const { data, error } = await ecoSupabase.rpc('redeem_section_code', { p_code: code });
+    if (error) return { ok: false, error: 'server_error', detail: error.message };
+    return data || { ok: false, error: 'server_error', detail: 'Empty response.' };
+  },
+
+  // Student-friendly text for a redeemSectionCode() result.
+  sectionCodeMessage(result) {
+    switch (result?.error) {
+      case 'invalid_code':
+        return "That code isn't valid. Check it and try again.";
+      case 'expired':
+        return 'This code has expired. Ask your teacher for a new one.';
+      case 'disabled':
+        return 'This code has been turned off. Ask your teacher for a new one.';
+      case 'already_in_section':
+        return result.section
+          ? `You're already in Section ${result.section}. Ask your teacher if it needs to change.`
+          : "You're already in a section. Ask your teacher if it needs to change.";
+      case 'rate_limited': {
+        const mins = Number(result.retry_minutes) || 15;
+        return `Too many incorrect tries. Wait ${mins} ${mins === 1 ? 'minute' : 'minutes'}, then try again.`;
+      }
+      case 'not_student':
+        return 'Only student accounts can join a section.';
+      case 'no_profile':
+        return "We couldn't find your student profile. Please contact your teacher.";
+      case 'not_signed_in':
+        return 'Your session ended. Please sign in again.';
+      default:
+        return /redeem_section_code/i.test(result?.detail || '')
+          ? 'Section codes are not set up yet. Ask your teacher to run supabase-section-codes.sql in Supabase.'
+          : `We couldn't check the code right now. ${result?.detail || 'Please try again.'}`.trim();
+    }
+  },
+
   async requireSession() {
     const { data, error } = await ecoSupabase.auth.getSession();
     if (error || !data.session) {
@@ -51,7 +108,22 @@ window.ecoAuth = {
   },
 
   async requireStudent() {
-    return this.requireRole('student');
+    const session = await this.requireRole('student');
+    if (!session) return null;
+
+    // A student must belong to a section before using the site. If they
+    // have none (for example a first Google sign-in), send them to the
+    // login page, which shows the "enter your section code" step.
+    try {
+      const section = await this.getSection(session);
+      if (!section) {
+        window.location.replace('login.html');
+        return null;
+      }
+    } catch (e) {
+      console.error('Section check failed:', e.message);   // don't lock students out on a read error
+    }
+    return session;
   },
 
   async signOut() {
