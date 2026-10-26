@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     1: 'e43f6bee-bcff-4692-b5e2-396b4176eacd', // Animal Cell vs Plant Cell
     2: 'fc3f6b43-fb9d-420d-9060-9529ba395621', // Mitosis of Plant and Animal Cells
     3: '46254ff2-c787-4792-94db-5d33181f6b55', // Cell Membrane and Transport
-    4: '1b15a414-7e6c-4992-b17c-1c924745366d', // Cell Respiration
-    5: '81ece535-7d0b-47e9-a95a-ed8e0f25cc76', // Photosynthesis
+    4: '5149863c-8971-49ef-afa2-085cec2f3d1e', // Cell Differentiation and Specialization
+    5: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9', // Cell Signaling
   };
 
   // ── GOAL LIST GROUPS ─────────────────────────────────────
@@ -35,8 +35,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const GOAL_GROUPS = [
     { label: 'Cell Structure',                  modules: [1] },
     { label: 'Cell Division',                  modules: [2] },
-    { label: 'Cell Energy',                     modules: [4, 5] },
     { label: 'Cell Processes',                 modules: [3] },
+    { label: 'Cell Specialization',            modules: [4] },
+    { label: 'Cell Signaling',                 modules: [5] },
   ];
 
   const client = window.ecoAuth?.client;

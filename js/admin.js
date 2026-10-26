@@ -40,7 +40,7 @@
 
 const MODULE_NAMES = [
     'Animal Cell vs Plant Cell', 'Mitosis of Plant and Animal Cells',
-    'Cell Membrane and Transport', 'Cell Respiration', 'Photosynthesis'
+    'Cell Membrane and Transport', 'Cell Differentiation and Specialization', 'Cell Signaling'
 ];
 
 // Same lesson_id -> display name mapping dashboard.html uses
@@ -49,8 +49,8 @@ const LESSON_NAMES = {
     'e43f6bee-bcff-4692-b5e2-396b4176eacd': 'Animal Cell vs Plant Cell',
     'fc3f6b43-fb9d-420d-9060-9529ba395621': 'Mitosis of Plant and Animal Cells',
     '46254ff2-c787-4792-94db-5d33181f6b55': 'Cell Membrane and Transport',
-    '1b15a414-7e6c-4992-b17c-1c924745366d': 'Cell Respiration',
-    '81ece535-7d0b-47e9-a95a-ed8e0f25cc76': 'Photosynthesis',
+    '5149863c-8971-49ef-afa2-085cec2f3d1e': 'Cell Differentiation and Specialization',
+    '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9': 'Cell Signaling',
 };
 const QUIZ_ORDER = Object.keys(LESSON_NAMES);
 
@@ -61,7 +61,7 @@ const LESSON_PAGES = [
     { key: 'lessonmodulemitosis.html',          name: 'Mitosis of Plant and Animal Cells' },
     { key: 'lesson-cell-membrane.html',         name: 'Cell Membrane and Transport' },
     { key: 'lesson-cell-differentiation.html',  name: 'Cell Differentiation and Specialization' },
-    { key: 'lesson-photosynthesis.html',        name: 'Photosynthesis' }
+    { key: 'lesson-cell-signaling.html',        name: 'Cell Signaling' }
 ];
 
 const PASS_MARK = 75;                        // quiz cards say "75% to pass"
