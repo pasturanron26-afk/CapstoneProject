@@ -184,7 +184,12 @@
           </div>
 
           <div class="card-actions">
-            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+            <div class="card-progress">
+              <span class="card-progress-label" id="quizTwoProgressLabel" aria-live="polite">Not attempted</span>
+              <div class="progress-rail" id="quizTwoProgress" role="progressbar" aria-label="Module 2 best quiz score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not attempted">
+                <span class="progress-fill" id="quizTwoProgressFill" style="width: 0%"></span>
+              </div>
+            </div>
             <a class="start-btn" href="quiz-mitosis.html" aria-label="Start quiz: Mitosis of Plant and Animal Cells">
               Start quiz <i class="bi bi-arrow-right"></i>
             </a>
@@ -220,7 +225,12 @@
           </div>
 
           <div class="card-actions">
-            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+            <div class="card-progress">
+              <span class="card-progress-label" id="quizThreeProgressLabel" aria-live="polite">Not attempted</span>
+              <div class="progress-rail" id="quizThreeProgress" role="progressbar" aria-label="Module 3 best quiz score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not attempted">
+                <span class="progress-fill" id="quizThreeProgressFill" style="width: 0%"></span>
+              </div>
+            </div>
             <a class="start-btn" href="quiz-membrane.html" aria-label="Start quiz: Cell Membrane and Transport">
               Start quiz <i class="bi bi-arrow-right"></i>
             </a>
@@ -256,7 +266,12 @@
           </div>
 
           <div class="card-actions">
-            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+            <div class="card-progress">
+              <span class="card-progress-label" id="quizFourProgressLabel" aria-live="polite">Not attempted</span>
+              <div class="progress-rail" id="quizFourProgress" role="progressbar" aria-label="Module 4 best quiz score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not attempted">
+                <span class="progress-fill" id="quizFourProgressFill" style="width: 0%"></span>
+              </div>
+            </div>
             <a class="start-btn" href="quiz-differentiation.html" aria-label="Start quiz: Cell Differentiation and Specialization">
               Start quiz <i class="bi bi-arrow-right"></i>
             </a>
@@ -292,7 +307,12 @@
           </div>
 
           <div class="card-actions">
-            <div class="progress-rail" aria-hidden="true"><span class="progress-fill" style="width: 0%"></span></div>
+            <div class="card-progress">
+              <span class="card-progress-label" id="quizFiveProgressLabel" aria-live="polite">Not attempted</span>
+              <div class="progress-rail" id="quizFiveProgress" role="progressbar" aria-label="Module 5 best quiz score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not attempted">
+                <span class="progress-fill" id="quizFiveProgressFill" style="width: 0%"></span>
+              </div>
+            </div>
             <a class="start-btn" href="quiz-signaling.html" aria-label="Start quiz: Cell Signaling">
               Start quiz <i class="bi bi-arrow-right"></i>
             </a>
@@ -304,8 +324,7 @@
   </main>
 
   <script>
-    // Optional: require auth like other pages
-    // ecoAuth.requireStudent?.();
+    ecoAuth.requireStudent();
 
     document.addEventListener('DOMContentLoaded', () => {
       const logoutButton = document.getElementById('logoutButton');
@@ -436,8 +455,142 @@
       renderProgress(bestScore, hasAttempt || safeCachedBest > 0);
     }
 
+    async function applyModuleTwoProgress() {
+      const lessonId = 'fc3f6b43-fb9d-420d-9060-9529ba395621';
+      const storageKey = 'ecolearn-quiz-02-best';
+      const progress = document.getElementById('quizTwoProgress');
+      const fill = document.getElementById('quizTwoProgressFill');
+      const label = document.getElementById('quizTwoProgressLabel');
+      if (!progress || !fill || !label) return;
+
+      const cachedBest = Number(localStorage.getItem(storageKey) || 0);
+      const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
+
+      function renderProgress(score, attempted, message) {
+        const description = attempted ? `${score}% best` : (message || 'Not attempted');
+        fill.style.width = `${score}%`;
+        label.textContent = description;
+        progress.setAttribute('aria-valuenow', String(score));
+        progress.setAttribute('aria-valuetext', description);
+      }
+
+      renderProgress(safeCachedBest, safeCachedBest > 0);
+
+      const client = window.ecoAuth?.client;
+      if (!client) {
+        console.error('Unable to load Module 2 quiz progress: Supabase client is unavailable.');
+        if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+        return;
+      }
+
+      const { data: { session } = {}, error: userError } = await client.auth.getSession();
+      if (userError) {
+        console.error('Unable to load Module 2 quiz progress:', userError.message);
+        if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+        return;
+      }
+      const user = session?.user;
+      if (!user) {
+        if (safeCachedBest === 0) renderProgress(0, false, 'Sign in to view score');
+        return;
+      }
+
+      const { data: attempts, error } = await client
+        .from('quiz_attempts')
+        .select('score')
+        .eq('user_id', user.id)
+        .eq('lesson_id', lessonId)
+        .order('score', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.error('Unable to load Module 2 quiz progress:', error.message);
+        if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+        return;
+      }
+
+      const hasAttempt = (attempts || []).length > 0;
+      const storedScore = hasAttempt ? Number(attempts[0].score) : 0;
+      if (hasAttempt && (!Number.isFinite(storedScore) || storedScore < 0 || storedScore > 10)) {
+        console.error('Unable to display Module 2 quiz progress: the saved score is invalid.');
+        renderProgress(safeCachedBest, safeCachedBest > 0, safeCachedBest > 0 ? undefined : 'Unable to load score');
+        return;
+      }
+
+      const databaseBest = hasAttempt ? Math.round((storedScore / 10) * 100) : 0;
+      const bestScore = Math.max(safeCachedBest, databaseBest);
+      if (bestScore > safeCachedBest) localStorage.setItem(storageKey, String(bestScore));
+      renderProgress(bestScore, hasAttempt || safeCachedBest > 0);
+    }
+
+    async function applyRemainingModuleProgress() {
+      const modules = [
+        { number: 3, lessonId: '46254ff2-c787-4792-94db-5d33181f6b55', storageKey: 'ecolearn-quiz-03-best' },
+        { number: 4, lessonId: '5149863c-8971-49ef-afa2-085cec2f3d1e', storageKey: 'ecolearn-quiz-04-best' },
+        { number: 5, lessonId: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9', storageKey: 'ecolearn-quiz-05-best' }
+      ];
+      const client = window.ecoAuth?.client;
+
+      for (const module of modules) {
+        const suffix = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five'][module.number];
+        const progress = document.getElementById(`quiz${suffix}Progress`);
+        const fill = document.getElementById(`quiz${suffix}ProgressFill`);
+        const label = document.getElementById(`quiz${suffix}ProgressLabel`);
+        if (!progress || !fill || !label) continue;
+
+        const cachedBest = Number(localStorage.getItem(module.storageKey) || 0);
+        const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
+        const renderProgress = (score, attempted, message) => {
+          const description = attempted ? `${score}% best` : (message || 'Not attempted');
+          fill.style.width = `${score}%`;
+          label.textContent = description;
+          progress.setAttribute('aria-valuenow', String(score));
+          progress.setAttribute('aria-valuetext', description);
+        };
+
+        renderProgress(safeCachedBest, safeCachedBest > 0);
+        if (!client) {
+          if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+          continue;
+        }
+
+        const { data: { session } = {}, error: userError } = await client.auth.getSession();
+        if (userError || !session?.user) {
+          if (safeCachedBest === 0) renderProgress(0, false, userError ? 'Unable to load score' : 'Sign in to view score');
+          continue;
+        }
+
+        const { data: attempts, error } = await client
+          .from('quiz_attempts')
+          .select('score')
+          .eq('user_id', session.user.id)
+          .eq('lesson_id', module.lessonId)
+          .order('score', { ascending: false })
+          .limit(1);
+
+        if (error) {
+          if (safeCachedBest === 0) renderProgress(0, false, 'Unable to load score');
+          continue;
+        }
+
+        const hasAttempt = (attempts || []).length > 0;
+        const storedScore = hasAttempt ? Number(attempts[0].score) : 0;
+        if (hasAttempt && (!Number.isFinite(storedScore) || storedScore < 0 || storedScore > 10)) {
+          renderProgress(safeCachedBest, safeCachedBest > 0, safeCachedBest > 0 ? undefined : 'Unable to load score');
+          continue;
+        }
+
+        const databaseBest = hasAttempt ? Math.round((storedScore / 10) * 100) : 0;
+        const bestScore = Math.max(safeCachedBest, databaseBest);
+        if (bestScore > safeCachedBest) localStorage.setItem(module.storageKey, String(bestScore));
+        renderProgress(bestScore, hasAttempt || safeCachedBest > 0);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       await applyModuleOneProgress();
+      await applyModuleTwoProgress();
+      await applyRemainingModuleProgress();
       applyQuizLockState();
     });
   </script>

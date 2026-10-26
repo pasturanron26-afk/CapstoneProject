@@ -131,11 +131,41 @@
 
                     <div class="quiz-progress-item">
                         <div class="quiz-progress-label">
-                            <span>Cell Division: Mitosis vs Meiosis</span>
-                            <span class="quiz-progress-score" id="quizTwoScore">Locked</span>
+                            <span>Mitosis of Plant and Animal Cells</span>
+                            <span class="quiz-progress-score" id="quizTwoScore">Not attempted</span>
                         </div>
                         <div class="quiz-progress-track">
-                            <div class="quiz-progress-fill is-locked" id="quizTwoFill" style="width: 0%;"></div>
+                            <div class="quiz-progress-fill" id="quizTwoFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-progress-item">
+                        <div class="quiz-progress-label">
+                            <span>Cell Membrane and Transport</span>
+                            <span class="quiz-progress-score" id="quizThreeScore">Not attempted</span>
+                        </div>
+                        <div class="quiz-progress-track">
+                            <div class="quiz-progress-fill" id="quizThreeFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-progress-item">
+                        <div class="quiz-progress-label">
+                            <span>Cell Differentiation and Specialization</span>
+                            <span class="quiz-progress-score" id="quizFourScore">Not attempted</span>
+                        </div>
+                        <div class="quiz-progress-track">
+                            <div class="quiz-progress-fill" id="quizFourFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-progress-item">
+                        <div class="quiz-progress-label">
+                            <span>Cell Signaling</span>
+                            <span class="quiz-progress-score" id="quizFiveScore">Not attempted</span>
+                        </div>
+                        <div class="quiz-progress-track">
+                            <div class="quiz-progress-fill" id="quizFiveFill" style="width: 0%;"></div>
                         </div>
                     </div>
 
@@ -331,59 +361,93 @@
                 setTimeout(() => { saveStatus.textContent = ''; }, 2500);
             });
 
-            // ---- Quiz progress (synced from attempts, cached locally) ----
-            const quizLessonId = 'e43f6bee-bcff-4692-b5e2-396b4176eacd';
-            const cachedBest = Number(localStorage.getItem('ecolearn-quiz-animal-plant-best') || 0);
-            const quizOneScore = document.getElementById('quizOneScore');
-            const quizOneFill = document.getElementById('quizOneFill');
-            const quizTwoScore = document.getElementById('quizTwoScore');
-            const quizTwoFill = document.getElementById('quizTwoFill');
-            const showQuizProgress = (bestScore, attempted) => {
-                if (attempted) {
-                    quizOneScore.textContent = `${bestScore}% best`;
-                    quizOneFill.style.width = `${bestScore}%`;
-                } else {
-                    quizOneScore.textContent = 'Not attempted';
-                    quizOneFill.style.width = '0%';
+            // ---- Quiz progress (connected to real quiz attempt data) ----
+            const quizModules = [
+                {
+                    lessonId: 'e43f6bee-bcff-4692-b5e2-396b4176eacd',
+                    label: 'Animal Cell vs Plant Cell',
+                    storageKey: 'ecolearn-quiz-animal-plant-best',
+                    scoreEl: document.getElementById('quizOneScore'),
+                    fillEl: document.getElementById('quizOneFill')
+                },
+                {
+                    lessonId: 'fc3f6b43-fb9d-420d-9060-9529ba395621',
+                    label: 'Mitosis of Plant and Animal Cells',
+                    storageKey: 'ecolearn-quiz-02-best',
+                    scoreEl: document.getElementById('quizTwoScore'),
+                    fillEl: document.getElementById('quizTwoFill')
+                },
+                {
+                    lessonId: '46254ff2-c787-4792-94db-5d33181f6b55',
+                    label: 'Cell Membrane and Transport',
+                    storageKey: 'ecolearn-quiz-03-best',
+                    scoreEl: document.getElementById('quizThreeScore'),
+                    fillEl: document.getElementById('quizThreeFill')
+                },
+                {
+                    lessonId: '5149863c-8971-49ef-afa2-085cec2f3d1e',
+                    label: 'Cell Differentiation and Specialization',
+                    storageKey: 'ecolearn-quiz-04-best',
+                    scoreEl: document.getElementById('quizFourScore'),
+                    fillEl: document.getElementById('quizFourFill')
+                },
+                {
+                    lessonId: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9',
+                    label: 'Cell Signaling',
+                    storageKey: 'ecolearn-quiz-05-best',
+                    scoreEl: document.getElementById('quizFiveScore'),
+                    fillEl: document.getElementById('quizFiveFill')
                 }
+            ];
 
-                if (bestScore === 100) {
-                    quizTwoScore.textContent = 'Unlocked';
-                    quizTwoFill.classList.remove('is-locked');
-                    quizTwoFill.style.width = '0%';
-                }
+            const setQuizProgress = (item, bestScore, attempted) => {
+                item.scoreEl.textContent = attempted ? `${bestScore}% best` : 'Not attempted';
+                item.fillEl.style.width = attempted ? `${bestScore}%` : '0%';
             };
-
-            const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
-            showQuizProgress(safeCachedBest, safeCachedBest > 0);
 
             const { data: attempts, error: attemptsError } = await ecoAuth.client
                 .from('quiz_attempts')
-                .select('score')
-                .eq('user_id', user.id)
-                .eq('lesson_id', quizLessonId)
-                .order('score', { ascending: false });
+                .select('lesson_id, score')
+                .eq('user_id', user.id);
 
-            if (attemptsError) {
-                console.error('Failed to load quiz progress:', attemptsError.message);
-                if (safeCachedBest === 0) quizOneScore.textContent = 'Unable to load';
-                else quizOneScore.textContent = `${safeCachedBest}% best (device only)`;
+            const bestByLesson = new Map();
+            if (!attemptsError && Array.isArray(attempts)) {
+                attempts.forEach((attempt) => {
+                    const score = Number(attempt.score);
+                    if (!Number.isFinite(score) || score < 0 || score > 10) {
+                        console.error('Ignoring invalid saved quiz score:', attempt);
+                        return;
+                    }
+                    const currentBest = bestByLesson.get(attempt.lesson_id);
+                    if (currentBest === undefined || score > currentBest) bestByLesson.set(attempt.lesson_id, score);
+                });
             } else {
-                const hasAttempt = (attempts || []).length > 0;
-                const databaseBest = hasAttempt
-                    ? Math.round((Number(attempts[0].score) / 10) * 100)
-                    : 0;
-                const bestScore = Math.max(safeCachedBest, databaseBest);
-                const isPerfect = bestScore === 100;
-
-                if (bestScore > safeCachedBest) {
-                    localStorage.setItem('ecolearn-quiz-animal-plant-best', String(bestScore));
-                }
-                if (isPerfect) {
-                    localStorage.setItem('ecolearn-quiz-animal-plant-perfect', 'true');
-                }
-                showQuizProgress(bestScore, hasAttempt || safeCachedBest > 0);
+                console.error('Failed to load quiz progress:', attemptsError?.message || 'Unknown error');
             }
+
+            quizModules.forEach((item) => {
+                const hasDatabaseAttempt = bestByLesson.has(item.lessonId);
+                const databaseBest = hasDatabaseAttempt ? Math.round(bestByLesson.get(item.lessonId) * 10) : 0;
+                const cachedValue = localStorage.getItem(item.storageKey);
+                const cachedBest = cachedValue === null ? null : Number(cachedValue);
+                const hasCachedScore = cachedBest !== null && Number.isFinite(cachedBest) && cachedBest >= 0 && cachedBest <= 100;
+                const hasAttempt = hasDatabaseAttempt || hasCachedScore;
+
+                if (hasDatabaseAttempt && (!hasCachedScore || databaseBest > cachedBest)) {
+                    localStorage.setItem(item.storageKey, String(databaseBest));
+                }
+
+                if (attemptsError && !hasCachedScore) {
+                    item.scoreEl.textContent = 'Unable to load';
+                    item.fillEl.style.width = '0%';
+                    return;
+                }
+                const bestScore = Math.max(databaseBest, hasCachedScore ? cachedBest : 0);
+                setQuizProgress(item, bestScore, hasAttempt);
+                if (hasCachedScore && (!hasDatabaseAttempt || cachedBest > databaseBest)) {
+                    item.scoreEl.textContent = `${bestScore}% best (device only)`;
+                }
+            });
 
             // ---- Logout ----
             const logoutHandler = async () => { await window.ecoAuth.signOut(); };

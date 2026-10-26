@@ -1,6 +1,6 @@
 alter table public.quiz_attempts enable row level security;
 
-grant select on table public.quiz_attempts to authenticated;
+grant select, insert on table public.quiz_attempts to authenticated;
 
 drop policy if exists "Students can read own quiz attempts" on public.quiz_attempts;
 create policy "Students can read own quiz attempts"

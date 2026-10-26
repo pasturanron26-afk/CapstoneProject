@@ -128,18 +128,19 @@
     /* ---------- course data ---------- */
     // Fallback list, used if lesson.html can't be read. Quiz ids match quiz_attempts.lesson_id.
     const MODULES = [
-        { title: 'Animal Cell vs Plant Cell',                img: 'imgs/animalVSplant.jpg',        id: 'e43f6bee-bcff-4692-b5e2-396b4176eacd' },
-        { title: 'Mitosis of Plant and Animal Cells',        img: 'imgs/cellDivision.jpg',         id: 'fc3f6b43-fb9d-420d-9060-9529ba395621' },
-        { title: 'Cell Membrane and Transport',              img: 'imgs/cellMembrane.jpg',         id: '46254ff2-c787-4792-94db-5d33181f6b55' },
-        { title: 'Cell Respiration',                         img: 'imgs/cellRespiration.jpg',      id: '1b15a414-7e6c-4992-b17c-1c924745366d' },
-        { title: 'Photosynthesis',                           img: 'imgs/photosynthesis.jpg',       id: '81ece535-7d0b-47e9-a95a-ed8e0f25cc76' },
-    ].map((m, i) => ({ ...m, n: i + 1, desc: '', href: 'lesson.html', best: null }));
+        { title: 'Animal Cell vs Plant Cell',                img: 'imgs/animalVSplant.jpg',        id: 'e43f6bee-bcff-4692-b5e2-396b4176eacd', scoreKey: 'ecolearn-quiz-animal-plant-best' },
+        { title: 'Mitosis of Plant and Animal Cells',        img: 'imgs/cellDivision.jpg',         id: 'fc3f6b43-fb9d-420d-9060-9529ba395621', scoreKey: 'ecolearn-quiz-02-best' },
+        { title: 'Cell Membrane and Transport',              img: 'imgs/cellMembrane.jpg',         id: '46254ff2-c787-4792-94db-5d33181f6b55', scoreKey: 'ecolearn-quiz-03-best' },
+        { title: 'Cell Differentiation and Specialization',  img: 'imgs/cellDifferentiation.jpg', id: '5149863c-8971-49ef-afa2-085cec2f3d1e', scoreKey: 'ecolearn-quiz-04-best' },
+        { title: 'Cell Signaling',                           img: 'imgs/cellSignaling.jpg',       id: '5347853d-6f4b-43b2-b7b6-9e941fe6ebe9', scoreKey: 'ecolearn-quiz-05-best' },
+    ].map((m, i) => ({ ...m, n: i + 1, desc: '', href: 'lesson.html', best: null, deviceOnly: false }));
 
     const GOAL_GROUPS = [
         { label: 'Cell structure',                 modules: [1] },
         { label: 'Cell division',                  modules: [2] },
-        { label: 'Cell energy',                    modules: [4, 5] },
         { label: 'Cell processes',                 modules: [3] },
+        { label: 'Cell specialization',            modules: [4] },
+        { label: 'Cell signaling',                 modules: [5] },
     ];
 
     let query = '';
@@ -166,7 +167,7 @@
         const taken = MODULES.filter(m => m.best !== null).length;
         document.getElementById('pathSummary').textContent = `${taken} of ${MODULES.length} quizzes taken`;
         document.getElementById('pathTrack').innerHTML = MODULES.map(m => {
-            const label = m.best === null ? 'quiz not taken' : `best score ${m.best}%`;
+            const label = m.best === null ? 'quiz not taken' : `best score ${m.best}%${m.deviceOnly ? ' (device only)' : ''}`;
             return `<li><a class="sd-seg is-${tier(m.best)}" href="${esc(m.href)}" title="Module ${m.n}: ${esc(m.title)} — ${label}" aria-label="Module ${m.n}, ${esc(m.title)}, ${label}"><b>${m.n}</b></a></li>`;
         }).join('');
     }
@@ -205,7 +206,7 @@
                 <div class="sd-module-body">
                     <span class="sd-module-no">Module ${String(m.n).padStart(2, '0')}</span>
                     <h3>${esc(m.title)}</h3>
-                    <span class="sd-chip is-${tier(m.best)}">${m.best === null ? 'Quiz not taken' : `Best score ${m.best}%`}</span>
+                    <span class="sd-chip is-${tier(m.best)}">${m.best === null ? 'Quiz not taken' : `Best score ${m.best}%${m.deviceOnly ? ' (device only)' : ''}`}</span>
                     <a class="sd-btn sd-module-btn" href="${esc(m.href)}" aria-label="Open ${esc(m.title)}">${m.best === null ? 'Start lesson' : 'Review lesson'}</a>
                 </div>
             </article>`).join('');
@@ -232,13 +233,31 @@
 
     async function loadScores(user) {
         const { data, error } = await ecoAuth.client.from('quiz_attempts').select('lesson_id, score').eq('user_id', user.id);
-        if (error) { console.error('Progress load failed:', error); return; }
-        const best = {};
-        (data || []).forEach(a => {
-            const pct = Math.round((a.score / 10) * 100);
-            if (best[a.lesson_id] === undefined || pct > best[a.lesson_id]) best[a.lesson_id] = pct;
+        if (error) console.error('Progress load failed:', error);
+        const best = new Map();
+        (data || []).forEach(attempt => {
+            const score = Number(attempt.score);
+            if (!Number.isFinite(score) || score < 0 || score > 10) {
+                console.error('Ignoring invalid saved quiz score:', attempt);
+                return;
+            }
+            const previous = best.get(attempt.lesson_id);
+            if (previous === undefined || score > previous) best.set(attempt.lesson_id, score);
         });
-        MODULES.forEach(m => { m.best = best[m.id] ?? null; });
+        MODULES.forEach(module => {
+            const hasDatabaseAttempt = best.has(module.id);
+            const databaseBest = hasDatabaseAttempt ? Math.round(best.get(module.id) * 10) : 0;
+            const cachedValue = localStorage.getItem(module.scoreKey);
+            const cachedBest = cachedValue === null ? null : Number(cachedValue);
+            const hasCachedScore = cachedBest !== null && Number.isFinite(cachedBest) && cachedBest >= 0 && cachedBest <= 100;
+            module.best = hasDatabaseAttempt || hasCachedScore
+                ? Math.max(databaseBest, hasCachedScore ? cachedBest : 0)
+                : null;
+            module.deviceOnly = hasCachedScore && (!hasDatabaseAttempt || cachedBest > databaseBest);
+            if (hasDatabaseAttempt && (!hasCachedScore || databaseBest > cachedBest)) {
+                localStorage.setItem(module.scoreKey, String(databaseBest));
+            }
+        });
     }
 
     /* ---------- init ---------- */

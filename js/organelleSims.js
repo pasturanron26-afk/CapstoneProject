@@ -430,9 +430,9 @@ function build(host, key) {
         `<h3 class="osim-title">${S.title}</h3><p class="osim-lead">${S.lead}</p>` +
         `<label class="osim-label" for="${id}">Step of the process</label>` +
         `<div class="osim-track"><span>${S.steps[0][0]}</span><input id="${id}" type="range" min="0" max="${N - 1}" step="0.01" value="0"><span>${S.steps[N - 1][0]}</span></div>` +
-        `<div class="osim-controls"><button class="osim-play" type="button"></button><div class="osim-chips" role="group" aria-label="Jump to step"></div></div>` +
+        `<div class="osim-controls"><div class="osim-chips" role="group" aria-label="Jump to step"></div></div>` +
         `<div class="osim-banner" aria-live="polite"></div>` +
-        `<div class="osim-panel"><svg viewBox="0 0 400 260" role="img" aria-label="${S.title}"></svg></div>` +
+        `<div class="osim-panel"><svg viewBox="0 0 400 260" role="img" aria-label="${S.title}"></svg><button class="osim-play" type="button"></button></div>` +
         `<ul class="osim-legend">${S.legend.map(l => `<li><i style="background:${l[0]}"></i>${l[1]}</li>`).join('')}</ul>`;
     const rng = host.querySelector('input'), play = host.querySelector('.osim-play'), box = host.querySelector('.osim-chips');
     const svg = host.querySelector('svg'), banner = host.querySelector('.osim-banner');
@@ -452,7 +452,15 @@ function build(host, key) {
         chips.forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
     }
     let raf = 0, last = 0, playing = false;
-    const label = () => { play.innerHTML = playing ? '<i class="bi bi-pause-fill"></i> Pause' : '<i class="bi bi-play-fill"></i> Play'; };
+    const label = () => {
+        play.innerHTML = playing ? '<i class="bi bi-pause-fill"></i> Pause' : '<i class="bi bi-play-fill"></i> Play';
+        play.setAttribute('aria-label', playing ? 'Pause animation' : 'Play animation');
+    };
+    function setPlaying(isPlaying) {
+        playing = isPlaying;
+        host.classList.toggle('is-playing', playing);
+        label();
+    }
     function tick(ts) {
         if (!last) last = ts;
         const dt = (ts - last) / 1000; last = ts;
@@ -460,8 +468,16 @@ function build(host, key) {
         if (+rng.value >= N - 1) { stop(); return; }
         raf = requestAnimationFrame(tick);
     }
-    function start() { if (+rng.value >= N - 1) set(0); playing = true; last = 0; label(); raf = requestAnimationFrame(tick); }
-    function stop() { playing = false; cancelAnimationFrame(raf); label(); }
+    function start() {
+        if (+rng.value >= N - 1) set(0);
+        last = 0;
+        setPlaying(true);
+        raf = requestAnimationFrame(tick);
+    }
+    function stop() {
+        cancelAnimationFrame(raf);
+        setPlaying(false);
+    }
     play.addEventListener('click', () => (playing ? stop() : start()));
     rng.addEventListener('input', () => { stop(); set(+rng.value); });
     label(); set(0);
