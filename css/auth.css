@@ -710,6 +710,14 @@ body {
     text-decoration: underline;
 }
 
+.auth-links .forgot-password-link {
+    color: #dc2626;
+}
+
+.auth-links .forgot-password-link:hover {
+    color: #b91c1c;
+}
+
 .btn-primary {
     width: 100%;
     padding: 13px;
