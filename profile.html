@@ -131,11 +131,41 @@
 
                     <div class="quiz-progress-item">
                         <div class="quiz-progress-label">
-                            <span>Cell Division: Mitosis vs Meiosis</span>
-                            <span class="quiz-progress-score" id="quizTwoScore">Locked</span>
+                            <span>Mitosis of Plant and Animal Cells</span>
+                            <span class="quiz-progress-score" id="quizTwoScore">Not attempted</span>
                         </div>
                         <div class="quiz-progress-track">
-                            <div class="quiz-progress-fill is-locked" id="quizTwoFill" style="width: 0%;"></div>
+                            <div class="quiz-progress-fill" id="quizTwoFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-progress-item">
+                        <div class="quiz-progress-label">
+                            <span>Cell Membrane and Transport</span>
+                            <span class="quiz-progress-score" id="quizThreeScore">Not attempted</span>
+                        </div>
+                        <div class="quiz-progress-track">
+                            <div class="quiz-progress-fill" id="quizThreeFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-progress-item">
+                        <div class="quiz-progress-label">
+                            <span>Cell Respiration</span>
+                            <span class="quiz-progress-score" id="quizFourScore">Not attempted</span>
+                        </div>
+                        <div class="quiz-progress-track">
+                            <div class="quiz-progress-fill" id="quizFourFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-progress-item">
+                        <div class="quiz-progress-label">
+                            <span>Photosynthesis</span>
+                            <span class="quiz-progress-score" id="quizFiveScore">Not attempted</span>
+                        </div>
+                        <div class="quiz-progress-track">
+                            <div class="quiz-progress-fill" id="quizFiveFill" style="width: 0%;"></div>
                         </div>
                     </div>
 
@@ -331,59 +361,71 @@
                 setTimeout(() => { saveStatus.textContent = ''; }, 2500);
             });
 
-            // ---- Quiz progress (synced from attempts, cached locally) ----
-            const quizLessonId = 'e43f6bee-bcff-4692-b5e2-396b4176eacd';
-            const cachedBest = Number(localStorage.getItem('ecolearn-quiz-animal-plant-best') || 0);
-            const quizOneScore = document.getElementById('quizOneScore');
-            const quizOneFill = document.getElementById('quizOneFill');
-            const quizTwoScore = document.getElementById('quizTwoScore');
-            const quizTwoFill = document.getElementById('quizTwoFill');
-            const showQuizProgress = (bestScore, attempted) => {
-                if (attempted) {
-                    quizOneScore.textContent = `${bestScore}% best`;
-                    quizOneFill.style.width = `${bestScore}%`;
-                } else {
-                    quizOneScore.textContent = 'Not attempted';
-                    quizOneFill.style.width = '0%';
+            // ---- Quiz progress (connected to real quiz attempt data) ----
+            const quizModules = [
+                {
+                    lessonId: 'e43f6bee-bcff-4692-b5e2-396b4176eacd',
+                    label: 'Animal Cell vs Plant Cell',
+                    scoreEl: document.getElementById('quizOneScore'),
+                    fillEl: document.getElementById('quizOneFill')
+                },
+                {
+                    lessonId: 'fc3f6b43-fb9d-420d-9060-9529ba395621',
+                    label: 'Mitosis of Plant and Animal Cells',
+                    scoreEl: document.getElementById('quizTwoScore'),
+                    fillEl: document.getElementById('quizTwoFill')
+                },
+                {
+                    lessonId: '46254ff2-c787-4792-94db-5d33181f6b55',
+                    label: 'Cell Membrane and Transport',
+                    scoreEl: document.getElementById('quizThreeScore'),
+                    fillEl: document.getElementById('quizThreeFill')
+                },
+                {
+                    lessonId: '1b15a414-7e6c-4992-b17c-1c924745366d',
+                    label: 'Cell Respiration',
+                    scoreEl: document.getElementById('quizFourScore'),
+                    fillEl: document.getElementById('quizFourFill')
+                },
+                {
+                    lessonId: '81ece535-7d0b-47e9-a95a-ed8e0f25cc76',
+                    label: 'Photosynthesis',
+                    scoreEl: document.getElementById('quizFiveScore'),
+                    fillEl: document.getElementById('quizFiveFill')
                 }
+            ];
 
-                if (bestScore === 100) {
-                    quizTwoScore.textContent = 'Unlocked';
-                    quizTwoFill.classList.remove('is-locked');
-                    quizTwoFill.style.width = '0%';
-                }
+            const setQuizProgress = (item, bestScore, attempted) => {
+                item.scoreEl.textContent = attempted ? `${bestScore}% best` : 'Not attempted';
+                item.fillEl.style.width = attempted ? `${bestScore}%` : '0%';
             };
-
-            const safeCachedBest = Number.isFinite(cachedBest) ? Math.max(0, Math.min(100, cachedBest)) : 0;
-            showQuizProgress(safeCachedBest, safeCachedBest > 0);
 
             const { data: attempts, error: attemptsError } = await ecoAuth.client
                 .from('quiz_attempts')
-                .select('score')
-                .eq('user_id', user.id)
-                .eq('lesson_id', quizLessonId)
-                .order('score', { ascending: false });
+                .select('lesson_id, score')
+                .eq('user_id', user.id);
 
-            if (attemptsError) {
-                console.error('Failed to load quiz progress:', attemptsError.message);
-                if (safeCachedBest === 0) quizOneScore.textContent = 'Unable to load';
-                else quizOneScore.textContent = `${safeCachedBest}% best (device only)`;
+            const bestByLesson = {};
+            if (!attemptsError && Array.isArray(attempts)) {
+                attempts.forEach((attempt) => {
+                    const percent = Math.round((Number(attempt.score || 0) / 10) * 100);
+                    const currentBest = bestByLesson[attempt.lesson_id];
+                    if (!currentBest || percent > currentBest) bestByLesson[attempt.lesson_id] = percent;
+                });
             } else {
-                const hasAttempt = (attempts || []).length > 0;
-                const databaseBest = hasAttempt
-                    ? Math.round((Number(attempts[0].score) / 10) * 100)
-                    : 0;
-                const bestScore = Math.max(safeCachedBest, databaseBest);
-                const isPerfect = bestScore === 100;
-
-                if (bestScore > safeCachedBest) {
-                    localStorage.setItem('ecolearn-quiz-animal-plant-best', String(bestScore));
-                }
-                if (isPerfect) {
-                    localStorage.setItem('ecolearn-quiz-animal-plant-perfect', 'true');
-                }
-                showQuizProgress(bestScore, hasAttempt || safeCachedBest > 0);
+                console.error('Failed to load quiz progress:', attemptsError?.message || 'Unknown error');
             }
+
+            quizModules.forEach((item) => {
+                const bestScore = bestByLesson[item.lessonId];
+                const attempted = Number.isFinite(bestScore) && bestScore > 0;
+                if (attemptsError) {
+                    item.scoreEl.textContent = 'Unable to load';
+                    item.fillEl.style.width = '0%';
+                    return;
+                }
+                setQuizProgress(item, attempted ? bestScore : 0, attempted);
+            });
 
             // ---- Logout ----
             const logoutHandler = async () => { await window.ecoAuth.signOut(); };
