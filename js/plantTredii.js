@@ -157,7 +157,19 @@ controls.enableZoom = true;    // Mouse wheel to zoom
 const zoomInButton = document.getElementById("zoomIn");
 const zoomOutButton = document.getElementById("zoomOut");
 const resetViewButton = document.getElementById("resetView");
+const panButton = document.getElementById("panModel");
 const organelleButtons = document.querySelectorAll(".organelleButton");
+
+if (panButton) {
+    panButton.addEventListener("click", function () {
+        const isPanMode = this.getAttribute("aria-pressed") !== "true";
+        this.setAttribute("aria-pressed", String(isPanMode));
+        this.classList.toggle("active", isPanMode);
+        controls.mouseButtons.LEFT = isPanMode
+            ? THREE.MOUSE.PAN
+            : THREE.MOUSE.ROTATE;
+    });
+}
 
 // ======================================================
 // MESH NAME MAPPING (Fixes the missing Vacuole)
