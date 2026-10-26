@@ -45,6 +45,20 @@ let animalCell = null;
 let originalAnimalPosition = new THREE.Vector3();
 let originalMaxDimension = 1;
 
+function centerAnimalCell() {
+    if (!animalCell) return;
+
+    animalCell.updateMatrixWorld(true);
+
+    const center =
+        new THREE.Box3()
+            .setFromObject(animalCell)
+            .getCenter(new THREE.Vector3());
+
+    animalCell.position.sub(center);
+    animalCell.updateMatrixWorld(true);
+}
+
 // ======================================================
 // MODE STATE
 // ======================================================
@@ -58,6 +72,89 @@ const MODEL_ROTATION = {
     y: -1.0,
     z: 0.0
 };
+
+// ======================================================
+// MODEL SCREEN POSITION OFFSET  (EDIT THIS TO MOVE THE MODEL)
+// Range: -1 to 1  (0.2 = 10% of the canvas width/height)
+// x: positive = right, negative = left
+// y: positive = up,    negative = down
+// ======================================================
+const MODEL_SCREEN_OFFSET = isMobile
+    ? { x: 0, y: 0 }      // mobile
+    : { x: 0.2, y: 0 };     // desktop
+
+// ======================================================
+// SEPARATE MODE POSITION OFFSET  (EDIT THIS TO MOVE THE ORGANELLE)
+// Used when a single organelle is shown alone.
+// x: positive = right, negative = left
+// y: positive = up,    negative = down
+// ======================================================
+const SEPARATE_SCREEN_OFFSET = isMobile
+    ? { x: 0, y: 0 }      // mobile
+    : { x: 0, y: 0 };     // desktop
+
+// ======================================================
+// PER-ORGANELLE POSITION OVERRIDES (separate mode)
+// Any organelle listed here uses its own offset instead of
+// SEPARATE_SCREEN_OFFSET. Organelles not listed use the default.
+// Keys are the data-organelle names of your buttons.
+// Uncomment a line and change the numbers.
+// ======================================================
+const ORGANELLE_SEPARATE_OFFSETS = {
+    // nucleus:              { x: 0.1,  y: 0 },
+    // mitochondria:         { x: 0,    y: -0.1 },
+    // golgiApparatus:       { x: -0.1, y: 0 },
+    endoplasmicReticulum: { x: 0.1,    y: 0.1 },
+    cellMem: { x: 0.2, y: 0 },
+};
+
+// ======================================================
+// PER-ORGANELLE ZOOM (separate mode)
+// Smaller number = zoomed in closer, bigger = zoomed out.
+// Organelles not listed use the default (2.6).
+// Don't go below 0.5 (the minimum camera distance).
+// ======================================================
+const ORGANELLE_SEPARATE_ZOOM = {
+    cellMem: 2.0,   // cell membrane
+};
+
+function getSeparateOffsetFor(organelleKey) {
+    return ORGANELLE_SEPARATE_OFFSETS[organelleKey] || SEPARATE_SCREEN_OFFSET;
+}
+
+// true while a single organelle is shown alone (separate mode).
+let isolatedView = false;
+
+// which organelle is currently shown alone
+let currentOrganelleKey = null;
+
+// ======================================================
+// AUTO-ROTATE PIVOT (separate mode)
+// The point (in the model's local space) where the isolated
+// organelle sits, so "Rotate 3D model" spins it in place
+// instead of swinging it around the model's origin.
+// ======================================================
+const isolatedPivotLocal = new THREE.Vector3();
+const _pivotBefore = new THREE.Vector3();
+const _pivotAfter = new THREE.Vector3();
+
+function rotateAroundIsolatedPivot(step) {
+    if (!animalCell) return;
+
+    animalCell.updateMatrixWorld(true);
+    _pivotBefore.copy(isolatedPivotLocal);
+    animalCell.localToWorld(_pivotBefore);
+
+    animalCell.rotation.y += step;
+
+    animalCell.updateMatrixWorld(true);
+    _pivotAfter.copy(isolatedPivotLocal);
+    animalCell.localToWorld(_pivotAfter);
+
+    // Move the model back so the pivot point stays exactly where it was
+    animalCell.position.add(_pivotBefore.sub(_pivotAfter));
+    animalCell.updateMatrixWorld(true);
+}
 
 // ======================================================
 // PER-ORGANELLE ROTATION OVERRIDES
@@ -233,6 +330,83 @@ function snapControlsUpdate() {
 
     controls.enableDamping =
         wasDamping;
+}
+
+function centerModelInCanvas() {
+    if (!animalCell || viewer.clientWidth <= 0 || viewer.clientHeight <= 0) {
+        return;
+    }
+
+    animalCell.updateMatrixWorld(true);
+    camera.updateMatrixWorld(true);
+
+    const bounds = new THREE.Box3();
+    animalCell.traverse(child => {
+        if (child.isMesh && child.visible) {
+            bounds.expandByObject(child);
+        }
+    });
+
+    if (bounds.isEmpty()) return;
+
+    const projectedBounds = new THREE.Box3();
+
+    for (let corner = 0; corner < 8; corner++) {
+        projectedBounds.expandByPoint(
+            new THREE.Vector3(
+                corner & 1 ? bounds.max.x : bounds.min.x,
+                corner & 2 ? bounds.max.y : bounds.min.y,
+                corner & 4 ? bounds.max.z : bounds.min.z
+            ).project(camera)
+        );
+    }
+
+    const projectedCenter =
+        projectedBounds.getCenter(new THREE.Vector3());
+
+    // Apply the screen position offset (see MODEL_SCREEN_OFFSET)
+    const activeOffset = isolatedView
+        ? getSeparateOffsetFor(currentOrganelleKey)
+        : MODEL_SCREEN_OFFSET;
+
+    projectedCenter.x -= activeOffset.x;
+    projectedCenter.y -= activeOffset.y;
+
+    const worldCenter =
+        bounds.getCenter(new THREE.Vector3());
+    const viewDirection =
+        camera.getWorldDirection(new THREE.Vector3());
+    const depth =
+        Math.max(
+            viewDirection.dot(worldCenter.sub(camera.position)),
+            camera.near
+        );
+    const verticalHalfExtent =
+        depth * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    const horizontalHalfExtent =
+        verticalHalfExtent * camera.aspect;
+    const cameraRight =
+        new THREE.Vector3()
+            .setFromMatrixColumn(camera.matrixWorld, 0)
+            .normalize();
+    const cameraUp =
+        new THREE.Vector3()
+            .setFromMatrixColumn(camera.matrixWorld, 1)
+            .normalize();
+    const offset =
+        new THREE.Vector3()
+            .addScaledVector(
+                cameraRight,
+                projectedCenter.x * horizontalHalfExtent
+            )
+            .addScaledVector(
+                cameraUp,
+                projectedCenter.y * verticalHalfExtent
+            );
+
+    camera.position.add(offset);
+    controls.target.add(offset);
+    snapControlsUpdate();
 }
 
 // ======================================================
@@ -422,6 +596,8 @@ function resetView() {
 
     if (!animalCell) return;
 
+    isolatedView = false;
+
     animalCell.position.copy(
         originalAnimalPosition
     );
@@ -435,6 +611,7 @@ function resetView() {
     animalCell.rotation.z =
         MODEL_ROTATION.z;
 
+    centerAnimalCell();
     animalCell.updateMatrixWorld(true);
 
     clearAllEffects();
@@ -458,6 +635,7 @@ function resetView() {
         originalMaxDimension * 4.5;
 
     snapControlsUpdate();
+    centerModelInCanvas();
 
     organelleButtons.forEach(button => {
         button.classList.remove("active");
@@ -591,9 +769,6 @@ loader.load(
             center
         );
 
-        originalAnimalPosition =
-            animalCell.position.clone();
-
         animalCell.rotation.x =
             MODEL_ROTATION.x;
 
@@ -602,6 +777,10 @@ loader.load(
 
         animalCell.rotation.z =
             MODEL_ROTATION.z;
+
+        centerAnimalCell();
+        originalAnimalPosition =
+            animalCell.position.clone();
 
         animalCell.updateMatrixWorld(
             true
@@ -634,6 +813,7 @@ loader.load(
             maxDimension * 4.5;
 
         controls.update();
+        centerModelInCanvas();
 
         // ==================================================
         // PREPARE MATERIALS
@@ -826,6 +1006,9 @@ function showOnlyOrganelles(
 
     if (!animalCell) return;
 
+    isolatedView = true;
+    currentOrganelleKey = organelleKey;
+
     const rotation =
         getRotationFor(
             organelleKey
@@ -937,8 +1120,15 @@ function showOnlyOrganelles(
             selectedSize.z
         );
 
+    // The organelle is now centered at the world origin.
+    // Remember that point in the model's local space for auto-rotate.
+    animalCell.updateMatrixWorld(true);
+    isolatedPivotLocal.copy(
+        animalCell.worldToLocal(new THREE.Vector3(0, 0, 0))
+    );
+
     let cameraDistance =
-        maxDimension * 2.6;
+        maxDimension * (ORGANELLE_SEPARATE_ZOOM[organelleKey] || 2.6);
 
     if (cameraDistance < 0.5) {
         cameraDistance = 0.5;
@@ -977,6 +1167,7 @@ function showOnlyOrganelles(
         maxDimension * 4.5;
 
     snapControlsUpdate();
+    centerModelInCanvas();
 }
 
 // ======================================================
@@ -989,27 +1180,7 @@ function highlightOrganelleWholeMode(
 
     if (!animalCell) return;
 
-    const rotation =
-        getRotationFor(
-            organelleKey
-        );
-
-    animalCell.position.copy(
-        originalAnimalPosition
-    );
-
-    animalCell.rotation.x =
-        rotation.x;
-
-    animalCell.rotation.y =
-        rotation.y;
-
-    animalCell.rotation.z =
-        rotation.z;
-
-    animalCell.updateMatrixWorld(
-        true
-    );
+    isolatedView = false;
 
     clearAllEffects();
 
@@ -1210,9 +1381,16 @@ function animate() {
 
         if (animalCell) {
 
-            animalCell.rotation.y +=
+            const rotationStep =
                 window.modelRotationState
                     .getSpeed() * frameScale;
+
+            if (isolatedView) {
+                // Separate mode: spin the organelle in place
+                rotateAroundIsolatedPivot(rotationStep);
+            } else {
+                animalCell.rotation.y += rotationStep;
+            }
         }
     }
 
@@ -1257,6 +1435,8 @@ function updateViewerSize() {
         height,
         false
     );
+
+    centerModelInCanvas();
 }
 
 if (typeof ResizeObserver !== "undefined") {

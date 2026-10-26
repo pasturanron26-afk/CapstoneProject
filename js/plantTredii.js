@@ -39,10 +39,49 @@ let originalMaxDimension = 1;
 // ======================================================
 let currentMode = "separate"; // "separate" or "whole"
 
+// true while a single organelle is shown alone (separate mode)
+let isolatedView = false;
+
 // ======================================================
 // DESIRED MODEL ROTATION
 // ======================================================
 const MODEL_ROTATION = { x: 0.5, y: 10.0, z: 0.0 };
+
+// ======================================================
+// CAMERA DISTANCE  (EDIT THESE TO ZOOM IN / OUT)
+// Bigger number = zoomed out (model looks smaller)
+// Smaller number = zoomed in (model looks bigger)
+// ======================================================
+const WHOLE_CAMERA_DISTANCE = 3.4;     // whole cell / reset view (was 3.0)
+const SEPARATE_CAMERA_DISTANCE = 3.0;  // one organelle alone     (was 2.6)
+
+// ======================================================
+// AUTO-ROTATE PIVOT (separate mode)
+// The point (in the model's local space) where the isolated
+// organelle sits, so "Rotate 3D model" spins it in place
+// instead of swinging it around the model's origin.
+// ======================================================
+const isolatedPivotLocal = new THREE.Vector3();
+const _pivotBefore = new THREE.Vector3();
+const _pivotAfter = new THREE.Vector3();
+
+function rotateAroundIsolatedPivot(step) {
+    if (!plantCell) return;
+
+    plantCell.updateMatrixWorld(true);
+    _pivotBefore.copy(isolatedPivotLocal);
+    plantCell.localToWorld(_pivotBefore);
+
+    plantCell.rotation.y += step;
+
+    plantCell.updateMatrixWorld(true);
+    _pivotAfter.copy(isolatedPivotLocal);
+    plantCell.localToWorld(_pivotAfter);
+
+    // Move the model back so the pivot point stays exactly where it was
+    plantCell.position.add(_pivotBefore.sub(_pivotAfter));
+    plantCell.updateMatrixWorld(true);
+}
 
 // ======================================================
 // SCENE
@@ -198,6 +237,8 @@ function clearAllEffects() {
 function resetView() {
     if (!plantCell) return;
 
+    isolatedView = false;
+
     plantCell.position.copy(originalPlantPosition);
     plantCell.rotation.x = MODEL_ROTATION.x;
     plantCell.rotation.y = MODEL_ROTATION.y;
@@ -206,7 +247,7 @@ function resetView() {
 
     clearAllEffects();
 
-    camera.position.set(0, 0, originalMaxDimension * 3.0);
+    camera.position.set(0, 0, originalMaxDimension * WHOLE_CAMERA_DISTANCE);
     controls.target.set(0, 0, 0);
     controls.minDistance = originalMaxDimension * 0.5;
     controls.maxDistance = originalMaxDimension * 4.5;
@@ -292,7 +333,7 @@ loader.load(
         plantCell.rotation.z = MODEL_ROTATION.z;
         plantCell.updateMatrixWorld(true);
 
-        camera.position.set(0, 0, maxDimension * 3.0);
+        camera.position.set(0, 0, maxDimension * WHOLE_CAMERA_DISTANCE);
         camera.near = maxDimension / 1000;
         camera.far = maxDimension * 100;
         camera.updateProjectionMatrix();
@@ -386,6 +427,8 @@ function meshBelongsToOrganelles(mesh, organelleNames) {
 function showOnlyOrganelles(organelleNames) {
     if (!plantCell) return;
 
+    isolatedView = true;
+
     plantCell.position.copy(originalPlantPosition);
     plantCell.rotation.x = MODEL_ROTATION.x;
     plantCell.rotation.y = MODEL_ROTATION.y;
@@ -429,7 +472,13 @@ function showOnlyOrganelles(organelleNames) {
     const selectedSize = centeredBox.getSize(new THREE.Vector3());
     const maxDimension = Math.max(selectedSize.x, selectedSize.y, selectedSize.z);
 
-    let cameraDistance = maxDimension * 2.6;
+    // The organelle is now centered at the world origin.
+    // Remember that point in the model's local space for auto-rotate.
+    isolatedPivotLocal.copy(
+        plantCell.worldToLocal(new THREE.Vector3(0, 0, 0))
+    );
+
+    let cameraDistance = maxDimension * SEPARATE_CAMERA_DISTANCE;
     if (cameraDistance < 0.5) cameraDistance = 0.5;
 
     camera.position.set(0, 0, cameraDistance);
@@ -451,6 +500,8 @@ function showOnlyOrganelles(organelleNames) {
 // ======================================================
 function highlightOrganelleWholeMode(organelleNames) {
     if (!plantCell) return;
+
+    isolatedView = false;
 
     plantCell.position.copy(originalPlantPosition);
     plantCell.rotation.x = MODEL_ROTATION.x;
@@ -542,7 +593,14 @@ function animate() {
     // Auto-rotate keeps requesting renders on its own
     if (window.modelRotationState && window.modelRotationState.isAutoRotating()) {
         if (plantCell) {
-            plantCell.rotation.y += window.modelRotationState.getSpeed();
+            const rotationStep = window.modelRotationState.getSpeed();
+
+            if (isolatedView) {
+                // Separate mode: spin the organelle in place
+                rotateAroundIsolatedPivot(rotationStep);
+            } else {
+                plantCell.rotation.y += rotationStep;
+            }
         }
         requestRender();
     }
