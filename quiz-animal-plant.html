@@ -156,6 +156,7 @@
     let timerId          = null;
     let quizTimedOut     = false;
     let quizFinished     = false;
+    let attemptSaveFailed = false;
 
     // ── STEP 1: Load 10 random questions from Supabase ───────
     async function loadQuiz() {
@@ -366,11 +367,12 @@
       const score  = answers.filter(a => a.is_correct).length;
       const client = window.ecoAuth?.client;
 
-      if (!client) { showResults(score); return; }
+      attemptSaveFailed = false;
+      if (!client) { attemptSaveFailed = true; showResults(score); return; }
 
       try {
         const { data: { user } } = await client.auth.getUser();
-        if (!user) { showResults(score); return; }
+        if (!user) { attemptSaveFailed = true; showResults(score); return; }
 
         // Insert attempt row
         const { data: attempt, error: attemptErr } = await client
@@ -381,6 +383,7 @@
 
         if (attemptErr || !attempt) {
           console.error('Failed to save attempt:', attemptErr);
+          attemptSaveFailed = true;
           showResults(score);
           return;
         }
@@ -401,6 +404,7 @@
 
       } catch (err) {
         console.error('Submit error:', err);
+        attemptSaveFailed = true;
       }
 
       showResults(score);
@@ -440,6 +444,7 @@
         resultsBadge.innerHTML = '<i class="bi bi-stopwatch"></i> Time is up';
         resultsNote.textContent = `You answered ${answers.length} of ${QUESTIONS_PER_SESSION} questions. Try again and keep an eye on the timer.`;
       }
+      if (attemptSaveFailed) resultsNote.textContent += ' This score was not saved to the class record. Check your connection, then retake the quiz. If it still fails, ask your administrator to apply supabase-quiz-attempts-policy.sql.';
     }
 
     // ── RETRY: shuffle a new set of 10 ───────────────────────
@@ -448,8 +453,10 @@
     });
 
     // ── INIT ─────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-      loadQuiz();
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await window.ecoAuth?.requireStudent?.();
+      if (!session) return;
+      await loadQuiz();
     });
   </script>
 </body>

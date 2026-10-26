@@ -79,10 +79,22 @@ let LESSON_LOAD_ERROR = null;
 let LESSON_ROWS_TOTAL = 0;   // lesson_progress rows this admin can see, for all students
 
 async function fetchQuizAttemptsByUser() {
-    const { data, error } = await ecoAuth.client
+    let { data, error } = await ecoAuth.client
         .from('quiz_attempts')
         .select('user_id, lesson_id, score, taken_at')
         .order('taken_at', { ascending: true });
+
+    if (error && /taken_at|column/i.test(error.message || '')) {
+        const fallback = await ecoAuth.client
+            .from('quiz_attempts')
+            .select('user_id, lesson_id, score');
+        data = fallback.data;
+        error = fallback.error;
+        if (!error) {
+            console.warn('Quiz attempt timestamps are unavailable; showing scores without attempt dates.');
+            data = (data || []).map(row => ({ ...row, taken_at: null }));
+        }
+    }
 
     if (error) {
         console.error('Failed to load quiz attempts from Supabase:', error.message);
