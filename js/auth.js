@@ -144,6 +144,80 @@ let logoutError;
 let logoutTrigger;
 let logoutCloseTimer;
 let logoutInProgress = false;
+let logoutScrollState;
+
+function lockLogoutBackgroundScroll() {
+  if (logoutScrollState) return;
+
+  const bodyStyle = document.body.style;
+  const rootStyle = document.documentElement.style;
+  const bodyProperties = ['position', 'top', 'left', 'right', 'width', 'overflow'];
+  const bodyWidth = window.getComputedStyle(document.body).width;
+  const savedBodyStyles = {};
+
+  bodyProperties.forEach((property) => {
+    savedBodyStyles[property] = {
+      value: bodyStyle.getPropertyValue(property),
+      priority: bodyStyle.getPropertyPriority(property)
+    };
+  });
+
+  logoutScrollState = {
+    scrollX: window.scrollX,
+    scrollY: window.scrollY,
+    bodyStyles: savedBodyStyles,
+    rootOverflow: rootStyle.getPropertyValue('overflow'),
+    rootOverflowPriority: rootStyle.getPropertyPriority('overflow'),
+    rootScrollbarGutter: rootStyle.getPropertyValue('scrollbar-gutter'),
+    rootScrollbarGutterPriority: rootStyle.getPropertyPriority('scrollbar-gutter')
+  };
+
+  bodyStyle.position = 'fixed';
+  bodyStyle.top = `-${logoutScrollState.scrollY}px`;
+  bodyStyle.left = `-${logoutScrollState.scrollX}px`;
+  bodyStyle.right = 'auto';
+  bodyStyle.width = bodyWidth;
+  bodyStyle.overflow = 'hidden';
+  rootStyle.scrollbarGutter = 'stable';
+  rootStyle.overflow = 'hidden';
+}
+
+function unlockLogoutBackgroundScroll() {
+  if (!logoutScrollState) return;
+
+  const {
+    scrollX,
+    scrollY,
+    bodyStyles,
+    rootOverflow,
+    rootOverflowPriority,
+    rootScrollbarGutter,
+    rootScrollbarGutterPriority
+  } = logoutScrollState;
+  const bodyStyle = document.body.style;
+  const rootStyle = document.documentElement.style;
+
+  Object.entries(bodyStyles).forEach(([property, savedStyle]) => {
+    if (savedStyle.value) {
+      bodyStyle.setProperty(property, savedStyle.value, savedStyle.priority);
+    } else {
+      bodyStyle.removeProperty(property);
+    }
+  });
+  if (rootOverflow) {
+    rootStyle.setProperty('overflow', rootOverflow, rootOverflowPriority);
+  } else {
+    rootStyle.removeProperty('overflow');
+  }
+  if (rootScrollbarGutter) {
+    rootStyle.setProperty('scrollbar-gutter', rootScrollbarGutter, rootScrollbarGutterPriority);
+  } else {
+    rootStyle.removeProperty('scrollbar-gutter');
+  }
+
+  logoutScrollState = null;
+  return { scrollX, scrollY };
+}
 
 function ensureLogoutDialog() {
   if (logoutDialog) return;
@@ -188,7 +262,7 @@ function ensureLogoutDialog() {
       </div>
     </section>
   `;
-  document.body.append(dialog);
+  document.documentElement.append(dialog);
 
   logoutDialog = dialog;
   logoutCancelButton = dialog.querySelector('.logout-confirmation__cancel');
@@ -201,12 +275,14 @@ function ensureLogoutDialog() {
     dialog.classList.remove('is-open');
     dialog.setAttribute('aria-hidden', 'true');
     dialog.inert = true;
-    document.body.classList.remove('logout-confirmation-open');
 
     logoutCloseTimer = window.setTimeout(() => {
       dialog.hidden = true;
       dialog.inert = false;
-      logoutTrigger?.focus();
+      document.body.classList.remove('logout-confirmation-open');
+      const restoredScroll = unlockLogoutBackgroundScroll();
+      logoutTrigger?.focus({ preventScroll: true });
+      if (restoredScroll) window.scrollTo(restoredScroll.scrollX, restoredScroll.scrollY);
       logoutTrigger = null;
     }, 180);
   }
@@ -221,7 +297,7 @@ function ensureLogoutDialog() {
       closeLogoutDialog();
     } else if (event.key === 'Tab') {
       event.preventDefault();
-      (event.shiftKey ? logoutConfirmButton : logoutCancelButton).focus();
+      (event.shiftKey ? logoutConfirmButton : logoutCancelButton).focus({ preventScroll: true });
     }
   });
   logoutConfirmButton.addEventListener('click', async () => {
@@ -242,18 +318,19 @@ function ensureLogoutDialog() {
       logoutConfirmButton.disabled = false;
       logoutCancelButton.disabled = false;
       logoutInProgress = false;
-      logoutConfirmButton.focus();
+      logoutConfirmButton.focus({ preventScroll: true });
     }
   });
 }
 
 function openLogoutDialog(trigger) {
   if (logoutDialog.classList.contains('is-open')) {
-    logoutCancelButton.focus();
+    logoutCancelButton.focus({ preventScroll: true });
     return;
   }
 
   window.clearTimeout(logoutCloseTimer);
+  lockLogoutBackgroundScroll();
   logoutTrigger = trigger;
   logoutError.hidden = true;
   logoutError.textContent = '';
@@ -266,7 +343,7 @@ function openLogoutDialog(trigger) {
   document.body.classList.add('logout-confirmation-open');
   window.requestAnimationFrame(() => {
     logoutDialog.classList.add('is-open');
-    logoutCancelButton.focus();
+    logoutCancelButton.focus({ preventScroll: true });
   });
 }
 
