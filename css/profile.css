@@ -238,7 +238,8 @@ body {
 .profile-save-btn:disabled {
     background-color: var(--paper-line);
     border-color: var(--paper-line);
-    color: #4F5F55;
+    color: #ffffff;
+    opacity: 0.55;
     cursor: not-allowed;
 }
 

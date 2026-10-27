@@ -127,10 +127,159 @@ window.ecoAuth = {
   },
 
   async signOut() {
-    await ecoSupabase.auth.signOut();
+    const { error } = await ecoSupabase.auth.signOut();
+    if (error) throw new Error(`Unable to sign out: ${error.message}`);
     window.location.replace('login.html');
   }
 };
+
+// =========================================
+// LOGOUT CONFIRMATION
+// Shared by every page that uses auth.js.
+// =========================================
+let logoutDialog;
+let logoutCancelButton;
+let logoutConfirmButton;
+let logoutError;
+let logoutTrigger;
+let logoutCloseTimer;
+let logoutInProgress = false;
+
+function ensureLogoutDialog() {
+  if (logoutDialog) return;
+
+  if (!document.querySelector('link[data-logout-confirmation-styles]')) {
+    const stylesheet = document.createElement('link');
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = 'css/logout-confirmation.css';
+    stylesheet.dataset.logoutConfirmationStyles = '';
+    document.head.append(stylesheet);
+  }
+
+  const dialog = document.createElement('div');
+  dialog.className = 'logout-confirmation';
+  dialog.hidden = true;
+  dialog.setAttribute('aria-hidden', 'true');
+  dialog.innerHTML = `
+    <section
+      class="logout-confirmation__modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="logoutConfirmationTitle"
+      aria-describedby="logoutConfirmationDescription"
+      tabindex="-1"
+    >
+      <div class="logout-confirmation__icon" aria-hidden="true">
+        <i class="bi bi-box-arrow-right"></i>
+      </div>
+      <h2 class="logout-confirmation__title" id="logoutConfirmationTitle">
+        Are you sure you want to log out?
+      </h2>
+      <p class="logout-confirmation__description" id="logoutConfirmationDescription">
+        You will be signed out of your account. You can log back in anytime.
+      </p>
+      <p class="logout-confirmation__error" role="alert" hidden></p>
+      <div class="logout-confirmation__actions">
+        <button class="logout-confirmation__cancel" type="button">Cancel</button>
+        <button class="logout-confirmation__confirm" type="button">
+          <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+          <span>Log Out</span>
+        </button>
+      </div>
+    </section>
+  `;
+  document.body.append(dialog);
+
+  logoutDialog = dialog;
+  logoutCancelButton = dialog.querySelector('.logout-confirmation__cancel');
+  logoutConfirmButton = dialog.querySelector('.logout-confirmation__confirm');
+  logoutError = dialog.querySelector('.logout-confirmation__error');
+
+  function closeLogoutDialog() {
+    if (dialog.hidden || logoutInProgress) return;
+
+    dialog.classList.remove('is-open');
+    dialog.setAttribute('aria-hidden', 'true');
+    dialog.inert = true;
+    document.body.classList.remove('logout-confirmation-open');
+
+    logoutCloseTimer = window.setTimeout(() => {
+      dialog.hidden = true;
+      dialog.inert = false;
+      logoutTrigger?.focus();
+      logoutTrigger = null;
+    }, 180);
+  }
+
+  logoutCancelButton.addEventListener('click', closeLogoutDialog);
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) closeLogoutDialog();
+  });
+  dialog.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeLogoutDialog();
+    } else if (event.key === 'Tab') {
+      event.preventDefault();
+      (event.shiftKey ? logoutConfirmButton : logoutCancelButton).focus();
+    }
+  });
+  logoutConfirmButton.addEventListener('click', async () => {
+    if (logoutInProgress) return;
+    logoutInProgress = true;
+    logoutConfirmButton.disabled = true;
+    logoutCancelButton.disabled = true;
+    logoutConfirmButton.querySelector('span').textContent = 'Logging out…';
+    logoutError.hidden = true;
+
+    try {
+      await window.ecoAuth.signOut();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      logoutError.textContent = 'We could not log you out. Please try again.';
+      logoutError.hidden = false;
+      logoutConfirmButton.querySelector('span').textContent = 'Log Out';
+      logoutConfirmButton.disabled = false;
+      logoutCancelButton.disabled = false;
+      logoutInProgress = false;
+      logoutConfirmButton.focus();
+    }
+  });
+}
+
+function openLogoutDialog(trigger) {
+  if (logoutDialog.classList.contains('is-open')) {
+    logoutCancelButton.focus();
+    return;
+  }
+
+  window.clearTimeout(logoutCloseTimer);
+  logoutTrigger = trigger;
+  logoutError.hidden = true;
+  logoutError.textContent = '';
+  logoutConfirmButton.disabled = false;
+  logoutCancelButton.disabled = false;
+  logoutConfirmButton.querySelector('span').textContent = 'Log Out';
+  logoutDialog.inert = false;
+  logoutDialog.hidden = false;
+  logoutDialog.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('logout-confirmation-open');
+  window.requestAnimationFrame(() => {
+    logoutDialog.classList.add('is-open');
+    logoutCancelButton.focus();
+  });
+}
+
+document.addEventListener('click', (event) => {
+  if (!(event.target instanceof Element)) return;
+  const trigger = event.target.closest('#logoutButton, #profileLogoutBtn');
+  if (!trigger) return;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  ensureLogoutDialog();
+  openLogoutDialog(trigger);
+}, true);
 
 // =========================================
 // RESPONSIVE SIDEBAR (MOBILE OFF-CANVAS)
