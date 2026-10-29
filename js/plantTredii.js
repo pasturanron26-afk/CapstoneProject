@@ -2,12 +2,52 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 
 
 // ======================================================
 // VIEWER
 // ======================================================
 const viewer = document.getElementById("animalViewer");
+
+// ======================================================
+// MOBILE DETECTION
+// Phones have high device pixel ratios (3x–4x) which
+// multiplies GPU work massively. We detect mobile once
+// and use it to tune the settings below.
+// ======================================================
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+// ======================================================
+// MODEL FILE
+// Phones load the lighter model, desktop loads the original.
+// (File names must match exactly, including capital letters.)
+// ======================================================
+const MODEL_PATH = isMobile
+    ? "./threeDyModels/PLANTCELLmobile.glb"
+    : "./threeDyModels/PLANTCELL.glb";
+
+// ======================================================
+// MOBILE GLASS
+// On phones any "glass" (transmission) material is replaced
+// by plain transparency, which is much cheaper to draw.
+// 0 = invisible, 1 = solid. Try 0.15 to 0.4
+// ======================================================
+const GLASS_OPACITY = 0.25;
+
+// ======================================================
+// MESH MERGING
+// Groups made of many tiny meshes are merged into one mesh
+// each (fewer draw calls). Names that don't exist are skipped.
+// ======================================================
+const MERGE_GROUPS = ["ribosomes", "ribosomesER", "cytoskeleton"];
+
+// ======================================================
+// WEIGHT REPORT (debug)
+// Set to true, reload on your computer, and read the console
+// to see which parts are heavy. Set back to false afterwards.
+// ======================================================
+const DEBUG_REPORT = false;
 
 // ======================================================
 // LOADING ELEMENTS
@@ -100,14 +140,6 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // ======================================================
-// MOBILE DETECTION
-// Phones have high device pixel ratios (3x–4x) which
-// multiplies GPU work massively. We detect mobile once
-// and use it to tune the renderer settings below.
-// ======================================================
-const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-// ======================================================
 // RENDERER
 // FIX: antialias off on mobile (high DPR already smooths
 // edges), lower pixel ratio cap, cheaper tone mapping,
@@ -168,6 +200,9 @@ if (panButton) {
         controls.mouseButtons.LEFT = isPanMode
             ? THREE.MOUSE.PAN
             : THREE.MOUSE.ROTATE;
+        controls.touches.ONE = isPanMode
+            ? THREE.TOUCH.PAN
+            : THREE.TOUCH.ROTATE;
     });
 }
 
@@ -326,7 +361,7 @@ dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5
 loader.setDRACOLoader(dracoLoader);
 
 loader.load(
-    "./threeDyModels/PLANTCELL.glb",
+    MODEL_PATH,
     function (gltf) {
         plantCell = gltf.scene;
         scene.add(plantCell);
@@ -359,7 +394,6 @@ loader.load(
 
         plantCell.traverse(child => {
             if (child.isMesh) {
-                console.log("Plant Cell Object:", child.name);
                 // FIX: Strip any baked-in glows from the 3D model on load
                 const materials = Array.isArray(child.material) ? child.material : [child.material];
                 materials.forEach(mat => {
@@ -370,6 +404,33 @@ loader.load(
                 });
             }
         });
+
+        // Weight report (only when DEBUG_REPORT is true)
+        if (DEBUG_REPORT) {
+            printWeightReport();
+        }
+
+        // Merge many small meshes into few (fewer draw calls)
+        MERGE_GROUPS.forEach(mergeGroupMeshes);
+
+        // MOBILE ONLY: replace expensive "glass" (transmission) with plain transparency
+        if (isMobile) {
+            plantCell.traverse(child => {
+                if (!child.isMesh) return;
+
+                const mats = Array.isArray(child.material) ? child.material : [child.material];
+                mats.forEach(m => {
+                    if (m.transmission > 0) {
+                        m.transmission = 0;
+                        m.transparent = true;
+                        m.opacity = GLASS_OPACITY;
+                        m.depthWrite = false;
+                        m.needsUpdate = true;
+                    }
+                });
+            });
+        }
+
         console.log("Plant Cell Loaded");
 
         if (loadingPercentage) loadingPercentage.textContent = "100%";
@@ -430,6 +491,98 @@ function meshBelongsToOrganelles(mesh, organelleNames) {
         currentObject = currentObject.parent;
     }
     return false;
+}
+
+// ======================================================
+// MERGE MANY SMALL MESHES INTO FEW (fewer draw calls)
+// ======================================================
+function mergeGroupMeshes(groupName) {
+    if (!plantCell) return;
+
+    plantCell.updateMatrixWorld(true);
+    const rootInverse = plantCell.matrixWorld.clone().invert();
+
+    // Collect the group's meshes, bucketed by material
+    const buckets = new Map();
+    plantCell.traverse(child => {
+        if (!child.isMesh || Array.isArray(child.material)) return;
+        if (!meshBelongsToOrganelles(child, [groupName])) return;
+
+        if (!buckets.has(child.material)) buckets.set(child.material, []);
+        buckets.get(child.material).push(child);
+    });
+
+    buckets.forEach((meshes, material) => {
+        if (meshes.length < 2) return;
+
+        const geometries = meshes.map(m => {
+            const g = m.geometry.clone();
+            g.applyMatrix4(rootInverse.clone().multiply(m.matrixWorld));
+            return g;
+        });
+
+        const merged = mergeGeometries(geometries, false);
+        geometries.forEach(g => g.dispose());
+
+        if (!merged) {
+            console.warn("Could not merge group:", groupName);
+            return;
+        }
+
+        const mergedMesh = new THREE.Mesh(merged, material);
+        mergedMesh.name = groupName;
+        plantCell.add(mergedMesh);
+
+        meshes.forEach(m => m.parent && m.parent.remove(m));
+    });
+}
+
+// ======================================================
+// WEIGHT REPORT (debug, see DEBUG_REPORT)
+// ======================================================
+function printWeightReport() {
+    const knownNames = [...Object.values(meshNameMap).flat(), "ribosomesER"];
+    const report = {};
+    const heaviest = [];
+    let totalMeshes = 0;
+    let totalTriangles = 0;
+
+    plantCell.traverse(child => {
+        if (!child.isMesh) return;
+
+        const tris = Math.round(
+            child.geometry.index
+                ? child.geometry.index.count / 3
+                : child.geometry.attributes.position.count / 3
+        );
+
+        let group = "other";
+        let node = child;
+        while (node) {
+            if (knownNames.includes(node.name)) { group = node.name; break; }
+            node = node.parent;
+        }
+
+        const mats = Array.isArray(child.material) ? child.material : [child.material];
+        const row = report[group] || (report[group] = { meshes: 0, triangles: 0, transparentMeshes: 0 });
+        row.meshes++;
+        row.triangles += tris;
+        if (mats.some(m => m.transparent)) row.transparentMeshes++;
+
+        mats.forEach(m => {
+            if (m.transmission > 0) {
+                console.log("TRANSMISSION:", child.name, "| material:", m.name, "| amount:", m.transmission);
+            }
+        });
+
+        totalMeshes++;
+        totalTriangles += tris;
+        heaviest.push({ mesh: child.name, group, triangles: tris });
+    });
+
+    console.log("TOTAL meshes:", totalMeshes, "triangles:", totalTriangles);
+    console.table(report);
+    console.table(heaviest.sort((a, b) => b.triangles - a.triangles).slice(0, 10));
 }
 
 // ======================================================

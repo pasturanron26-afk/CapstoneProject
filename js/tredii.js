@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 
 // ======================================================
 // VIEWER
@@ -18,6 +19,23 @@ const BASE_PIXEL_RATIO = isMobile
     : Math.min(window.devicePixelRatio || 1, 2);
 
 let currentPixelRatio = BASE_PIXEL_RATIO;
+
+// ======================================================
+// MODEL FILE
+// Phones load the lighter model, desktop loads the original.
+// (File names must match exactly, including capital letters.)
+// ======================================================
+const MODEL_PATH = isMobile
+    ? "./threeDyModels/ANIMALCELLmobile.glb"
+    : "./threeDyModels/ANIMALCELL.glb";
+
+// ======================================================
+// MOBILE GLASS (cytoplasm)
+// On phones the "glass" (transmission) material is replaced
+// by plain transparency, which is much cheaper to draw.
+// 0 = invisible, 1 = solid. Try 0.15 to 0.4
+// ======================================================
+const GLASS_OPACITY = 0.25;
 
 // ======================================================
 // LOADING ELEMENTS
@@ -437,6 +455,9 @@ if (panButton) {
         controls.mouseButtons.LEFT = isPanMode
             ? THREE.MOUSE.PAN
             : THREE.MOUSE.ROTATE;
+        controls.touches.ONE = isPanMode
+            ? THREE.TOUCH.PAN
+            : THREE.TOUCH.ROTATE;
     });
 }
 
@@ -747,7 +768,7 @@ loader.setDRACOLoader(
 
 loader.load(
 
-    "./threeDyModels/ANIMALCELL.glb",
+    MODEL_PATH,
 
     function(gltf) {
 
@@ -836,11 +857,6 @@ loader.load(
 
             if (!child.isMesh) return;
 
-            console.log(
-                "Animal Cell Object:",
-                child.name
-            );
-
             child.frustumCulled = true;
 
             const materials =
@@ -861,6 +877,35 @@ loader.load(
                 }
             });
         });
+
+        // ==================================================
+        // MERGE MANY SMALL MESHES (fewer draw calls)
+        // ==================================================
+        ["ribosomes", "ribosomesER", "cytoskeleton"].forEach(mergeGroupMeshes);
+
+        // ==================================================
+        // MOBILE ONLY: replace expensive "glass" (transmission)
+        // with plain transparency
+        // ==================================================
+        if (isMobile) {
+            animalCell.traverse(child => {
+                if (!child.isMesh) return;
+
+                const mats = Array.isArray(child.material)
+                    ? child.material
+                    : [child.material];
+
+                mats.forEach(m => {
+                    if (m.transmission > 0) {
+                        m.transmission = 0;
+                        m.transparent = true;
+                        m.opacity = GLASS_OPACITY;
+                        m.depthWrite = false;
+                        m.needsUpdate = true;
+                    }
+                });
+            });
+        }
 
         console.log(
             "Animal Cell Loaded"
@@ -1008,6 +1053,50 @@ function meshBelongsToOrganelles(
     }
 
     return false;
+}
+
+// ======================================================
+// MERGE MANY SMALL MESHES INTO FEW (fewer draw calls)
+// ======================================================
+function mergeGroupMeshes(groupName) {
+    if (!animalCell) return;
+
+    animalCell.updateMatrixWorld(true);
+    const rootInverse = animalCell.matrixWorld.clone().invert();
+
+    // Collect the group's meshes, bucketed by material
+    const buckets = new Map();
+    animalCell.traverse(child => {
+        if (!child.isMesh || Array.isArray(child.material)) return;
+        if (!meshBelongsToOrganelles(child, [groupName])) return;
+
+        if (!buckets.has(child.material)) buckets.set(child.material, []);
+        buckets.get(child.material).push(child);
+    });
+
+    buckets.forEach((meshes, material) => {
+        if (meshes.length < 2) return;
+
+        const geometries = meshes.map(m => {
+            const g = m.geometry.clone();
+            g.applyMatrix4(rootInverse.clone().multiply(m.matrixWorld));
+            return g;
+        });
+
+        const merged = mergeGeometries(geometries, false);
+        geometries.forEach(g => g.dispose());
+
+        if (!merged) {
+            console.warn("Could not merge group:", groupName);
+            return;
+        }
+
+        const mergedMesh = new THREE.Mesh(merged, material);
+        mergedMesh.name = groupName;
+        animalCell.add(mergedMesh);
+
+        meshes.forEach(m => m.parent && m.parent.remove(m));
+    });
 }
 
 // ======================================================
