@@ -1,5 +1,5 @@
 /* =====================================================
-   ECOLEARN — ADMIN CLASS RECORD
+   BIOLEARN — ADMIN CLASS RECORD
 
    Concept: an instructor's class record book. Quiet green
    chrome, ruled rows, figures that line up, and one place
@@ -9,7 +9,7 @@
 
    Type:   Poppins        -> titles and big numbers (site identity)
            Source Sans 3  -> table and body text (narrow, digits align)
-   Colour: pine / moss / lichen from the rest of EcoLearn.
+   Colour: pine / moss / lichen from the rest of BioLearn.
            Amber = below the pass mark. Red = destructive only.
 
    This file is self-contained: admin.html no longer loads

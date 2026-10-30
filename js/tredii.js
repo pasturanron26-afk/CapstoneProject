@@ -30,6 +30,14 @@ const MODEL_PATH = isMobile
     : "./threeDyModels/ANIMALCELL.glb";
 
 // ======================================================
+// CAMERA DISTANCE  (EDIT THESE TO ZOOM IN / OUT)
+// Bigger number = zoomed out (model looks smaller)
+// Smaller number = zoomed in (model looks bigger)
+// ======================================================
+const WHOLE_CAMERA_DISTANCE = isMobile ? 1.3 : 2.2;   // whole cell / reset view
+const DEFAULT_SEPARATE_ZOOM = isMobile ? 1.7 : 2.6;   // one organelle alone
+
+// ======================================================
 // MOBILE GLASS (cytoplasm)
 // On phones the "glass" (transmission) material is replaced
 // by plain transparency, which is much cheaper to draw.
@@ -98,7 +106,7 @@ const MODEL_ROTATION = {
 // y: positive = up,    negative = down
 // ======================================================
 const MODEL_SCREEN_OFFSET = isMobile
-    ? { x: 0, y: 0 }      // mobile
+    ? { x: 0.1, y: 0 }      // mobile
     : { x: 0.2, y: 0 };     // desktop
 
 // ======================================================
@@ -132,9 +140,13 @@ const ORGANELLE_SEPARATE_OFFSETS = {
 // Organelles not listed use the default (2.6).
 // Don't go below 0.5 (the minimum camera distance).
 // ======================================================
-const ORGANELLE_SEPARATE_ZOOM = {
-    cellMem: 2.0,   // cell membrane
-};
+const ORGANELLE_SEPARATE_ZOOM = isMobile
+    ? {
+        cellMem: 1.3,   // cell membrane (mobile)
+    }
+    : {
+        cellMem: 2.0,   // cell membrane (desktop)
+    };
 
 function getSeparateOffsetFor(organelleKey) {
     return ORGANELLE_SEPARATE_OFFSETS[organelleKey] || SEPARATE_SCREEN_OFFSET;
@@ -654,7 +666,7 @@ function resetView() {
     camera.position.set(
         0,
         0,
-        originalMaxDimension * 2.2
+        originalMaxDimension * WHOLE_CAMERA_DISTANCE
     );
 
     controls.target.set(
@@ -824,7 +836,7 @@ loader.load(
         camera.position.set(
             0,
             0,
-            maxDimension * 2.2
+            maxDimension * WHOLE_CAMERA_DISTANCE
         );
 
         camera.near =
@@ -1231,7 +1243,7 @@ function showOnlyOrganelles(
     );
 
     let cameraDistance =
-        maxDimension * (ORGANELLE_SEPARATE_ZOOM[organelleKey] || 2.6);
+        maxDimension * (ORGANELLE_SEPARATE_ZOOM[organelleKey] || DEFAULT_SEPARATE_ZOOM);
 
     if (cameraDistance < 0.5) {
         cameraDistance = 0.5;

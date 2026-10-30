@@ -1,5 +1,5 @@
 /* =====================================================
-   ECOLEARN — SHARED SIDEBAR
+   BIOLEARN — SHARED SIDEBAR
    One sidebar for every page (student, viewer and admin).
    Pages mark the current link with  class="active"  and
    aria-current="page"  — no per-page <style> overrides.

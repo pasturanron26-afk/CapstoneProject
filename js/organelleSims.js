@@ -1,4 +1,4 @@
-/* EcoLearn organelle simulators.
+/* BioLearn organelle simulators.
    Finds every .organelle-section on the page, matches its .organelle-name,
    and adds a 2D step-by-step simulator under the 3D model. */
 (function () {

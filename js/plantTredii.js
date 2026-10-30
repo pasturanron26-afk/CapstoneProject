@@ -92,8 +92,8 @@ const MODEL_ROTATION = { x: 0.5, y: 10.0, z: 0.0 };
 // Bigger number = zoomed out (model looks smaller)
 // Smaller number = zoomed in (model looks bigger)
 // ======================================================
-const WHOLE_CAMERA_DISTANCE = 3.4;     // whole cell / reset view (was 3.0)
-const SEPARATE_CAMERA_DISTANCE = 3.0;  // one organelle alone     (was 2.6)
+const WHOLE_CAMERA_DISTANCE = isMobile ? 1.9 : 3.4;     // whole cell / reset view
+const SEPARATE_CAMERA_DISTANCE = isMobile ? 1.6 : 3.0;  // one organelle alone
 
 // ======================================================
 // AUTO-ROTATE PIVOT (separate mode)

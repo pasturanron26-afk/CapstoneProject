@@ -1,5 +1,5 @@
 /* =====================================================
-   ECOLEARN — ADMIN DASHBOARD LOGIC
+   BIOLEARN — ADMIN DASHBOARD LOGIC
    Implements the "Administration Management" branch of the
    system functional diagram:
      - View Student Information
@@ -991,7 +991,7 @@ function showView(view, { focus = false } = {}) {
         if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     el('viewTitle').textContent = VIEWS[view].title;
-    document.title = `${VIEWS[view].title} · EcoLearn Admin`;
+    document.title = `${VIEWS[view].title} · BioLearn Admin`;
     renderSubtitle();
     window.scrollTo({ top: 0 });
     if (focus) el('viewTitle').focus({ preventScroll: true });
