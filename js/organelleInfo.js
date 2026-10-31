@@ -890,6 +890,30 @@ const infoSources = document.getElementById("infoSources");
 // ======================================================
 
 let currentOrganelle = null;
+let currentPronunciationAudio = null;
+
+const ANIMAL_ORGANELLE_VOICE_FILES = {
+    cellMem: "cellMembrane_AnimalCell.mp3",
+    centriole: "Centriole_AnimalCell.mp3",
+    cytoplasm: "Cytoplasm_AnimalCell.mp3",
+    cytoskeleton: "Cytoskeleton_AnimalCell.mp3",
+    endoplasmicReticulum: "EndoplasmicReticulum_AnimalCell.mp3",
+    golgiApparatus: "Golgi Apparatus_AnimalCell.mp3",
+    lysosome: "Lysosome_AnimalCell.mp3",
+    mitochondria: "Mitochondria_AnimalCell.mp3",
+    nucleus: "Nucleus_AnimalCell.mp3",
+    Nucleolus: "Nucleolus_AnimalCell.mp3",
+    peroxisome: "Peroxisome_AnimalCell.mp3",
+    ribosomes: "Ribosomes_AnimalCell.mp3",
+    vacuole: "Vacuole_AnimalCell.mp3"
+};
+
+function stopPronunciationAudio() {
+    if (!currentPronunciationAudio) return;
+
+    currentPronunciationAudio.pause();
+    currentPronunciationAudio = null;
+}
 
 // ======================================================
 // SCROLL INFORMATION PANEL TO TOP
@@ -997,7 +1021,16 @@ function updateOrganelleInformation(organelleName) {
         return;
     }
 
+    stopPronunciationAudio();
     currentOrganelle = organelleName;
+    const voiceFile = ANIMAL_ORGANELLE_VOICE_FILES[organelleName];
+    if (voiceFile) {
+        currentPronunciationAudio = new Audio();
+        currentPronunciationAudio.preload = "auto";
+        currentPronunciationAudio.src =
+            "voice/AnimalCellVoicePack/" + encodeURIComponent(voiceFile);
+        currentPronunciationAudio.load();
+    }
 
     if (infoTitle) infoTitle.textContent = information.title;
 
@@ -1032,6 +1065,7 @@ function resetOrganelleInformation() {
     }
 
     currentOrganelle = null;
+    stopPronunciationAudio();
 
     if (infoTitle) infoTitle.textContent = information.title;
 
@@ -1045,10 +1079,6 @@ function resetOrganelleInformation() {
     renderSections(information.sections);
     renderSources(information.sources);
 
-    if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-    }
-
     const infoPanel = document.querySelector(".div2");
     if (infoPanel) {
         infoPanel.scrollTo({ top: 0, behavior: "auto" });
@@ -1059,67 +1089,16 @@ function resetOrganelleInformation() {
 // SPEAKER / PRONUNCIATION
 // ======================================================
 
-// Voice used by the speaker button on this page: male voice (Animal Cell).
-// The first name that matches an installed voice wins. Browsers do not say
-// whether a voice is male or female, so voices are matched by name.
-// Reorder or replace names to change the voice.
-const PREFERRED_PRONUNCIATION_VOICES = [
-    "Microsoft Guy Online (Natural)",
-    "Microsoft Davis Online (Natural)",
-    "Microsoft Andrew Online (Natural)",
-    "Microsoft Brian Online (Natural)",
-    "Microsoft Christopher Online (Natural)",
-    "Microsoft Mark",
-    "Microsoft David",
-    "Google UK English Male",
-    "Daniel",
-    "Alex"
-];
-
-// Pitch used when none of the names above are installed.
-const PRONUNCIATION_FALLBACK_PITCH = 0.8;
-
-function pickPronunciationVoice() {
-    if (!("speechSynthesis" in window)) return null;
-    const voices = window.speechSynthesis.getVoices();
-
-    for (const name of PREFERRED_PRONUNCIATION_VOICES) {
-        const match = voices.find(function (v) { return v.name.indexOf(name) !== -1; });
-        if (match) return match;
-    }
-
-    return null;
-}
-
-// Chrome loads its voice list lazily; ask for it once so it is ready on first click.
-if ("speechSynthesis" in window) {
-    window.speechSynthesis.getVoices();
-}
-
 if (speakButton) {
     speakButton.addEventListener("click", function () {
-        if (!currentOrganelle || !organelleInformation[currentOrganelle]) return;
+        if (!currentOrganelle || !currentPronunciationAudio) return;
 
-        const information = organelleInformation[currentOrganelle];
-        const text = information.title;
-
-        if (!("speechSynthesis" in window)) return;
-
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        const voice = pickPronunciationVoice();
-        if (voice) {
-            utterance.voice = voice;
-            utterance.lang = voice.lang;
-            utterance.pitch = 1;
-        } else {
-            // No matching voice installed: shift the pitch of the default voice instead.
-            utterance.lang = "en-US";
-            utterance.pitch = PRONUNCIATION_FALLBACK_PITCH;
+        if (currentPronunciationAudio.readyState > 0) {
+            currentPronunciationAudio.currentTime = 0;
         }
-        utterance.rate = 0.9;
-        utterance.volume = 1;
-        window.speechSynthesis.speak(utterance);
+        currentPronunciationAudio.play().catch(function (error) {
+            console.error("Could not play the organelle pronunciation:", error);
+        });
     });
 }
 
