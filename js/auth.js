@@ -129,7 +129,7 @@ window.ecoAuth = {
   async signOut() {
     const { error } = await ecoSupabase.auth.signOut();
     if (error) throw new Error(`Unable to sign out: ${error.message}`);
-    window.location.replace('login.html');
+    window.location.replace('index.html');
   }
 };
 

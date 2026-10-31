@@ -93,10 +93,12 @@ body {
 }
 
 .brand-name {
-    font-family: var(--font-serif);
+    display: block;
+    width: 4.378em;
+    height: 1em;
+    margin-left: -0.35em;
+    object-fit: fill;
     font-size: 26px;
-    font-weight: 600;
-    line-height: 1;
 }
 
 .brand-subtitle {
@@ -199,16 +201,15 @@ h1 span {
 }
 
 .btn-secondary {
-    color: var(--paper);
-    background: linear-gradient(135deg, var(--moss), var(--light-green));
+    color: var(--deep-green);
+    background: transparent;
     border: 1px solid var(--moss);
-    box-shadow: 0 7px 20px rgba(30, 114, 69, 0.14);
+    box-shadow: none;
 }
 
 .btn-secondary:hover {
     transform: translateY(-2px);
-    filter: brightness(1.06);
-    box-shadow: 0 12px 24px rgba(30, 114, 69, 0.22);
+    border-color: var(--deep-green);
 }
 
 .btn-primary:focus-visible,
